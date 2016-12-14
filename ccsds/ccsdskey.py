@@ -2,45 +2,70 @@
 # -*- coding: utf-8 -*-
 
 
-from .core import *
-exc = core.ccsdsexception
+from . import ccsdsexception as exc
 
 
 __all__ = ['CCSDSKey']
 
 
 class CCSDSKey(object):
-    def __init__(self, name, dic, start, end=None, fct=None, unit=''):
+    def __init__(self, name, dic=None, start=None, l=1, fct=None, fctrev=None):
         """
-        Dictionary of keys to perform easy extraction from a bits sequence
+        Dictionary of keys to perform easy extraction from a bits sequence.
         
         Args:
-        * name (str): the name of the dictionary, for debug purposes
+        * name (str): the name of the dictionary, for referencing
         * dic (dict): dictionary of possible values
         * start (int): start-position in bit from the beginning of the primary
           header, or whatever reference you decided
-        * end (int) [optional]: end-position (inclusive) in bit from the
-          beginning of primary header, or whatever reference you decided.
-          Default is equal to ``start`` (length = 1)
-        * fct (callable) [optional]: function to apply on the output bits
-        * unit (str) [optional]: the unit of the output value
+        * l (int): length of the strip of bits
+        * fct (callable) [optional]: function to apply to the bits
+        * fctrev (callable) [optional]: reverse function of ``fct``
         """
         self.name = str(name)
-        self.dic = dict(dic)
-        self.cut = slice(int(start),
-                         int(end)+1 if end is not None else int(start)+1)
         self.fct = fct if callable(fct) else None
+        self.fctrev = fctrev if callable(fctrev) else None
+        self.dic = dict(dic) if dic is not None else None
+        if ((self.dic is not None\
+            and (self.fct is not None or self.fctrev is not None))\
+            or (self.dic is None and self.fct is None)):
+            raise exc.BadDefinition(name=self.name)
+        self.decode_only = (self.fct is not None and self.fctrev is None)
+        self.relative_only = False
+        self.len = int(l)
+        # just the length is provided
+        if start is None:
+            self.start = 0
+            self.end = self.len
+            self.relative_only = True
+        elif start is not None:
+            self.start = int(start)
+            self.end = self.start + self.len
+        self.cut = slice(self.start, self.end)
+        self.cut_rel = slice(0, self.len)
 
     def __str__(self):
-        return "{}: {} <{}>{}".format(self.name,
-                                      self.dic,
-                                      self.cut,
-                                      ", fct: {}".format(self.fct.func_name)\
-                                          if self.fct is not None else "")
+        return "{}: <{}>".format(self.name, self.cut)
 
     __repr__ = __str__
 
+    def cut_offset(self, offset):
+        """
+        Returns the slice with an offset in position
+
+        Args:
+        * offset (int): the offset
+        """
+        offset = int(offset)
+        if self.start + offset < 0:
+            raise exc.CantApplyOffset(name=self.name, start=self.start,
+                                      offset=offset)
+        else:
+            return slice(self.start + offset, self.end + offset)
+    
     def __getitem__(self, key):
+        if self.dic is None:
+            raise exc.NoDic(name=self.name)
         if key in self.dic.keys():
             return self.dic[key]
         elif str(key) in self.dic.keys():
@@ -49,26 +74,66 @@ class CCSDSKey(object):
             try:
                 return self.dic[int(key)]
             except:
-                raise exc.NoSuchKey(dic=self.dic, key=key)
+                raise exc.NoSuchKey(name=self.name, key=key)
 
-    def grab(self, bits, raw=False, *kwargs):
+    def grab(self, packet, rel=False, raw=False, offset=None, **kwargs):
         """
-        Grabs the slice of relevant bits and returns the corresponding
-        dictionary key or applies the transform function if applicable
+        Grabs the slice of relevant bits in the packet and returns
+        the corresponding dictionary key or applies the transform function
+        if applicable.
 
         Args:
-        * bits (str): chain of '0' and '1'
+        * packet (str): the packet, either chain of '0' and '1' or hex
+          depending how were ``start`` and ``l`` defined
+        * rel (bool): if ``False`` follows ``start``, if ``True``
+          grabs the bits from the position 0
         * raw (bool): if ``True``, returns the raw bit sequence
+        * offset (int) [optional]: offset to apply to the slice
+
+        Kwargs:
+        * Passed on to ``fct`` and ``fctrev`` if applicable
         """
-        dum = bits[self.cut]
+        if not rel and self.relative_only:
+            raise exc.NoAbsGrab(name=self.name)
+        if offset is not None:
+            dum = bits[self.cut_offset(offset=int(offset))]
+        else:
+            dum = bits[self.cut]
+        if len(dum) != self.len:
+            raise exc.GrabFail(name=self.name, l=self.len)
         if raw:
             return dum
         elif self.fct is None:
-            return self.find(dum)
+            return self.dic_find(dum)
         else:
-            return self.fct(dum, *kwargs)
+            return self.fct(dum, **kwargs)
 
-    def find(self, value):
+    def tobits(self, value, raw=False, pad=None, **kwargs):
+        """
+        Give a value, returns the sequence of bits generated by
+        fctrev, and pad it if necessary
+
+        Args:
+        * value: the value to convert to bits
+        * raw (bool): if ``True``, a simple int2bin transform is applied
+          with a padding to ``len`` unless ``pad`` is provided
+        * pad (int or None) [optional]: the padding length to apply, or
+          no padding if ``None``
+
+        Kwargs:
+        * Passed on to ``fct`` and ``fctrev`` if applicable
+        """
+        if self.decode_only and not raw:
+            raise exc.DecodeOnly(name=self.name)
+        padding = self.len if pad is None else int(pad)
+        if raw:
+            return core.int2bin(value, pad=padding)
+        elif self.fctrev is None:
+            return self[value]
+        else:
+            return self.fctrev(value, **kwargs).zfill(padding)
+
+    def dic_find(self, value):
         """
         Performs the reverse search in the dictionary: given a
         value, it will return the corresponding key
@@ -76,16 +141,21 @@ class CCSDSKey(object):
         Args:
         * value: the value to search in ``dic``
         """
+        if self.dic is None:
+            raise exc.NoDic(name=self.name)
+        found = False
         for k, v in self.dic.items():
             if v == value:
-                return k
+                found = True
             elif str(v) == str(value):
-                return k
+                found = True
             else:
                 try:
                     if int(v) == int(value):
-                        return k
+                        found = True
                 except:
                     pass
+            if found:
+                return k
         else:
-            raise exc.NoSuchKey(dic=self.dic, key=key)
+            raise exc.NoSuchValue(name=self.name, key=value)

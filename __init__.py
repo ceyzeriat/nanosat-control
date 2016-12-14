@@ -1,4 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import ccsds
+from . import ccsds
+from . import core
+from .command import *
