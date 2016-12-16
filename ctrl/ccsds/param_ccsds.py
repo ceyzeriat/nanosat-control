@@ -17,33 +17,73 @@ MAXIMUMPACKETLENGTH = MAXIMUMDATALENGTH + 6  # octets
 # origin of start/end is start of packet
 # start/end units is bits
 
+def get_pid(v, pad, **kwargs):
+    return core.int2bin(param_apid.APIDREGISTRATION[v], pad=pad)
+
+def get_pid_rev(v, pld, lvl, **kwargs):
+    dic = param_apid.APIDREGISTRATION_REV
+    return dic[int(pld)][int(lvl) if int(pld) == 0 else 1]
+
 HEADER_P_SIZE = 6  # octets
 
-PACKETVERSION = CCSDSKey('packet_version', dic={0: '000'}, start=0, l=3)  # 0
-PACKETVERSION_VALUE = 0
+PACKETVERSION = CCSDSKey(   name='packet_version',
+                            dic={0: '000'},
+                            start=0,
+                            l=3,
+                            dic_force=0)
 
-PACKETTYPE = CCSDSKey('packet_type', dic={'telemetry': '0', 'telecommand': '1'}, start=3, l=1)
+PACKETTYPE = CCSDSKey(  name='packet_type',
+                        dic={'telemetry': '0', 'telecommand': '1'},
+                        start=3,
+                        l=1)
 
-SECONDARYHEADERFLAG = CCSDSKey('secondary_header_flag', dic={0: '0', 1: '1'}, start=4, l=1)  # 1
+SECONDARYHEADERFLAG = CCSDSKey( name='secondary_header_flag',
+                                dic={0: '0', 1: '1'},
+                                start=4,
+                                l=1,
+                                dic_force=1)
 
-PAYLOADFLAG = CCSDSKey('payload_flag', dic={0: '0', 1: '1'}, start=5, l=1)
+PAYLOADFLAG = CCSDSKey( name='payload_flag',
+                        dic={0: '0', 1: '1'},
+                        start=5, l=1)
 
-LEVELFLAG = CCSDSKey('level_flag', dic={0: '0', 1: '1'}, start=6, l=1)
+LEVELFLAG = CCSDSKey(   name='level_flag',
+                        dic={0: '0', 1: '1'},
+                        start=6,
+                        l=1)
 
-PID = CCSDSKey('apid', dic=param_apid.APIDREGISTRATION, start=7, l=5)
+PID = CCSDSKey( name='pid',
+                start=7,
+                l=5,
+                fctdepack=get_pid_rev,
+                fctpack=get_pid)
 
-PACKETCATEGORY = CCSDSKey('packet_category', dic=param_category.CATEGORYREGISTRATION, start=12, l=4)
+PACKETCATEGORY = CCSDSKey(  name='packet_category',
+                            dic=param_category.CATEGORYREGISTRATION,
+                            start=12,
+                            l=4)
 
-SEQUENCEFLAG = CCSDSKey('sequence_flag', dic={'segment': '00', 'start': '01', 'end': '10', 'standalone': '11'}, start=16, l=2)
-SEQUENCEFLAG_VALUE = 'standalone'
+SEQUENCEFLAG = CCSDSKey(name='sequence_flag',
+                        dic={'segment': '00', 'start': '01', 'end': '10', 'standalone': '11'},
+                        start=16,
+                        l=2,
+                        dic_force='standalone')
 
-PACKETID = CCSDSKey('packet_id', start=18, l=14, fct=core.bin2int, fctrev=core.int2bin)
+PACKETID = CCSDSKey(name='packet_id',
+                    start=18,
+                    l=14,
+                    fctdepack=core.bin2int,
+                    fctpack=core.int2bin)
 
-DATALENGTH = CCSDSKey('data_length', start=32, l=16, fct=core.bin2int, fctrev=core.int2bin)
+DATALENGTH = CCSDSKey(  name='data_length',
+                        start=32,
+                        l=16,
+                        fctdepack=core.bin2int,
+                        fctpack=core.int2bin)
 
 
 # all keys in the right order
-HEADER_P_KEYS = [PACKETVERSION, PACKETTYPE, SECONDARYHEADERFLAG, PAYLOADFLAG, LEVELFLAG, PID, PACKETCATEGORY, SEQUENCEFLAG, PACKETID, DATALENGTH]
+HEADER_P_KEYS = [PACKETVERSION, PACKETTYPE, SECONDARYHEADERFLAG, PID, PAYLOADFLAG, LEVELFLAG, PACKETCATEGORY, SEQUENCEFLAG, PACKETID, DATALENGTH]
 
 
 
@@ -53,9 +93,17 @@ HEADER_P_KEYS = [PACKETVERSION, PACKETTYPE, SECONDARYHEADERFLAG, PAYLOADFLAG, LE
 
 HEADER_S_SIZE_TELEMETRY = 6  # octets
 
-DAYSINCEREF_TELEMETRY = CCSDSKey('days_since_ref', start=0, l=16, fct=core.bin2int)
+DAYSINCEREF_TELEMETRY = CCSDSKey(   name='days_since_ref',
+                                    start=0,
+                                    l=16,
+                                    fctdepack=core.bin2int,
+                                    fctpack=core.int2bin)
 
-MSECSINCEREF_TELEMETRY = CCSDSKey('ms_since_ref', start=16, l=32, fct=core.bin2int)
+MSECSINCEREF_TELEMETRY = CCSDSKey(  name='ms_since_ref',
+                                    start=16,
+                                    l=32,
+                                    fctdepack=core.bin2int,
+                                    fctpack=core.int2bin)
 
 # all keys in the right order
 HEADER_S_KEYS_TELEMETRY = [DAYSINCEREF_TELEMETRY, MSECSINCEREF_TELEMETRY]
@@ -68,16 +116,37 @@ HEADER_S_KEYS_TELEMETRY = [DAYSINCEREF_TELEMETRY, MSECSINCEREF_TELEMETRY]
 
 HEADER_S_SIZE_TELECOMMAND = 6  # octets
 
-REQACKRECEPTIONTELECOMMAND = CCSDSKey('reqack_reception', start=0, l=1, dic={0: '0', 1: '1'})
+REQACKRECEPTIONTELECOMMAND = CCSDSKey(  name='reqack_reception',
+                                        start=0,
+                                        l=1,
+                                        dic={0: '0', 1: '1'})
 
-REQACKFORMATTELECOMMAND = CCSDSKey('reqack_format', start=1, l=1, dic={0: '0', 1: '1'})
+REQACKFORMATTELECOMMAND = CCSDSKey( name='reqack_format',
+                                    start=1,
+                                    l=1,
+                                    dic={0: '0', 1: '1'})
 
-REQACKEXECUTIONTELECOMMAND = CCSDSKey('reqack_execution', start=2, l=1, dic={0: '0', 1: '1'})
+REQACKEXECUTIONTELECOMMAND = CCSDSKey(  name='reqack_execution',
+                                        start=2,
+                                        l=1,
+                                        dic={0: '0', 1: '1'})
 
-TELECOMMANDID = CCSDSKey('telecommand_id', start=3, l=10, fct=core.bin2int)
+TELECOMMANDID = CCSDSKey(   name='telecommand_id',
+                            start=3,
+                            l=10,
+                            fctdepack=core.bin2int,
+                            fctpack=core.int2bin)
 
-EMITTERID = CCSDSKey('emitter_id', start=13, l=3, fct=core.bin2int)
+EMITTERID = CCSDSKey(   name='emitter_id',
+                        start=13,
+                        l=3,
+                        fctdepack=core.bin2int,
+                        fctpack=core.int2bin)
 
-SIGNATURE = CCSDSKey('signature', start=16, l=32, fct=core.bin2int)
+SIGNATURE = CCSDSKey(   name='signature',
+                        start=16,
+                        l=32,
+                        fctdepack=core.bin2int,
+                        fctpack=core.int2bin)
 
-HEADER_S_KEYS_TELEMETRY = [REQACKRECEPTIONTELECOMMAND, REQACKFORMATTELECOMMAND, REQACKEXECUTIONTELECOMMAND, TELECOMMANDID, EMITTERID, SIGNATURE]
+HEADER_S_KEYS_TELECOMMAND = [REQACKRECEPTIONTELECOMMAND, REQACKFORMATTELECOMMAND, REQACKEXECUTIONTELECOMMAND, TELECOMMANDID, EMITTERID, SIGNATURE]

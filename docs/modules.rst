@@ -1,5 +1,5 @@
-PicSat
-======
+ctrl
+====
 
 .. toctree::
    :maxdepth: 4

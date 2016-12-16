@@ -3,14 +3,14 @@
 
 
 from . import cmdexception as exc
-from . import core
+from .. import core
 from .pformat import PFormat
 
 
 __all__ = ['Param']
 
 
-class Param(object):
+class Parameter(object):
     def __init__(self, name, desc, rng, typ=None, size=1, unit=None):
         """
         Creates a self-checking parameter used in a command

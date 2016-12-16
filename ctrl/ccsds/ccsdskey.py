@@ -3,13 +3,15 @@
 
 
 from . import ccsdsexception as exc
+from .. import core
 
 
 __all__ = ['CCSDSKey']
 
 
 class CCSDSKey(object):
-    def __init__(self, name, dic=None, start=None, l=1, fct=None, fctrev=None):
+    def __init__(self, name, dic=None, start=None, l=1, fctdepack=None,
+                 fctpack=None, dic_force=None):
         """
         Dictionary of keys to perform easy extraction from a bits sequence.
         
@@ -19,18 +21,24 @@ class CCSDSKey(object):
         * start (int): start-position in bit from the beginning of the primary
           header, or whatever reference you decided
         * l (int): length of the strip of bits
-        * fct (callable) [optional]: function to apply to the bits
-        * fctrev (callable) [optional]: reverse function of ``fct``
+        * fctdepack (callable) [optional]: function to apply to the bits to
+          get the value. Shall remain ``None`` if ``dic`` is provided
+        * fctpack (callable) [optional]: reverse function of ``fctdepack``
+          Shall remain ``None`` if ``dic`` is provided
         """
         self.name = str(name)
-        self.fct = fct if callable(fct) else None
-        self.fctrev = fctrev if callable(fctrev) else None
-        self.dic = dict(dic) if dic is not None else None
-        if ((self.dic is not None\
-            and (self.fct is not None or self.fctrev is not None))\
-            or (self.dic is None and self.fct is None)):
-            raise exc.BadDefinition(name=self.name)
-        self.decode_only = (self.fct is not None and self.fctrev is None)
+        self._fctdepack = fctdepack if callable(fctdepack) else None
+        self._fctpack = fctpack if callable(fctpack) else None
+        self.isdic = (dic is not None)
+        self.dic = dict(dic) if self.isdic else None
+        if self.isdic:
+            if self._fctdepack is not None or self._fctpack is not None:
+                raise exc.BadDefinition(name=self.name)
+        else:
+            if self._fctdepack is None and self._fctpack is None:
+                raise exc.BadDefinition(name=self.name)
+        self.can_depack = (self._fctdepack is not None or self.isdic)
+        self.can_pack = (self._fctpack is not None or self.isdic)
         self.relative_only = False
         self.len = int(l)
         # just the length is provided
@@ -43,6 +51,7 @@ class CCSDSKey(object):
             self.end = self.start + self.len
         self.cut = slice(self.start, self.end)
         self.cut_rel = slice(0, self.len)
+        self.dic_force = dic_force
 
     def __str__(self):
         return "{}: <{}>".format(self.name, self.cut)
@@ -64,7 +73,7 @@ class CCSDSKey(object):
             return slice(self.start + offset, self.end + offset)
     
     def __getitem__(self, key):
-        if self.dic is None:
+        if not self.isdic:
             raise exc.NoDic(name=self.name)
         if key in self.dic.keys():
             return self.dic[key]
@@ -76,64 +85,69 @@ class CCSDSKey(object):
             except:
                 raise exc.NoSuchKey(name=self.name, key=key)
 
-    def grab(self, packet, rel=False, raw=False, offset=None, **kwargs):
+    def depack(self, packet, rel=False, raw=False, offset=None, **kwargs):
         """
         Grabs the slice of relevant bits in the packet and returns
-        the corresponding dictionary key or applies the transform function
-        if applicable.
+        the corresponding key or applies the depack function
 
         Args:
         * packet (str): the packet, either chain of '0' and '1' or hex
-          depending how were ``start`` and ``l`` defined
+          depending how ``start`` and ``l`` were defined
         * rel (bool): if ``False`` follows ``start``, if ``True``
-          grabs the bits from the position 0
+          grabs the bits from the position 0 (or ``offset``) of the
+          packet provided
         * raw (bool): if ``True``, returns the raw bit sequence
         * offset (int) [optional]: offset to apply to the slice
 
         Kwargs:
-        * Passed on to ``fct`` and ``fctrev`` if applicable
+        * Passed on to ``fctdepack`` if applicable
         """
+        if not self.can_depack and not raw:
+            raise exc.NoDepack(name=self.name)
         if not rel and self.relative_only:
             raise exc.NoAbsGrab(name=self.name)
         if offset is not None:
-            dum = bits[self.cut_offset(offset=int(offset))]
+            bits = packet[self.cut_offset(offset=int(offset))]
         else:
-            dum = bits[self.cut]
-        if len(dum) != self.len:
+            bits = packet[self.cut]
+        if len(bits) != self.len:
             raise exc.GrabFail(name=self.name, l=self.len)
         if raw:
-            return dum
-        elif self.fct is None:
-            return self.dic_find(dum)
+            return bits
+        elif self._fctdepack is None:
+            return self._dic_rev(core.reverse_if_little_endian(bits))
         else:
-            return self.fct(dum, **kwargs)
+            return self._fctdepack(bits, **kwargs)
 
-    def tobits(self, value, raw=False, pad=None, **kwargs):
+    def pack(self, value, raw=False, pad=None, **kwargs):
         """
-        Give a value, returns the sequence of bits generated by
-        fctrev, and pad it if necessary
+        Give a value, returns the sequence of bits from dic or
+        generated by fctpack, and finally pads it if necessary
 
         Args:
         * value: the value to convert to bits
         * raw (bool): if ``True``, a simple int2bin transform is applied
-          with a padding to ``len`` unless ``pad`` is provided
-        * pad (int or None) [optional]: the padding length to apply, or
-          no padding if ``None``
+          with a padding to the key length unless ``pad`` is provided
+        * pad (int or None) [optional]: the padding length to
+          apply, or default ``None`` pads to key length .
 
         Kwargs:
-        * Passed on to ``fct`` and ``fctrev`` if applicable
+        * Passed on to and ``fctpack`` if applicable
         """
-        if self.decode_only and not raw:
-            raise exc.DecodeOnly(name=self.name)
-        padding = self.len if pad is None else int(pad)
+        if self.isdic and self.dic_force is not None:
+            value = self.dic_force
+        if not self.can_pack and not raw:
+            raise exc.NoPack(name=self.name)
+        pad = self.len if pad is None else int(pad)
         if raw:
-            return core.int2bin(value, pad=padding)
-        elif self.fctrev is None:
-            return self[value]
+            return core.int2bin(value, pad=pad)
+        elif self._fctpack is None:
+            return core.reverse_if_little_endian(self[value])
         else:
-            return self.fctrev(value, **kwargs).zfill(padding)
+            return core.padit(self._fctpack(value, pad=pad, **kwargs),
+                              l=pad, ch='0')
 
-    def dic_find(self, value):
+    def _dic_rev(self, value):
         """
         Performs the reverse search in the dictionary: given a
         value, it will return the corresponding key
@@ -141,8 +155,6 @@ class CCSDSKey(object):
         Args:
         * value: the value to search in ``dic``
         """
-        if self.dic is None:
-            raise exc.NoDic(name=self.name)
         found = False
         for k, v in self.dic.items():
             if v == value:
@@ -158,4 +170,4 @@ class CCSDSKey(object):
             if found:
                 return k
         else:
-            raise exc.NoSuchValue(name=self.name, key=value)
+            raise exc.NoSuchValue(name=self.name, value=value)

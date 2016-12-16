@@ -3,7 +3,7 @@
 
 
 from . import cmdexception as exc
-from . import core
+from .. import core
 
 
 __all__ = ['PFormat']

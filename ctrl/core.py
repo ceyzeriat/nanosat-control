@@ -6,24 +6,34 @@ import binascii
 import time
 import datetime
 import numpy as np
+import os
 
 
+EMITTER_ID = int(open(os.path.join( os.path.dirname(os.path.abspath(__file__)),
+                                    "emitter_id")).read().strip())
 DATETIME_REF = 16801  # 2016,1,1,0,0,0
 TWINKLETWINKLELITTLEINDIA = True
 
 
-def get_now2daystamp():
-    return int(time.mktime(time.gmtime())/86400.-DATETIME_REF)
+def now2daystamp():
+    return int(time.mktime(time.localtime())/86400.-DATETIME_REF)
 
-def get_now2msstamp():
+def now2msstamp():
     g = datetime.datetime.utcnow()
-    return int(g.hour * 36e5 + g.minute * 6e4 + g.second * 1e3 + g.microsecond//1000)
+    return int(g.hour * 36e5 + g.minute * 6e4 + g.second * 1e3
+                + g.microsecond//1000)
+
+def stamps2now(daystamp, msstamp):
+    return (DATETIME_REF+daystamp)*86400. + msstamp*0.001
 
 def identity(v, *args, **kwargs):
     """
     A dummy callable that does nothing
     """
     return v
+
+def setstr(txt, slc, rep):
+    return txt[:slc.start] + rep[0:slc.stop-slc.start] + txt[slc.stop:]
 
 def clean_name(txt):
     number = {"0": "zero", "1": "one", "2": "two", "3": "three", "4": "four",
@@ -35,7 +45,7 @@ def clean_name(txt):
                    else txt[0])\
             + txt[1:]
 
-def int2bin(i, pad=True):
+def int2bin(i, pad=True, **kwargs):
     """
     Give an int ``i`` as int or str, get bits
     Set ``pad`` to ``True`` for a 8n padding.
@@ -58,7 +68,7 @@ def int2bin(i, pad=True):
     else:
         return b
 
-def bin2int(b):
+def bin2int(b, **kwargs):
     """
     Give bits ``b`` as str or '0b001', get an int
     """
@@ -66,15 +76,15 @@ def bin2int(b):
         b = b[::-1]
     return int(b, 2)
 
-def bin2hex(b):
+def bin2hex(b, pad=0, **kwargs):
     """
     Give bits ``b`` as str or '0b001', returns hex
     The hex returned will be one or several char if ``char`` is
     ``True`` or a len=2n string 'ff' if not
     """
-    return int2hex(bin2int(b))
+    return int2hex(bin2int(b), pad=pad)
 
-def hex2bin(h, pad=True):
+def hex2bin(h, pad=True, **kwargs):
     """
     Give hex ``h`` as chars '\xf0' returns bits
     Set ``pad`` to ``True`` for a 8n padding.
@@ -83,7 +93,7 @@ def hex2bin(h, pad=True):
     """
     return int2bin(hex2int(h), pad=pad)
 
-def hex2int(h):
+def hex2int(h, **kwargs):
     """
     Give hex ``h`` as chars '\xf0', returns int
     """
@@ -102,6 +112,12 @@ def int2hex(i, pad=0):
     if pad > 1:
         hx = padit(hx, pad, '\x00')
     return hx
+
+def reverse_if_little_endian(bits):
+    if TWINKLETWINKLELITTLEINDIA:
+        return bits[::-1]
+    else:    
+        return bits
 
 def octify(b):
     """

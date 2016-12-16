@@ -3,9 +3,9 @@
 
 
 from . import cmdexception as exc
-from . import core
+from .. import core
 from . import param_commands
-from .param import Param
+from .parameter import Parameter
 
 
 __all__ = ['Command']
@@ -42,7 +42,7 @@ class Command(object):
         for idx, item in enumerate(self._param):
             if len(item) < param_commands.MINLENPARAMSTRUCTURE:
                 raise exc.WrongParameterDefinition(self.name, item[0])
-            p = Param(*item)
+            p = Parameter(*item)
             self._params.append(p)
             setattr(self, "p_{}_{}".format(idx, p.name), self._params[-1])
 

@@ -17,7 +17,6 @@ APIDREGISTRATION_OBC_L1 = { 'L1ComManager': 0,
                             'L1AdcsManager': 2,
                             'ModeManager': 3,
                             'EventManager': 4,
-                            'L1AdcsManager': 5,
                             'payloadManager1': 6,
                             'payloadManager2': 7,
                             'payloadManager3': 8}
@@ -25,3 +24,38 @@ APIDREGISTRATION_OBC_L1 = { 'L1ComManager': 0,
 APIDREGISTRATION_PLD = {    'hkPayload': 2,
                             'sciencePayload': 3,
                             'debugPayload': 4}
+
+
+APIDREGISTRATION = {}
+PLDREGISTRATION = {}
+LVLREGISTRATION = {}
+for k, v in APIDREGISTRATION_OBC_L0.items():
+    APIDREGISTRATION[k] = v
+    PLDREGISTRATION[k] = '0'
+    LVLREGISTRATION[k] = '0'
+
+for k, v in APIDREGISTRATION_OBC_L1.items():
+    APIDREGISTRATION[k] = v
+    PLDREGISTRATION[k] = '0'
+    LVLREGISTRATION[k] = '1'
+
+for k, v in APIDREGISTRATION_PLD.items():
+    APIDREGISTRATION[k] = v
+    PLDREGISTRATION[k] = '1'
+
+
+APIDREGISTRATION_REV = {}
+for k, v in APIDREGISTRATION_OBC_L0.items():
+    if not v in APIDREGISTRATION_REV.keys():
+        APIDREGISTRATION_REV[v] = [['', ''], ['', '']]
+    APIDREGISTRATION_REV[v][0][0] = k
+
+for k, v in APIDREGISTRATION_OBC_L1.items():
+    if not v in APIDREGISTRATION_REV.keys():
+        APIDREGISTRATION_REV[v] = [['', ''], ['', '']]
+    APIDREGISTRATION_REV[v][0][1] = k
+
+for k, v in APIDREGISTRATION_PLD.items():
+    if not v in APIDREGISTRATION_REV.keys():
+        APIDREGISTRATION_REV[v] = [['', ''], ['', '']]
+    APIDREGISTRATION_REV[v][1][0] = k

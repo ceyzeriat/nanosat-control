@@ -2,20 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-def doraise(obj, **kwargs):
-    return bool(kwargs.pop('raiseError', getattr(obj, 'raiseError', True)))
-
-
-def raise_it(exc, raiseoupas, *args, **kwargs):
-    exc = exc(*args, **kwargs)
-    if raiseoupas:
-        raise exc
-    else:
-        print("\033[31m{}\033[39m".format(exc.message))
-        return True
-    return False
-
-
 class CCSDSException(Exception):
     """
     Root for CCSDS Exceptions
@@ -98,27 +84,44 @@ class CantApplyOffset(CCSDSException):
 
 class BadDefinition(CCSDSException):
     """
-    If the key has both a dic and a fct/fctrev
+    If the key has both a dic and a fctpack/fctdepack
     """
     def __init__(self, name, *args, **kwargs):
         self._init(name, *args, **kwargs)
-        self.message = "Should assign either a dic or a fct/fctrev "\
-                       "'{}'".format(name)
+        self.message = "Should assign either a dic or a fctpack/fctdepack, "\
+                       "in '{}'".format(name)
 
-class DecodeOnly(CCSDSException):
+class NoPack(CCSDSException):
     """
-    If trying to render while fctrev was not provided
+    If trying to render while fctpack was not provided
     """
     def __init__(self, name, *args, **kwargs):
         self._init(name, *args, **kwargs)
-        self.message = "Cannot render the bits, fctrev was not "\
+        self.message = "Cannot render the bits, fctpack was not "\
+                       "provided, in '{}'".format(name)
+
+class NoDepack(CCSDSException):
+    """
+    If trying to depack while fctrev was not provided
+    """
+    def __init__(self, name, *args, **kwargs):
+        self._init(name, *args, **kwargs)
+        self.message = "Cannot depack the packet, fctdepack was not "\
                        "provided, in '{}'".format(name)
 
 class NoDic(CCSDSException):
     """
-    If the ccsdskey is defined through a fct and not a dic
+    If the ccsdskey is defined through fctpack/depack and not a dic
     """
     def __init__(self, name, *args, **kwargs):
         self._init(name, *args, **kwargs)
-        self.message = "CCSDS key '{}' is defined through fct, "\
+        self.message = "CCSDS key '{}' is defined through fctpack/depack, "\
                        "not dic".format(name)
+
+class PacketValueMissing(CCSDSException):
+    """
+    If at packing, a value is missing
+    """
+    def __init__(self, name, *args, **kwargs):
+        self._init(name, *args, **kwargs)
+        self.message = "CCSDS value for key '{}' is not optional".format(name)

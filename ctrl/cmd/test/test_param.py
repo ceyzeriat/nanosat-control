@@ -3,13 +3,13 @@
 
 
 from nose.tools import raises
-from ctrl.param import Param
-from ctrl.core import TWINKLETWINKLELITTLEINDIA, bin2hex
+from ctrl.parameter import Parameter
+from ctrl import core
 from ctrl import cmdexception as exc
 
 
 def test_param_base():
-    p = Param('hop', 'blah', (0, 10), 'uint8', 3, None)
+    p = Parameter('hop', 'blah', (0, 10), 'uint8', 3, None)
     assert p.name == 'hop'
     assert p.desc == 'blah'
     assert p.unit == ''
@@ -20,7 +20,7 @@ def test_param_base():
     assert p.size == 3
 
 def test_param_str_tuple():
-    p = Param('hop', 'blah', (0, 10), 'str')
+    p = Parameter('hop', 'blah', (0, 10), 'str')
     assert p.is_valid('rt') == False
     assert p.is_valid(3) == False
     assert p.is_valid([10]) == False
@@ -34,7 +34,7 @@ def test_param_str_tuple():
     assert p.tohex(['\x02']) == '\x02'
 
 def test_param_str_list():
-    p = Param('hop', 'blah', [0, 1, 2, 4], 'str', 2)
+    p = Parameter('hop', 'blah', [0, 1, 2, 4], 'str', 2)
     assert p._isdict == False
     assert p.is_valid(['\x01', '\x04']) == True
     assert p.is_valid(['\x01', '\x03']) == False
@@ -48,7 +48,7 @@ def test_param_str_list():
     assert p.tohex('\x01\x02') == '\x01\x02'
 
 def test_param_uint_tuple():
-    p = Param('hop', 'blah', (0, 10), 'uint8', 1, None)
+    p = Parameter('hop', 'blah', (0, 10), 'uint8', 1, None)
     assert p.is_valid('rt') == False
     assert p.is_valid(3) == True
     assert p.is_valid([10]) == True
@@ -62,7 +62,7 @@ def test_param_uint_tuple():
     assert p.tohex(10) == '\x0A'
 
 def test_param_uint_list():
-    p = Param('hop', 'blah', [0, 1, 2, 4], 'uint8', 2, None)
+    p = Parameter('hop', 'blah', [0, 1, 2, 4], 'uint8', 2, None)
     assert p._isdict == False
     assert p.is_valid('rt') == False
     assert p.is_valid(1) == False
@@ -78,14 +78,14 @@ def test_param_uint_list():
     assert p.tohex([1, 0]) == '\x01\x00'
 
 def test_param_list():
-    p = Param('hop', 'blah', (0, 2**16-1), 'uint16', 2, None)
-    if TWINKLETWINKLELITTLEINDIA:
-        assert p.tohex([4, 260]) == '\x04\x00\x04\x01'
-    else:
-        assert p.tohex([4, 260]) == '\x00\x04\x01\x04'
+    p = Parameter('hop', 'blah', (0, 2**16-1), 'uint16', 2, None)
+    core.TWINKLETWINKLELITTLEINDIA = True
+    assert p.tohex([4, 260]) == '\x04\x00\x04\x01'
+    core.TWINKLETWINKLELITTLEINDIA = False
+    assert p.tohex([4, 260]) == '\x00\x04\x01\x04'
 
 def test_param_dict():
-    p = Param('hop', 'blah', {'a': '\x10', 'b': '\x45'}, size=2)
+    p = Parameter('hop', 'blah', {'a': '\x10', 'b': '\x45'}, size=2)
     assert p._isdict == True
     assert p.is_valid('a') == False
     assert p.is_valid(['a', 'a']) == True
@@ -97,52 +97,52 @@ def test_param_dict():
 
 @raises(exc.UnknownFormat)
 def test_command_UnknownFormat():
-    p = Param('hop', 'blah', (0, 255))
+    p = Parameter('hop', 'blah', (0, 255))
 
 @raises(exc.WrongParameterDefinition)
 def test_param_WrongParameterDefinition1():
-    p = Param('hop', 'blah', [0.0, 1, 2, 4], 'uint8', 2, None)
+    p = Parameter('hop', 'blah', [0.0, 1, 2, 4], 'uint8', 2, None)
 
 @raises(exc.WrongParameterDefinition)
 def test_param_WrongParameterDefinition2():
-    p = Param('hop', 'blah', [-1, 1, 2, 4], 'uint8', 2, None)
+    p = Parameter('hop', 'blah', [-1, 1, 2, 4], 'uint8', 2, None)
 
 @raises(exc.WrongParameterDefinition)
 def test_param_WrongParameterDefinition3():
-    p = Param('hop', 'blah', [0, 1, 2, 256], 'uint8', 2, None)
+    p = Parameter('hop', 'blah', [0, 1, 2, 256], 'uint8', 2, None)
 
 @raises(exc.WrongParameterDefinition)
 def test_param_WrongParameterDefinition4():
-    p = Param('hop', 'blah', str, 'uint8', 2, None)
+    p = Parameter('hop', 'blah', str, 'uint8', 2, None)
 
 @raises(exc.WrongParameterDefinition)
 def test_param_WrongParameterDefinition5():
-    p = Param('hop', 'blah', (0.0, 12), 'uint8', 2, None)
+    p = Parameter('hop', 'blah', (0.0, 12), 'uint8', 2, None)
 
 @raises(exc.WrongParameterDefinition)
 def test_param_WrongParameterDefinition6():
-    p = Param('hop', 'blah', (-1, 12), 'uint8', 2, None)
+    p = Parameter('hop', 'blah', (-1, 12), 'uint8', 2, None)
 
 @raises(exc.WrongParameterDefinition)
 def test_param_WrongParameterDefinition7():
-    p = Param('hop', 'blah', (0, 256), 'uint8', 2, None)
+    p = Parameter('hop', 'blah', (0, 256), 'uint8', 2, None)
 
 @raises(exc.WrongParameterDefinition)
 def test_param_WrongParameterDefinition8():
-    p = Param('hop', 'blah', ('a', 256), 'uint8', 2, None)
+    p = Parameter('hop', 'blah', ('a', 256), 'uint8', 2, None)
 
 @raises(exc.WrongParameterDefinition)
 def test_param_WrongParameterDefinition9():
-    p = Param('hop', 'blah', ('a', 256), 'str', 2, None)
+    p = Parameter('hop', 'blah', ('a', 256), 'str', 2, None)
 
 @raises(exc.InvalidParameterValue)
 def test_param_InvalidParameterValue():
-    p = Param('hop', 'blah', (0, 255), 'uint8', 2, None)
+    p = Parameter('hop', 'blah', (0, 255), 'uint8', 2, None)
     assert p.is_valid(-1) == False
     p.tohex(-1)
 
 @raises(exc.InvalidParameterValue)
 def test_param_InvalidParameterValue():
-    p = Param('hop', 'blah', (0, 255), 'uint8', 2, None)
+    p = Parameter('hop', 'blah', (0, 255), 'uint8', 2, None)
     assert p.is_valid(-1) == False
     p.tohex(4.5)

@@ -3,6 +3,7 @@
 
 
 from . import param_ccsds
+from .. import param_apid
 from .. import core
 from . import ccsdsexception as exc
 
@@ -11,58 +12,41 @@ __all__ = ['CCSDSPacket']
 
 
 class CCSDSPacket(object):
-    def __init__(self, hx, header_p_keys=None, header_s_keys=None):
+    def __init__(self, data=None, header_aux={}, packet=''):
         """
         A CCSDS packet to be packed of unpacked.
 
         Args:
-        * hx (hex str): the hex string that corresponds to a packet
-        * data_keys (list): list of ``CCSDSKey`` in the packet data
-        * header_p_keys (list): list of ``CCSDSKey`` in the primary header.
-          Leave to ``None`` for default (recommended).
-        * header_s_keys (list): list of ``CCSDSKey`` in the secondary header.
-          Leave to ``None`` for default (recommended).
+        * 
+        * packet (hex str): the hex string that corresponds to a packet
         """
-        self.header_p_keys = header_p_keys if header_p_keys is not None\
-            else param_ccsds.HEADER_P_KEYS
-        self.header_s_keys = header_s_keys if header_p_keys is not None\
-            else param_ccsds.HEADER_S_KEYS
-        self.data_keys = list(data_keys)
-        self.hx = hx
+        #self.data_keys = list(data_keys)
+        self.packet = str(packet)
         self.header_p = {}
         self.header_s = {}
-        self.data = {}
+        #self.data = {}
     
-    def depack_header_p(self):
+    def depack_header(self, mode='tm'):
         """
         Depacks the primary header of the packet, fills ``header_p``
         """
-        where_we_are = 0
-        bits = core.hex2bin(self.blob[:param_ccsds.HEADER_P_SIZE])
-        for item in self.header_p_keys:
-            if not item.relative_only:
-                self.header_p[item.name] = self.grab(bits)
-            else:
-                self.header_p[item.name] = self.grab(bits,
-                                                     rel=True,
-                                                     offset=-where_we_are)
-            where_we_are += item.len
-
-    def depack_header_s(self):
-        """
-        Depacks the secondary header of the packet, fills ``header_s``
-        """
-        where_we_are = 0
+        # header primaire
+        mode = 'telemetry' if str(mode).lower()[1] == 'm' else 'telecommand'
+        bits = core.hex2bin(self.packet[:param_ccsds.HEADER_P_SIZE])
+        for item in param_ccsds.HEADER_P_KEYS:
+            self.header_p[item.name] = self.grab(bits)
+        # header secondaire
+        if mode == 'telemetry':
+            hs = param_ccsds.HEADER_S_KEYS_TELEMETRY
+        else:
+            hs = param_ccsds.HEADER_S_KEYS_TELECOMMAND
         start = param_ccsds.HEADER_P_SIZE
-        bits = core.hex2bin(self.blob[start:start+param_ccsds.HEADER_S_SIZE])
-        for item in self.header_s_keys:
-            if not item.relative_only:
-                self.header_p[item.name] = self.grab(bits)
-            else:
-                self.header_p[item.name] = self.grab(bits,
-                                                     rel=True,
-                                                     offset=-where_we_are)
-            where_we_are += item.len
+        bits = core.hex2bin(self.packet[start:start+param_ccsds.HEADER_S_SIZE])
+        for item in hs:
+            self.header_p[item.name] = self.grab(bits)
+
+    def depack_header_hx(self):
+        pass
 
     def depack_data(self, **kwargs):
         pass
@@ -70,64 +54,76 @@ class CCSDSPacket(object):
     def depack(self, **kwargs):
         """
         Convenience function that calls successively
-        ``depack_header_p``, ``depack_header_s``, and
-        ``depack_data`` methods
+        ``depack_header_p``, ``depack_header_s``,
+        ``depack_header_hx``, and ``depack_data`` methods
 
         Kwargs:
         *  Passed on to ``depack_data``
         """
-        self.depack_header_p()
-        self.depack_header_s()
+        self.depack_header()
+        self.depack_header_hx()
         self.depack_data(**kwargs)
 
-    def pack_header_p(self, values):
+    def _pack_header(self, values, mode='tc'):  # ok
         """
         Encodes the values into a CCSDS primary header, returns hex string
 
         Args:
+        * mode (str): 'tm' or 'tc' for telemetry or telecommand
         * values (dict): the values to pack. The keys shall
-          correspond to ``HEADER_P_KEYS``
+          correspond to ``HEADER_P_KEYS``, ``HEADER_S_SIZE_TELEMETRY`` and
+          ``HEADER_S_SIZE_TELECOMMAND``
         """
-        where_we_are = 0
+        # PRIMARY HEADER
+        mode = 'telemetry' if str(mode).lower()[1] == 'm' else 'telecommand'
+        values['packet_type'] = mode
+        if mode == 'telecommand':
+            values['packet_category'] = '0'
+        if 'pid' not in values.keys():
+            raise exc.PacketValueMissing('pid')
+        values['payload_flag'] = param_apid.PLDREGISTRATION[values['pid']]
+        values['level_flag'] = param_apid.LVLREGISTRATION[values['pid']]
         # init the long chain of bits to 0
         bits = '0' * (param_ccsds.HEADER_P_SIZE * 8)
-        for item in self.header_p_keys:
-            if not item.relative_only:
-                slc = item.cut
-            else:
-                slc = item.cut_offset(offset=-where_we_are)
-            bits[slc] = item.tobits(values[item.name])
-            where_we_are += item.len
-        return core.bin2hex(bits)
-
-    def pack_header_s(self, values):
-        """
-        Encodes the values into a CCSDS primary header, returns hex string        
-
-        Args:
-        * values (dict): the values to pack. The keys shall
-          correspond to ``HEADER_S_KEYS``
-        """
-        where_we_are = 0
+        for item in param_ccsds.HEADER_P_KEYS:
+            if item.name not in values.keys() and item.dic_force is None:
+                raise exc.PacketValueMissing(item.name)
+            bits = core.setstr( bits,
+                                item.cut,
+                                item.pack(values.get(item.name, '')))
+        res = core.bin2hex(bits, pad=param_ccsds.HEADER_P_SIZE)
+        # SECONDARY HEADER
         # init the long chain of bits to 0
-        bits = '0' * (param_ccsds.HEADER_S_SIZE * 8)
-        for item in self.header_s_keys:
-            if not item.relative_only:
-                slc = item.cut
-            else:
-                slc = item.cut_offset(offset=-where_we_are)
-            bits[slc] = item.tobits(values[item.name])
-            where_we_are += item.len
-        return core.bin2hex(bits)
+        if mode == 'telecommand':
+            hs = param_ccsds.HEADER_S_KEYS_TELECOMMAND
+            hdsz = param_ccsds.HEADER_S_SIZE_TELECOMMAND
+            values['signature'] = 0
+            values['emitter_id'] = core.EMITTER_ID
+        else:
+            hs = param_ccsds.HEADER_S_KEYS_TELEMETRY
+            hdsz = param_ccsds.HEADER_S_SIZE_TELEMETRY
+            values['days_since_ref'] = core.now2daystamp()
+            values['ms_since_ref'] = core.now2msstamp()
+        bits = '0' * (hdsz * 8)
+        for item in hs:
+            if item.name not in values.keys() and item.dic_force is None:
+                raise exc.PacketValueMissing(item.name)
+            bits = core.setstr( bits,
+                                item.cut,
+                                item.pack(values.get(item.name, '')))
+        return res + core.bin2hex(bits, pad=hdsz)
+
+    def pack_header_hx(self, **kwargs):
+        return ''
 
     def pack_data(self, **kwargs):
         return ''
 
-    def pack(self, values, **kwargs):
+    def pack(self, mode, values, **kwargs):
         """
         Convenience function that concatenates successively
-        ``pack_header_p``, ``pack_header_s``, and
-        ``pack_data`` methods outputs, returns hex string
+        ``pack_header_p``, ``pack_header_s``, ``pack_header_hx``,
+        and ``pack_data`` methods outputs, returns hex string
 
         Args:
         * values (dict): the values to pack. The keys shall
@@ -137,6 +133,6 @@ class CCSDSPacket(object):
         Kwargs:
         *  Passed on to ``pack_data``
         """
-        return self.pack_header_p(values)\
-               + self.pack_header_s(values)\
-               + self.pack(value, **kwargs)
+        return self.pack_header(mode=mode, values=values)\
+               + self.pack_header_hx(mode=mode, values=values, **kwargs)\
+               + self.pack_data(mode=mode, values=values, **kwargs)
