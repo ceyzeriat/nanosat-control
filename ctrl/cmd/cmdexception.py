@@ -39,13 +39,13 @@ class MissingCommandInput(CMDException):
         self.message = "Parameter '{}' is not optionnal in CMD "\
                        "'{}'".format(param, cmd)
 
-class WrongParamCount(CMDException):
+class WrongPID(CMDException):
     """
-    Missing input at command call
+    pid given does not match
     """
-    def __init__(self, cmd, n, *args, **kwargs):
-        self._init(cmd, n, *args, **kwargs)
-        self.message = "Command '{}' should have '{}' param".format(cmd, n)
+    def __init__(self, pid, cmd, *args, **kwargs):
+        self._init(pid, cmd, *args, **kwargs)
+        self.message = "Unknown pid '{}' in cmd '{}'".format(pid, cmd)
 
 class UnknownFormat(CMDException):
     """
@@ -86,7 +86,16 @@ class InvalidParameterValue(CMDException):
     """
     Missing input at command call
     """
-    def __init__(self, cmd, value, *args, **kwargs):
-        self._init(cmd, value, *args, **kwargs)
+    def __init__(self, pa, value, *args, **kwargs):
+        self._init(pa, value, *args, **kwargs)
         self.message = "Value '{}' is not valid for parameter "\
-                       "'{}'".format(value, cmd)
+                       "'{}'".format(value, pa)
+
+class WrongCommandLength(CMDException):
+    """
+    If the total length of the input parameters is not valid
+    """
+    def __init__(self, cmd, l, ll, *args, **kwargs):
+        self._init(cmd, l, ll, *args, **kwargs)
+        self.message = "Total length '{}' of the input is not valid "\
+                       "for command '{}', should be '{}'".format(l, cmd, ll)

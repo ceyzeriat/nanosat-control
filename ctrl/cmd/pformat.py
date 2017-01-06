@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 
-from . import cmdexception as exc
-from .. import core
+from . import cmdexception
+from ..utils import core
 
 
 __all__ = ['PFormat']
@@ -28,13 +28,13 @@ class PFormat(object):
         if rep is not None:
             typ, bits = rep
         if typ not in AUTHTYPS:
-            raise exc.UnknownFormat(typ)
+            raise cmdexception.UnknownFormat(typ)
         self._typ = str(typ)
         if self.typ != 'str':
             if bits is None:
-                raise exc.MissingFormatInput('bits', self.typ)
+                raise cmdexception.MissingFormatInput('bits', self.typ)
             elif not isinstance(bits, int) or bits not in [8, 16, 32, 64]:
-                raise exc.WrongFormatBitLength(self.typ, bits)
+                raise cmdexception.WrongFormatBitLength(self.typ, bits)
             self._bits = int(bits)
             self._halfmaxint = 2**(self.bits-1)
             self._maxint = self._halfmaxint * 2
@@ -92,7 +92,7 @@ class PFormat(object):
             if not isinstance(value, (float, core.np.floating)):
                 return False
         else:
-            raise exc.UnknownFormat(self.typ)
+            raise cmdexception.UnknownFormat(self.typ)
         return True
 
     def _tohex(self, value):
@@ -101,11 +101,11 @@ class PFormat(object):
         elif self.typ == 'uint':
             return core.padit(core.int2hex(value), self.bits // 8, '\x00')
         elif self.typ == 'int':
-            raise exc.NotImplemented()
+            raise cmdexception.NotImplemented()
         elif self.typ == 'float':
-            raise exc.NotImplemented()
+            raise cmdexception.NotImplemented()
         else:
-            raise exc.UnknownFormat(self.typ)
+            raise cmdexception.UnknownFormat(self.typ)
 
     @property
     def typ(self):
@@ -113,7 +113,7 @@ class PFormat(object):
 
     @typ.setter
     def typ(self, value):
-        raise exc.ReadOnly('typ')
+        raise cmdexception.ReadOnly('typ')
 
     @property
     def bits(self):
@@ -121,4 +121,4 @@ class PFormat(object):
 
     @bits.setter
     def bits(self, value):
-        raise exc.ReadOnly('bits')
+        raise cmdexception.ReadOnly('bits')

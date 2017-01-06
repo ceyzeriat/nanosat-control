@@ -2,4 +2,4 @@
 # -*- coding: utf-8 -*-
 
 
-from .allcommand import *
+from .orm import *

@@ -4,17 +4,17 @@
 
 from nose.tools import raises
 from ctrl.ccsds.ccsdskey import CCSDSKey
-from ctrl.ccsds import ccsdsexception as exc
-from ctrl import core
+from ctrl.ccsds import ccsdsexception
+from ctrl.utils import core
 
 
 def test_ccsdskey_base():
     p = CCSDSKey('pt', dic={'aa': '0', 'bb': '1'}, start=3, l=1)
     assert p.name == "pt"
     assert p.dic != None
-    assert p.fctdepack == None
-    assert p.fctpack == None
-    assert p.can_depack == True
+    assert p._fctunpack == None
+    assert p._fctpack == None
+    assert p.can_unpack == True
     assert p.can_pack == True
     assert p.relative_only == False
     assert p.len == 1
@@ -27,29 +27,29 @@ def test_ccsdskey_base():
     assert p._dic_rev('0') == 'aa'
     assert p._dic_rev(1) == 'bb'
 
-def test_depack():
+def test_unpack():
     p = CCSDSKey('pt', dic={'aa': '0', 'bb': '1'}, start=3, l=1)
-    assert p.depack('111011', raw=True) == '0'
-    assert p.depack('111011') == 'aa'
-    assert p.depack('111101', offset=1) == 'aa'
-    p = CCSDSKey('pt', start=3, l=1, fctdepack=int)
-    assert p.can_depack == True
+    assert p.unpack('111011', raw=True) == '0'
+    assert p.unpack('111011') == 'aa'
+    assert p.unpack('111101', offset=1) == 'aa'
+    p = CCSDSKey('pt', start=3, l=1, fctunpack=int)
+    assert p.can_unpack == True
     assert p.can_pack == False
-    assert p.depack('11101') is 0
-    p = CCSDSKey('pt', l=1, fctdepack=int)
-    assert p.depack('01111', rel=True) is 0
+    assert p.unpack('11101') is 0
+    p = CCSDSKey('pt', l=1, fctunpack=int)
+    assert p.unpack('0', rel=True) is 0
     p = CCSDSKey('pt', l=1, fctpack=bool)
-    assert p.depack('01111', rel=True, raw=True) == '0'
-    p = CCSDSKey('pt', start=0, l=4, fctdepack=core.bin2int)
+    assert p.unpack('0', rel=True, raw=True) == '0'
+    p = CCSDSKey('pt', start=0, l=4, fctunpack=core.bin2int)
     core.TWINKLETWINKLELITTLEINDIA = True
-    assert p.depack('0011') == 12
+    assert p.unpack('0011') == 12
     core.TWINKLETWINKLELITTLEINDIA = False
-    assert p.depack('0011') == 3
+    assert p.unpack('0011') == 3
     p = CCSDSKey('pt', dic={'aa': '01', 'bb': '10'}, start=0, l=2)
     core.TWINKLETWINKLELITTLEINDIA = True
-    assert p.depack('01') == 'bb'
+    assert p.unpack('01') == 'bb'
     core.TWINKLETWINKLELITTLEINDIA = False
-    assert p.depack('01') == 'aa'
+    assert p.unpack('01') == 'aa'
 
 
 def test_pack():
@@ -78,49 +78,49 @@ def test_pack():
     assert p.pack('bb') == '10'
     core.TWINKLETWINKLELITTLEINDIA = False
     assert p.pack('aa') == '01'
-    assert p.pack('bb') == '10'
+    assert p.pack('bb') == '01'
 
-@raises(exc.CantApplyOffset)
+@raises(ccsdsexception.CantApplyOffset)
 def test_ccsdskey_CantApplyOffset():
     p = CCSDSKey('pt', dic={'aa': '0', 'bb': '1'}, start=3, l=1)
     p.cut_offset(-4)
 
-@raises(exc.BadDefinition)
+@raises(ccsdsexception.BadDefinition)
 def test_ccsdskey_BadDefinition1():
     p = CCSDSKey('pt', dic={'aa': '0', 'bb': '1'}, start=3, l=1, fctpack=int)
 
-@raises(exc.BadDefinition)
+@raises(ccsdsexception.BadDefinition)
 def test_ccsdskey_BadDefinition2():
-    p = CCSDSKey('pt', dic={'aa': '0', 'bb': '1'}, start=3, l=1, fctdepack=int)
+    p = CCSDSKey('pt', dic={'aa': '0', 'bb': '1'}, start=3, l=1, fctunpack=int)
 
-@raises(exc.BadDefinition)
+@raises(ccsdsexception.BadDefinition)
 def test_ccsdskey_BadDefinition3():
     p = CCSDSKey('pt', start=3, l=1)
 
-@raises(exc.NoDic)
+@raises(ccsdsexception.NoDic)
 def test_ccsdskey_NoDic():
     p = CCSDSKey('pt', start=3, l=1, fctpack=int)
-    assert p.can_depack == False
+    assert p.can_unpack == False
     assert p.can_pack == True
     dum = p['hop']
 
-@raises(exc.NoSuchValue)
+@raises(ccsdsexception.NoSuchValue)
 def test_ccsdskey_NoSuchValue():
     p = CCSDSKey('pt', dic={'aa': '0', 'bb': '1'}, start=3, l=1)
     dum = p._dic_rev('3')
 
-@raises(exc.NoDepack)
-def test_ccsdskey_NoDepack():
+@raises(ccsdsexception.NoUnpack)
+def test_ccsdskey_NoUnpack():
     p = CCSDSKey('pt', start=3, l=1, fctpack=bool)
-    dum = p.depack('01111')
+    dum = p.unpack('01111')
 
-@raises(exc.NoAbsGrab)
+@raises(ccsdsexception.NoAbsGrab)
 def test_ccsdskey_NoAbsGrab():
-    p = CCSDSKey('pt', l=1, fctdepack=bool)
+    p = CCSDSKey('pt', l=1, fctunpack=bool)
     assert p.relative_only == True
-    dum = p.depack('01111')
+    dum = p.unpack('01111')
 
-@raises(exc.GrabFail)
+@raises(ccsdsexception.GrabFail)
 def test_ccsdskey_GrabFail():
-    p = CCSDSKey('pt', start=3, l=3, fctdepack=bool)
-    dum = p.depack('01111')
+    p = CCSDSKey('pt', start=3, l=3, fctunpack=bool)
+    dum = p.unpack('01111')

@@ -3,20 +3,32 @@
 
 
 from nose.tools import raises
-from ctrl.command import Command
-from ctrl import cmdexception as exc
+from ctrl.cmd.command import Command
+from ctrl.cmd import cmdexception
 import copy
+from ctrl.cmd.param_commands import RANGESEPARATOR
+
+def ftup(x, y):
+    return "{}{}{}".format(x, RANGESEPARATOR, y)
 
 
 echo = {'number':1,
         'name': 'echo',
-        'level': 0,
-        'subsystem': '',
-        'apid':  34,
+        'subsystem': 'obc',
+        'pid': "L0ComManager",
         'desc': "blah",
         'lparam': 2,
-        'param': (('hop', 'blah', (0, 255), 'str', 2), ),
-        'nparam': 1}
+        'param': (('hop', 'blah', ftup(0, 255), 'str', 2), )}
+
+
+
+echo2 = {'number':1,
+        'name': 'echo',
+        'subsystem': 'obc',
+        'pid': "L0ComManager",
+        'desc': "blah",
+        'lparam': 2,
+        'param': (('hop', 'blah', ftup(0, 255), 'str', ftup(1,2)), )}
 
 
 def test_command_base():
@@ -25,29 +37,36 @@ def test_command_base():
     assert c.name == 'echo'
     assert c.desc == 'blah'
     assert c.level == 0
-    assert c.subsystem == ""
-    assert c.apid == 34
+    assert c.subsystem == "obc"
+    assert c.pid == "L0ComManager"
     assert c.lparam == 2
+    assert c.nparam == 1
     assert c.p_0_hop.typ.typ == 'str'
 
 def test_command_call():
     c = Command(**echo)
-    assert c.call(hop='ab') == '\x61\x62'
-    assert c(hop='ab') == '\x61\x62'
+    assert c.generate_data(hop='ab')[0] == '\x61\x62'
+    assert c.generate_data(hop='ab')[1] == {'hop': 'ab'}
+    assert c(hop='ab') == c.generate_data(hop='ab')
 
-@raises(exc.WrongParamCount)
-def test_command_WrongParamCount():
+@raises(cmdexception.WrongPID)
+def test_command_WrongPID():
     ee = copy.deepcopy(echo)
-    ee['nparam'] = 2
+    ee['pid'] = 'tadaaaam'
     c = Command(**ee)
 
-@raises(exc.WrongParameterDefinition)
+@raises(cmdexception.WrongParameterDefinition)
 def test_command_WrongParameterDefinition():
     ee = copy.deepcopy(echo)
     ee['param'] = (('hop', 'blah'), )
     c = Command(**ee)
 
-@raises(exc.MissingCommandInput)
+@raises(cmdexception.MissingCommandInput)
 def test_command_MissingCommandInput():
     c = Command(**echo)
-    c.call('\x00')
+    c.generate_data('\x00')
+
+@raises(cmdexception.WrongCommandLength)
+def test_command_WrongCommandLength():
+    c = Command(**echo2)
+    c.generate_data(hop='a')

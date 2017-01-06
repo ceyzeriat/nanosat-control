@@ -22,6 +22,33 @@ class ReadOnly(CTRLException):
         self._init(key, *args, **kwargs)
         self.message = "Attribute '{}' is read-only".format(key)
 
+class MissingDBServerFile(CTRLException):
+    """
+    If the DB server file is missing
+    """
+    def __init__(self, f, *args, **kwargs):
+        self._init(f, *args, **kwargs)
+        self.message = "Cannot find DB server file '{}'".format(f)
+
+class NoDBConnection(CTRLException):
+    """
+    If the DB is not running
+    """
+    def __init__(self, *args, **kwargs):
+        self._init(*args, **kwargs)
+        self.message = "No DB connection open"
+
+class BrokenTelemetryDumpFolder(CTRLException):
+    """
+    If the Telemetry data dump folder does not exist
+    """
+    def __init__(self, f, *args, **kwargs):
+        self._init(f, *args, **kwargs)
+        self.message = "Folder '{}' for telemetry-dump missing".format(f)
+
+
+
+# not used
 class NoSuchKey(CTRLException):
     """
     Missing key in the parameter dictionary

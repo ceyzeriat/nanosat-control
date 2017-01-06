@@ -84,11 +84,11 @@ class CantApplyOffset(CCSDSException):
 
 class BadDefinition(CCSDSException):
     """
-    If the key has both a dic and a fctpack/fctdepack
+    If the key has both a dic and a fctpack/fctunpack
     """
     def __init__(self, name, *args, **kwargs):
         self._init(name, *args, **kwargs)
-        self.message = "Should assign either a dic or a fctpack/fctdepack, "\
+        self.message = "Should assign either a dic or a fctpack/fctunpack, "\
                        "in '{}'".format(name)
 
 class NoPack(CCSDSException):
@@ -100,22 +100,22 @@ class NoPack(CCSDSException):
         self.message = "Cannot render the bits, fctpack was not "\
                        "provided, in '{}'".format(name)
 
-class NoDepack(CCSDSException):
+class NoUnpack(CCSDSException):
     """
-    If trying to depack while fctrev was not provided
+    If trying to unpack while fctrev was not provided
     """
     def __init__(self, name, *args, **kwargs):
         self._init(name, *args, **kwargs)
-        self.message = "Cannot depack the packet, fctdepack was not "\
+        self.message = "Cannot unpack the packet, fctunpack was not "\
                        "provided, in '{}'".format(name)
 
 class NoDic(CCSDSException):
     """
-    If the ccsdskey is defined through fctpack/depack and not a dic
+    If the ccsdskey is defined through fctpack/unpack and not a dic
     """
     def __init__(self, name, *args, **kwargs):
         self._init(name, *args, **kwargs)
-        self.message = "CCSDS key '{}' is defined through fctpack/depack, "\
+        self.message = "CCSDS key '{}' is defined through fctpack/unpack, "\
                        "not dic".format(name)
 
 class PacketValueMissing(CCSDSException):
@@ -125,3 +125,11 @@ class PacketValueMissing(CCSDSException):
     def __init__(self, name, *args, **kwargs):
         self._init(name, *args, **kwargs)
         self.message = "CCSDS value for key '{}' is not optional".format(name)
+
+class CategoryMissing(CCSDSException):
+    """
+    Packet category does not exist
+    """
+    def __init__(self, idx, *args, **kwargs):
+        self._init(idx, *args, **kwargs)
+        self.message = "Packet category index '{}' does not exist".format(idx)

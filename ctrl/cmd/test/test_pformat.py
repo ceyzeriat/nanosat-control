@@ -3,8 +3,8 @@
 
 
 from nose.tools import raises
-from ctrl.pformat import PFormat
-from ctrl import cmdexception as exc
+from ctrl.cmd.pformat import PFormat
+from ctrl.cmd import cmdexception
 
 
 def test_pformat_parse():
@@ -59,40 +59,40 @@ def test_pformat_float():
     assert p.is_valid(0) == False
     assert p.is_valid(0.0) == True
 
-@raises(exc.NotImplemented)
+@raises(cmdexception.NotImplemented)
 def test_pformat_NotImplemented():
     p = PFormat('int', 8)
     p._tohex(12)
 
-@raises(exc.NotImplemented)
+@raises(cmdexception.NotImplemented)
 def test_pformat_NotImplemented():
     p = PFormat('float', 8)
     p._tohex(12.0)
 
-@raises(exc.MissingFormatInput)
+@raises(cmdexception.MissingFormatInput)
 def test_pformat_MissingFormatInput():
     p = PFormat('int')
 
-@raises(exc.UnknownFormat)
+@raises(cmdexception.UnknownFormat)
 def test_pformat_UnknownFormat():
     p = PFormat('issdgnt')
 
-@raises(exc.UnknownFormat)
+@raises(cmdexception.UnknownFormat)
 def test_pformat_UnknownFormat():
     p = PFormat('issdgnt')
 
-@raises(exc.WrongFormatBitLength)
+@raises(cmdexception.WrongFormatBitLength)
 def test_pformat_WrongFormatBitLength1():
     p = PFormat('int', 0)
 
-@raises(exc.WrongFormatBitLength)
+@raises(cmdexception.WrongFormatBitLength)
 def test_pformat_WrongFormatBitLength2():
     p = PFormat('int', 8.0)
 
-@raises(exc.WrongFormatBitLength)
+@raises(cmdexception.WrongFormatBitLength)
 def test_pformat_WrongFormatBitLength3():
     p = PFormat('int', 3)
 
-@raises(exc.WrongFormatBitLength)
+@raises(cmdexception.WrongFormatBitLength)
 def test_pformat_WrongFormatBitLength4():
     p = PFormat('int', 65)

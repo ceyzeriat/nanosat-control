@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 
-from . import cmdexception as exc
-from .. import core
+from . import cmdexception
+from . import param_commands
+from ..utils import core
 from .pformat import PFormat
 
 
@@ -19,14 +20,14 @@ class Parameter(object):
         * name (str): the name of the parameter.
           Use characters: a-z, A-Z, 0-9 and _ only.
         * desc (str): the description of the parameter
-        * rng (min-max tuple, list or dict): if min-max tuple: the
+        * rng (min-max str, list or dict): if 'min-max' str: the
           min and max values the parameter should take (bounds inclusive),
           if list: the allowed values,
           if dict: the allowed keys; in that case, ``typ`` is irrelevant.
         * typ (Format or str): the type of the parameter, alternatively, a
           string defining it, e.g. ``int8``, ``float32``, ``str``, ``unit16``.
-        * size (int): the maximum length of the expected input,
-          which is padded with 0 if smaller
+        * size (min-max str or int): the min and max acceptable length of the
+          expected input (bounds inclusive), or if 'int' the exact length
         * unit (str or None): the unit of the parameter
         """
         self._name = core.clean_name(name)
@@ -39,39 +40,58 @@ class Parameter(object):
             self._rngdisp = repr(self.rng.keys())
         else:
             self._typ = PFormat(typ)
-            if isinstance(rng, tuple):
-                self._rng = (rng[0], rng[1])
+            if isinstance(rng, (str, unicode)):
+                self._rng = rng.split(param_commands.RANGESEPARATOR)[:2]
+                self._rng = tuple([core.to_num(item) for item in self._rng])
                 if self.typ.typ != 'str':
                     if not (self.typ.is_valid(self.rng[0])
                             and self.typ.is_valid(self.rng[1])):
-                        raise exc.WrongParameterDefinition(self.name, 'rng')
+                        raise cmdexception.WrongParameterDefinition(self.name,
+                                                                    'rng')
                 else:
                     if not (isinstance(self.rng[0], int)
                             and isinstance(self.rng[1], int)):
-                        raise exc.WrongParameterDefinition(self.name, 'rng')
+                        raise cmdexception.WrongParameterDefinition(self.name,
+                                                                    'rng')
                 self._rngdisp = "[{}--{}]".format(*self.rng)
             elif hasattr(rng, "__iter__"):
                 self._rng = list(rng)
                 for item in self.rng:
                     if self.typ.typ != 'str':
                         if not self.typ.is_valid(item):
-                            raise exc.WrongParameterDefinition(self.name,'rng')
+                            raise cmdexception.WrongParameterDefinition(
+                                                                self.name,
+                                                                'rng')
                     else:
                         if not isinstance(item, int):
-                            raise exc.WrongParameterDefinition(self.name,'rng')
+                            raise cmdexception.WrongParameterDefinition(
+                                                                self.name,
+                                                                'rng')
                 self._rngdisp = repr(self.rng)
             else:
-                raise exc.WrongParameterDefinition(self.name, 'rng')
-        if not isinstance(size, int) or size <= 0:
-            raise exc.WrongParameterDefinition(self.name, 'size')
-        self._size = int(size)
+                raise cmdexception.WrongParameterDefinition(self.name, 'rng')
+        if isinstance(size, (str, unicode)):
+            self._size = size.split(param_commands.RANGESEPARATOR)[:2]
+            self._size = tuple([core.to_num(item) for item in self._size])
+            self._sizedisp = "[{}--{}]".format(*self.size)
+            if not isinstance(self.size[0], int) \
+                    or not isinstance(self.size[1], int):
+                raise cmdexception.WrongParameterDefinition(self.name, 'size')
+            if self.size[0] < 0 or self.size[1] < 0 \
+                    or self.size[0] > self.size[1]:
+                raise cmdexception.WrongParameterDefinition(self.name, 'size')
+        elif isinstance(size, int) and size > 0:
+            self._size = size
+            self._sizedisp = "[{}]".format(self.size)
+        else:
+            raise cmdexception.WrongParameterDefinition(self.name, 'size')
 
     def __str__(self):        
-        return " {}{} {}[{}]: {}\n  {}".format(
+        return " {}{} {}{}: {}\n  {}".format(
                         self.name,
                         " ({})".format(self.unit) if self.unit != "" else "",
                         self.typ,
-                        self.size,
+                        self._sizedisp,
                         self._rngdisp,
                         self.desc)
 
@@ -92,55 +112,53 @@ class Parameter(object):
         if self._isdict:
             if not hasattr(value, "__iter__"):
                 value = [value]
-            if len(value) != self.size:
-                return False
+            if isinstance(self.size, int) and len(value) != self.size:
+                return (False, value) if withvalue else False
+            elif isinstance(self.size, tuple) and \
+                    (len(value) < self.size[0] or len(value) > self.size[1]):
+                return (False, value) if withvalue else False
             for item in value:
                 if not item in self.rng.keys():
-                    return False
-            if withvalue:
-                return True, value
-            else:
-                return True
+                    return (False, value) if withvalue else False
+            return (True, value) if withvalue else True
         if not hasattr(value, "__iter__"):
             # split input string into ['a', 'b', ...]
             if self.typ.typ == 'str':
                 if not isinstance(value, str):
-                    return False
+                    return (False, value) if withvalue else False
                 value = [item for item in value]
             else:
                 value = [value]
-        if len(value) != self.size:
-            return False
+        if isinstance(self.size, int) and len(value) != self.size:
+            return (False, value) if withvalue else False
+        elif isinstance(self.size, tuple) and \
+                (len(value) < self.size[0] or len(value) > self.size[1]):
+            return (False, value) if withvalue else False
         # checks ranges and types
         for item in value:
             # checks types
             if not self.typ.is_valid(item):
-                return False
+                return (False, value) if withvalue else False
             if self.typ.typ == 'str':
                 item = ord(item)
             # checks ranges
             if isinstance(self.rng, list):
                 if not item in self.rng:
-                    return False
+                    return (False, value) if withvalue else False
             elif isinstance(self.rng, tuple):
                 if not self.rng[0] <= item <= self.rng[1]:
-                    return False
+                    return (False, value) if withvalue else False
             else:
-                return False
-        if withvalue:
-            return True, value
-        else:
-            return True
+                return (False, value) if withvalue else False
+        return (True, value) if withvalue else True
 
     def tohex(self, value):
         """
         Equivalent of calling the object
         """
-        rep = self.is_valid(value, withvalue=True)
-        if rep is False:
-            raise exc.InvalidParameterValue(self.name, value)
-        else:
-            valid, value = rep
+        valid, value = self.is_valid(value, withvalue=True)
+        if valid is False:
+            raise cmdexception.InvalidParameterValue(self.name, value)
         ret = ""
         if self._isdict:
             for item in value:
@@ -156,7 +174,7 @@ class Parameter(object):
 
     @man.setter
     def man(self, value):
-        raise exc.ReadOnly('man')
+        raise cmdexception.ReadOnly('man')
 
     @property
     def name(self):
@@ -164,7 +182,7 @@ class Parameter(object):
 
     @name.setter
     def name(self, value):
-        raise exc.ReadOnly('name')
+        raise cmdexception.ReadOnly('name')
 
     @property
     def desc(self):
@@ -172,7 +190,7 @@ class Parameter(object):
 
     @desc.setter
     def desc(self, value):
-        raise exc.ReadOnly('desc')    
+        raise cmdexception.ReadOnly('desc')    
 
     @property
     def typ(self):
@@ -180,7 +198,7 @@ class Parameter(object):
 
     @typ.setter
     def typ(self, value):
-        raise exc.ReadOnly('typ')
+        raise cmdexception.ReadOnly('typ')
 
     @property
     def rng(self):
@@ -188,7 +206,7 @@ class Parameter(object):
 
     @rng.setter
     def rng(self, value):
-        raise exc.ReadOnly('rng')
+        raise cmdexception.ReadOnly('rng')
 
     @property
     def size(self):
@@ -196,7 +214,7 @@ class Parameter(object):
 
     @size.setter
     def size(self, value):
-        raise exc.ReadOnly('size')
+        raise cmdexception.ReadOnly('size')
 
     @property
     def unit(self):
@@ -204,4 +222,4 @@ class Parameter(object):
 
     @unit.setter
     def unit(self, value):
-        raise exc.ReadOnly('unit')
+        raise cmdexception.ReadOnly('unit')

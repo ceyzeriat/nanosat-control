@@ -46,3 +46,6 @@ develop-eggs
 
 # Mac OSX
 .DS_Store
+
+# package
+param/db_server

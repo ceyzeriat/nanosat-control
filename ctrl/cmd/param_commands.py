@@ -4,12 +4,6 @@
 
 MINLENPARAMSTRUCTURE = 3
 
+COMMANDSFILE = ["param", "cmds.json"]
 
-echo = {'number':1,
-        'name': 'echo',
-        'level': 0,
-        'subsystem': '',
-        'apid':  'L0ComManager',
-        'desc': "Picsat receives a message (2 chars) and replies with the same message",
-        'lparam': 2,
-        'param': (('message', 'the message', (0, 255), 'str', 2, None), )}
+RANGESEPARATOR = ';'

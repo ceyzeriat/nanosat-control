@@ -7,24 +7,91 @@ import time
 import datetime
 import numpy as np
 import os
+import glob
+import pytz
+from . import ctrlexception
+from ..param.param_all import *
+import re
+import inflect
 
 
-EMITTER_ID = int(open(os.path.join( os.path.dirname(os.path.abspath(__file__)),
-                                    "emitter_id")).read().strip())
-DATETIME_REF = 16801  # 2016,1,1,0,0,0
-TWINKLETWINKLELITTLEINDIA = True
+MAXPACKETID = 2**14
 
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+HOME = os.path.expanduser("~")
+
+def concat_dir(*args):
+    return os.path.join(*args)
+
+def rel_dir(*args):
+    return concat_dir(ROOT, *args)
+
+TELEMETRYDUMPFOLDER = concat_dir(HOME, *TELEMETRYDUMPFOLDER)
+if not os.path.exists(TELEMETRYDUMPFOLDER):
+    raise ctrlexception.BrokenTelemetryDumpFolder(TELEMETRYDUMPFOLDER)
+
+try:
+    f = open(rel_dir(*DBFILE), mode='r')
+    DBENGINE = f.readline().strip()
+    assert len(DBENGINE) > 20
+    assert DBENGINE[:13] == 'postgresql://'
+    f.close()
+except IOError:
+    raise ctrlexception.MissingDBServerFile(rel_dir(*DBFILE))
+
+def get_tc_packet_id():
+    f = open(rel_dir(*PACKETIDFILE), mode='r')
+    res = int(f.readline().strip())
+    f.close()
+    return res
+
+def get_next_tc_packet_id():
+    return (get_tc_packet_id()+1) % MAXPACKETID
+
+def get_set_next_tc_packet_id():
+    v = get_next_tc_packet_id()
+    f = open(rel_dir(*PACKETIDFILE), mode='w')
+    f.write(str(v))
+    f.close()
+    return v
+
+def camelize_singular(txt):
+    """
+    Produce a 'camelized' and singular class name.
+    e.g. 'the_underscores' -> 'TheUnderscore'
+    """
+    camelize = str(txt[0].upper() + \
+            re.sub(r'_([a-z])', lambda m: m.group(1).upper(), txt[1:]))
+    return inflect.engine().singular_noun(camelize)
+
+def to_num(v):
+    if not isinstance(v, (str, unicode)):
+        return v
+    v = v.strip()
+    try:
+        v = int(v)
+    except:
+        try:
+            v = float(v)
+        except:
+            pass
+    return v
+
+def now():
+    return datetime.datetime.now(pytz.utc)
 
 def now2daystamp():
     return int(time.mktime(time.localtime())/86400.-DATETIME_REF)
 
 def now2msstamp():
-    g = datetime.datetime.utcnow()
+    g = now()
     return int(g.hour * 36e5 + g.minute * 6e4 + g.second * 1e3
                 + g.microsecond//1000)
 
-def stamps2now(daystamp, msstamp):
-    return (DATETIME_REF+daystamp)*86400. + msstamp*0.001
+def stamps2time(daystamp, msstamp):
+    ts = (DATETIME_REF+daystamp)*86400. + msstamp*0.001
+    return datetime.datetime.fromtimestamp(ts, tz=pytz.utc)
 
 def identity(v, *args, **kwargs):
     """
