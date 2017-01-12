@@ -128,4 +128,4 @@ def get_ack_TC(timestamp):
                         .order_by(desc(Telecommand.time_sent))\
                         .limit(1),
                     'id', None)
-    ack_fmt_id = 
+    ack_fmt_id = None

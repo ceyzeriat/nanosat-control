@@ -97,7 +97,7 @@ def merge_socket(*args):
     return core.SOCKETSEPARATOR.join(['{}'.format(item) for item in args])
 
 def to_num(v):
-    if isStr(v):
+    if not isStr(v):
         return v
     v = v.strip()
     try:
@@ -160,7 +160,10 @@ def clean_name(txt):
             + txt[1:]
 
 def isStr(txt):
-    return isinstance(rng, (str, unicode)):
+    """
+    Check if txt is valid string
+    """
+    return isinstance(txt, (str, unicode))
 
 def int2bin(i, pad=True, **kwargs):
     """
