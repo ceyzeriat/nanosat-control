@@ -48,4 +48,4 @@ develop-eggs
 .DS_Store
 
 # package
-param/db_server
+ctrl/param/db_server
