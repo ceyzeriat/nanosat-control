@@ -8,6 +8,7 @@ from .ccsds import param_ccsds
 from .utils import core
 #from .ccsds import ccsdsexception
 from . import db
+from .order import Order
 
 
 __all__ = ['Telecommand']
@@ -62,11 +63,16 @@ class Telecommand(Command):
         hd['raw_file'] = './raw_data'
         # saves to DB
         hd['time_sent'] = core.now()
-        db.save_TC_to_DB(hd, hdx, inputs)
+        tcid = db.save_TC_to_DB(hd, hdx, inputs)
         # broadcast on socket to the antenna process
         # send(packet)
 
+        return Order(hd=hd, hdx=hdx, inputs=inputs)
+
     def show(self, *args, **kwargs):
+        """
+        Show pretty packet
+        """
         return self._generate_packet(**kwargs)
 
     @classmethod

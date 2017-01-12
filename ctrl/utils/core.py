@@ -9,10 +9,11 @@ import numpy as np
 import os
 import glob
 import pytz
-from . import ctrlexception
-from ..param.param_all import *
 import re
 import inflect
+from dateutil import parser
+from . import ctrlexception
+from ..param.param_all import *
 
 
 MAXPACKETID = 2**14
@@ -65,6 +66,29 @@ def camelize_singular(txt):
             re.sub(r'_([a-z])', lambda m: m.group(1).upper(), txt[1:]))
     return inflect.engine().singular_noun(camelize)
 
+def split_socket(data):
+    """
+    Splits the data using the socket separator and returns a list of
+    the different pieces
+    """
+    res = []
+    spot = 0
+    data = str(data)
+    while spot != -1:
+        spot = data.find(core.SOCKETSEPARATOR)
+        if spot == -1:
+            res.append(data)
+        else:
+            res.append(data[:spot])
+        data = data[spot + len(core.SOCKETSEPARATOR):]
+    return res
+
+def merge_socket(*args):
+    """
+    Merges the data using the socket separator and returns a string
+    """
+    return core.SOCKETSEPARATOR.join(['{}'.format(item) for item in args])
+
 def to_num(v):
     if not isinstance(v, (str, unicode)):
         return v
@@ -77,6 +101,21 @@ def to_num(v):
         except:
             pass
     return v
+
+def strISOstamp2datetime(txt):
+    return parser.parse(txt)
+
+def packetfilename2datetime(txt):
+    """
+    Give a filename following `TELEMETRYNAMEFORMAT`
+    """
+    txt = os.path.basename(txt)
+    dd, ms = txt.split('_')[1:]
+    dd, tt = dd.split('T')
+    dt = [int(dd[:4]), int(dd[4:6]), int(dd[6:])]
+    dt = dt + [int(tt[:2]), int(tt[2:4]), int(tt[4:])]
+    dt += [int(ms.split('.')[0]), pytz.utc]
+    return datetime.datetime(*dt)
 
 def now():
     return datetime.datetime.now(pytz.utc)

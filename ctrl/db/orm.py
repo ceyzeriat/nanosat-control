@@ -5,10 +5,12 @@
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
+from sqlalchemy import desc
 from ..utils import core
 from ..utils import ctrlexception
 from ..ccsds import param_category
 from ..ccsds import param_ccsds
+from ..param import param_apid
 
 
 __all__ = ['init_DB', 'get_column_keys', 'save_TC_to_DB', 'close_DB',
@@ -76,6 +78,7 @@ def save_TC_to_DB(hd, hdx, inputs):
     for k, v in inputs.items():
         DB.add(TelecommandDatum(id=TC.id, param_key=k, value=v))
     DB.commit()
+    return TC.id
 
 
 def save_TM_to_DB(hd, hdx, data):
@@ -105,3 +108,24 @@ def save_TM_to_DB(hd, hdx, data):
     DB.add(tbl(**hdx))
     DB.commit()
     # save the data
+
+    return TM.id
+
+
+def get_ack_TC(timestamp):
+    """
+    returns the DB id of the TC of which the input telemetry packet
+    is the acknowledgement
+    """
+    
+    ack_rec_id = getattr(
+                    db.query(Telecommand)\
+                        .filter_by(and_(
+                                Telecommand.pid==param_apid.PACKETWRAPPERPID,
+                                Telecommand.ack_reception_id==None,
+                                Telecommand.reqack_reception==1
+                                Telecommand.time_sent<=timestamp))\
+                        .order_by(desc(Telecommand.time_sent))\
+                        .limit(1),
+                    'id', None)
+    ack_fmt_id = 

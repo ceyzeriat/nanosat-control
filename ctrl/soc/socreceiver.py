@@ -138,7 +138,7 @@ class SocReceiver(object):
 
     def _newconnection(self):
         """
-        Replace this function with proper data processing
+        Replace this function with proper new connection processing
         """
         print(self._soc)
 
@@ -171,6 +171,7 @@ def connectme(self, oneshot):
     Infinite loop to listen the data from the port
     """
     while self.loopConnect or oneshot:
+        oneshot = False
         if self.connected:
             time.sleep(self._connectWait)
             continue
@@ -185,7 +186,6 @@ def connectme(self, oneshot):
                 return False
             ready = False
         if ready:
-            self._newconnection()
             if not self._get_AR():
                 if not self.loopConnect:
                     return False
@@ -197,6 +197,7 @@ def connectme(self, oneshot):
                         return False
                 else:
                     status = self._start()
+                    self._newconnection()
                     if not self.loopConnect:
                         return status
         time.sleep(self._connectWait)

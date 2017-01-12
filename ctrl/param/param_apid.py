@@ -4,6 +4,10 @@
 
 # taken from https://nubes-lesia.obspm.fr/index.php/apps/files?dir=%2FPicSat%2FProjet%2FtrxDoc
 
+# the PID that sends the packets eventually, useful to know for the
+# acknowledgement of receipt
+PACKETWRAPPERPID = 'L0ComManager'
+
 
 PIDREGISTRATION_OBC_L0 = {  'L0ComManager': 0,
                             'MemoryManager': 1,
@@ -42,6 +46,7 @@ for k, v in PIDREGISTRATION_OBC_L1.items():
 for k, v in PIDREGISTRATION_PLD.items():
     PIDREGISTRATION[k] = v
     PLDREGISTRATION[k] = '1'
+    LVLREGISTRATION[k] = '0'
 
 
 # PIDREGISTRATION_REV[pld][lvl]

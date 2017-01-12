@@ -46,6 +46,32 @@ class BrokenTelemetryDumpFolder(CTRLException):
         self._init(f, *args, **kwargs)
         self.message = "Folder '{}' for telemetry-dump missing".format(f)
 
+class CommProcessDead(CTRLException):
+    """
+    If the communication process is not running
+    """
+    def __init__(self, *args, **kwargs):
+        self._init(*args, **kwargs)
+        self.message = "The comm process is not running"
+
+class PacketFileMissing(CTRLException):
+    """
+    If the packet file sent through the socket is missing
+    """
+    def __init__(self, f, *args, **kwargs):
+        self._init(f, *args, **kwargs)
+        self.message = "The packet file '{}' does not exist".format(f)
+
+class PacketMismatch(CTRLException):
+    """
+    If the packet file content is different from the data obtained
+    through the socket
+    """
+    def __init__(self, f, *args, **kwargs):
+        self._init(f, *args, **kwargs)
+        self.message = "Mismatch between the data in file '{}' and the data"\
+                       "obtained through socket".format(f)
+        
 
 
 # not used
