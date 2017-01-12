@@ -40,7 +40,7 @@ class Parameter(object):
             self._rngdisp = repr(self.rng.keys())
         else:
             self._typ = PFormat(typ)
-            if isinstance(rng, (str, unicode)):
+            if core.isStr(rng):
                 self._rng = rng.split(param_commands.RANGESEPARATOR)[:2]
                 self._rng = tuple([core.to_num(item) for item in self._rng])
                 if self.typ.typ != 'str':

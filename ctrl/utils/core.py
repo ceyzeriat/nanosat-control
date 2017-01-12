@@ -16,6 +16,13 @@ from . import ctrlexception
 from ..param.param_all import *
 
 
+# make sure that python 3 understands unicode native python 2 function
+try:
+    _DUM = bool(type(unicode))
+except:
+    unicode = str
+
+
 MAXPACKETID = 2**14
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -90,7 +97,7 @@ def merge_socket(*args):
     return core.SOCKETSEPARATOR.join(['{}'.format(item) for item in args])
 
 def to_num(v):
-    if not isinstance(v, (str, unicode)):
+    if isStr(v):
         return v
     v = v.strip()
     try:
@@ -144,12 +151,16 @@ def setstr(txt, slc, rep):
 def clean_name(txt):
     number = {"0": "zero", "1": "one", "2": "two", "3": "three", "4": "four",
               "5": "five", "6": "six", "7": "seven", "8": "eight", "9": "nine"}
-    authorized = range(65, 91) + range(97, 123) + range(48, 58) + [95]
+    authorized = list(range(65, 91)) + list(range(97, 123))\
+                    + list(range(48, 58)) + [95]
     txt = "".join([letter if (ord(letter) in authorized) else ""
                     for letter in str(txt)])
     return (number[txt[0]] + "_" if ord(txt[0]) in number.keys()\
                    else txt[0])\
             + txt[1:]
+
+def isStr(txt):
+    return isinstance(rng, (str, unicode)):
 
 def int2bin(i, pad=True, **kwargs):
     """
