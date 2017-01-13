@@ -70,7 +70,7 @@ class Parameter(object):
                 self._rngdisp = repr(self.rng)
             else:
                 raise cmdexception.WrongParameterDefinition(self.name, 'rng')
-        if isinstance(size, (str, unicode)):
+        if core.isStr(size):
             self._size = size.split(param_commands.RANGESEPARATOR)[:2]
             self._size = tuple([core.to_num(item) for item in self._size])
             self._sizedisp = "[{}--{}]".format(*self.size)
