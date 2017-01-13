@@ -2,178 +2,73 @@
 # -*- coding: utf-8 -*-
 
 
-from . import cmdexception
+from .cm import Cm
+from ..ccsds import TCPacker
 from ..utils import core
-from . import param_commands
-from ..param import param_apid
-from .parameter import Parameter
+#from .ccsds import ccsdsexception
+from ..telecommand import Telecommand
 
 
 __all__ = ['Command']
 
 
-class Command(object):
-    def __init__(self, number, name, pid, desc, lparam, subsystem, param):
+class Command(Cm):
+    def __init__(self, *args, **kwargs):
         """
-        Creates a self-checking command
-        
-        Args:
-        * number (int): the unique id
-        * name (str): the name (code friendly)
-        * pid (int): the unique pid
-        * desc (str): the description
-        * lparam (int): the total length of the parameters, in octets
-        * level (int): either ``0``, or ``1``, for L0 or L1
-        * subsystem (str): the subsystem key
-        * param (iterable of list): an iterable of parameter lists of
-          form and order: (name, desc, rng, typ, size, unit)
-        """
-        self._name = core.clean_name(name)
-        self._number = int(number)
-        pid = str(pid)
-        if pid not in param_apid.PIDREGISTRATION.keys():
-            raise cmdexception.WrongPID(pid, self.name)
-        self._pid = str(pid)
-        self._desc = str(desc)
-        self._lparam = int(lparam)
-        self._subsystem = str(subsystem)
-        self._param = [tuple(item) for item in param]
-        self._payload = bool(param_apid.PLDREGISTRATION[self.pid])
-        self._level = int(param_apid.LVLREGISTRATION[self.pid])
-        self._params = []
-        for idx, item in enumerate(self._param):
-            if len(item) < param_commands.MINLENPARAMSTRUCTURE:
-                raise cmdexception.WrongParameterDefinition(self.name, item[0])
-            p = Parameter(*item)
-            self._params.append(p)
-            setattr(self, "p_{}_{}".format(idx, p.name), self._params[-1])
-        self._nparam = len(self._params)
+        Sends the command and stores it in the database
 
-    def __str__(self):
-        return "#{} {} (L{})\n {}\n{} params: ({} octet)\n{}".format(
-                            self.number,
-                            self.name,
-                            int(self.level),
-                            self.desc,
-                            self.nparam,
-                            self.lparam,
-                            "\n".join([str(item) for item in self._params]))
+        Args ar ignored
 
-    __repr__ = __str__
+        Kwargs:
+        * the input parameters of the command
+        * rack (bool): ``True`` to get the acknowledgement of reception
+        * fack (bool): ``True`` to get the acknowledgement of format
+        * eack (bool): ``True`` to get the acknowledgement of execution
+        """
+        # sole purpose of this __init__ is overwrite the docstring
+        super(Command, self).__init__(*args, **kwargs)
 
-    def to_dict(self):
+    def _generate_packet(self, **kwargs):
         """
-        Returns a dictionnary for initialization or json dumping
+        Generates the full packet and returns the packet (str),
+        the values used to generate the prim/sec headers (dict) and the
+        input parameters used to generate the data (dict).
         """
-        return {'number': self.number, 'name': self.name, 'pid': self.pid,
-                'desc': self.desc, 'lparam': self.lparam,
-                'subsystem': self.subsystem, 'param': self._param}
+        data, inputs = self.generate_data(**kwargs)
+        packet, hd, hdx, dat = TCPacker.pack(pid=self.pid, data=data,
+                                             tcid=self.number, retvalues=True,
+                                             retdbvalues=True, **kwargs)
+        return packet, hd, hdx, inputs
 
     def __call__(self, *args, **kwargs):
-        return self.generate_data(**kwargs)
+        return self.send(**kwargs)
 
-    def generate_data(self, *args, **kwargs):
+    def send(self, *args, **kwargs):
         """
-        Returns the packet data (as string) and the dictionnary of
-        input parameters => values. The input parameters are that of
-        the command, see ``man`` method.
+        Sends the command and stores it in the database
 
-        Args are ignored
+        Args ar ignored
 
-        Kwargs: the input parameters of the command
+        Kwargs:
+        * the input parameters of the command
+        * rack (bool): ``True`` to get the acknowledgement of reception
+        * fack (bool): ``True`` to get the acknowledgement of format
+        * eack (bool): ``True`` to get the acknowledgement of execution
         """
-        rep = ""
-        inputs = {}
-        for param in self._params:
-            if param.name not in kwargs.keys():
-                raise cmdexception.MissingCommandInput(self.name, param.name)
-            inputs[param.name] = kwargs.pop(param.name)
-            rep += param.tohex(inputs[param.name])
-        if len(rep) != self.lparam:
-            raise cmdexception.WrongCommandLength(self.name,
-                                                    len(rep),
-                                                    self.lparam)
-        return rep, inputs
+        # generates the packet
+        packet, hd, hdx, inputs = self._generate_packet(**kwargs)
+        # save to server
+        hd['raw_file'] = core.RAWPACKETFILDER
+        # saves to DB
+        hd['time_sent'] = core.now()
+        return Telecommand._initfromCommand(hd=hd, hdx=hdx, inputs=inputs)
 
-    @property
-    def name(self):
-        return self._name
+    def show(self, *args, **kwargs):
+        """
+        Show pretty packet
+        """
+        return self._generate_packet(**kwargs)
 
-    @name.setter
-    def name(self, value):
-        raise cmdexception.ReadOnly('name')
-
-    @property
-    def number(self):
-        return self._number
-
-    @number.setter
-    def number(self, value):
-        raise cmdexception.ReadOnly('number')
-
-    @property
-    def desc(self):
-        return self._desc
-
-    @desc.setter
-    def desc(self, value):
-        raise cmdexception.ReadOnly('desc')
-
-    @property
-    def nparam(self):
-        return self._nparam
-
-    @nparam.setter
-    def nparam(self, value):
-        raise cmdexception.ReadOnly('nparam')
-
-    @property
-    def lparam(self):
-        return self._lparam
-
-    @lparam.setter
-    def lparam(self, value):
-        raise cmdexception.ReadOnly('lparam')
-
-    @property
-    def level(self):
-        return self._level
-
-    @level.setter
-    def level(self, value):
-        raise cmdexception.ReadOnly('level')
-
-    @property
-    def payload(self):
-        return self._payload
-
-    @payload.setter
-    def payload(self, value):
-        raise cmdexception.ReadOnly('payload')
-
-    @property
-    def subsystem(self):
-        return self._subsystem
-
-    @subsystem.setter
-    def subsystem(self, value):
-        raise cmdexception.ReadOnly('subsystem')
-
-    @property
-    def pid(self):
-        return self._pid
-
-    @pid.setter
-    def pid(self, value):
-        raise cmdexception.ReadOnly('pid')
-
-    @property
-    def man(self, ret=False):
-        if ret:
-            return str(self)
-        else:
-            print(self)
-
-    @man.setter
-    def man(self, value):
-        raise cmdexception.ReadOnly('man')
+    @classmethod
+    def _initfromCm(cls, cmd):
+        return cls(**cmd.to_dict())

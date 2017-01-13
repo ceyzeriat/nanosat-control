@@ -11,4 +11,4 @@ from . import db
 from ._version import __version__, __major__, __minor__, __micro__
 from .telecommand import *
 from .telemetry import *
-from .order import *
+

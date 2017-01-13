@@ -3,7 +3,7 @@
 
 
 from nose.tools import raises
-from ctrl.cmd.command import Command
+from ctrl.cmd.cm import Cm
 from ctrl.cmd import cmdexception
 import copy
 from ctrl.cmd.param_commands import RANGESEPARATOR
@@ -31,8 +31,8 @@ echo2 = {'number':1,
         'param': (('hop', 'blah', ftup(0, 255), 'str', ftup(1,2)), )}
 
 
-def test_command_base():
-    c = Command(**echo)
+def test_cm_base():
+    c = Cm(**echo)
     assert c.number == 1
     assert c.name == 'echo'
     assert c.desc == 'blah'
@@ -43,30 +43,30 @@ def test_command_base():
     assert c.nparam == 1
     assert c.p_0_hop.typ.typ == 'str'
 
-def test_command_call():
-    c = Command(**echo)
+def test_cm_call():
+    c = Cm(**echo)
     assert c.generate_data(hop='ab')[0] == '\x61\x62'
     assert c.generate_data(hop='ab')[1] == {'hop': 'ab'}
     assert c(hop='ab') == c.generate_data(hop='ab')
 
 @raises(cmdexception.WrongPID)
-def test_command_WrongPID():
+def test_cm_WrongPID():
     ee = copy.deepcopy(echo)
     ee['pid'] = 'tadaaaam'
-    c = Command(**ee)
+    c = Cm(**ee)
 
 @raises(cmdexception.WrongParameterDefinition)
-def test_command_WrongParameterDefinition():
+def test_cm_WrongParameterDefinition():
     ee = copy.deepcopy(echo)
     ee['param'] = (('hop', 'blah'), )
-    c = Command(**ee)
+    c = Cm(**ee)
 
-@raises(cmdexception.MissingCommandInput)
-def test_command_MissingCommandInput():
-    c = Command(**echo)
+@raises(cmdexception.MissingCmInput)
+def test_cm_MissingCmInput():
+    c = Cm(**echo)
     c.generate_data('\x00')
 
-@raises(cmdexception.WrongCommandLength)
-def test_command_WrongCommandLength():
-    c = Command(**echo2)
+@raises(cmdexception.WrongCmLength)
+def test_cm_WrongCmLength():
+    c = Cm(**echo2)
     c.generate_data(hop='a')

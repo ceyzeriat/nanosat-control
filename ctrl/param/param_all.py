@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+NOERRORATIMPORT = True
+
 # the path to the file containing the packet id counter
 PACKETIDFILE = ["param", "tc_packet_id"]
 
@@ -52,3 +54,6 @@ TELEMETRYNAMEFORMAT = 'TM_%Y%m%dT%H%M%S_%f.packet'
 
 # the split between filename and data
 SOCKETSEPARATOR = "_#;#_"
+
+# the relative path where the raw packets are stored, on the server
+RAWPACKETFILDER = './raw_data'

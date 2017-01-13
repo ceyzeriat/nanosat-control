@@ -37,7 +37,10 @@ def rel_dir(*args):
 
 TELEMETRYDUMPFOLDER = concat_dir(HOME, *TELEMETRYDUMPFOLDER)
 if not os.path.exists(TELEMETRYDUMPFOLDER):
-    raise ctrlexception.BrokenTelemetryDumpFolder(TELEMETRYDUMPFOLDER)
+    if NOERRORATIMPORT:
+        print(ctrlexception.BrokenTelemetryDumpFolder(TELEMETRYDUMPFOLDER))
+    else:
+        raise ctrlexception.BrokenTelemetryDumpFolder(TELEMETRYDUMPFOLDER)
 
 try:
     f = open(rel_dir(*DBFILE), mode='r')
@@ -46,7 +49,10 @@ try:
     assert DBENGINE[:13] == 'postgresql://'
     f.close()
 except IOError:
-    raise ctrlexception.MissingDBServerFile(rel_dir(*DBFILE))
+    if NOERRORATIMPORT:
+        print(ctrlexception.MissingDBServerFile(rel_dir(*DBFILE)))
+    else:
+        raise ctrlexception.MissingDBServerFile(rel_dir(*DBFILE))
 
 def get_tc_packet_id():
     f = open(rel_dir(*PACKETIDFILE), mode='r')

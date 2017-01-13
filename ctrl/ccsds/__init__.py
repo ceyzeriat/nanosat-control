@@ -9,4 +9,4 @@ from . import ccsdsexception
 from .ccsdskey import *
 from .ccsdspacker import *
 from .ccsdsunpacker import *
-from .ccsdsblob import CCSDSBlob
+from .ccsdsblob import *

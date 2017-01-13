@@ -8,7 +8,7 @@ from . import param_ccsds
 from . import param_category
 
 
-__all__ = ['CCSDSUnPacker']
+__all__ = ['TCUnPacker', 'TMUnPacker']
 
 
 class CCSDSUnPacker(object):
@@ -137,3 +137,6 @@ class CCSDSUnPacker(object):
                             hds[param_ccsds.PACKETCATEGORY.name]]
         data['all'] = packet[hsz:]
         return data
+
+TCUnPacker = CCSDSUnPacker(mode='tc')
+TMUnPacker = CCSDSUnPacker(mode='tm')
