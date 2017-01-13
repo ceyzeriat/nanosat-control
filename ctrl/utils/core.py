@@ -18,8 +18,10 @@ from ..param.param_all import *
 
 # make sure that python 3 understands unicode native python 2 function
 try:
+    PYTHONVERSION = 2
     _DUM = bool(type(unicode))
 except:
+    PYTHONVERSION = 3
     unicode = str
 
 
@@ -223,9 +225,13 @@ def hex2int(h, **kwargs):
     """
     Give hex ``h`` as chars '\xf0', returns int
     """
+    if len(h) == 1:
+        return ord(h)
     if TWINKLETWINKLELITTLEINDIA:
         h = h[::-1]
-    return int(binascii.hexlify(h), 16) if len(h) > 1 else ord(h)
+    if not isinstance(h, bytes) and PYTHONVERSION == 3:
+        h = bytes([ord(item) for item in h])
+    return int(binascii.hexlify(h), 16)
 
 def int2hex(i, pad=0):
     """
