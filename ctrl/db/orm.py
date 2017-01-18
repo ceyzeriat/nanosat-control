@@ -146,7 +146,7 @@ def get_ack_TC(timestamp):
                         .filter_by(and_(
                                 Telecommand.pid==param_apid.PACKETWRAPPERPID,
                                 Telecommand.ack_reception_id==None,
-                                Telecommand.reqack_reception==1,
+                                #Telecommand.reqack_reception==1,
                                 Telecommand.time_sent<=timestamp))\
                         .order_by(desc(Telecommand.time_sent))\
                         .limit(1),

@@ -29,37 +29,34 @@ from . import param_ccsds
 from ..utils import core
 from . import ccsdsexception as exc
 from ..param import param_apid
+from .ccsdspacker import CCSDSPacker
 
 
 __all__ = ['CCSDSBlob']
 
 
 class CCSDSBlob(object):
-    def __init__(self, blob, mode='telemetry', secondary_header_flag=1):
+    def __init__(self, blob, mode='tm'):
         """
         Analyzes a blob of bits to find the first valid packet
         These 4 packet-related parameters are used as assumptions
         to parse and validate the packet
 
         Args:
-        * blob (str): the '\x00\xf0...' string
-        * mode: 'telemetry' or 'telecommand'
-        * secondary_header_flag: 1
+        * blob (str): the bytes string
+        * mode: 'tm' or 'tc'
         """
         self.blob = blob
-        param = {}
-        param['md'] = mode
-        param['shf'] = int(bool(secondary_header_flag))
+        pk = CCSDSPacker(mode=mode)
+        vals = {param_ccsds.PID.name: '', param_ccsds.PACKETCATEGORY.name: '0'}        
         # building of possible packet start flags
-        self.auth_first_octets = []
+        self.auth_bits = []
         for item in param_apid.PIDREGISTRATION.keys():
-            dum = param_ccsds.PACKETVERSION.pack('')\
-                  + param_ccsds.PACKETTYPE.pack(param['md'])\
-                  + param_ccsds.SECONDARYHEADERFLAG.pack(param['shf'])\
-                  + str(param_apid.PLDREGISTRATION[item])\
-                  + str(param_apid.LVLREGISTRATION[item])\
-                  + param_ccsds.PID.pack(item)
-            self.auth_first_octets.append(dum)
+            vals[param_ccsds.PID.name] = item
+            self.auth_bits.append(pk.pack_primHeader(
+                                    values=vals, datalen=0, retvalues=False,
+                                    retdbvalues=False, withPacketID=False
+                                )[:param_ccsds.AUTHPACKETLENGTH])
 
     def find(self, start=0):
         """
@@ -73,8 +70,9 @@ class CCSDSBlob(object):
         if self.blob[start:start+2] == '':
             return 0
         for i in range(len(self.blob[start:])):
-            if core.hex2bin(self.blob[start+i:start+i+2])[:12]\
-                                in self.auth_first_octets:
+            if core.hex2bin(self.blob[start+i:start+i+2])\
+                    [:param_ccsds.AUTHPACKETLENGTH]\
+                                    in self.auth_bits:
                 return i
         else:
             return None

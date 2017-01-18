@@ -81,7 +81,7 @@ class Command(Cm):
         # generates the packet
         packet, hd, hdx, inputs = self._generate_packet(**kwargs)
         # save to server
-        hd['raw_file'] = core.RAWPACKETFILDER
+        hd['raw_file'] = core.RAWPACKETFOLDER
         # saves to DB
         hd['time_sent'] = core.now()
         return Telecommand._initfromCommand(hd=hd, hdx=hdx, inputs=inputs)

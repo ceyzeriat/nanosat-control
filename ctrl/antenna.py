@@ -83,9 +83,23 @@ def process_data(data):
     dum = COMM_TRANS.tell(core.merge_socket(now, name, data))
 
 
-def init_antenna():
+def checkoutbox_listener():
+
+
+def serial_listener():
+    global ANTENNA
+    ANTENNA = serial.Serial(core.ANTENNAPORT)
+    ANTENNA.open()
+    ANTENNA.reset_input_buffer()
+    ANTENNA.reset_output_buffer()
+    ANTENNA.timetout = 0
+
+def init_antenna(antenna):
     """
     Initializes the antenna
+
+    ``antenna`` can be:
+      * ``checkoutbox``: the ISIS rfcheckoutbox
     """
     global COMM_TRANS
     global COMM_REC
@@ -96,11 +110,7 @@ def init_antenna():
                             start=True)
     COMM_REC = CommRec(port=core.TELECOMMANDPORT, name=core.COMMLISTENTCNAME,
                         connect=True, connectWait=0.5)
-    ANTENNA = serial.Serial(core.ANTENNAPORT)
-    ANTENNA.open()
-    ANTENNA.reset_input_buffer()
-    ANTENNA.reset_output_buffer()
-    ANTENNA.timetout = 0
+    if 
     comm_running = True
 
 

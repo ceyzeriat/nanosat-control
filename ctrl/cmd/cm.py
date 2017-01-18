@@ -46,7 +46,6 @@ class Cm(object):
         * pid (int): the unique pid
         * desc (str): the description
         * lparam (int): the total length of the parameters, in octets
-        * level (int): either ``0``, or ``1``, for L0 or L1
         * subsystem (str): the subsystem key
         * param (iterable of list): an iterable of parameter lists of
           form and order: (name, desc, rng, typ, size, unit)

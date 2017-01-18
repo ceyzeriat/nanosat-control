@@ -77,15 +77,15 @@ class CCSDSUnPacker(object):
         bits = core.hex2bin(packet[:param_ccsds.HEADER_P_SIZE],
                                 pad=param_ccsds.HEADER_P_SIZE * 8)
         # prepare optionnal inputs
-        header_p['payload_flag'] = ''
-        header_p['level_flag'] = ''
+        header_p[param_ccsds.PAYLOADFLAG.name] = ''
+        header_p[param_ccsds.LEVELFLAG.name] = ''
         for item in param_ccsds.HEADER_P_KEYS:
             if retdbvalues and item.non_db_dic:
                 header_p[item.name] = core.bin2int(item.unpack(bits, raw=True))
             else:
                 header_p[item.name] = item.unpack(bits,
-                                                pld=header_p['payload_flag'],
-                                                lvl=header_p['level_flag'])
+                                pld=header_p[param_ccsds.PAYLOADFLAG.name],
+                                lvl=header_p[param_ccsds.LEVELFLAG.name])
         return header_p
 
     def unpack_secHeader(self, packet, retdbvalues=True):

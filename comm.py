@@ -31,7 +31,7 @@ from ctrl import antenna
 
 
 print("Initialization...")
-antenna.init_antenna()
+antenna.init_antenna(antenna=core.ANTENNALISTENED)
 
 print("Starting...")
 while 1:

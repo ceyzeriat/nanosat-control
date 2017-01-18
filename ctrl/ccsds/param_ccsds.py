@@ -68,7 +68,8 @@ SECONDARYHEADERFLAG = CCSDSKey( name='secondary_header_flag',
 
 PAYLOADFLAG = CCSDSKey( name='payload_flag',
                         dic={0: '0', 1: '1'},
-                        start=5, l=1)
+                        start=5,
+                        l=1)
 
 LEVELFLAG = CCSDSKey(   name='level_flag',
                         dic={0: '0', 1: '1'},
@@ -116,6 +117,11 @@ HEADER_P_KEYS = [PACKETVERSION, PACKETTYPE, SECONDARYHEADERFLAG, PAYLOADFLAG,
 # SECONDARY HEADER TELEMETRY
 # origin of start/end is end of primary header
 # start/end units is bits
+
+
+# length of the bit sequence useful to unambiguously determine the
+# beginning of a packet
+AUTHPACKETLENGTH = 12
 
 
 def days_unpack(v):

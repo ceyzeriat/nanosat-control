@@ -25,7 +25,11 @@
 ###############################################################################
 
 
+# to avoid error at import if the DB or folders are not proper
 NOERRORATIMPORT = True
+
+# which antenna are you using
+ANTENNALISTENED = 'checkoutbox'
 
 # the path to the file containing the packet id counter
 PACKETIDFILE = ["param", "tc_packet_id"]
@@ -65,13 +69,14 @@ SAVESTATUSPORT = 50005
 SAVESTATUSPORTLISTENERS = 1
 WATCHLISTENSAVESTATUSNAME = 'watch'
 
+
 # the antenna port to listen
-ANTENNAPORT = '/dev/ttyS3'
+ANTENNASERIALPORT = '/dev/ttyS3'
 
 # how often you should listen to the antenna port
 ANTENNARPORTREADFREQ = 30
 
-# where the raw telemetry are dumped (locally)
+# where the raw telemetry are dumped (locally), relative to HOME
 TELEMETRYDUMPFOLDER = ["tm_data"]
 # the format of the name for the raw telemetry dumps
 TELEMETRYNAMEFORMAT = 'TM_%Y%m%dT%H%M%S_%f.packet'
@@ -80,4 +85,4 @@ TELEMETRYNAMEFORMAT = 'TM_%Y%m%dT%H%M%S_%f.packet'
 SOCKETSEPARATOR = "_#;#_"
 
 # the relative path where the raw packets are stored, on the server
-RAWPACKETFILDER = './raw_data'
+RAWPACKETFOLDER = './raw_data'
