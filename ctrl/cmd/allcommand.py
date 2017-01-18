@@ -25,7 +25,6 @@
 ###############################################################################
 
 
-import json
 from .command import Command
 from . import param_commands
 from ..utils import core

@@ -44,7 +44,7 @@ class Cm(object):
         Args:
         * number (int): the unique id
         * name (str): the name (code friendly)
-        * pid (int): the unique pid
+        * pid (str): the unique pid identity string
         * desc (str): the description
         * lparam (int): the total length of the parameters, in octets
         * subsystem (str): the subsystem key

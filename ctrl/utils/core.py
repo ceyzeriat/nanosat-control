@@ -34,6 +34,7 @@ import glob
 import pytz
 import re
 import inflect
+import json
 from dateutil import parser
 from . import ctrlexception
 from ..param.param_all import *
@@ -113,19 +114,19 @@ def split_socket_info(data):
     spot = 0
     data = str(data)
     while spot != -1:
-        spot = data.find(core.SOCKETSEPARATOR)
+        spot = data.find(SOCKETSEPARATOR)
         if spot == -1:
             res.append(data)
         else:
             res.append(data[:spot])
-        data = data[spot + len(core.SOCKETSEPARATOR):]
+        data = data[spot + len(SOCKETSEPARATOR):]
     return res
 
 def merge_socket_info(*args):
     """
     Merges the data using the socket separator and returns a string
     """
-    return core.SOCKETSEPARATOR.join(['{}'.format(item) for item in args])
+    return SOCKETSEPARATOR.join(['{}'.format(item) for item in args])
 
 def to_num(v):
     if not isStr(v):
@@ -144,7 +145,7 @@ def load_json_cmds(path):
     """
     Loads all the commands from the json file, given the path list
     """
-    f = open(core.rel_dir(*path), mode='r')
+    f = open(rel_dir(*path), mode='r')
     allcmds = json.load(f)
     f.close()
     return allcmds
@@ -153,7 +154,7 @@ def save_json_cmds(path, cmds):
     """
     Loads all the commands from the json file, given the path list
     """
-    f = open(core.rel_dir(*path), mode='w')
+    f = open(rel_dir(*path), mode='w')
     json.dump(cmds, f)
     f.close()
 

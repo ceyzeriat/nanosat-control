@@ -25,16 +25,12 @@
 ###############################################################################
 
 
-from . import param
-from . import utils
-from . import ccsds
-from . import cmd
-from . import soc
-from . import db
-from . import c
-from . import c0
-from . import c1
-from ._version import __version__, __major__, __minor__, __micro__
-from .telecommand import *
-from .telemetry import *
+from ..cmd import L0CMDS as _ALL
 
+
+__all__ = []
+
+
+for _cmd in _ALL:
+    locals()[_cmd.name] = _cmd
+    __all__.append(_cmd.name)

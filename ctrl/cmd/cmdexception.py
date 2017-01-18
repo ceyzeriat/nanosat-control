@@ -129,5 +129,5 @@ class RedundantCm(CMDException):
     """
     def __init__(self, i, n, *args, **kwargs):
         self._init(i, n, *args, **kwargs)
-        self.message = "Number '{}' or name '{}' of the Cm is already found "
+        self.message = "Number '{}' or name '{}' of the Cm is already found "\
                        "in the json file".format(i, n)
