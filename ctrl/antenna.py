@@ -32,6 +32,7 @@ from .soc import SocTransmitter
 from .soc import SocReceiver
 from .utils import core
 from .telemetry import Telemetry
+from .utils import ctrlexception
 
 
 __all__ = ['process_data', 'init_antenna', 'close_antenna']
@@ -76,23 +77,26 @@ def process_data(data):
     name = core.concat_dir(core.TELEMETRYDUMPFOLDER, name)
     if len(glob.glob(name)) > 0:
         name += ".{}".format(len(glob.glob(name))+1)
+    # sauvegarde locale
     f = open(name, mode='w')
     f.write(data)
     f.close()
     # envoi packets socket alpha
-    dum = COMM_TRANS.tell(core.merge_socket(now, name, data))
+    dum = COMM_TRANS.tell(core.merge_socket_info(now, name, data))
 
 
-def checkoutbox_listener():
+def init_checkoutbox():
+    global ANTENNA
 
 
-def serial_listener():
+def init_serial():
     global ANTENNA
     ANTENNA = serial.Serial(core.ANTENNAPORT)
     ANTENNA.open()
     ANTENNA.reset_input_buffer()
     ANTENNA.reset_output_buffer()
     ANTENNA.timetout = 0
+
 
 def init_antenna(antenna):
     """
@@ -110,7 +114,11 @@ def init_antenna(antenna):
                             start=True)
     COMM_REC = CommRec(port=core.TELECOMMANDPORT, name=core.COMMLISTENTCNAME,
                         connect=True, connectWait=0.5)
-    if 
+    print("Setting up antenna: '{}'".format(antenna))
+    if antenna == 'checkoutbox':
+        init_checkoutbox()
+    else:
+        raise ctrlexception.UnknownAntenna(antenna)
     comm_running = True
 
 

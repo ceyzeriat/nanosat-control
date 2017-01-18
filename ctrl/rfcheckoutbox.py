@@ -25,34 +25,9 @@
 ###############################################################################
 
 
-import json
-from .command import Command
-from . import param_commands
-from ..utils import core
+__all__ = ['RFCheckoutbox']
 
 
-__all__ = ['ALLCMDS', 'L0CMDS', 'L1CMDS', 'ALLCMDSNAMES', 'L0CMDSNAMES',
-			'L1CMDSNAMES']
-
-
-allcmds = core.load_json_cmds(param_commands.COMMANDSFILE)
-
-
-ALLCMDS = []
-L0CMDS = []
-L1CMDS = []
-ALLCMDSNAMES = []
-L0CMDSNAMES = []
-L1CMDSNAMES = []
-
-
-for item in allcmds:
-    c = Command(**item)
-    ALLCMDS.append(c)
-    ALLCMDSNAMES.append(c.name)
-    if c.level == 0:
-        L0CMDS.append(c)
-        L0CMDSNAMES.append(c)
-    else:
-        L1CMDS.append(c)
-        L1CMDSNAMES.append(c)
+class RFCheckoutbox(object):
+    def __init__(self, arg):
+        self.arg = arg

@@ -78,7 +78,7 @@ def process_data(data):
     A callback function that saves the package in the database after
     parsing it
     """
-    time_received, path, thedata = core.split_socket(data)[:3]
+    time_received, path, thedata = core.split_socket_info(data)[:3]
     if len(glob.glob(path)) == 0:
         raise ctrlexception.PacketFileMissing(path)
     f = open(path, mode='r')
@@ -90,7 +90,7 @@ def process_data(data):
     #if not time_received == core.packetfilename2datetime(path):
     #    raise ctrlexception.PacketDateMismatch(path)
     t = Telemetry(thedata, time_received=time_received)
-    dum = TM_TRANS.tell(core.merge_socket(now, name, data))
+    dum = TM_TRANS.tell(core.merge_socket_info(now, name, data))
 
 
 def init_saving():

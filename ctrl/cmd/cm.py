@@ -25,6 +25,7 @@
 ###############################################################################
 
 
+import json
 from . import cmdexception
 from ..utils import core
 from . import param_commands
@@ -83,6 +84,9 @@ class Cm(object):
 
     __repr__ = __str__
 
+    def __call__(self, *args, **kwargs):
+        return self.generate_data(**kwargs)
+
     def to_dict(self):
         """
         Returns a dictionnary for initialization or json dumping
@@ -91,8 +95,18 @@ class Cm(object):
                 'desc': self.desc, 'lparam': self.lparam,
                 'subsystem': self.subsystem, 'param': self._param}
 
-    def __call__(self, *args, **kwargs):
-        return self.generate_data(**kwargs)
+    def to_json_file(self):
+        """
+        Adds the command into the json file if it does not already
+        exist there
+        """
+        allcmds = core.load_json_cmds(param_commands.COMMANDSFILE)
+        allids = [item['number'] for item in allcmds]
+        allnames = [item['name'].lower() for item in allcmds]
+        if self.number in allids or self.name.lower() in allnames:
+            raise cmdexception.RedundantCm(i=self.number, n=self.name)
+        allcmds.append(self.to_dict())
+        core.save_json_cmds(param_commands.COMMANDSFILE, allcmds)
 
     def generate_data(self, *args, **kwargs):
         """

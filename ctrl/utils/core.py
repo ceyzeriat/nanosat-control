@@ -104,7 +104,7 @@ def camelize_singular(txt):
             re.sub(r'_([a-z])', lambda m: m.group(1).upper(), txt[1:]))
     return inflect.engine().singular_noun(camelize)
 
-def split_socket(data):
+def split_socket_info(data):
     """
     Splits the data using the socket separator and returns a list of
     the different pieces
@@ -121,7 +121,7 @@ def split_socket(data):
         data = data[spot + len(core.SOCKETSEPARATOR):]
     return res
 
-def merge_socket(*args):
+def merge_socket_info(*args):
     """
     Merges the data using the socket separator and returns a string
     """
@@ -140,7 +140,27 @@ def to_num(v):
             pass
     return v
 
+def load_json_cmds(path):
+    """
+    Loads all the commands from the json file, given the path list
+    """
+    f = open(core.rel_dir(*path), mode='r')
+    allcmds = json.load(f)
+    f.close()
+    return allcmds
+
+def save_json_cmds(path, cmds):
+    """
+    Loads all the commands from the json file, given the path list
+    """
+    f = open(core.rel_dir(*path), mode='w')
+    json.dump(cmds, f)
+    f.close()
+
 def strISOstamp2datetime(txt):
+    """
+    Tranforms a ISO date as string into a datetime
+    """
     return parser.parse(txt)
 
 def packetfilename2datetime(txt):

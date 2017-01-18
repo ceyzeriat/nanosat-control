@@ -94,7 +94,14 @@ class PacketMismatch(CTRLException):
         self._init(f, *args, **kwargs)
         self.message = "Mismatch between the data in file '{}' and the data"\
                        "obtained through socket".format(f)
-        
+
+class UnknownAntenna(CTRLException):
+    """
+    Antenna keyword not known
+    """
+    def __init__(self, antenna, *args, **kwargs):
+        self._init(antenna, *args, **kwargs)
+        self.message = "Antenna keyword '{}' unknown".format(antenna)
 
 
 # not used
