@@ -51,7 +51,8 @@ def valid_callsign(callsign):
             if not (char == 42 and cs[-1] == 42):
                 return False
 
-    if not core.str2ints(ssid).isdigit():
+    # conversion in number fails
+    if core.to_num(ssid) == ssid:
         return False
 
     if not (0 <= int(ssid) <= 15):
