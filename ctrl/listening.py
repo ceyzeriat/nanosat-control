@@ -152,6 +152,7 @@ def close_listening():
     global listen_running
     listen_running = False
     LISTEN_TRANS.close()
+    LISTEN_REC_CONTROL.stop_connectLoop()
     LISTEN_REC_CONTROL.close()
     ANTENNA.close()
     LISTEN_TRANS = None

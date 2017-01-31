@@ -34,4 +34,4 @@ from ctrl import c1
 
 
 print("Initialization...")
-controlling.init_controlling()
+controlling.init_control()

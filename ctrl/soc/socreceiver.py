@@ -147,11 +147,10 @@ class SocReceiver(object):
 
     def close(self):
         """
-        Shuts down the receivers.
+        Shuts down the receiver, but not the autoconnect
         """
         if not self.running:
             return
-        self.stop_connectLoop()
         self._running = False
         self._soc.shutdown(socket.SHUT_RDWR)
         self._soc.close()

@@ -28,6 +28,7 @@
 from .soc import SocTransmitter
 from .soc import SocReceiver
 from .utils import core
+from .utils import REPORTS
 
 
 __all__ = ['init_watch', 'close_watch']
@@ -122,13 +123,13 @@ def init_watch():
     WATCH_TRANS = WatchTrans(port=core.WATCHINGPORT[0],
                                 nreceivermax=len(core.WATCHINGPORTLISTENERS),
                                 start=True, portname=core.WATCHINGPORT[1])
-    WATCH_REC_LISTEN = WatchTMRec(port=core.LISTENINGPORT,
+    WATCH_REC_LISTEN = WatchSavingRec(port=core.LISTENINGPORT[0],
                                 name=core.WATCHINGNAME, connect=True,
                                 connectWait=0.5, portname=core.WATCHINGPORT[1])
-    WATCH_REC_CONTROL = WatchTCRec(port=core.CONTROLLINGPORT,
+    WATCH_REC_CONTROL = WatchControlRec(port=core.CONTROLLINGPORT[0],
                                 name=core.WATCHINGNAME, connect=True,
                                 connectWait=0.5, portname=core.WATCHINGPORT[1])
-    WATCH_REC_SAVE = WatchSTRec(port=core.SAVINGPORT,
+    WATCH_REC_SAVE = WatchListenRec(port=core.SAVINGPORT[0],
                                 name=core.WATCHINGNAME, connect=True,
                                 connectWait=0.5, portname=core.WATCHINGPORT[1])
     watch_running = True
@@ -145,6 +146,12 @@ def close_watch():
     global watch_running
     watch_running = False
     WATCH_TRANS.close()
+    WATCH_REC_LISTEN.stop_connectLoop()
+    WATCH_REC_LISTEN.close()
+    WATCH_REC_CONTROL.stop_connectLoop()
+    WATCH_REC_CONTROL.close()
+    WATCH_REC_SAVE.stop_connectLoop()
+    WATCH_REC_SAVE.close()
     WATCH_TRANS = None
     WATCH_REC_LISTEN = None
     WATCH_REC_CONTROL = None
