@@ -91,10 +91,10 @@ ANTENNARPORTREADFREQ = 30
 
 
 # RFCHECKOUTBOX
-# listen port
-RFCHECKOUTBOXLISTENPORT = 0
-# write port
-RFCHECKOUTBOXWRITEPORT = 0
+# port
+RFCHECKOUTBOXPORT = 3211
+RFCHECKOUTBOXTIMEOUT = 1  # sec
+RFCHECKOUTBOXLENGTH = 1024  # octet
 
 
 # where the raw telemetry are dumped (locally), relative to HOME

@@ -27,6 +27,7 @@
 
 import socket
 from .utils import core
+import select
 
 
 __all__ = ['RFCheckoutbox']
@@ -35,33 +36,33 @@ __all__ = ['RFCheckoutbox']
 class RFCheckoutbox(object):
     def __init__(self):
         host = socket.gethostbyname(socket.gethostname())
-        port = int(23)
-        soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        soc.connect((host, port))
+        port = int(core.RFCHECKOUTBOXPORT)
+        self.soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.soc.connect((host, port))
+        self.timeout = core.RFCHECKOUTBOXTIMEOUT
+        self.length = core.RFCHECKOUTBOXLENGTH
 
-    def in_waiting(self, ):
-        pass
+    def in_waiting(self):
+        return self.length
 
-    def read(self, ):
-        pass
+    def read(self, size=-1):
+        ready = select.select([self.soc], [], [], self.timeout)
+        if ready[0]:
+            soc.recv(int(self.length))
+            return data
+        else:
+            return ''
 
-    def write(self, ):
-        pass
+    def write(self, data):
+        if data != '':
+            self.soc.sendall(data)
 
-    def close(self, ):
+    def close(self):
         pass
 
 
 """
-import select
-
-
-port = 3211
-timeout = 1
-l = 999
-
-
 
 data = []
 while 1:
