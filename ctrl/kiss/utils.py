@@ -46,11 +46,11 @@ def valid_callsign(callsign):
         return False
 
     for char in callsign:
-        if not (char.isalpha() or char.isdigit()):
+        if not (str(char).isalpha() or str(char).isdigit()):
             if not (char == b'*' and callsign[-1] == b'*'):
                 return False
 
-    if not ssid.isdigit():
+    if not str(ssid).isdigit():
         return False
 
     if not (0 <= int(ssid) <= 15):
