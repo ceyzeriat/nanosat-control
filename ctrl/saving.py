@@ -33,91 +33,109 @@ from .soc import SocReceiver
 from .utils import core
 from .telemetry import Telemetry
 from .ccsds import CCSDSBlob
-from . import ctrlexception
+from .utils import ctrlexception
+from .utils import REPORTS
+from .kiss import Framer
 
 
-__all__ = ['process_data', 'init_saving', 'close_saving']
+__all__ = ['init_saving', 'close_saving', 'report']
 
 
-TM_TRANS = None
-TM_REC = None
-TM_running = False
+SAVE_TRANS = None
+SAVE_REC_LISTEN = None
+save_running = False
 
 
-class CommTrans(SocTransmitter):
+class SaveTrans(SocTransmitter):
     def _newconnection(self, name):
         """
-        Call-back function when a new connection
-        is extablished
+        Call-back function when a new connection is extablished
         """
-        print('New receiver on incoming packets broadcast: {}'.format(name))
+        report('newTransConnection', rec=name)
 
 
-class CommRec(SocReceiver):
-    def process(self, data):
-        """
-        Saves the packet in the database and does 
-        """
-        blobparser = CCSDSBlob(data)
-        start = 0
-        pk = blobparser.grab_first_packet(start=start)
-        while pk is not None:
-            process_data(pk)
-            start += len(pk)
-            pk = blobparser.grab_first_packet(start=start)
-
+class SaveRec(SocReceiver):
     def _newconnection(self):
         """
         New connection or connection restablished
         """
-        print('Listening socket: {}'.format(self._soc))
+        report('newRecConnection', port=self.portname)
+
+    def process(self, data):
+        """
+        Saves the packet in the database and does 
+        """
+        # ignores the reporting
+        if core.is_reporting(data):
+            return
+        report('receivedTM')
+        inputs = core.split_socket_info(data)
+        source, destination, packet = Framer.decode_kiss(inputs['data'])
+        report('receivedCallsignTM', source=source, ll=len(packet),
+                    destination=destination)
+        blobparser = CCSDSBlob(packet)
+        start = 0
+        pk = blobparser.grab_first_packet(start=start)
+        while pk is not None:
+            inputs['data'] = pk
+            process_incoming(inputs)
+            start += len(pk)
+            pk = blobparser.grab_first_packet(start=start)
+        return
 
 
-def process_data(data):
+def process_incoming(t, path, data):
     """
     A callback function that saves the package in the database after
     parsing it
     """
-    time_received, path, thedata = core.split_socket_info(data)[:3]
     if len(glob.glob(path)) == 0:
         raise ctrlexception.PacketFileMissing(path)
     f = open(path, mode='r')
     dd = f.read()
     f.close()
-    if not dd == thedata:
+    if not dd == data:
         raise ctrlexception.PacketMismatch(path)
-    time_received = core.strISOstamp2datetime(time_received)
-    #if not time_received == core.packetfilename2datetime(path):
+    t = core.strISOstamp2datetime(t)
+    #if not t == core.packetfilename2datetime(path):
     #    raise ctrlexception.PacketDateMismatch(path)
-    t = Telemetry(thedata, time_received=time_received)
-    dum = TM_TRANS.tell(core.merge_socket_info(now, name, data))
+    tm = Telemetry._fromPacket(data, time_received=t)
+    report('savedTM', dbid=tm.dbid)
+
+
+def report(report_key, **kwargs):
+    """
+    Reports to watchdog
+    """
+    rp = REPORTS[report_key].pack(who=core.SAVINGNAME, **kwargs)
+    return SAVE_TRANS.tell(rp)
 
 
 def init_saving():
     """
     Initializes the saving procedure
     """
-    global TM_TRANS
-    global TM_REC
-    global TM_running
-    TM_TRANS = CommTrans(port=core.SAVESTATUSPORT,
-                            nreceivermax=core.SAVESTATUSPORTLISTENERS,
-                            start=True)
-    TM_REC = CommRec(port=core.TELEMETRYPORT, name=core.SAVELISTENTMNAME,
-                        connect=True, connectWait=0.5)
-    TM_running = True
+    global SAVE_TRANS
+    global SAVE_REC_LISTEN
+    global save_running
+    SAVE_TRANS = SaveTrans(port=core.SAVINGPORT[0],
+                            nreceivermax=len(core.SAVINGPORTLISTENERS),
+                            start=True, portname=core.SAVINGPORT[1])
+    SAVE_REC_LISTEN = SaveRec(port=core.LISTENINGPORT, name=core.SAVINGNAME,
+                                connect=True, connectWait=0.5,
+                                portname=core.LISTENINGPORT[1])
+    save_running = True
 
 
 def close_saving():
     """
     Closes the saving procedure
     """
-    global TM_TRANS
-    global TM_REC
-    global TM_running
-    TM_running = False
-    TM_TRANS.close()
-    TM_REC.stop_connectLoop()
-    TM_REC.close()
-    TM_TRANS = None
-    TM_REC = None
+    global SAVE_TRANS
+    global SAVE_REC_LISTEN
+    global save_running
+    save_running = False
+    SAVE_TRANS.close()
+    SAVE_REC_LISTEN.close()
+    SAVE_TRANS = None
+    SAVE_REC_LISTEN = None

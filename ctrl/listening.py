@@ -25,46 +25,53 @@
 ###############################################################################
 
 
-import serial
 import time
 import glob
 from .soc import SocTransmitter
 from .soc import SocReceiver
 from .utils import core
-from .telemetry import Telemetry
 from .utils import ctrlexception
+from .rfcheckoutbox import RFCheckoutbox
 
 
-__all__ = ['process_data', 'init_antenna', 'close_antenna']
+__all__ = ['process_data', 'init_listening', 'close_listening', 'report']
 
 
-COMM_TRANS = None
-COMM_REC = None
+LISTEN_TRANS = None
+LISTEN_REC_CONTROL = None
 ANTENNA = None
-comm_running = False
+listen_running = False
 
 
-class CommTrans(SocTransmitter):
+class ListenTrans(SocTransmitter):
     def _newconnection(self, name):
         """
         Call-back function when a new connection
         is extablished
         """
-        print('New receiver on incoming packets broadcast: {}'.format(name))
+        report('newTransConnection', rec=name)
 
 
-class CommRec(SocReceiver):
-    def process(self, data):
-        """
-        Sends the data to the antenna
-        """
-        ANTENNA.write(data)
-
+class ListenRec(SocReceiver):
     def _newconnection(self):
         """
         New connection or connection restablished
         """
-        print('Listening socket: {}'.format(self._soc))
+        report('newRecConnection', port=self.portname)
+
+    def process(self, data):
+        """
+        Sends the data to the antenna
+        """
+        # ignores the reporting
+        if core.is_reporting(data):
+            return
+        else:
+            report('sendingTC')
+            ANTENNA.write(data)
+            now = core.now()
+            ### if success, update hd['time_sent'] in database
+            report('sentTC', t=now)
 
 
 def process_data(data):
@@ -77,16 +84,19 @@ def process_data(data):
     name = core.concat_dir(core.TELEMETRYDUMPFOLDER, name)
     if len(glob.glob(name)) > 0:
         name += ".{}".format(len(glob.glob(name))+1)
-    # sauvegarde locale
+    # locally saved
     f = open(name, mode='w')
     f.write(data)
     f.close()
-    # envoi packets socket alpha
-    dum = COMM_TRANS.tell(core.merge_socket_info(now, name, data))
+    # sends packets on the socket
+    dum = LISTEN_TRANS.tell(core.merge_socket_info(t=now, path=name, data=data))
+    ### check who recieved it and report
+    return dum
 
 
 def init_checkoutbox():
     global ANTENNA
+    ANTENNA = RFCheckoutbox()
 
 
 def init_serial():
@@ -98,43 +108,52 @@ def init_serial():
     ANTENNA.timetout = 0
 
 
-def init_antenna(antenna):
+def report(report_key, **kwargs):
     """
-    Initializes the antenna
+    Reports to watchdog
+    """
+    rp = REPORTS[report_key].pack(who=core.LISTENINGNAME, **kwargs)
+    return LISTEN_TRANS.tell(rp)
+
+
+def init_listening(antenna):
+    """
+    Initializes the listening
 
     ``antenna`` can be:
       * ``checkoutbox``: the ISIS rfcheckoutbox
     """
-    global COMM_TRANS
-    global COMM_REC
+    global LISTEN_TRANS
+    global LISTEN_REC_CONTROL
     global ANTENNA
-    global comm_running
-    COMM_TRANS = CommTrans(port=core.TELEMETRYPORT,
-                            nreceivermax=core.TELEMETRYPORTLISTENERS,
-                            start=True)
-    COMM_REC = CommRec(port=core.TELECOMMANDPORT, name=core.COMMLISTENTCNAME,
-                        connect=True, connectWait=0.5)
+    global listen_running
+    LISTEN_TRANS = ListenTrans(port=core.LISTENINGPORT[0],
+                                nreceivermax=len(core.LISTENINGPORTLISTENERS),
+                                start=True, portname=core.LISTENINGPORT[1])
+    LISTEN_REC_CONTROL = ListenRec(port=core.CONTROLLINGPORT,
+                                name=core.LISTENINGNAME, connect=True,
+                                connectWait=0.5,
+                                portname=core.CONTROLLINGPORT[1])
     print("Setting up antenna: '{}'".format(antenna))
     if antenna == 'checkoutbox':
         init_checkoutbox()
     else:
         raise ctrlexception.UnknownAntenna(antenna)
-    comm_running = True
+    listen_running = True
 
 
-def close_antenna():
+def close_listening():
     """
-    Closes the antenna
+    Closes the listening
     """
-    global COMM_TRANS
-    global COMM_REC
+    global LISTEN_TRANS
+    global LISTEN_REC_CONTROL
     global ANTENNA
-    global comm_running
-    comm_running = False
-    COMM_TRANS.close()
-    COMM_REC.stop_connectLoop()
-    COMM_REC.close()
+    global listen_running
+    listen_running = False
+    LISTEN_TRANS.close()
+    LISTEN_REC_CONTROL.close()
     ANTENNA.close()
-    COMM_TRANS = None
-    COMM_REC = None
+    LISTEN_TRANS = None
+    LISTEN_REC_CONTROL = None
     ANTENNA = None

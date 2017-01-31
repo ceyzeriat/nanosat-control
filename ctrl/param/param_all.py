@@ -37,6 +37,10 @@ PACKETIDFILE = ["param", "tc_packet_id"]
 # the path to the parameter file containing the DB connection settings
 DBFILE = ["param", "db_server"]
 
+# the callsign files
+CSSOURCEFILE = ["param", "callsign_source"]
+CSDESTFILE = ["param", "callsign_destination"]
+
 # who is the emitter
 EMITTERID = 1
 
@@ -54,27 +58,44 @@ REQACKRECEPTION = True
 REQACKFORMAT = True
 REQACKEXECUTION = True
 
-# the port for telemetry broadcasting/listening
-TELEMETRYPORT = 50007
-TELEMETRYPORTLISTENERS = 2
-SAVELISTENTMNAME = 'save'
 
-# the port for telecommand broadcasting/listening
-TELECOMMANDPORT = 50006
-TELECOMMANDPORTLISTENERS = 2
-COMMLISTENTCNAME = 'comm'
-
-# the port for saving status broadcasting/listening
-SAVESTATUSPORT = 50005
-SAVESTATUSPORTLISTENERS = 1
-WATCHLISTENSAVESTATUSNAME = 'watch'
+# process names
+LISTENINGNAME = 'listen'  # telemetryport
+CONTROLLINGNAME = 'control'
+SAVINGNAME = 'save'
+WATCHINGNAME = 'watch'
 
 
-# the antenna port to listen
+# the port for telemetry broadcasting/listening (alpha)
+LISTENINGPORT = (50007, LISTENINGNAME)
+LISTENINGPORTLISTENERS = [SAVINGNAME, WATCHINGNAME]
+
+# the port for telecommand broadcasting/listening (beta)
+CONTROLLINGPORT = (50006, CONTROLLINGNAME)
+CONTROLLINGPORTLISTENERS = [LISTENINGNAME, WATCHINGNAME]
+
+# the port for saving status broadcasting/listening (gamma)
+SAVINGPORT = (50005, SAVINGNAME)
+SAVINGPORTLISTENERS = [WATCHINGNAME]
+
+# the port for saving status broadcasting/listening (delta)
+WATCHINGPORT = (50004, WATCHINGNAME)
+WATCHINGPORTLISTENERS = [CONTROLLINGNAME]
+
+
+# SERIAL ANTENNA
+# the serial-antenna port to listen
 ANTENNASERIALPORT = '/dev/ttyS3'
-
-# how often you should listen to the antenna port
+# how often you should listen to the serial-antenna port
 ANTENNARPORTREADFREQ = 30
+
+
+# RFCHECKOUTBOX
+# listen port
+RFCHECKOUTBOXLISTENPORT = 0
+# write port
+RFCHECKOUTBOXWRITEPORT = 0
+
 
 # where the raw telemetry are dumped (locally), relative to HOME
 TELEMETRYDUMPFOLDER = ["tm_data"]
@@ -82,7 +103,13 @@ TELEMETRYDUMPFOLDER = ["tm_data"]
 TELEMETRYNAMEFORMAT = 'TM_%Y%m%dT%H%M%S_%f.packet'
 
 # the split between filename and data
-SOCKETSEPARATOR = "_#;#_"
+SOCKETSEPARATOR = "###"
+SOCKETESCAPE = "/"
+SOCKETMAPPER = ":::"
+RESPLITVARS = '(?<!' + SOCKETESCAPE + ')' + SOCKETSEPARATOR
+RESPLITMAP = '(?<!' + SOCKETESCAPE + ')' + SOCKETMAPPER
+REPORTKEY = 'report'
+
 
 # the relative path where the raw packets are stored, on the server
 RAWPACKETFOLDER = './raw_data'

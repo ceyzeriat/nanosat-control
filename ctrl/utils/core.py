@@ -36,6 +36,7 @@ import re
 import inflect
 import json
 from dateutil import parser
+from multiprocessing import current_process
 from . import ctrlexception
 from ..param.param_all import *
 
@@ -68,6 +69,7 @@ if not os.path.exists(TELEMETRYDUMPFOLDER):
     else:
         raise ctrlexception.BrokenTelemetryDumpFolder(TELEMETRYDUMPFOLDER)
 
+# preparing the DB server
 try:
     f = open(rel_dir(*DBFILE), mode='r')
     DBENGINE = f.readline().strip()
@@ -80,16 +82,48 @@ except IOError:
     else:
         raise ctrlexception.MissingDBServerFile(rel_dir(*DBFILE))
 
+# preparing the source callsign
+try:
+    f = open(rel_dir(*CSSOURCEFILE), mode='r')
+    CSSOURCE = f.readline().strip()
+    f.close()
+except IOError:
+    if NOERRORATIMPORT:
+        print(ctrlexception.MissingSourceCallsign(rel_dir(*CSSOURCEFILE)))
+    else:
+        raise ctrlexception.MissingSourceCallsign(rel_dir(*CSSOURCEFILE))
+
+# preparing the destination callsign
+try:
+    f = open(rel_dir(*CSDESTFILE), mode='r')
+    CSDESTINATION = f.readline().strip()
+    f.close()
+except IOError:
+    if NOERRORATIMPORT:
+        print(ctrlexception.MissingDestinationCallsign(rel_dir(*CSDESTFILE)))
+    else:
+        raise ctrlexception.MissingDestinationCallsign(rel_dir(*CSDESTFILE))
+
+
 def get_tc_packet_id():
+    """
+    Just reads the packet id from the file
+    """
     f = open(rel_dir(*PACKETIDFILE), mode='r')
     res = int(f.readline().strip())
     f.close()
     return res
 
 def get_next_tc_packet_id():
+    """
+    Reads the packet id from the file and adds one
+    """
     return (get_tc_packet_id()+1) % MAXPACKETID
 
 def get_set_next_tc_packet_id():
+    """
+    Reads the packet id from the file, adds one and saves new value
+    """
     v = get_next_tc_packet_id()
     f = open(rel_dir(*PACKETIDFILE), mode='w')
     f.write(str(v))
@@ -105,28 +139,65 @@ def camelize_singular(txt):
             re.sub(r'_([a-z])', lambda m: m.group(1).upper(), txt[1:]))
     return inflect.engine().singular_noun(camelize)
 
+def get_pid():
+    """
+    Returns the process ID number of the invoking thread
+    """
+    return current_process().pid
+
 def split_socket_info(data):
     """
-    Splits the data using the socket separator and returns a list of
-    the different pieces
+    Splits the data using the socket separator and returns a dictionnary
+    of the different pieces
     """
-    res = []
-    spot = 0
-    data = str(data)
-    while spot != -1:
-        spot = data.find(SOCKETSEPARATOR)
-        if spot == -1:
-            res.append(data)
-        else:
-            res.append(data[:spot])
-        data = data[spot + len(SOCKETSEPARATOR):]
-    return res
+    res = re.split(RESPLITVARS, data)
+    res = [re.split(RESPLITMAP,
+                    item.replace(SOCKETESCAPE+SOCKETSEPARATOR, SOCKETSEPARATOR))
+            for item in res]
+    dic = {}
+    for k, v in res:
+        dic[k] = v.replace(SOCKETESCAPE+SOCKETMAPPER, SOCKETMAPPER)
+    return dic
 
-def merge_socket_info(*args):
+def merge_socket_info(**kwargs):
     """
     Merges the data using the socket separator and returns a string
     """
-    return SOCKETSEPARATOR.join(['{}'.format(item) for item in args])
+    res = []
+    for k, v in kwargs.items():
+        v = v.replace(SOCKETMAPPER, SOCKETESCAPE+SOCKETMAPPER)
+        res.append('{}{}{}'.format(k, SOCKETMAPPER, v))
+    return SOCKETSEPARATOR.join([
+                item.replace(SOCKETSEPARATOR,
+                                SOCKETESCAPE+SOCKETSEPARATOR) for item in res])
+
+def merge_reporting(**kwargs):
+    """
+    Merges the data using the socket separator and returns a string
+    """
+    kwargs[REPORTKEY] = '1'
+    return merge_socket_info(**kwargs)
+
+def is_reporting(data):
+    """
+    Returns ``True`` if the data is some reporting
+    """
+    lrep = len(REPORTKEY)
+    lmap = len(SOCKETMAPPER)
+    lsep = len(SOCKETSEPARATOR)
+    PROOF = REPORTKEY + SOCKETMAPPER + '1'
+    # only and just reporting flag
+    if data == PROOF:
+        return True
+    # start with report flag
+    elif data[:lrep+lsep+lmap+1] == PROOF + SOCKETSEPARATOR:
+        return True
+    # ends with report flag
+    elif data[-(lrep+lsep+lmap+1):] == SOCKETSEPARATOR + PROOF:
+        return True
+    elif data.find(SOCKETSEPARATOR + PROOF + SOCKETSEPARATOR) != -1:
+        return True
+    return False
 
 def to_num(v):
     if not isStr(v):
@@ -273,9 +344,7 @@ def hex2int(h, **kwargs):
         return ord(h)
     if TWINKLETWINKLELITTLEINDIA:
         h = h[::-1]
-    if not isinstance(h, bytes) and PYTHONVERSION == 3:
-        h = bytes([ord(item) for item in h])
-    return int(binascii.hexlify(h), 16)
+    return int(binascii.hexlify(str2bytes(h)), 16)
 
 def int2hex(i, pad=0):
     """
@@ -300,7 +369,7 @@ def octify(b):
     Splits a long ``b`` octets sequence into 8-bit pieces
     after it has padded ``b`` to a 8n length
     """
-    b = str(b).zfill(((len(b)-1)//8+1)*8)
+    b = b.zfill(((len(b)-1)//8+1)*8)
     return [b[i:i+8] for i in range(0, len(b), 8)]
 
 def padit(txt, l, ch='0'):
@@ -312,3 +381,57 @@ def padit(txt, l, ch='0'):
         return txt + ch[0] * (l - len(txt))
     else:    
         return ch[0] * (l - len(txt)) + txt
+
+def fillit(txt, l, ch='0', right=True):
+    """
+    Fills ``txt`` on the ``right`` with char ``ch`` up to ``l`` length
+    """
+    if right:
+        return txt + ch*(l-len(txt))
+    else:
+        return ch*(l-len(txt)) + txt
+
+def str2bytes(txt):
+    """
+    Transforms whatever string or bytes into a ascii-bytes
+    chain compatible with python 2 and 3
+    """
+    if not isinstance(txt, bytes) and PYTHONVERSION == 3:
+        txt = bytes([ord(item) for item in txt])
+    return txt
+
+def str2ints(txt):
+    """
+    Transforms whatever string or bytes into a int-bytes
+    chain compatible with python 2 and 3
+    """
+    if PYTHONVERSION == 3:
+        if isinstance(txt, bytes):
+            return txt
+        elif not hasattr(txt, '__iter__'):
+            return bytes([txt])
+        else:
+            return bytes([ord(item) for item in txt])
+    elif PYTHONVERSION == 2:
+        return [ord(item) for item in txt]
+
+def ints2str(ints):
+    """
+    Transforms whatever int-bytes chain into a string
+    """
+    if not hasattr(ints, '__iter__'):
+        return chr(ints)
+    return ''.join([chr(x) for x in ints])
+
+def ints2bytes(ints):
+    """
+    Transforms whatever int-bytes chain into a string or bytes
+    compatible with python 2 and 3
+    """
+    if PYTHONVERSION == 3:
+        if not hasattr(ints, '__iter__'):
+            return bytes([ints])
+        else:
+            return bytes([x for x in ints])
+    elif PYTHONVERSION == 2:
+        return ints2str(ints)

@@ -130,8 +130,7 @@ def save_TM_to_DB(hd, hdx, data):
     hdx['telemetry_packet'] = TM.id
     DB.add(tbl(**hdx))
     DB.commit()
-    # save the data
-
+    ### save the data
     return TM.id
 
 

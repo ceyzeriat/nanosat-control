@@ -32,7 +32,7 @@ from . import param_ccsds
 from . import param_category
 
 
-__all__ = ['TMPacker', 'TCPacker']
+__all__ = []
 
 
 class CCSDSPacker(object):
@@ -280,6 +280,3 @@ class CCSDSPacker(object):
             return '', {}
         else:
             return ''
-
-TMPacker = CCSDSPacker(mode='tm')
-TCPacker = CCSDSPacker(mode='tc')

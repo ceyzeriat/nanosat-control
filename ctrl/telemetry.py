@@ -37,33 +37,31 @@ __all__ = ['Telemetry']
 
 
 class Telemetry(object):
-    def __init__(self, packet, time_received=None):
+    def __init__(self, dbid):
         """
-        Unpacks and stores the telemetry
+        Gets a telemetry from the database
+        """
+        self.dbid = int(dbid)
+
+    @classmethod
+    def _fromPacket(cls, packet, time_received=None):
+        """
+        Unpacks and stores the telemetry. Feeds ``hd``, ``hdx`` and
+        ``data`` attributes
 
         Args:
         * packet (str): the raw packet to unpack
         * time_received (datetime+tz): the reception time of the packet
         """
-        self.packet = packet
-        self.hd = {}
-        self.hdx = {}
-        self.data = {}
-        self._process(time_received=time_received)
-
-    def _process(self, time_received=None):
-        """
-        Unpacks the packet and feeds ``hd``, ``hdx`` and
-        ``data`` attributes
-        """
-        self.hd, self.hdx, self.data = TMUnPacker.unpack(self.packet,    
+        cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet,    
                                                         retdbvalues=True)
-        self.hd['raw_file'] = core.RAWPACKETFILDER
-        self.hd['receiver_id'] = core.RECEIVERID
-        self.hd['time_received'] = time_received\
+        cls.hd['raw_file'] = core.RAWPACKETFILDER
+        cls.hd['receiver_id'] = core.RECEIVERID
+        cls.hd['time_received'] = time_received\
                 if isinstance(time_received, core.datetime.datetime)\
                 else core.now()
-        db.save_TM_to_DB(self.hd, self.hdx, self.data)
+        dbid = db.save_TM_to_DB(cls.hd, cls.hdx, cls.data)
+        return cls(dbid=dbid)
 
     def find_ack_TC(self):
         """

@@ -37,6 +37,7 @@ class CTRLException(Exception):
 
     __str__ = __repr__
 
+
 class ReadOnly(CTRLException):
     """
     Read-only
@@ -44,6 +45,7 @@ class ReadOnly(CTRLException):
     def __init__(self, key, *args, **kwargs):
         self._init(key, *args, **kwargs)
         self.message = "Attribute '{}' is read-only".format(key)
+
 
 class MissingDBServerFile(CTRLException):
     """
@@ -53,6 +55,26 @@ class MissingDBServerFile(CTRLException):
         self._init(f, *args, **kwargs)
         self.message = "Cannot find DB server file '{}'".format(f)
 
+
+class MissingSourceCallsign(CTRLException):
+    """
+    If the source callsign file is missing
+    """
+    def __init__(self, f, *args, **kwargs):
+        self._init(f, *args, **kwargs)
+        self.message = "The source callsign file '{}' does not exist".format(f)
+
+
+class MissingDestinationCallsign(CTRLException):
+    """
+    If the destination callsign file is missing
+    """
+    def __init__(self, f, *args, **kwargs):
+        self._init(f, *args, **kwargs)
+        self.message = "The destination callsign file '{}' does"\
+                       "not exist".format(f)
+
+
 class NoDBConnection(CTRLException):
     """
     If the DB is not running
@@ -60,6 +82,7 @@ class NoDBConnection(CTRLException):
     def __init__(self, *args, **kwargs):
         self._init(*args, **kwargs)
         self.message = "No DB connection open"
+
 
 class BrokenTelemetryDumpFolder(CTRLException):
     """
@@ -69,6 +92,7 @@ class BrokenTelemetryDumpFolder(CTRLException):
         self._init(f, *args, **kwargs)
         self.message = "Folder '{}' for telemetry-dump missing".format(f)
 
+
 class CommProcessDead(CTRLException):
     """
     If the communication process is not running
@@ -77,6 +101,7 @@ class CommProcessDead(CTRLException):
         self._init(*args, **kwargs)
         self.message = "The comm process is not running"
 
+
 class PacketFileMissing(CTRLException):
     """
     If the packet file sent through the socket is missing
@@ -84,6 +109,7 @@ class PacketFileMissing(CTRLException):
     def __init__(self, f, *args, **kwargs):
         self._init(f, *args, **kwargs)
         self.message = "The packet file '{}' does not exist".format(f)
+
 
 class PacketMismatch(CTRLException):
     """
@@ -95,6 +121,7 @@ class PacketMismatch(CTRLException):
         self.message = "Mismatch between the data in file '{}' and the data"\
                        "obtained through socket".format(f)
 
+
 class UnknownAntenna(CTRLException):
     """
     Antenna keyword not known
@@ -102,6 +129,15 @@ class UnknownAntenna(CTRLException):
     def __init__(self, antenna, *args, **kwargs):
         self._init(antenna, *args, **kwargs)
         self.message = "Antenna keyword '{}' unknown".format(antenna)
+
+
+class ControllingNotInitialized(CTRLException):
+    """
+    When the controlling is not initialized
+    """
+    def __init__(self, *args, **kwargs):
+        self._init(*args, **kwargs)
+        self.message = "Controlling is not initialized"
 
 
 # not used

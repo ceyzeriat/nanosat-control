@@ -25,22 +25,22 @@
 ###############################################################################
 
 
-from .utils import core
-
-
-__all__ = ['Telecommand']
-
-
-class Telecommand(object):
-    def __init__(self, dbid):
-        """
-        Reads a telecommand from the database
-        """
-        pass
-        # read database and take a telecommand
-
-    def show(self, *args, **kwargs):
-        """
-        Show pretty packet
-        """
-        return
+REPORTSDATA = [
+    ('newRecConnection', "Receiver '{who}' connected to port '{port}'",
+        ['who', 'port']),
+    ('newTransConnection', "Port '{who}' got a new receiver: '{rec}'",
+        ['who', 'rec']),
+    ('broadcastTC', "'{who}' broadcasting TC id '{dbid}'",
+        ['who', 'dbid']),
+    ('sendingTC', "'{who}' is sending TC",
+        ['who']),
+    ('sentTC', "'{who}' sent TC at '{}'",
+        ['who', 't']),
+    ('receivedTM', "'{who}' received data for saving",
+        ['who']),
+    ('receivedCallsignTM', "'{who}' (callsign '{source}') received data of "\
+        "length '{ll}' from callsign '{destination}' for saving",
+        ['who', 'source', 'll', 'destination']),
+    ('savedTM', "'{who}' saved data under id '{}'",
+        ['who', 'dbid']),
+    ]

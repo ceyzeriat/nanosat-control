@@ -36,7 +36,7 @@ __all__ = ['SocReceiver']
 
 class SocReceiver(object):
     def __init__(self, port, name, buffer_size=1024, connect=True,
-                    connectWait=0.5):
+                    connectWait=0.5, portname=""):
         """
         Connects to a transmitting port in order to listen for
         any communication from it. In case the communication drops
@@ -51,6 +51,8 @@ class SocReceiver(object):
           at initialization. If ``False``, use ``connect`` method.
         * connectWait (float >0.1): the duration in second between two
           successive connection attempts
+        * portname (str[15]): the name of the communicating port, for
+          identification purposes
         """
         self.buffer_size = int(buffer_size)
         self._soc = None
@@ -58,6 +60,7 @@ class SocReceiver(object):
         self._connected = False
         self._timeout = 1.
         self.name = str(name)[:15]
+        self.portname = str(portname)[:15]
         self._running = False
         self.host = socket.gethostbyname(socket.gethostname())
         self.port = int(port)
@@ -144,10 +147,11 @@ class SocReceiver(object):
 
     def close(self):
         """
-        Shuts down the receivers. Use 
+        Shuts down the receivers.
         """
         if not self.running:
             return
+        self.stop_connectLoop()
         self._running = False
         self._soc.shutdown(socket.SHUT_RDWR)
         self._soc.close()

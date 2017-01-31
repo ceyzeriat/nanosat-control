@@ -30,6 +30,8 @@ from ..ccsds import TCPacker
 from ..utils import core
 #from .ccsds import ccsdsexception
 from ..telecommand import Telecommand
+from .. import db
+from ..controlling import broadcast_TC
 
 
 __all__ = ['Command']
@@ -80,11 +82,14 @@ class Command(Cm):
         """
         # generates the packet
         packet, hd, hdx, inputs = self._generate_packet(**kwargs)
-        # save to server
         hd['raw_file'] = core.RAWPACKETFOLDER
-        # saves to DB
-        hd['time_sent'] = core.now()
-        return Telecommand._initfromCommand(hd=hd, hdx=hdx, inputs=inputs)
+        # left None until confirmation sent by antenna
+        hd['time_sent'] = None
+        # save in database
+        dbid = db.save_TC_to_DB(hd=hd, hdx=hdx, inputs=inputs)
+        # broadcast on socket to the antenna process and watchdog
+        dum = broadcast_TC(dbid=dbid, packet=packet)
+        return Telecommand(dbid=dbid)
 
     def show(self, *args, **kwargs):
         """

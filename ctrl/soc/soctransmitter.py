@@ -34,7 +34,7 @@ __all__ = ['SocTransmitter']
 
 
 class SocTransmitter(object):
-    def __init__(self, port, nreceivermax, start=True):
+    def __init__(self, port, nreceivermax, start=True, portname=""):
         """
         Creates a transmitting socket to which receiving socket
         can listen.
@@ -45,9 +45,12 @@ class SocTransmitter(object):
           listen. From 1 to 5.
         * start (bool): whether to start the broadcasting at
           initialization or not. If not, use ``start`` method
+        * portname (str[15]): the name of the communicating port, for
+          identification purposes
         """
         self._running = False
         self.port = int(port)
+        self.portname = str(portname)[:15]
         self._nreceivermax = max(1, min(5, int(nreceivermax)))
         self.receivers = {}
         if start:

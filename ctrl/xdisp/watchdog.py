@@ -25,22 +25,16 @@
 ###############################################################################
 
 
-from .utils import core
+import curses
 
 
-__all__ = ['Telecommand']
-
-
-class Telecommand(object):
-    def __init__(self, dbid):
-        """
-        Reads a telecommand from the database
-        """
-        pass
-        # read database and take a telecommand
-
-    def show(self, *args, **kwargs):
-        """
-        Show pretty packet
-        """
-        return
+def curses_main(args):
+    w    = curses.initscr()
+    curses.echo()
+    while True:
+        w.addstr(0, 0, ">")
+        w.clrtoeol()
+        s   = w.getstr()
+        if s == "q":    break
+        w.insertln()
+        w.addstr(1, 0, "[" + s + "]")

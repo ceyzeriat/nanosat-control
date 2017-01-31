@@ -4,7 +4,8 @@
 #include <stdint.h>
 #include <string.h>
 
-uint32_t crc(uint8_t *message, uint32_t datasize);
+
+uint32_t crc_chained(uint32_t basecrc, uint8_t *message, uint32_t datasize);
 
 
 #endif

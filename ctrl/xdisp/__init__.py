@@ -25,22 +25,4 @@
 ###############################################################################
 
 
-from .utils import core
-
-
-__all__ = ['Telecommand']
-
-
-class Telecommand(object):
-    def __init__(self, dbid):
-        """
-        Reads a telecommand from the database
-        """
-        pass
-        # read database and take a telecommand
-
-    def show(self, *args, **kwargs):
-        """
-        Show pretty packet
-        """
-        return
+from .watchdog import *

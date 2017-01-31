@@ -25,22 +25,31 @@
 ###############################################################################
 
 
-from .utils import core
+class KISSException(Exception):
+    """
+    Root for KISS Exceptions
+    """
+    def _init(self, *args, **kwargs):
+        self.args = [a for a in args] + [a for a in kwargs.values()]
+
+    def __repr__(self):
+        return repr(self.message)
+
+    __str__ = __repr__
 
 
-__all__ = ['Telecommand']
+class BadCallsignError(KISSException):
+    """
+    Bad Callsign
+    """
+    def __init__(self, cs, *args, **kwargs):
+        self._init(cs, *args, **kwargs)
+        self.message = "Could not extract callsign from '{}'".format(cs)
 
-
-class Telecommand(object):
-    def __init__(self, dbid):
-        """
-        Reads a telecommand from the database
-        """
-        pass
-        # read database and take a telecommand
-
-    def show(self, *args, **kwargs):
-        """
-        Show pretty packet
-        """
-        return
+class SocketClosetError(Exception):
+    """
+    Socket Closed
+    """
+    def __init__(self, cs, *args, **kwargs):
+        self._init(cs, *args, **kwargs)
+        self.message = "Could not extract callsign from '{}'".format(cs)
