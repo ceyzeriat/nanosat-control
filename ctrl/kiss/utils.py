@@ -45,13 +45,13 @@ def valid_callsign(callsign):
     if not ((2 <= len(callsign) <= 6) and (1 <= len(ssid) <= 2)):
         return False
 
-    for char in callsign:
-        if not (core.ints2bytes(char).isalpha()\
-                or core.ints2bytes(char).isdigit()):
-            if not (char == b'*' and callsign[-1] == b'*'):
+    cs = core.str2ints(callsign)
+    for char in cs:
+        if not (chr(char).isalpha() or chr(char).isdigit()):
+            if not (char == 42 and cs[-1] == 42):
                 return False
 
-    if not core.ints2bytes(ssid).isdigit():
+    if not core.str2ints(ssid).isdigit():
         return False
 
     if not (0 <= int(ssid) <= 15):
