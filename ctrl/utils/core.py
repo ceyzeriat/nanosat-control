@@ -286,7 +286,7 @@ def isStr(txt):
     """
     Check if txt is valid string
     """
-    return isinstance(txt, (str, unicode))
+    return isinstance(txt, (str, unicode, bytes))
 
 def int2bin(i, pad=True, **kwargs):
     """
