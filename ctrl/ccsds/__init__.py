@@ -31,8 +31,10 @@ from . import param_ccsds_aux
 from . import ccsdsexception
 from .ccsdskey import *
 from .ccsdspacker import *
+from .ccsdsblob import *
 from .ccsdsunpacker import CCSDSUnPacker as _CCSDSUnPacker
-from .ccsdsblob import CCSDSPacker as _CCSDSPacker
+from .ccsdspacker import CCSDSPacker as _CCSDSPacker
+
 
 TCUnPacker = _CCSDSUnPacker(mode='tc')
 TMUnPacker = _CCSDSUnPacker(mode='tm')

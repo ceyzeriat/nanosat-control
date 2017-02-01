@@ -28,10 +28,12 @@
 import time
 from ctrl.utils import core
 from ctrl import listening
+from ctrl import db
 
 
 print("Initialization...")
 listening.init_listening(antenna=core.ANTENNALISTENED)
+db.init_DB()
 
 print("Starting...")
 while 1:

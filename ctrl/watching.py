@@ -28,6 +28,7 @@
 from .soc import SocTransmitter
 from .soc import SocReceiver
 from .utils import core
+from .utils import REPORTS
 
 
 __all__ = ['init_watch', 'close_watch']
@@ -64,7 +65,7 @@ class WatchListenRec(SocReceiver):
         Sends the data to the antenna
         """
         if core.is_reporting(data):
-            inputs = core.split_socket_info(data)
+            inputs = core.split_socket_info(data, asStr=True)
             print('Reporting: '+REPORTS[inputs['key']].disp(**inputs))
         else:
             print('Raw data: '+repr(data))
@@ -84,7 +85,7 @@ class WatchControlRec(SocReceiver):
         Sends the data to the antenna
         """
         if core.is_reporting(data):
-            inputs = core.split_socket_info(data)
+            inputs = core.split_socket_info(data, asStr=True)
             print('Reporting: '+REPORTS[inputs['key']].disp(**inputs))
         else:
             print('Raw data: '+repr(data))
@@ -104,7 +105,7 @@ class WatchSavingRec(SocReceiver):
         Sends the data to the antenna
         """
         if core.is_reporting(data):
-            inputs = core.split_socket_info(data)
+            inputs = core.split_socket_info(data, asStr=True)
             print('Reporting: '+REPORTS[inputs['key']].disp(**inputs))
         else:
             print('Raw data: '+repr(data))
@@ -122,15 +123,15 @@ def init_watch():
     WATCH_TRANS = WatchTrans(port=core.WATCHINGPORT[0],
                                 nreceivermax=len(core.WATCHINGPORTLISTENERS),
                                 start=True, portname=core.WATCHINGPORT[1])
-    WATCH_REC_LISTEN = WatchTMRec(port=core.LISTENINGPORT,
+    WATCH_REC_LISTEN = WatchListenRec(port=core.LISTENINGPORT[0],
                                 name=core.WATCHINGNAME, connect=True,
-                                connectWait=0.5, portname=core.WATCHINGPORT[1])
-    WATCH_REC_CONTROL = WatchTCRec(port=core.CONTROLLINGPORT,
+                                connectWait=0.5, portname=core.LISTENINGPORT[1])
+    WATCH_REC_CONTROL = WatchControlRec(port=core.CONTROLLINGPORT[0],
                                 name=core.WATCHINGNAME, connect=True,
-                                connectWait=0.5, portname=core.WATCHINGPORT[1])
-    WATCH_REC_SAVE = WatchSTRec(port=core.SAVINGPORT,
+                                connectWait=0.5, portname=core.CONTROLLINGPORT[1])
+    WATCH_REC_SAVE = WatchSavingRec(port=core.SAVINGPORT[0],
                                 name=core.WATCHINGNAME, connect=True,
-                                connectWait=0.5, portname=core.WATCHINGPORT[1])
+                                connectWait=0.5, portname=core.SAVINGPORT[1])
     watch_running = True
 
 

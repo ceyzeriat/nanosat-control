@@ -34,13 +34,13 @@ REPORTSDATA = [
         ['who', 'dbid']),
     ('sendingTC', "'{who}' is sending TC",
         ['who']),
-    ('sentTC', "'{who}' sent TC at '{}'",
+    ('sentTC', "'{who}' sent TC at '{t}'",
         ['who', 't']),
     ('receivedTM', "'{who}' received data for saving",
         ['who']),
     ('receivedCallsignTM', "'{who}' (callsign '{source}') received data of "\
         "length '{ll}' from callsign '{destination}' for saving",
         ['who', 'source', 'll', 'destination']),
-    ('savedTM', "'{who}' saved data under id '{}'",
+    ('savedTM', "'{who}' saved data under id '{dbid}'",
         ['who', 'dbid']),
     ]

@@ -27,11 +27,11 @@
 
 from ctrl.utils import core
 from ctrl import watching
-from ctrl.xdisp.watchdog import Watchdog
+#from ctrl.xdisp.watchdog import Watchdog
 
 
 print("Initialization...")
-watching.init_watching()
+watching.init_watch()
 
 # infinite loop to check processes
 #curses.wrapper(curses_main)

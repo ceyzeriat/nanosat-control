@@ -68,7 +68,7 @@ def test_cm_base():
 
 def test_cm_call():
     c = Cm(**echo)
-    assert c.generate_data(hop='ab')[0] == '\x61\x62'
+    assert c.generate_data(hop='ab')[0] == b'\x61\x62'
     assert c.generate_data(hop='ab')[1] == {'hop': 'ab'}
     assert c(hop='ab') == c.generate_data(hop='ab')
 
@@ -84,12 +84,12 @@ def test_cm_WrongParameterDefinition():
     ee['param'] = (('hop', 'blah'), )
     c = Cm(**ee)
 
-@raises(cmdexception.MissingCmInput)
-def test_cm_MissingCmInput():
+@raises(cmdexception.MissingCommandInput)
+def test_cm_MissingCommandInput():
     c = Cm(**echo)
     c.generate_data('\x00')
 
-@raises(cmdexception.WrongCmLength)
-def test_cm_WrongCmLength():
+@raises(cmdexception.WrongCommandLength)
+def test_cm_WrongCommandLength():
     c = Cm(**echo2)
     c.generate_data(hop='a')

@@ -25,6 +25,10 @@
 ###############################################################################
 
 
+from sys import version_info
+PYTHON3 = version_info > (3,)
+
+
 import binascii
 import time
 import datetime
@@ -42,11 +46,7 @@ from ..param.param_all import *
 
 
 # make sure that python 3 understands unicode native python 2 function
-try:
-    PYTHONVERSION = 2
-    _DUM = bool(type(unicode))
-except:
-    PYTHONVERSION = 3
+if PYTHON3:
     unicode = str
 
 
@@ -145,18 +145,24 @@ def get_pid():
     """
     return current_process().pid
 
-def split_socket_info(data):
+def split_socket_info(data, asStr=False):
     """
     Splits the data using the socket separator and returns a dictionnary
-    of the different pieces
+    of the different pieces in bytes format
     """
     res = re.split(RESPLITVARS, data)
     res = [re.split(RESPLITMAP,
-                    item.replace(SOCKETESCAPE+SOCKETSEPARATOR, SOCKETSEPARATOR))
+                item.replace(SOCKETESCAPE+SOCKETSEPARATOR, SOCKETSEPARATOR))
             for item in res]
     dic = {}
-    for k, v in res:
-        dic[k] = v.replace(SOCKETESCAPE+SOCKETMAPPER, SOCKETMAPPER)
+    if asStr:
+        for k, v in res:
+            dic[bytes2str(k)] = bytes2str(v.replace(SOCKETESCAPE+SOCKETMAPPER,
+                                                      SOCKETMAPPER))
+    else:
+        for k, v in res:
+            dic[bytes2str(k)] = v.replace(SOCKETESCAPE+SOCKETMAPPER,
+                                            SOCKETMAPPER)
     return dic
 
 def merge_socket_info(**kwargs):
@@ -165,8 +171,9 @@ def merge_socket_info(**kwargs):
     """
     res = []
     for k, v in kwargs.items():
+        v = str2bytes(v)
         v = v.replace(SOCKETMAPPER, SOCKETESCAPE+SOCKETMAPPER)
-        res.append('{}{}{}'.format(k, SOCKETMAPPER, v))
+        res.append(str2bytes(k) + SOCKETMAPPER + v)
     return SOCKETSEPARATOR.join([
                 item.replace(SOCKETSEPARATOR,
                                 SOCKETESCAPE+SOCKETSEPARATOR) for item in res])
@@ -185,7 +192,7 @@ def is_reporting(data):
     lrep = len(REPORTKEY)
     lmap = len(SOCKETMAPPER)
     lsep = len(SOCKETSEPARATOR)
-    PROOF = REPORTKEY + SOCKETMAPPER + '1'
+    PROOF = str2bytes(REPORTKEY) + SOCKETMAPPER + b'1'
     # only and just reporting flag
     if data == PROOF:
         return True
@@ -355,7 +362,7 @@ def int2hex(i, pad=0):
     if TWINKLETWINKLELITTLEINDIA:
         hx = hx[::-1]
     if pad > 1:
-        hx = padit(hx, pad, '\x00')
+        hx = padit(txt=hx, l=pad, ch=b'\x00')
     return hx
 
 def reverse_if_little_endian(bits):
@@ -372,19 +379,21 @@ def octify(b):
     b = b.zfill(((len(b)-1)//8+1)*8)
     return [b[i:i+8] for i in range(0, len(b), 8)]
 
-def padit(txt, l, ch='0'):
+def padit(txt, l, ch):
     """
     Pads with ``ch`` up to length ``l``, on the right is little endian
     or on the left if big
+    ``txt`` and ``ch`` must be the same type (bytes or str)
     """
     if TWINKLETWINKLELITTLEINDIA:
-        return txt + ch[0] * (l - len(txt))
+        return txt + ch * (l - len(txt))
     else:    
-        return ch[0] * (l - len(txt)) + txt
+        return ch * (l - len(txt)) + txt
 
-def fillit(txt, l, ch='0', right=True):
+def fillit(txt, l, ch, right=True):
     """
     Fills ``txt`` on the ``right`` with char ``ch`` up to ``l`` length
+    ``txt`` and ``ch`` must be the same type (bytes or str)
     """
     if right:
         return txt + ch*(l-len(txt))
@@ -396,7 +405,9 @@ def str2bytes(txt):
     Transforms whatever string or bytes into a ascii-bytes
     chain compatible with python 2 and 3
     """
-    if not isinstance(txt, bytes) and PYTHONVERSION == 3:
+    if isinstance(txt, int) and PYTHON3:
+        return bytes([txt])
+    elif not isinstance(txt, bytes) and PYTHON3:
         txt = bytes([ord(item) for item in txt])
     return txt
 
@@ -405,15 +416,21 @@ def str2ints(txt):
     Transforms whatever string or bytes into a int-bytes
     chain compatible with python 2 and 3
     """
-    if PYTHONVERSION == 3:
+    if PYTHON3:
         if isinstance(txt, bytes):
             return txt
         elif not hasattr(txt, '__iter__'):
             return bytes([txt])
         else:
             return bytes([ord(item) for item in txt])
-    elif PYTHONVERSION == 2:
+    else:
         return [ord(item) for item in txt]
+
+def bytes2str(byt):
+    if not isinstance(byt, (str, unicode)):
+        return str(byt.decode('utf-8'))
+    else:
+        return byt
 
 def ints2str(ints):
     """
@@ -428,10 +445,10 @@ def ints2bytes(ints):
     Transforms whatever int-bytes chain into a string or bytes
     compatible with python 2 and 3
     """
-    if PYTHONVERSION == 3:
+    if PYTHON3:
         if not hasattr(ints, '__iter__'):
             return bytes([ints])
         else:
             return bytes([x for x in ints])
-    elif PYTHONVERSION == 2:
+    else:
         return ints2str(ints)

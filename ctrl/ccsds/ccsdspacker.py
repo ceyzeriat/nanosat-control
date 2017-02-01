@@ -107,7 +107,7 @@ class CCSDSPacker(object):
         hds = {}
         hds.update(retprim[1])
         hds.update(retsec[1])
-        maybeAux = ''
+        maybeAux = b''
         hdx = {}
         retd = {}
         # header aux
@@ -244,13 +244,13 @@ class CCSDSPacker(object):
           in a format directly compatible with the database
         """
         if self.mode != 'telemetry':
-            return ('', {}) if retvalues else ''
+            return (b'', {}) if retvalues else b''
         pktCat = int(pktCat)
         if pktCat not in param_category.PACKETCATEGORIES.keys():
             raise ccsdsexception.CategoryMissing(pktCat)
         hdxsz = param_category.PACKETCATEGORYSIZES[pktCat]
         if hdxsz == 0:
-            return ('', {}) if retvalues else ''
+            return (b'', {}) if retvalues else b''
         bits, retvals = self._pack_something(
                             thelist=param_category.PACKETCATEGORIES[pktCat],
                             allvalues=values,
@@ -274,9 +274,9 @@ class CCSDSPacker(object):
           in a format directly compatible with the database
         """
         if self.mode != 'telemetry':
-            return ('', {}) if retvalues else ''
+            return (b'', {}) if retvalues else b''
         # encode the data here TBD
         if retvalues:
-            return '', {}
+            return b'', {}
         else:
-            return ''
+            return b''

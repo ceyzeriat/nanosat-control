@@ -118,7 +118,7 @@ class Cm(object):
 
         Kwargs: the input parameters of the command
         """
-        rep = ""
+        rep = b""
         inputs = {}
         for param in self._params:
             if param.name not in kwargs.keys():

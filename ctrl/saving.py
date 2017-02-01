@@ -121,7 +121,7 @@ def init_saving():
     SAVE_TRANS = SaveTrans(port=core.SAVINGPORT[0],
                             nreceivermax=len(core.SAVINGPORTLISTENERS),
                             start=True, portname=core.SAVINGPORT[1])
-    SAVE_REC_LISTEN = SaveRec(port=core.LISTENINGPORT, name=core.SAVINGNAME,
+    SAVE_REC_LISTEN = SaveRec(port=core.LISTENINGPORT[0], name=core.SAVINGNAME,
                                 connect=True, connectWait=0.5,
                                 portname=core.LISTENINGPORT[1])
     save_running = True

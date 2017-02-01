@@ -31,7 +31,10 @@ from ctrl import controlling
 from ctrl import c
 from ctrl import c0
 from ctrl import c1
+from ctrl import db
 
 
 print("Initialization...")
-controlling.init_controlling()
+controlling.init_control()
+db.init_DB()
+

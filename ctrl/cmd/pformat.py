@@ -95,7 +95,8 @@ class PFormat(object):
         * value: must be a single value to be checked
         """
         if hasattr(value, "__iter__"):
-            return False
+            if len(value) > 1:
+                return False
         if self.typ == 'str':
             if not isinstance(value, str):
                 return False
@@ -120,9 +121,9 @@ class PFormat(object):
 
     def _tohex(self, value):
         if self.typ == 'str':
-            return value
+            return core.str2bytes(value)
         elif self.typ == 'uint':
-            return core.padit(core.int2hex(value), self.bits // 8, '\x00')
+            return core.int2hex(value, pad=self.bits // 8)
         elif self.typ == 'int':
             raise cmdexception.NotImplemented()
         elif self.typ == 'float':

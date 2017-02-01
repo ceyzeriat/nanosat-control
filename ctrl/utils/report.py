@@ -47,7 +47,7 @@ class Report(object):
         * params (iterable of str): the required parameters in the
           message
         """
-        self.key = str(key)[:15]
+        self.key = str(key)[:25]
         self.message = str(message)
         self.params = tuple(params)
 

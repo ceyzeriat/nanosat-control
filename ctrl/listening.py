@@ -29,6 +29,7 @@ import time
 import glob
 from .soc import SocTransmitter
 from .soc import SocReceiver
+from .utils import REPORTS
 from .utils import core
 from .utils import ctrlexception
 from .rfcheckoutbox import RFCheckoutbox
@@ -130,7 +131,7 @@ def init_listening(antenna):
     LISTEN_TRANS = ListenTrans(port=core.LISTENINGPORT[0],
                                 nreceivermax=len(core.LISTENINGPORTLISTENERS),
                                 start=True, portname=core.LISTENINGPORT[1])
-    LISTEN_REC_CONTROL = ListenRec(port=core.CONTROLLINGPORT,
+    LISTEN_REC_CONTROL = ListenRec(port=core.CONTROLLINGPORT[0],
                                 name=core.LISTENINGNAME, connect=True,
                                 connectWait=0.5,
                                 portname=core.CONTROLLINGPORT[1])

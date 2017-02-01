@@ -144,7 +144,7 @@ class Parameter(object):
                 if not item in self.rng.keys():
                     return (False, value) if withvalue else False
             return (True, value) if withvalue else True
-        if not hasattr(value, "__iter__"):
+        if not hasattr(value, "__iter__") or core.isStr(value):
             # split input string into ['a', 'b', ...]
             if self.typ.typ == 'str':
                 if not isinstance(value, str):
@@ -182,10 +182,10 @@ class Parameter(object):
         valid, value = self.is_valid(value, withvalue=True)
         if valid is False:
             raise cmdexception.InvalidParameterValue(self.name, value)
-        ret = ""
+        ret = b""
         if self._isdict:
             for item in value:
-                ret += self.rng[item]
+                ret += core.str2bytes(self.rng[item])
         else:
             for item in value:
                 ret += self.typ._tohex(item)
