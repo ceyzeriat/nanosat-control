@@ -136,6 +136,7 @@ def close_saving():
     global save_running
     save_running = False
     SAVE_TRANS.close()
+    SAVE_REC_LISTEN.stop_connectLoop()
     SAVE_REC_LISTEN.close()
     SAVE_TRANS = None
     SAVE_REC_LISTEN = None
