@@ -81,7 +81,7 @@ class Callsign(object):
         if self.digi:
             encoded_ssid |= 0x80
         # Pad the callsign to 6 characters
-        _callsign = core.str2ints(core.fillit(_callsign, l=6, ch=' '))
+        _callsign = core.str2ints(core.fillit(_callsign, l=6, ch=b' '))
 
         encoded_callsign = core.ints2bytes([p << 1 for p in _callsign])
 

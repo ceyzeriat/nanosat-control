@@ -171,6 +171,8 @@ def merge_socket_info(**kwargs):
     """
     res = []
     for k, v in kwargs.items():
+        if not isStr(v):
+            v = str(v)
         v = str2bytes(v)
         v = v.replace(SOCKETMAPPER, SOCKETESCAPE+SOCKETMAPPER)
         res.append(str2bytes(k) + SOCKETMAPPER + v)
