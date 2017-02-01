@@ -123,7 +123,6 @@ def init_watch():
     WATCH_TRANS = WatchTrans(port=core.WATCHINGPORT[0],
                                 nreceivermax=len(core.WATCHINGPORTLISTENERS),
                                 start=True, portname=core.WATCHINGPORT[1])
-<<<<<<< HEAD
     WATCH_REC_LISTEN = WatchListenRec(port=core.LISTENINGPORT[0],
                                 name=core.WATCHINGNAME, connect=True,
                                 connectWait=0.5, portname=core.LISTENINGPORT[1])
@@ -131,15 +130,6 @@ def init_watch():
                                 name=core.WATCHINGNAME, connect=True,
                                 connectWait=0.5, portname=core.CONTROLLINGPORT[1])
     WATCH_REC_SAVE = WatchSavingRec(port=core.SAVINGPORT[0],
-=======
-    WATCH_REC_LISTEN = WatchSavingRec(port=core.LISTENINGPORT[0],
-                                name=core.WATCHINGNAME, connect=True,
-                                connectWait=0.5, portname=core.WATCHINGPORT[1])
-    WATCH_REC_CONTROL = WatchControlRec(port=core.CONTROLLINGPORT[0],
-                                name=core.WATCHINGNAME, connect=True,
-                                connectWait=0.5, portname=core.WATCHINGPORT[1])
-    WATCH_REC_SAVE = WatchListenRec(port=core.SAVINGPORT[0],
->>>>>>> 59822ac11f94076bcdc192e1a88632bb0b0af195
                                 name=core.WATCHINGNAME, connect=True,
                                 connectWait=0.5, portname=core.SAVINGPORT[1])
     watch_running = True
