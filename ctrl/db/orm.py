@@ -127,6 +127,7 @@ def save_TM_to_DB(hd, hdx, data):
     # saving the aux header
     tbl = param_category.TABLECATEGORY[hd[param_ccsds.PACKETCATEGORY.name]]
     tbl = globals()[tbl]
+    hdx = dict(hdx)
     hdx['telemetry_packet'] = TM.id
     DB.add(tbl(**hdx))
     DB.commit()

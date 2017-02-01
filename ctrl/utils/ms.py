@@ -33,7 +33,7 @@ __all__ = ['Ms']
 
 class Ms(int):
     def __init__(self, v):
-        super(int, self).__init__(v)
+        super(int, self).__init__()
         self._hour = self // 3600000
         self._min = (self % 3600000) // 60000
         self._sec = (self % 60000) // 1000

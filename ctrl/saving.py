@@ -78,7 +78,7 @@ class SaveRec(SocReceiver):
         pk = blobparser.grab_first_packet(start=start)
         while pk is not None:
             inputs['data'] = pk
-            process_incoming(inputs)
+            process_incoming(**inputs)
             start += len(pk)
             pk = blobparser.grab_first_packet(start=start)
         return
@@ -91,7 +91,7 @@ def process_incoming(t, path, data):
     """
     if len(glob.glob(path)) == 0:
         raise ctrlexception.PacketFileMissing(path)
-    f = open(path, mode='r')
+    f = open(path, mode='rb')
     dd = f.read()
     f.close()
     if not dd == data:
@@ -118,6 +118,8 @@ def init_saving():
     global SAVE_TRANS
     global SAVE_REC_LISTEN
     global save_running
+    if save_running:
+        return
     SAVE_TRANS = SaveTrans(port=core.SAVINGPORT[0],
                             nreceivermax=len(core.SAVINGPORTLISTENERS),
                             start=True, portname=core.SAVINGPORT[1])
@@ -134,6 +136,8 @@ def close_saving():
     global SAVE_TRANS
     global SAVE_REC_LISTEN
     global save_running
+    if not save_running:
+        return
     save_running = False
     SAVE_TRANS.close()
     SAVE_REC_LISTEN.stop_connectLoop()

@@ -36,15 +36,16 @@ __all__ = ['PACKETCATEGORIES', 'CATEGORYREGISTRATION', 'PACKETCATEGORYSIZES',
 
 
 CATEGORYREGISTRATION = {0: '0000',
-                        1: '0010',
-                        2: '0011',
-                        3: '0100',
-                        4: '0101',
-                        5: '0110',
-                        6: '0111',
-                        7: '1000',
-                        8: '1001',
-                        9: '1010'}
+                        1: '0001',
+                        2: '0010',
+                        3: '0011',
+                        4: '0100',
+                        5: '0101',
+                        6: '0110',
+                        7: '0111',
+                        8: '1000',
+                        9: '1001',
+                        10: '1010'}
 
 TELECOMMANDID = CCSDSKey(   name='telecommand_id',
                             start=0,
@@ -65,10 +66,10 @@ ERRORCODE = CCSDSKey(       name='error_code',
                             fctpack=core.int2bin)
 
 
-CATEGORY_0 = []
+CATEGORY_0 = []  # None
 CATEGORY_1 = [TELECOMMANDID, PACKETIDMIRROR, ERRORCODE]
 CATEGORY_2 = [TELECOMMANDID, PACKETIDMIRROR, ERRORCODE]
-CATEGORY_3 = []
+CATEGORY_3 = []  # None
 CATEGORY_4 = []
 CATEGORY_5 = []
 CATEGORY_6 = []
@@ -80,6 +81,7 @@ CATEGORY_9 = []
 ACKCATEGORIES = [0, 1, 2]
 
 
+# header aux
 PACKETCATEGORIES = {0: CATEGORY_0,
                     1: CATEGORY_1,
                     2: CATEGORY_2,
@@ -100,7 +102,7 @@ for k, cat in PACKETCATEGORIES.items():
 TABLECATEGORY =    {0: 'TmcatRcpAcknowledgement',
                     1: 'TmcatFmtAcknowledgement',
                     2: 'TmcatExeAcknowledgement',
-                    3: '',
+                    3: 'TmcatDebug',
                     4: '',
                     5: '',
                     6: '',

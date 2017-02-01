@@ -48,26 +48,27 @@ class CCSDSBlob(object):
         """
         self.blob = blob
         pk = CCSDSPacker(mode=mode)
-        vals = {param_ccsds.PID.name: '', param_ccsds.PACKETCATEGORY.name: '0'}        
+        vals = {param_ccsds.PID.name: '', param_ccsds.PACKETCATEGORY.name: '0'}
         # building of possible packet start flags
         self.auth_bits = []
         for item in param_apid.PIDREGISTRATION.keys():
             vals[param_ccsds.PID.name] = item
-            self.auth_bits.append(pk.pack_primHeader(
-                                    values=vals, datalen=0, retvalues=False,
-                                    retdbvalues=False, withPacketID=False
-                                )[:param_ccsds.AUTHPACKETLENGTH])
+            possible_head = core.hex2bin(
+                                pk.pack_primHeader(values=vals, datalen=0,
+                                        retvalues=False, retdbvalues=False,
+                                        withPacketID=False)[:2]
+                                    )[:param_ccsds.AUTHPACKETLENGTH]
+            self.auth_bits.append(possible_head)
 
     def find(self, start=0):
         """
         Finds the possible start of a packet in the blob.
         Returns the index of the start or None if not found
-        Does not check the validity, see ``find_first``
 
         Args:
         * start (int): from where the search should start
         """
-        if self.blob[start:start+2] == '':
+        if self.blob[start:start+2] == b'':
             return 0
         for i in range(len(self.blob[start:])):
             if core.hex2bin(self.blob[start+i:start+i+2])\
@@ -97,24 +98,24 @@ class CCSDSBlob(object):
         Args:
         * start (int): from where the search should start
         """
-        start += self.find(start=start)
-        if start is None:
+        idx = self.find(start=start)
+        if idx is None:
             return None
+        start += idx
+        try:
+            length = self.grab_data_length(start=start)
+        except:
+            # issue, maybe the packet is cut before the data length bit
+            return None
+        # bullshit length, just restart search further
+        if length < param_ccsds.HEADER_P_SIZE:
+            return self.find_first_packet(start=start+1)
+        # bang on, found a new start where you expected it
+        elif self.find(start=start+param_ccsds.HEADER_P_SIZE+length) == 0:
+            return slice(start, start + param_ccsds.HEADER_P_SIZE + length)
+        # try again
         else:
-            try:
-                length = self.grab_data_length(start=start)
-            except:
-                # issue, maybe the packet is cut before the data length bit
-                return None
-            # bullshit length, just restart search further
-            if length < param_ccsds.HEADER_P_SIZE:
-                return self.find_first_packet(start=start+1)
-            # bang on, found a new start where you expected it
-            elif self.find(start=start+param_ccsds.HEADER_P_SIZE+length) == 0:
-                return slice(start, start + param_ccsds.HEADER_P_SIZE + length)
-            # try again
-            else:
-                return self.find_first_packet(start=start+1)
+            return self.find_first_packet(start=start+1)
 
     def grab_first_packet(self, start=0):
         """

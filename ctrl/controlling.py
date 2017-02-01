@@ -76,6 +76,8 @@ def init_control():
     """
     global CONTROL_TRANS
     global control_running
+    if control_running:
+        return
     CONTROL_TRANS = ControlTrans(port=core.CONTROLLINGPORT[0],
                             nreceivermax=len(core.CONTROLLINGPORTLISTENERS),
                             start=True, portname=core.CONTROLLINGPORT[1])
@@ -88,6 +90,8 @@ def close_control():
     """
     global CONTROL_TRANS
     global control_running
+    if not control_running:
+        return
     control_running = False
     CONTROL_TRANS.close()
     CONTROL_TRANS = None

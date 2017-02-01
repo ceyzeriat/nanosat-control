@@ -120,6 +120,8 @@ def init_watch():
     global WATCH_REC_CONTROL
     global WATCH_REC_SAVE
     global watch_running
+    if watch_running:
+        return
     WATCH_TRANS = WatchTrans(port=core.WATCHINGPORT[0],
                                 nreceivermax=len(core.WATCHINGPORTLISTENERS),
                                 start=True, portname=core.WATCHINGPORT[1])
@@ -144,6 +146,8 @@ def close_watch():
     global WATCH_REC_CONTROL
     global WATCH_REC_SAVE
     global watch_running
+    if not watch_running:
+        return
     watch_running = False
     WATCH_TRANS.close()
     WATCH_REC_LISTEN.stop_connectLoop()
