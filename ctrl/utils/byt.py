@@ -32,6 +32,7 @@ __all__ = ['Byt']
 
 
 if core.PYTHON3:
+
     class Byt(bytes):
         def __new__(cls, value):
             if isinstance(value, str):
@@ -69,17 +70,54 @@ if core.PYTHON3:
             Returns the list of ints
             """
             return list(self.iterInts())
+
+        def str(self):
+            """
+            Returns the bytes as unicode
+            """
+            if not hasattr(self, '_str'):
+                self._str = self.decode('UTF-8')
+            return self._str
+
 else:
     class Byt(str):
         def __new__(cls, value):
             if isinstance(value[0], int):
                 # It's a list of integers
-                value = ''.join([chr(x) for x in value])
+                value = ''.join([chr(item) for item in value])
             return super(Byt, cls).__new__(cls, value)
 
-        def itemint(self, index):
-            return ord(self[index])
+        def __getitem__(self, pos):
+            return Byt(super(Byt, self).__getitem__(pos))
 
-        def iterint(self):
-            for x in self:
-                yield ord(x)
+        def __getslice__(self, deb, fin):
+            return Byt(super(Byt, self).__getitem__(deb, fin))
+
+        def __str__(self):
+            return self
+
+        def __repr__(self):
+            return "{}('{}')".format(self.__class__.__name__, self)
+
+        def __iter__(self):
+            for ch in super(Byt, self).__iter__():
+                yield Byt(ch)
+
+        def iterInts(self):
+            """
+            Returns the iterator of ints
+            """
+            for ch in super(Byt, self).__iter__():
+                yield ord(ch)
+
+        def ints(self):
+            """
+            Returns the list of ints
+            """
+            return list(self.iterInts())
+
+        def str(self):
+            """
+            Returns the bytes as unicode
+            """
+            return unicode(self)
