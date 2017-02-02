@@ -31,6 +31,8 @@ from ctrl import saving
 from ctrl import db
 
 
+core.prepare_terminal('Save')
 print("Initialization...")
 saving.init_saving()
 db.init_DB()
+print("Done")

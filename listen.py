@@ -32,8 +32,10 @@ from ctrl import listening
 from ctrl import db
 
 
+core.prepare_terminal('Listen')
 print("Initialization...")
 listening.init_listening(antenna=core.ANTENNALISTENED)
+print("Done\n")
 
 print("Starting...")
 while 1:

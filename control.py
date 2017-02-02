@@ -39,3 +39,9 @@ print("Initialization...")
 controlling.init_control()
 db.init_DB()
 print("Done")
+
+time.sleep(0.5)
+
+core.prepare_terminal('Control')
+print(core.ART)
+
