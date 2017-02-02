@@ -26,6 +26,7 @@
 
 
 import socket
+from ..utils import Byt
 
 
 __all__ = ['Kiss']
@@ -54,7 +55,7 @@ class Kiss(object):
     def _read_handler(self, read_bytes=None):
         read_bytes = read_bytes or kiss.READ_BYTES
         read_data = self.interface.recv(read_bytes)
-        if read_data == b'':
+        if read_data == Byt():
             raise Exception('Socket Closed')
         return read_data
 
@@ -76,7 +77,7 @@ class Kiss(object):
         :param frame: Frame to write.
         """
         frame_escaped = kiss.escape_special_codes(frame)
-        frame_kiss = b''.join([
+        frame_kiss = Byt().join([
             kiss.FEND,
             kiss.DATA_FRAME,
             frame_escaped,
@@ -95,13 +96,13 @@ class Kiss(object):
         :return: List of frames (if readmode=False).
         :rtype: list
         """
-        read_buffer = b''
+        read_buffer = Byt()
 
         read_bytes = read_bytes or kiss.READ_BYTES
         
         while 1:
             read_data = self.interface.recv(read_bytes)
-            if read_data == b'':
+            if read_data == Byt():
                 raise Exception('Socket Closed')
 
             if read_data is not None and len(read_data):
@@ -125,8 +126,8 @@ class Kiss(object):
                     # Closing FEND found
                     if split_data[0]:
                         # Partial frame continued, otherwise drop
-                        frames.append(b''.join([read_buffer, split_data[0]]))
-                        read_buffer = b''
+                        frames.append(Byt().join([read_buffer, split_data[0]]))
+                        read_buffer = Byt()
                     # Opening FEND found
                     else:
                         frames.append(read_buffer)
@@ -135,10 +136,10 @@ class Kiss(object):
                 elif len_fend >= 3:
                     # Iterate through split_data and extract just the frames.
                     for i in range(0, len_fend - 1):
-                        _str = b''.join([read_buffer, split_data[i]])
+                        _str = Byt().join([read_buffer, split_data[i]])
                         if _str:
                             frames.append(_str)
-                            read_buffer = b''
+                            read_buffer = Byt()
                     if split_data[len_fend - 1]:
                         read_buffer = split_data[len_fend - 1]
 

@@ -26,6 +26,7 @@
 
 
 from ..utils import core
+from ..utils import Byt
 from . import utils
 from . import kissexception
 
@@ -41,8 +42,8 @@ class Callsign(object):
         Args:
         * callsign (str): the callsign
         """
-        self.callsign = b''
-        self.ssid = b'0'
+        self.callsign = Byt()
+        self.ssid = Byt('0')
         self.digi = False
         self.parse(callsign)
 
@@ -81,7 +82,7 @@ class Callsign(object):
         if self.digi:
             encoded_ssid |= 0x80
         # Pad the callsign to 6 characters
-        _callsign = core.str2ints(core.fillit(_callsign, l=6, ch=b' '))
+        _callsign = core.str2ints(core.fillit(_callsign, l=6, ch=Byt(' ')))
 
         encoded_callsign = core.ints2bytes([p << 1 for p in _callsign])
 
@@ -95,14 +96,14 @@ class Callsign(object):
         Args:
         * callsign (str): ASCII-Encoded APRS Callsign
         """
-        callsign = core.str2bytes(callsign)
-        if b'-' in callsign:
-            _callsign, ssid = callsign.split(b'-')
+        callsign = Byt(callsign)
+        if Byt('-') in callsign:
+            _callsign, ssid = callsign.split(Byt('-'))
         else:
             _callsign = callsign
-            ssid = b'0'
+            ssid = Byt(0)
 
-        if _callsign[-1] == b'*':
+        if _callsign[-1] == Byt('*'):
             _callsign = _callsign[:-1]
             self.digi = True
 

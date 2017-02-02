@@ -29,6 +29,7 @@ from nose.tools import raises
 from ctrl.ccsds.ccsdskey import CCSDSKey
 from ctrl.ccsds import ccsdsexception
 from ctrl.utils import core
+from ctrl.utils import Byt
 
 
 def test_ccsdskey_base():

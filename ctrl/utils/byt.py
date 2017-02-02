@@ -34,7 +34,7 @@ __all__ = ['Byt']
 if core.PYTHON3:
 
     class Byt(bytes):
-        def __new__(cls, value):
+        def __new__(cls, value=''):
             if isinstance(value, str):
                 # It's a unicode string:
                 value = value.encode('ISO-8859-1')
@@ -82,7 +82,7 @@ if core.PYTHON3:
 else:
 
     class Byt(str):
-        def __new__(cls, value):
+        def __new__(cls, value=''):
             if isinstance(value, int):
                 value = chr(value)
             if isinstance(value[0], int):

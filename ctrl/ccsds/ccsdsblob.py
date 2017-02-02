@@ -27,6 +27,7 @@
 
 from . import param_ccsds
 from ..utils import core
+from ..utils import Byt
 from . import ccsdsexception as exc
 from ..param import param_apid
 from .ccsdspacker import CCSDSPacker
@@ -68,7 +69,7 @@ class CCSDSBlob(object):
         Args:
         * start (int): from where the search should start
         """
-        if self.blob[start:start+2] == b'':
+        if self.blob[start:start+2] == Byt():
             return 0
         for i in range(len(self.blob[start:])):
             if core.hex2bin(self.blob[start+i:start+i+2])\

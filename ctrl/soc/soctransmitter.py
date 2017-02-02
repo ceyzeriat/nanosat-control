@@ -29,6 +29,7 @@ import socket
 from threading import Thread
 import select
 from ..utils import core
+from ..utils import Byt
 
 
 __all__ = ['SocTransmitter']
@@ -99,8 +100,8 @@ class SocTransmitter(object):
             receiver.getpeername()
         except:
             return False
-        receiver.sendall(core.str2bytes(txt))
-        if self._receive(receiver, l=1, timeout=0.1) == b'0':
+        receiver.sendall(Byt(txt))
+        if self._receive(receiver, l=1, timeout=0.1) == Byt(0):
             return True
         else:
             self.receivers.pop(name)
@@ -126,7 +127,7 @@ class SocTransmitter(object):
         """
         if not self.running:
             return False
-        if txt == b'':
+        if txt == Byt():
             return None
         ret = {}
         for name, receiver in list(self.receivers.items()):
@@ -137,7 +138,7 @@ class SocTransmitter(object):
         """
         Forces all receivers to drop listening
         """
-        self.tell(b'__die__')
+        self.tell(Byt('__die__'))
         self.receivers = {}
 
     def close(self):
@@ -191,10 +192,10 @@ def accept_receivers(self):
             receiver.close()
             break
         if self.nreceivers < self._nreceivermax:
-            receiver.sendall(b'0')
+            receiver.sendall(Byt(0))
             name = self._receive(receiver, l=15, timeout=5.)
             if name is not None:
-                receiver.sendall(b'0')
+                receiver.sendall(Byt(0))
                 self.receivers[name] = receiver
                 self._newconnection(name)
         else:

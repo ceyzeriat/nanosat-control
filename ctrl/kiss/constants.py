@@ -25,6 +25,9 @@
 ###############################################################################
 
 
+from ..utils import Byt
+
+
 #SERIAL_TIMEOUT = 0.01
 #READ_BYTES = 1000
 
@@ -32,35 +35,35 @@
 # http://en.wikipedia.org/wiki/KISS_(TNC)#Special_Characters
 # http://k4kpk.com/content/notes-aprs-kiss-and-setting-tnc-x-igate-and-digipeater
 # Frames begin and end with a FEND/Frame End/0xC0 byte
-FEND = b'\xc0'  # Marks START and END of a Frame
-FESC = b'\xdb'  # Escapes FEND and FESC bytes within a frame
+FEND = Byt('\xc0')  # Marks START and END of a Frame
+FESC = Byt('\xdb')  # Escapes FEND and FESC bytes within a frame
 
 # Transpose Bytes: Used within a frame-
 # "Transpose FEND": An FEND after an FESC (within a frame)-
 # Sent as FESC TFEND
-TFEND = b'\xdc'
+TFEND = Byt('\xdc')
 # "Transpose FESC": An FESC after an FESC (within a frame)-
 # Sent as FESC TFESC
-TFESC = b'\xdd'
+TFESC = Byt('\xdd')
 
 # "FEND is sent as FESC, TFEND"
 # 0xC0 is sent as 0xDB 0xDC
-FESC_TFEND = b''.join([FESC, TFEND])
+FESC_TFEND = Byt().join([FESC, TFEND])
 
 # "FESC is sent as FESC, TFESC"
 # 0xDB is sent as 0xDB 0xDD
-FESC_TFESC = b''.join([FESC, TFESC])
+FESC_TFESC = Byt().join([FESC, TFESC])
 
 # KISS Command Codes
 # http://en.wikipedia.org/wiki/KISS_(TNC)#Command_Codes
-DATA_FRAME = b'\x00'
-SLOT_TIME = b'\x03'
-#TX_DELAY = b'\x01'
-#PERSISTENCE = b'\x02'
-#TX_TAIL = b'\x04'
-#FULL_DUPLEX = b'\x05'
-#SET_HARDWARE = b'\x06'
-#RETURN = b'\xFF'
+DATA_FRAME = Byt('\x00')
+SLOT_TIME = Byt('\x03')
+#TX_DELAY = Byt('\x01')
+#PERSISTENCE = Byt('\x02')
+#TX_TAIL = Byt('\x04')
+#FULL_DUPLEX = Byt('\x05')
+#SET_HARDWARE = Byt('\x06')
+#RETURN = Byt('\xFF')
 
 
 #DEFAULT_KISS_CONFIG_VALUES = {
@@ -71,10 +74,10 @@ SLOT_TIME = b'\x03'
 #    'FULL_DUPLEX': 0,
 #}
 
-#KISS_ON = b'KISS $0B'
-#KISS_OFF = b''.join([FEND, b'\xff', FEND, FEND])
+#KISS_ON = Byt('KISS $0B')
+#KISS_OFF = Byt().join([FEND, Byt('\xff'), FEND, FEND])
 
-#NMEA_HEADER = b''.join([FEND, b'\xf0', b'$'])
+#NMEA_HEADER = Byt().join([FEND, Byt('\xf0'), Byt('$')])
 
 
 
@@ -82,7 +85,7 @@ SLOT_TIME = b'\x03'
 #APRSIS_FILTER_PORT = 14580
 #APRSIS_RX_PORT = 8080
 
-#APRSIS_SW_VERSION = b'APRS Python Module'
+#APRSIS_SW_VERSION = Byt('APRS Python Module')
 #APRSIS_URL = 'http://srvr.aprs-is.net:8080'
 
 #APRSIS_HTTP_HEADERS = {

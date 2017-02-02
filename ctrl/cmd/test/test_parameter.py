@@ -30,6 +30,8 @@ from ctrl.cmd.parameter import Parameter
 from ctrl.cmd import cmdexception
 from ctrl.cmd.param_commands import RANGESEPARATOR
 from ctrl.utils import core
+from ctrl.utils import Byt
+
 
 def ftup(x, y):
     return "{}{}{}".format(x, RANGESEPARATOR, y)
@@ -57,8 +59,8 @@ def test_param_str_tuple():
     assert p.is_valid('\x00\x00') == False
     assert p.is_valid(['\x10'], withvalue=True)[0] == False
     assert p.is_valid(['\x04'], withvalue=True) == (True, ['\x04'])
-    assert p.tohex('\x04') == b'\x04'
-    assert p.tohex(['\x02']) == b'\x02'
+    assert p.tohex('\x04') == Byt('\x04')
+    assert p.tohex(['\x02']) == Byt('\x02')
 
 def test_param_str_list():
     p = Parameter('hop', 'blah', [0, 1, 2, 4], 'str', 2)
@@ -71,8 +73,8 @@ def test_param_str_list():
     assert p.is_valid(['\x01', '\x02', '\x00']) == False
     assert p.is_valid(['\x03', '\x01'], withvalue=True)[0] == False
     assert p.is_valid('\x04\x00', withvalue=True) == (True, ['\x04', '\x00'])
-    assert p.tohex(['\x04', '\x01']) == b'\x04\x01'
-    assert p.tohex('\x01\x02') == b'\x01\x02'
+    assert p.tohex(['\x04', '\x01']) == Byt('\x04\x01')
+    assert p.tohex('\x01\x02') == Byt('\x01\x02')
 
 def test_param_uint_tuple():
     p = Parameter('hop', 'blah', ftup(0,10), 'uint8', 1, None)
@@ -85,8 +87,8 @@ def test_param_uint_tuple():
     assert p.is_valid([1.0]) == False
     assert p.is_valid([12.0], withvalue=True)[0] == False
     assert p.is_valid([0], withvalue=True) == (True, [0])
-    assert p.tohex(3) == b'\x03'
-    assert p.tohex(10) == b'\x0A'
+    assert p.tohex(3) == Byt('\x03')
+    assert p.tohex(10) == Byt('\x0A')
 
 def test_param_uint_list():
     p = Parameter('hop', 'blah', [0, 1, 2, 4], 'uint8', ftup(2,3), None)
@@ -102,15 +104,15 @@ def test_param_uint_list():
     assert p.is_valid([0, 3]) == False
     assert p.is_valid([2.0, 1], withvalue=True)[0] == False
     assert p.is_valid([4, 0], withvalue=True) == (True, [4, 0])
-    assert p.tohex([4, 1]) == b'\x04\x01'
-    assert p.tohex([1, 0]) == b'\x01\x00'
+    assert p.tohex([4, 1]) == Byt('\x04\x01')
+    assert p.tohex([1, 0]) == Byt('\x01\x00')
 
 def test_param_list():
     p = Parameter('hop', 'blah', ftup(0,65535), 'uint16', 2, None)
     core.TWINKLETWINKLELITTLEINDIA = True
-    assert p.tohex([4, 260]) == b'\x04\x00\x04\x01'
+    assert p.tohex([4, 260]) == Byt('\x04\x00\x04\x01')
     core.TWINKLETWINKLELITTLEINDIA = False
-    assert p.tohex([4, 260]) == b'\x00\x04\x01\x04'
+    assert p.tohex([4, 260]) == Byt('\x00\x04\x01\x04')
 
 def test_param_dict():
     p = Parameter('hop', 'blah', {'a': '\x10', 'b': '\x45'}, size=2)
@@ -121,7 +123,7 @@ def test_param_dict():
     assert p.is_valid(['a', 'c']) == False
     assert p.is_valid(['a', 'a', 'c']) == False
     assert p.is_valid(['b']) == False
-    assert p.tohex(['a', 'b']) == b'\x10\x45'
+    assert p.tohex(['a', 'b']) == Byt('\x10\x45')
 
 def test_param_dict_flexsize():
     p = Parameter('hop', 'blah', {'a': '\x10', 'b': '\x45'}, size=ftup(2,3))
@@ -135,7 +137,7 @@ def test_param_dict_flexsize():
     assert p.is_valid(['a', 'a', 'b', 'c']) == False
     assert p.is_valid(['a', 'a', 'b', 'a']) == False
     assert p.is_valid(['b']) == False
-    assert p.tohex(['a', 'b']) == b'\x10\x45'
+    assert p.tohex(['a', 'b']) == Byt('\x10\x45')
 
 @raises(cmdexception.UnknownFormat)
 def test_command_UnknownFormat():

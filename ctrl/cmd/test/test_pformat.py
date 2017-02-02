@@ -28,6 +28,7 @@
 from nose.tools import raises
 from ctrl.cmd.pformat import PFormat
 from ctrl.cmd import cmdexception
+from ctrl.utils import Byt
 
 
 def test_pformat_parse():
@@ -50,8 +51,8 @@ def test_pformat_str():
     assert p.is_valid(32) == False
     assert p.is_valid('a') == True
     assert p.is_valid('\x01') == True
-    assert p._tohex('a') == b'a'
-    assert p._tohex('\x41') == b'A'
+    assert p._tohex('a') == Byt('a')
+    assert p._tohex('\x41') == Byt('A')
 
 def test_pformat_nostr():
     p = PFormat('int', 8)
@@ -73,8 +74,8 @@ def test_pformat_uint():
     assert p.is_valid(255) == True
     assert p.is_valid(0) == True
     assert p.is_valid(-1) == False
-    assert p._tohex(0) == b'\x00'
-    assert p._tohex(241) == b'\xf1'
+    assert p._tohex(0) == Byt('\x00')
+    assert p._tohex(241) == Byt('\xf1')
 
 def test_pformat_float():
     p = PFormat('float', 8)

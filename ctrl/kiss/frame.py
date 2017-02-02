@@ -28,6 +28,7 @@
 from . import utils
 from . import constants
 from ..utils import core
+from ..utils import Byt
 from .callsign import Callsign
 
 
@@ -39,31 +40,31 @@ class Frame(object):
         """
         Codes/decodes a KISS frame
         """
-        self.source = Callsign(core.str2bytes(source))\
-                        if source is not None else b''
-        self.destination = Callsign(core.str2bytes(destination))\
-                            if destination is not None else b''
-        self.path = list(map(Callsign, map(core.str2bytes, path)))\
+        self.source = Callsign(Byt(source))\
+                        if source is not None else Byt()
+        self.destination = Callsign(Byt(destination))\
+                            if destination is not None else Byt()
+        self.path = list(map(Callsign, map(Byt, path)))\
                         if path != [] else []
 
     def reinit(self):
-        self.source = Callsign(core.str2bytes(core.CSSOURCE))
-        self.destination = Callsign(core.str2bytes(core.CSDESTINATION))
+        self.source = Callsign(Byt(core.CSSOURCE))
+        self.destination = Callsign(Byt(core.CSDESTINATION))
         self.path = []
 
     def encode_kiss(self, text):
         """
         Encodes an Frame as KISS.
         """
-        self.text = core.str2bytes(text)
+        self.text = Byt(text)
         enc_frame = self.destination.encode_kiss() +\
                         self.source.encode_kiss() +\
-                        b''.join([path_call.encode_kiss()
+                        Byt().join([path_call.encode_kiss()
                                     for path_call in self.path])
         frame = enc_frame[:-1] +\
                     core.ints2bytes(core.str2ints(enc_frame[-1])[0] | 0x01) +\
                     constants.SLOT_TIME +\
-                    b'\xf0' +\
+                    Byt('\xf0') +\
                     self.text
         frame = utils.escape_special_codes(frame)
         return constants.FEND + constants.DATA_FRAME + frame + constants.FEND
@@ -73,7 +74,7 @@ class Frame(object):
         Parses and Extracts the components of an KISS-Encoded Frame.
         """
         # init
-        source, destination, text = b'', b'', b''
+        source, destination, text = Byt(), Byt(), Byt()
         # parse KISS away
         frame = utils.strip_df_start(frame)
         # recover special codes
