@@ -33,7 +33,7 @@ __all__ = ['Day']
 
 class Day(int):
     def __init__(self, v):
-        super(int, self).__init__(v)
+        super(int, self).__init__()
         d = time.gmtime((DATETIME_REF + self) * 86400)        
         self._year = d.tm_year
         self._month = d.tm_mon
