@@ -72,28 +72,33 @@ class Frame(object):
         """
         Parses and Extracts the components of an KISS-Encoded Frame.
         """
+        # init
+        source, destination, text = b'', b'', b''
+        # parse KISS away
         frame = utils.strip_df_start(frame)
+        # recover special codes
+        frame = utils.recover_special_codes(frame)
         frameints = core.str2ints(frame)
         frame_len = len(frameints)
-        if frame_len < 16:
-            return None
-        for idx, char in enumerate(frameints):
-            # Is address field length correct?
-            # Find the first ODD Byte followed by the next boundary:
-            if (char & 0x01
-                    and ((idx + 1) % 7) == 0):
-                i = (idx + 1) / 7
-                # Less than 2 callsigns?
-                if 1 < i < 11:
-                    # For frames <= 70 bytes
-                    if frame_len >= idx + 2:
-                        if (frameints[idx + 1] & 0x03 == 0x03 and
-                                frameints[idx + 2] in [0xf0, 0xcf]):
-                            text = frame[idx + 3:]
-                            destination = Callsign(frame[:7])
-                            source = Callsign(frame[7:])
-                            #self._extract_kiss_path(frame, i)
-                return source, destination, text
+        if frame_len > 16:
+            for idx, char in enumerate(frameints):
+                # Is address field length correct?
+                # Find the first ODD Byte followed by the next boundary:
+                if (char & 0x01 and ((idx + 1) % 7) == 0):
+                    i = (idx + 1) // 7
+                    # Less than 2 callsigns?
+                    if 1 < i < 11:
+                        # For frames <= 70 bytes
+                        if frame_len >= idx + 2:
+                            if (frameints[idx + 1] & 0x03 == 0x03 and
+                                    frameints[idx + 2] in [0xf0, 0xcf]):
+                                text = frame[idx + 3:]
+                                destination = Callsign(frame[:7])
+                                source = Callsign(frame[7:])
+                                #self._extract_kiss_path(frame, i)
+                    return source, destination, text
+        return source, destination, text
 
 
-Framer = Frame(source=core.CSSOURCE, destination=core.CSDESTINATION)
+if not core.JUSTALIB:
+    Framer = Frame(source=core.CSSOURCE, destination=core.CSDESTINATION)

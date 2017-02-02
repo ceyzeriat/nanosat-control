@@ -34,9 +34,10 @@ from .ccsdspacker import *
 from .ccsdsblob import *
 from .ccsdsunpacker import CCSDSUnPacker as _CCSDSUnPacker
 from .ccsdspacker import CCSDSPacker as _CCSDSPacker
+from ..utils.core import JUSTALIB as _JUSTALIB
 
-
-TCUnPacker = _CCSDSUnPacker(mode='tc')
-TMUnPacker = _CCSDSUnPacker(mode='tm')
-TMPacker = _CCSDSPacker(mode='tm')
-TCPacker = _CCSDSPacker(mode='tc')
+if not _JUSTALIB:
+    TCUnPacker = _CCSDSUnPacker(mode='tc')
+    TMUnPacker = _CCSDSUnPacker(mode='tm')
+    TMPacker = _CCSDSPacker(mode='tm')
+    TCPacker = _CCSDSPacker(mode='tc')

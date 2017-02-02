@@ -40,22 +40,23 @@ class RFCheckoutbox(object):
         self.soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.soc.connect((host, port))
-        self.timeout = core.RFCHECKOUTBOXTIMEOUT
-        self.length = core.RFCHECKOUTBOXLENGTH
+        self.timeout = float(core.RFCHECKOUTBOXTIMEOUT)
+        self.length = int(core.RFCHECKOUTBOXLENGTH)
 
     def in_waiting(self):
         return self.length
 
-    def read(self, size=-1):
+    def read(self, size=None):
         ready = select.select([self.soc], [], [], self.timeout)
         if ready[0]:
-            soc.recv(int(self.length))
+            data = self.soc.recv(self.length)
+            print('got:',data)
             return data
         else:
-            return ''
+            return
 
     def write(self, data):
-        if data != '':
+        if data != '' and data is not None:
             self.soc.sendall(data)
 
     def close(self):

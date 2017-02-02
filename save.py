@@ -28,7 +28,9 @@
 import time
 from ctrl.utils import core
 from ctrl import saving
+from ctrl import db
 
 
 print("Initialization...")
 saving.init_saving()
+db.init_DB()

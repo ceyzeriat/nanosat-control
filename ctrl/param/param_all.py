@@ -28,6 +28,9 @@
 # to avoid error at import if the DB or folders are not proper
 NOERRORATIMPORT = True
 
+# if you don't wanna execute anything at import and just use as a library
+JUSTALIB = False
+
 # which antenna are you using
 ANTENNALISTENED = 'checkoutbox'
 

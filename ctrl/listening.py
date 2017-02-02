@@ -80,13 +80,15 @@ def process_data(data):
     A callback function that saves the package and sends it
     over the TM socket
     """
+    if len(data) <= 0:
+        return
     now = core.now()
     name = now.strftime(core.TELEMETRYNAMEFORMAT)
     name = core.concat_dir(core.TELEMETRYDUMPFOLDER, name)
     if len(glob.glob(name)) > 0:
         name += ".{}".format(len(glob.glob(name))+1)
     # locally saved
-    f = open(name, mode='w')
+    f = open(name, mode='wb')
     f.write(data)
     f.close()
     # sends packets on the socket
@@ -128,6 +130,8 @@ def init_listening(antenna):
     global LISTEN_REC_CONTROL
     global ANTENNA
     global listen_running
+    if listen_running:
+        return
     LISTEN_TRANS = ListenTrans(port=core.LISTENINGPORT[0],
                                 nreceivermax=len(core.LISTENINGPORTLISTENERS),
                                 start=True, portname=core.LISTENINGPORT[1])
@@ -151,6 +155,8 @@ def close_listening():
     global LISTEN_REC_CONTROL
     global ANTENNA
     global listen_running
+    if not listen_running:
+        return
     listen_running = False
     LISTEN_TRANS.close()
     LISTEN_REC_CONTROL.stop_connectLoop()

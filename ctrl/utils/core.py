@@ -57,9 +57,16 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOME = os.path.expanduser("~")
 
 def concat_dir(*args):
+    """
+    Concatenates the path in ``args`` into a string-path
+    """
     return os.path.join(*args)
 
 def rel_dir(*args):
+    """
+    Concatenates the path in ``args`` into a relative
+    string-path from the package directory
+    """
     return concat_dir(ROOT, *args)
 
 TELEMETRYDUMPFOLDER = concat_dir(HOME, *TELEMETRYDUMPFOLDER)
@@ -73,9 +80,9 @@ if not os.path.exists(TELEMETRYDUMPFOLDER):
 try:
     f = open(rel_dir(*DBFILE), mode='r')
     DBENGINE = f.readline().strip()
+    f.close()
     assert len(DBENGINE) > 20
     assert DBENGINE[:13] == 'postgresql://'
-    f.close()
 except IOError:
     if NOERRORATIMPORT:
         print(ctrlexception.MissingDBServerFile(rel_dir(*DBFILE)))
@@ -88,6 +95,7 @@ try:
     CSSOURCE = f.readline().strip()
     f.close()
 except IOError:
+    CSSOURCE = None
     if NOERRORATIMPORT:
         print(ctrlexception.MissingSourceCallsign(rel_dir(*CSSOURCEFILE)))
     else:
@@ -99,6 +107,7 @@ try:
     CSDESTINATION = f.readline().strip()
     f.close()
 except IOError:
+    CSDESTINATION = None
     if NOERRORATIMPORT:
         print(ctrlexception.MissingDestinationCallsign(rel_dir(*CSDESTFILE)))
     else:
@@ -135,8 +144,8 @@ def camelize_singular(txt):
     Produce a 'camelized' and singular class name.
     e.g. 'the_underscores' -> 'TheUnderscore'
     """
-    camelize = str(txt[0].upper() + \
-            re.sub(r'_([a-z])', lambda m: m.group(1).upper(), txt[1:]))
+    camelize = str(txt[0].upper() +\
+                    re.sub(r'_([a-z])', lambda m: m.group(1).upper(), txt[1:]))
     return inflect.engine().singular_noun(camelize)
 
 def get_pid():
@@ -171,6 +180,8 @@ def merge_socket_info(**kwargs):
     """
     res = []
     for k, v in kwargs.items():
+        if not isStr(v):
+            v = str(v)
         v = str2bytes(v)
         v = v.replace(SOCKETMAPPER, SOCKETESCAPE+SOCKETMAPPER)
         res.append(str2bytes(k) + SOCKETMAPPER + v)
@@ -276,22 +287,31 @@ def identity(v, *args, **kwargs):
     return v
 
 def setstr(txt, slc, rep):
+    """
+    Sets ``rep`` at ``slc`` slice in ``txt``
+    ``txt`` and ``rep`` must be the same type (bytes or str)
+    """
     return txt[:slc.start] + rep[0:slc.stop-slc.start] + txt[slc.stop:]
 
 def clean_name(txt):
+    """
+    Cleans the ``txt`` from non-alphanum characters; replaces the first
+    character by a word if it is a number
+    """
+    if not isinstance(txt, (str, unicode)):
+        raise TypeError("txt must be string or unicode")
     number = {"0": "zero", "1": "one", "2": "two", "3": "three", "4": "four",
               "5": "five", "6": "six", "7": "seven", "8": "eight", "9": "nine"}
     authorized = list(range(65, 91)) + list(range(97, 123))\
                     + list(range(48, 58)) + [95]
-    txt = "".join([letter if (ord(letter) in authorized) else ""
-                    for letter in str(txt)])
-    return (number[txt[0]] + "_" if ord(txt[0]) in number.keys()\
-                   else txt[0])\
+    txt = "".join([letter for letter in str(txt)
+                        if (ord(letter) in authorized)])
+    return number[txt[0]] + "_" if ord(txt[0]) in number.keys() else txt[0]\
             + txt[1:]
 
 def isStr(txt):
     """
-    Check if txt is valid string
+    Check if txt is valid string: (str, unicode, bytes)
     """
     return isinstance(txt, (str, unicode, bytes))
 
@@ -427,6 +447,9 @@ def str2ints(txt):
         return [ord(item) for item in txt]
 
 def bytes2str(byt):
+    """
+    Transforms bytes to str
+    """
     if not isinstance(byt, (str, unicode)):
         return str(byt.decode('utf-8'))
     else:

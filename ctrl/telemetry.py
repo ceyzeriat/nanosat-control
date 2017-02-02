@@ -53,9 +53,8 @@ class Telemetry(object):
         * packet (str): the raw packet to unpack
         * time_received (datetime+tz): the reception time of the packet
         """
-        cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet,    
-                                                        retdbvalues=True)
-        cls.hd['raw_file'] = core.RAWPACKETFILDER
+        cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet, retdbvalues=True)
+        cls.hd['raw_file'] = core.RAWPACKETFOLDER
         cls.hd['receiver_id'] = core.RECEIVERID
         cls.hd['time_received'] = time_received\
                 if isinstance(time_received, core.datetime.datetime)\
