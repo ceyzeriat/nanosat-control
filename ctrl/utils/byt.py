@@ -52,7 +52,7 @@ if core.PYTHON3:
             return self.decode('ISO-8859-1')
 
         def __repr__(self):
-            return "{}('{}')".format(self.__class__.__name__, self.decode('ISO-8859-1'))
+            return "{}('{}')".format(self.__class__.__name__, self.__str__())
 
         def __iter__(self):
             for ch in super(Byt, self).__iter__():
@@ -80,8 +80,11 @@ if core.PYTHON3:
             return self._str
 
 else:
+
     class Byt(str):
         def __new__(cls, value):
+            if isinstance(value, int):
+                value = chr(value)
             if isinstance(value[0], int):
                 # It's a list of integers
                 value = ''.join([chr(item) for item in value])
@@ -91,23 +94,33 @@ else:
             return Byt(super(Byt, self).__getitem__(pos))
 
         def __getslice__(self, deb, fin):
-            return Byt(super(Byt, self).__getitem__(deb, fin))
+            return Byt(super(Byt, self).__getslice__(deb, fin))
 
         def __str__(self):
-            return self
+            return super(Byt, self).__str__()
 
         def __repr__(self):
-            return "{}('{}')".format(self.__class__.__name__, self)
+            return "{}('{}')".format(self.__class__.__name__, self.__str__())
 
         def __iter__(self):
-            for ch in super(Byt, self).__iter__():
+            for ch in self.str():
                 yield Byt(ch)
+
+        def __add__(self, txt):
+            if isinstance(txt, Byt):
+                return Byt(super(Byt, self).__add__(txt))
+            raise TypeError("can't concat Byt to " + type(txt).__name__)
+
+        def __radd__(self, txt):
+            if isinstance(txt, Byt):
+                return Byt(txt.__add__(self))
+            raise TypeError("can't concat Byt to " + type(txt).__name__)
 
         def iterInts(self):
             """
             Returns the iterator of ints
             """
-            for ch in super(Byt, self).__iter__():
+            for ch in self.str():
                 yield ord(ch)
 
         def ints(self):
