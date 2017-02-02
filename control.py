@@ -34,7 +34,8 @@ from ctrl import c1
 from ctrl import db
 
 
+core.prepare_terminal('Control')
 print("Initialization...")
 controlling.init_control()
 db.init_DB()
-
+print("Done")

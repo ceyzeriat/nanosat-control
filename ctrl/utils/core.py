@@ -41,6 +41,7 @@ import inflect
 import json
 from dateutil import parser
 from multiprocessing import current_process
+from sys import stdout
 from . import ctrlexception
 from ..param.param_all import *
 
@@ -48,7 +49,6 @@ from ..param.param_all import *
 # make sure that python 3 understands unicode native python 2 function
 if PYTHON3:
     unicode = str
-
 
 MAXPACKETID = 2**14
 
@@ -113,6 +113,15 @@ except IOError:
     else:
         raise ctrlexception.MissingDestinationCallsign(rel_dir(*CSDESTFILE))
 
+
+ART = """
+  ____  _      ____        _   
+ |  _ \(_) ___/ ___|  __ _| |_ 
+ | |_) | |/ __\___ \ / _` | __|
+ |  __/| | (__ ___) | (_| | |_ 
+ |_|   |_|\___|____/ \__,_|\__|
+                               
+"""
 
 def get_tc_packet_id():
     """
@@ -409,6 +418,10 @@ def padit(txt, l, ch):
         return txt + ch * (l - len(txt))
     else:    
         return ch * (l - len(txt)) + txt
+
+def prepare_terminal(txt):
+    __import__('os').system("reset")
+    stdout.write("\x1b]2;{}\x07".format(txt))
 
 def fillit(txt, l, ch, right=True):
     """
