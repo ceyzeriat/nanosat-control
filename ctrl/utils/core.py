@@ -332,6 +332,8 @@ def int2bin(i, pad=True, **kwargs):
     Set `pad`` to ``None`` or ``False`` for no padding.
     """
     i = int(i)
+    if i < 0:
+        raise ctrlexception.NegativeUnsignedInteger(i)
     if i <= 1:
         b = str(i)
     else:
@@ -346,6 +348,64 @@ def int2bin(i, pad=True, **kwargs):
         return b[::-1]
     else:
         return b
+
+def intSign2bin(i, sz, **kwargs):
+    """
+    Give a signed int ``i`` as int or str with its size ``sz`` in
+    octet, get bits
+    Set ``pad`` to ``True`` for a 8n padding.
+    If ``pad`` is int, pads to ``pad`` characters.
+    Set `pad`` to ``None`` or ``False`` for no padding.
+    """
+    sz = int(sz)*8
+    i = int(i)
+    half = 2**(sz-1)
+    if not -half <= i <= half-1:
+        raise ctrlexception.OutofboundInteger(i, sz//8)
+    if i >= 0:
+        return int2bin(i, pad=sz)
+    else:
+        if TWINKLETWINKLELITTLEINDIA:
+            return int2bin(half+i, pad=sz)[:-1] + '1'
+        else:
+            return '1' + int2bin(half+i, pad=sz)[1:]
+
+def intSign2hex(i, sz):
+    """
+    Give a signed int ``i`` as int or str with its size ``sz`` in
+    octet, get chars
+    """
+    sz = int(sz)*8
+    i = int(i)
+    half = 2**(sz-1)
+    if not -half <= i <= half-1:
+        raise ctrlexception.OutofboundInteger(i, sz//8)
+    if i >= 0:
+        return int2hex(i, pad=sz)
+    else:
+        pass ###
+
+def bin2intSign(i, **kwargs):
+    """
+    Give bits ``b`` as str or '0b001', get an int
+    """
+    if TWINKLETWINKLELITTLEINDIA:
+        b = b[::-1]
+    if int(b[0]) == 0:
+        return int(b, 2)
+    else:
+        pass ###
+
+def hex2intSign(h, **kwargs):
+    """
+    Give hex ``h`` as chars '\xf0', returns signed int
+    """
+    if len(h) == 1:
+        return ord(h)
+    if TWINKLETWINKLELITTLEINDIA:
+        h = h[::-1]
+    pass ###
+    # return int(binascii.hexlify(str2bytes(h)), 16)
 
 def bin2int(b, **kwargs):
     """

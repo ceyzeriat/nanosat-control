@@ -140,6 +140,33 @@ class ControllingNotInitialized(CTRLException):
         self.message = "Controlling is not initialized"
 
 
+class RFCheckoutBoxIssue(CTRLException):
+    """
+    When can't listen to RFCheckoutBox
+    """
+    def __init__(self, *args, **kwargs):
+        self._init(*args, **kwargs)
+        self.message = "Can't listen to RFCheckoutBox"
+
+
+class NegativeUnsignedInteger(CTRLException):
+    """
+    When an unsigned int is given a negative value
+    """
+    def __init__(self, v, args, **kwargs):
+        self._init(v, *args, **kwargs)
+        self.message = "Can't encode a negative unsigned int '{}'".format(v)
+
+
+class OutofboundInteger(CTRLException):
+    """
+    When an unsigned int is given a negative value
+    """
+    def __init__(self, v, b, args, **kwargs):
+        self._init(v, b, *args, **kwargs)
+        self.message = "Can't encode int '{}' on '{}' bytes".format(v, b)
+
+
 # not used
 class NoSuchKey(CTRLException):
     """

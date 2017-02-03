@@ -28,6 +28,7 @@
 import socket
 from .utils import core
 import select
+from .utils import ctrlexception
 
 
 __all__ = ['RFCheckoutbox']
@@ -39,7 +40,10 @@ class RFCheckoutbox(object):
         port = int(core.RFCHECKOUTBOXPORT)
         self.soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.soc.connect((host, port))
+        try:
+            self.soc.connect((host, port))
+        except:
+            raise ctrlexception.RFCheckoutBoxIssue()
         self.timeout = float(core.RFCHECKOUTBOXTIMEOUT)
         self.length = int(core.RFCHECKOUTBOXLENGTH)
 
