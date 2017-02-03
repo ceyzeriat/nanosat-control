@@ -25,7 +25,9 @@
 ###############################################################################
 
 
-from .core import DATETIME_REF, datetime, time
+from ..param.param_all import DATETIME_REF
+import datetime
+import time
 
 
 __all__ = ['Day']

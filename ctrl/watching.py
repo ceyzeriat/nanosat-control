@@ -28,7 +28,7 @@
 from .soc import SocTransmitter
 from .soc import SocReceiver
 from .utils import core
-from .utils import REPORTS
+from .utils.report import REPORTS
 
 
 __all__ = ['init_watch', 'close_watch']

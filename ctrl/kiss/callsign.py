@@ -101,14 +101,14 @@ class Callsign(object):
             _callsign, ssid = callsign.split(Byt('-'))
         else:
             _callsign = callsign
-            ssid = Byt(0)
+            ssid = Byt('0')
 
         if _callsign[-1] == Byt('*'):
             _callsign = _callsign[:-1]
             self.digi = True
 
-        self.callsign = _callsign.lstrip().rstrip()
-        self.ssid = ssid.lstrip().rstrip()
+        self.callsign = _callsign.strip()
+        self.ssid = ssid.strip()
 
     def _extract_callsign_from_kiss_frame(self, frame):
         """

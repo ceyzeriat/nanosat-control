@@ -28,6 +28,16 @@
 from ..utils import Byt
 
 
+ART = """
+  ____  _      ____        _   
+ |  _ \(_) ___/ ___|  __ _| |_ 
+ | |_) | |/ __\___ \ / _` | __|
+ |  __/| | (__ ___) | (_| | |_ 
+ |_|   |_|\___|____/ \__,_|\__|
+                               
+"""
+
+
 # to avoid error at import if the DB or folders are not proper
 NOERRORATIMPORT = True
 

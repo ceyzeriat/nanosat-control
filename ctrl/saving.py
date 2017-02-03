@@ -31,10 +31,10 @@ import glob
 from .soc import SocTransmitter
 from .soc import SocReceiver
 from .utils import core
+from .utils import ctrlexception
+from .utils.report import REPORTS
 from .telemetry import Telemetry
 from .ccsds import CCSDSBlob
-from .utils import ctrlexception
-from .utils import REPORTS
 from .kiss import Framer
 
 

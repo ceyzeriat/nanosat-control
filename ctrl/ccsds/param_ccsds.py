@@ -26,7 +26,9 @@
 
 
 from .ccsdskey import CCSDSKey
-from ..utils import core, Day, Ms
+from ..utils import core
+from ..utils.day import Day
+from ..utils.ms import Ms
 from ..param import param_apid
 from . import param_category
 

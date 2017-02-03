@@ -29,7 +29,7 @@ import time
 import glob
 from .soc import SocTransmitter
 from .soc import SocReceiver
-from .utils import REPORTS
+from .utils.report import REPORTS
 from .utils import core
 from .utils import ctrlexception
 from .rfcheckoutbox import RFCheckoutbox

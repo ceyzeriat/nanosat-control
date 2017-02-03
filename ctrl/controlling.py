@@ -27,7 +27,7 @@
 
 from .soc import SocTransmitter
 from .utils import core
-from .utils import REPORTS
+from .utils.report import REPORTS
 from .kiss import Framer
 from .utils import ctrlexception
 

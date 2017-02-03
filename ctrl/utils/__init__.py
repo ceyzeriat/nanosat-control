@@ -25,9 +25,6 @@
 ###############################################################################
 
 
-from .day import *
-from .ms import *
 from .byt import *
-from . import core
 from . import ctrlexception
-from .report import REPORTS
+# don't import core and day, otherwise you get a circular import

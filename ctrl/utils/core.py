@@ -44,7 +44,7 @@ from multiprocessing import current_process
 from sys import stdout
 from . import ctrlexception
 from ..param.param_all import *
-from .byt import Byt
+from .byt import Byt, PYTHON3
 
 
 # make sure that python 3 understands unicode native python 2 function
@@ -56,6 +56,10 @@ MAXPACKETID = 2**14
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 HOME = os.path.expanduser("~")
+
+def prepare_terminal(txt):
+    __import__('os').system("reset")
+    stdout.write("\x1b]2;{}\x07".format(txt))
 
 def concat_dir(*args):
     """
@@ -114,15 +118,6 @@ except IOError:
     else:
         raise ctrlexception.MissingDestinationCallsign(rel_dir(*CSDESTFILE))
 
-
-ART = """
-  ____  _      ____        _   
- |  _ \(_) ___/ ___|  __ _| |_ 
- | |_) | |/ __\___ \ / _` | __|
- |  __/| | (__ ___) | (_| | |_ 
- |_|   |_|\___|____/ \__,_|\__|
-                               
-"""
 
 def get_tc_packet_id():
     """
@@ -327,7 +322,7 @@ def isStr(txt):
 
 def int2bin(i, pad=True, **kwargs):
     """
-    Give an int ``i`` as int or str, get bits
+    Give an int ``i`` as int or str, returns bits
     Set ``pad`` to ``True`` for a 8n padding.
     If ``pad`` is int, pads to ``pad`` characters.
     Set `pad`` to ``None`` or ``False`` for no padding.
@@ -353,7 +348,7 @@ def int2bin(i, pad=True, **kwargs):
 def intSign2bin(i, sz, **kwargs):
     """
     Give a signed int ``i`` as int or str with its size ``sz`` in
-    octet, get bits
+    octet, returns bits
     Set ``pad`` to ``True`` for a 8n padding.
     If ``pad`` is int, pads to ``pad`` characters.
     Set `pad`` to ``None`` or ``False`` for no padding.
@@ -371,56 +366,30 @@ def intSign2bin(i, sz, **kwargs):
         else:
             return '1' + int2bin(half+i, pad=sz)[1:]
 
-def intSign2hex(i, sz):
-    """
-    Give a signed int ``i`` as int or str with its size ``sz`` in
-    octet, get chars
-    """
-    sz = int(sz)*8
-    i = int(i)
-    half = 2**(sz-1)
-    if not -half <= i <= half-1:
-        raise ctrlexception.OutofboundInteger(i, sz//8)
-    if i >= 0:
-        return int2hex(i, pad=sz)
-    else:
-        pass ###
-
-def bin2intSign(i, **kwargs):
-    """
-    Give bits ``b`` as str or '0b001', get an int
-    """
-    if TWINKLETWINKLELITTLEINDIA:
-        b = b[::-1]
-    if int(b[0]) == 0:
-        return int(b, 2)
-    else:
-        pass ###
-
-def hex2intSign(h, **kwargs):
-    """
-    Give hex ``h`` as chars '\xf0', returns signed int
-    """
-    if len(h) == 1:
-        return ord(h)
-    if TWINKLETWINKLELITTLEINDIA:
-        h = h[::-1]
-    pass ###
-    # return int(binascii.hexlify(str2bytes(h)), 16)
-
 def bin2int(b, **kwargs):
     """
-    Give bits ``b`` as str or '0b001', get an int
+    Give bits ``b`` as str or '0b001', returns int
     """
     if TWINKLETWINKLELITTLEINDIA:
         b = b[::-1]
     return int(b, 2)
 
+def bin2intSign(b, **kwargs):
+    """
+    Give bits ``b`` as str or '0b001', returns signed int
+    """
+    if TWINKLETWINKLELITTLEINDIA:
+        b = b[::-1]
+    if len(b) == 1:
+        return int(b)
+    elif int(b[0]) == 0:
+        return int(b, 2)
+    else:
+        return int(b[1:], 2) - 2**(len(b)-1)
+
 def bin2hex(b, pad=0, **kwargs):
     """
-    Give bits ``b`` as str or '0b001', returns hex
-    The hex returned will be one or several char if ``char`` is
-    ``True`` or a len=2n string 'ff' if not
+    Give bits ``b`` as str or '0b001', returns chars
     """
     return int2hex(bin2int(b), pad=pad)
 
@@ -443,9 +412,20 @@ def hex2int(h, **kwargs):
         h = h[::-1]
     return int(binascii.hexlify(Byt(h)), 16)
 
+def hex2intSign(h, **kwargs):
+    """
+    Give hex ``h`` as chars '\xf0', returns signed int
+    """
+    i = hex2int(h)
+    half = 2**(len(h)*8-1)
+    if i < half:
+        return i
+    else:
+        return i-2*half
+
 def int2hex(i, pad=0):
     """
-    Give an int, returns string of chars
+    Give an int, returns chars
     """
     hx = hex(i)[2:].replace('L', '')  # replace if long int
     hx = binascii.unhexlify(('0' * (len(hx) % 2)) + hx)
@@ -455,6 +435,21 @@ def int2hex(i, pad=0):
         hx = padit(txt=hx, l=pad, ch=Byt(0))
     return hx
 
+def intSign2hex(i, sz):
+    """
+    Give a signed int ``i`` as int or str with its size ``sz`` in
+    octet, returns chars
+    """
+    sz = int(sz)
+    i = int(i)
+    half = 2**(sz*8-1)
+    if not -half <= i <= half-1:
+        raise ctrlexception.OutofboundInteger(i, sz//8)
+    if i >= 0:
+        return int2hex(i, pad=sz)
+    else:
+        return int2hex(2*half+i, pad=sz)
+
 def reverse_if_little_endian(bits):
     if TWINKLETWINKLELITTLEINDIA:
         return bits[::-1]
@@ -463,10 +458,10 @@ def reverse_if_little_endian(bits):
 
 def octify(b):
     """
-    Splits a long ``b`` octets sequence into 8-bit pieces
+    Splits a long ``b`` bits sequence into 8-bit pieces
     after it has padded ``b`` to a 8n length
     """
-    b = b.zfill(((len(b)-1)//8+1)*8)
+    b = padit(b, ((len(b)-1)//8+1)*8, '0')
     return [b[i:i+8] for i in range(0, len(b), 8)]
 
 def padit(txt, l, ch):
@@ -480,10 +475,6 @@ def padit(txt, l, ch):
     else:    
         return ch * (l - len(txt)) + txt
 
-def prepare_terminal(txt):
-    __import__('os').system("reset")
-    stdout.write("\x1b]2;{}\x07".format(txt))
-
 def fillit(txt, l, ch, right=True):
     """
     Fills ``txt`` on the ``right`` with char ``ch`` up to ``l`` length
@@ -494,11 +485,12 @@ def fillit(txt, l, ch, right=True):
     else:
         return ch*(l-len(txt)) + txt
 
+"""
 def str2ints(txt):
-    """
+    "
     Transforms whatever string or bytes into a int-bytes
     chain compatible with python 2 and 3
-    """
+    "
     if PYTHON3:
         if isinstance(txt, bytes):
             return txt
@@ -510,27 +502,27 @@ def str2ints(txt):
         return [ord(item) for item in txt]
 
 def bytes2str(byt):
-    """
+    "
     Transforms bytes to str
-    """
+    "
     if not isinstance(byt, (str, unicode)):
         return str(byt.decode('utf-8'))
     else:
         return byt
 
 def ints2str(ints):
-    """
+    "
     Transforms whatever int-bytes chain into a string
-    """
+    "
     if not hasattr(ints, '__iter__'):
         return chr(ints)
     return ''.join([chr(x) for x in ints])
 
 def ints2bytes(ints):
-    """
+    "
     Transforms whatever int-bytes chain into a string or bytes
     compatible with python 2 and 3
-    """
+    "
     if PYTHON3:
         if not hasattr(ints, '__iter__'):
             return bytes([ints])
@@ -538,3 +530,4 @@ def ints2bytes(ints):
             return bytes([x for x in ints])
     else:
         return ints2str(ints)
+"""

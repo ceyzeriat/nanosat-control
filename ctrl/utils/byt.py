@@ -25,13 +25,14 @@
 ###############################################################################
 
 
-from . import core
+from sys import version_info
+PYTHON3 = version_info > (3,)
 
 
-__all__ = ['Byt']
+__all__ = ['Byt', 'PYTHON3']
 
 
-if core.PYTHON3:
+if PYTHON3:
 
     class Byt(bytes):
         def __new__(cls, value=''):
@@ -100,13 +101,16 @@ if core.PYTHON3:
 
 else:
 
+    from binascii import hexlify
+
     class Byt(str):
         def __new__(cls, value=''):
             if isinstance(value, int):
                 value = chr(value)
-            if isinstance(value[0], int):
-                # It's a list of integers
-                value = ''.join([chr(item) for item in value])
+            if len(value) > 0:
+                if isinstance(value[0], int):
+                    # It's a list of integers
+                    value = ''.join(chr(item) for item in value)
             return super(Byt, cls).__new__(cls, value)
 
         def __getitem__(self, pos):
@@ -122,7 +126,7 @@ else:
             return "{}('{}')".format(self.__class__.__name__, self.__str__())
 
         def __iter__(self):
-            for ch in self.str():
+            for ch in str(self):
                 yield Byt(ch)
 
         def __add__(self, txt):
@@ -139,7 +143,7 @@ else:
             """
             Returns the iterator of ints
             """
-            for ch in self.str():
+            for ch in str(self):
                 yield ord(ch)
 
         def ints(self):
@@ -149,16 +153,14 @@ else:
             return list(self.iterInts())
 
         def split(self, sep=None, maxsplit=-1):
-            if not isinstance(sep, Byt):
+            if not isinstance(sep, Byt) and sep is not None:
                 raise TypeError("can't split Byt and " + type(sep).__name__)
-            return list(map(Byt, super(Byt, self).split(sep=sep,
-                                                        maxsplit=maxsplit)))
+            return list(map(Byt, super(Byt, self).split(sep, maxsplit)))
 
         def rsplit(self, sep=None, maxsplit=-1):
             if not isinstance(sep, Byt):
                 raise TypeError("can't split Byt and " + type(sep).__name__)
-            return list(map(Byt, super(Byt, self).rsplit(sep=sep,
-                                                         maxsplit=maxsplit)))
+            return list(map(Byt, super(Byt, self).rsplit(sep, maxsplit)))
 
         def replace(self, old, new, count=-1):
             if not isinstance(old, Byt) or not isinstance(new, Byt):
@@ -184,6 +186,8 @@ else:
             return Byt(super(Byt, self).rstrip(bytes))
 
         def join(self, iterable_of_bytes):
+            if len(iterable_of_bytes) == 0:
+                return Byt()
             for item in iterable_of_bytes:
                 if not isinstance(item, Byt):
                     raise TypeError("can't join non-Byt characters")
@@ -191,4 +195,4 @@ else:
                 return Byt(super(Byt, self).join(iterable_of_bytes))
 
         def hex(self):
-            return ' '.join(super(Byt, ch).hex() for ch in self)
+            return ' '.join(hexlify(ch) for ch in self)
