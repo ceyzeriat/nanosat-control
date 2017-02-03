@@ -30,6 +30,7 @@ from threading import Thread
 import select
 import time
 from ..utils import core
+from ..utils import Byt
 
 
 __all__ = ['SocReceiver']
@@ -174,7 +175,7 @@ class SocReceiver(object):
         Returns ``True`` if the transmitter got the message else
         ``Flase``
         """
-        return self._receive(self._soc, l=1, timeout=self._timeout) == b'0'
+        return self._receive(self._soc, l=1, timeout=self._timeout) == Byt(0)
 
 
 def tellme(self):
@@ -183,11 +184,11 @@ def tellme(self):
     """
     while self.running:
         data = self._soc.recv(self.buffer_size)
-        if data == b'' or not self.running:
+        if data == Byt() or not self.running:
             self.close()
             return
-        self._soc.sendall(b'0')
-        if data == b'__die__':
+        self._soc.sendall(Byt(0))
+        if data == Byt('__die__'):
             self.close()
         else:
             self.process(data)
@@ -217,7 +218,7 @@ def connectme(self, oneshot):
                 if not self.loopConnect:
                     return False
             else:
-                self._soc.sendall(core.str2bytes(self.name))
+                self._soc.sendall(Byt(self.name))
                 if not self._get_AR():
                     self.close()
                     if not self.loopConnect:

@@ -44,6 +44,7 @@ from multiprocessing import current_process
 from sys import stdout
 from . import ctrlexception
 from ..param.param_all import *
+from .byt import Byt
 
 
 # make sure that python 3 understands unicode native python 2 function
@@ -175,12 +176,12 @@ def split_socket_info(data, asStr=False):
     dic = {}
     if asStr:
         for k, v in res:
-            dic[bytes2str(k)] = bytes2str(v.replace(SOCKETESCAPE+SOCKETMAPPER,
-                                                      SOCKETMAPPER))
+            dic[Byt(k).str()] = Byt(v.replace(SOCKETESCAPE+SOCKETMAPPER,
+                                                      SOCKETMAPPER)).str()
     else:
         for k, v in res:
-            dic[bytes2str(k)] = v.replace(SOCKETESCAPE+SOCKETMAPPER,
-                                            SOCKETMAPPER)
+            dic[bytes2str(k)] = Byt(v.replace(SOCKETESCAPE+SOCKETMAPPER,
+                                            SOCKETMAPPER))
     return dic
 
 def merge_socket_info(**kwargs):
@@ -191,9 +192,9 @@ def merge_socket_info(**kwargs):
     for k, v in kwargs.items():
         if not isStr(v):
             v = str(v)
-        v = str2bytes(v)
+        v = Byt(v)
         v = v.replace(SOCKETMAPPER, SOCKETESCAPE+SOCKETMAPPER)
-        res.append(str2bytes(k) + SOCKETMAPPER + v)
+        res.append(Byt(k) + SOCKETMAPPER + v)
     return SOCKETSEPARATOR.join([
                 item.replace(SOCKETSEPARATOR,
                                 SOCKETESCAPE+SOCKETSEPARATOR) for item in res])
@@ -202,7 +203,7 @@ def merge_reporting(**kwargs):
     """
     Merges the data using the socket separator and returns a string
     """
-    kwargs[REPORTKEY] = '1'
+    kwargs[REPORTKEY] = Byt(1)
     return merge_socket_info(**kwargs)
 
 def is_reporting(data):
@@ -212,7 +213,7 @@ def is_reporting(data):
     lrep = len(REPORTKEY)
     lmap = len(SOCKETMAPPER)
     lsep = len(SOCKETSEPARATOR)
-    PROOF = str2bytes(REPORTKEY) + SOCKETMAPPER + b'1'
+    PROOF = Byt(REPORTKEY) + SOCKETMAPPER + Byt(1)
     # only and just reporting flag
     if data == PROOF:
         return True
@@ -322,7 +323,7 @@ def isStr(txt):
     """
     Check if txt is valid string: (str, unicode, bytes)
     """
-    return isinstance(txt, (str, unicode, bytes))
+    return isinstance(txt, (str, unicode, bytes, Byt))
 
 def int2bin(i, pad=True, **kwargs):
     """
@@ -440,7 +441,7 @@ def hex2int(h, **kwargs):
         return ord(h)
     if TWINKLETWINKLELITTLEINDIA:
         h = h[::-1]
-    return int(binascii.hexlify(str2bytes(h)), 16)
+    return int(binascii.hexlify(Byt(h)), 16)
 
 def int2hex(i, pad=0):
     """
@@ -451,7 +452,7 @@ def int2hex(i, pad=0):
     if TWINKLETWINKLELITTLEINDIA:
         hx = hx[::-1]
     if pad > 1:
-        hx = padit(txt=hx, l=pad, ch=b'\x00')
+        hx = padit(txt=hx, l=pad, ch=Byt(0))
     return hx
 
 def reverse_if_little_endian(bits):
@@ -492,17 +493,6 @@ def fillit(txt, l, ch, right=True):
         return txt + ch*(l-len(txt))
     else:
         return ch*(l-len(txt)) + txt
-
-def str2bytes(txt):
-    """
-    Transforms whatever string or bytes into a ascii-bytes
-    chain compatible with python 2 and 3
-    """
-    if isinstance(txt, int) and PYTHON3:
-        return bytes([txt])
-    elif not isinstance(txt, bytes) and PYTHON3:
-        txt = bytes([ord(item) for item in txt])
-    return txt
 
 def str2ints(txt):
     """

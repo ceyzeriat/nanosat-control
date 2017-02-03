@@ -4,6 +4,7 @@
 
 from . import constants
 from ..utils import core
+from ..utils import Byt
 
 
 __all__ = ['escape_special_codes', 'valid_callsign', 'recover_special_codes',
@@ -31,15 +32,15 @@ def valid_callsign(callsign):
     Args:
     * callsign (str): Callsign to validate
     """
-    callsign = core.str2bytes(callsign).lstrip().rstrip()
+    callsign = Byt(callsign).strip()
 
-    if b'-' in callsign:
-        if not callsign.count(b'-') == 1:
+    if Byt('-') in callsign:
+        if not callsign.count(Byt('-')) == 1:
             return False
         else:
-            callsign, ssid = callsign.split(b'-')
+            callsign, ssid = callsign.split(Byt('-'))
     else:
-        ssid = b'0'
+        ssid = Byt(0)
 
     # Test length, call should be 2--6
     if not ((2 <= len(callsign) <= 6) and (1 <= len(ssid) <= 2)):
@@ -84,33 +85,3 @@ def recover_special_codes(escaped_codes):
     """
     return escaped_codes.replace(constants.FESC_TFESC, constants.FESC)\
                         .replace(constants.FESC_TFEND, constants.FEND)
-
-
-
-
-
-def extract_ui(frame):
-    """
-    Extracts the UI component of an individual frame.
-
-    :param frame: AX.25 frame.
-    :type frame: str
-    :returns: UI component of frame.
-    :rtype: str
-    """
-    start_ui = frame.split(
-        b''.join([constants.FEND, constants.DATA_FRAME]))
-    end_ui = start_ui[0].split(''.join([constants.SLOT_TIME, '\xf0']))
-    return ''.join([chr(ord(x) >> 1) for x in end_ui[0]])
-
-
-def strip_nmea(frame):
-    """
-    Extracts NMEA header from T3-Micro or NMEA encoded KISS frames.
-    """
-    if len(frame) > 0:
-        if ord(frame[0]) == 240:
-            return frame[1:].rstrip()
-    return frame
-
-

@@ -27,6 +27,7 @@
 
 from . import cmdexception
 from ..utils import core
+from ..utils import Byt
 
 
 __all__ = ['PFormat']
@@ -121,7 +122,7 @@ class PFormat(object):
 
     def _tohex(self, value):
         if self.typ == 'str':
-            return core.str2bytes(value)
+            return Byt(value)
         elif self.typ == 'uint':
             return core.int2hex(value, pad=self.bits // 8)
         elif self.typ == 'int':

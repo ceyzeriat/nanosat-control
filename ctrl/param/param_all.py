@@ -25,6 +25,9 @@
 ###############################################################################
 
 
+from ..utils import Byt
+
+
 # to avoid error at import if the DB or folders are not proper
 NOERRORATIMPORT = True
 
@@ -35,14 +38,14 @@ JUSTALIB = False
 ANTENNALISTENED = 'checkoutbox'
 
 # the path to the file containing the packet id counter
-PACKETIDFILE = ["param", "tc_packet_id"]
+PACKETIDFILE = ['param', 'tc_packet_id']
 
 # the path to the parameter file containing the DB connection settings
-DBFILE = ["param", "db_server"]
+DBFILE = ['param', 'db_server']
 
 # the callsign files
-CSSOURCEFILE = ["param", "callsign_source"]
-CSDESTFILE = ["param", "callsign_destination"]
+CSSOURCEFILE = ['param', 'callsign_source']
+CSDESTFILE = ['param', 'callsign_destination']
 
 # who is the emitter
 EMITTERID = 1
@@ -101,16 +104,16 @@ RFCHECKOUTBOXLENGTH = 1024  # octet
 
 
 # where the raw telemetry are dumped (locally), relative to HOME
-TELEMETRYDUMPFOLDER = ["tm_data"]
+TELEMETRYDUMPFOLDER = ['tm_data']
 # the format of the name for the raw telemetry dumps
 TELEMETRYNAMEFORMAT = 'TM_%Y%m%dT%H%M%S_%f.packet'
 
 # the split between filename and data
-SOCKETSEPARATOR = b"###"
-SOCKETESCAPE = b"/"
-SOCKETMAPPER = b":::"
-RESPLITVARS = b'(?<!' + SOCKETESCAPE + b')' + SOCKETSEPARATOR
-RESPLITMAP = b'(?<!' + SOCKETESCAPE + b')' + SOCKETMAPPER
+SOCKETSEPARATOR = Byt('###')
+SOCKETESCAPE = Byt('/')
+SOCKETMAPPER = Byt(':::')
+RESPLITVARS = Byt('(?<!') + SOCKETESCAPE + Byt(')') + SOCKETSEPARATOR
+RESPLITMAP = Byt('(?<!') + SOCKETESCAPE + Byt(')') + SOCKETMAPPER
 REPORTKEY = 'report'
 
 

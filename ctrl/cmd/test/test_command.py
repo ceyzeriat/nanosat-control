@@ -30,6 +30,8 @@ from ctrl.cmd.cm import Cm
 from ctrl.cmd import cmdexception
 import copy
 from ctrl.cmd.param_commands import RANGESEPARATOR
+from ctrl.utils import Byt
+
 
 def ftup(x, y):
     return "{}{}{}".format(x, RANGESEPARATOR, y)
@@ -68,7 +70,7 @@ def test_cm_base():
 
 def test_cm_call():
     c = Cm(**echo)
-    assert c.generate_data(hop='ab')[0] == b'\x61\x62'
+    assert c.generate_data(hop='ab')[0] == Byt('\x61\x62')
     assert c.generate_data(hop='ab')[1] == {'hop': 'ab'}
     assert c(hop='ab') == c.generate_data(hop='ab')
 

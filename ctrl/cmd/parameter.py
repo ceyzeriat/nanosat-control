@@ -28,6 +28,7 @@
 from . import cmdexception
 from . import param_commands
 from ..utils import core
+from ..utils import Byt
 from .pformat import PFormat
 
 
@@ -185,7 +186,7 @@ class Parameter(object):
         ret = b""
         if self._isdict:
             for item in value:
-                ret += core.str2bytes(self.rng[item])
+                ret += Byt(self.rng[item])
         else:
             for item in value:
                 ret += self.typ._tohex(item)
