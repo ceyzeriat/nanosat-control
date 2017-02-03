@@ -40,13 +40,13 @@ if core.PYTHON3:
                 value = value.encode('ISO-8859-1')
             elif isinstance(value, int):
                 value = chr(value).encode('ISO-8859-1')
-            return super(Byt, cls).__new__(cls, value)
+            return super().__new__(cls, value)
 
         def __getitem__(self, pos):
             if isinstance(pos, int):
-                return Byt(super(Byt, self).__getitem__(slice(pos, pos+1)))
+                return Byt(super().__getitem__(slice(pos, pos+1)))
             else:
-                return Byt(super(Byt, self).__getitem__(pos))
+                return Byt(super().__getitem__(pos))
 
         def __str__(self):
             return self.decode('ISO-8859-1')
@@ -55,14 +55,14 @@ if core.PYTHON3:
             return "{}('{}')".format(self.__class__.__name__, self.__str__())
 
         def __iter__(self):
-            for ch in super(Byt, self).__iter__():
+            for ch in super().__iter__():
                 yield Byt(ch)
 
         def iterInts(self):
             """
             Returns the iterator of ints
             """
-            for ch in super(Byt, self).__iter__():
+            for ch in super().__iter__():
                 yield ch
 
         def ints(self):
@@ -72,30 +72,31 @@ if core.PYTHON3:
             return list(self.iterInts())
 
         def split(self, sep=None, maxsplit=-1):
-            return list(map(Byt, super(Byt, self).split(sep=sep,
-                                                        maxsplit=maxsplit)))
+            return list(map(Byt, super().split(sep=sep, maxsplit=maxsplit)))
 
         def rsplit(self, sep=None, maxsplit=-1):
-            return list(map(Byt, super(Byt, self).rsplit(sep=sep,
-                                                         maxsplit=maxsplit)))
+            return list(map(Byt, super().rsplit(sep=sep, maxsplit=maxsplit)))
 
         def replace(self, old, new, count=-1):
-            return Byt(super(Byt, self).replace(old, new, count))
+            return Byt(super().replace(old, new, count))
 
         def zfill(self, width):
-            return Byt(super(Byt, self).zfill(width))
+            return Byt(super().zfill(width))
 
         def strip(self, bytes=None):
-            return Byt(super(Byt, self).strip(bytes))
+            return Byt(super().strip(bytes))
 
         def lstrip(self, bytes=None):
-            return Byt(super(Byt, self).lstrip(bytes))
+            return Byt(super().lstrip(bytes))
 
         def rstrip(self, bytes=None):
-            return Byt(super(Byt, self).rstrip(bytes))
+            return Byt(super().rstrip(bytes))
 
         def join(self, iterable_of_bytes):
-            return Byt(super(Byt, self).join(iterable_of_bytes))
+            return Byt(super().join(iterable_of_bytes))
+
+        def hex(self):
+            return ' '.join(super(Byt, ch).hex() for ch in self)
 
 else:
 
@@ -188,3 +189,6 @@ else:
                     raise TypeError("can't join non-Byt characters")
             else:
                 return Byt(super(Byt, self).join(iterable_of_bytes))
+
+        def hex(self):
+            return ' '.join(super(Byt, ch).hex() for ch in self)
