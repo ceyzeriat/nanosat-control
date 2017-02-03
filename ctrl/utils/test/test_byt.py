@@ -24,3 +24,12 @@
 #
 ###############################################################################
 
+
+from nose.tools import raises
+from ctrl.utils import Byt
+
+
+def test_stuff():
+    assert Byt() == b''
+    assert Byt() == Byt('')
+
