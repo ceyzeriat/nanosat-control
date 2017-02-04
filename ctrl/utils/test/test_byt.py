@@ -35,6 +35,7 @@ def test_creation():
     assert Byt([0, 1, 2]) == Byt('\x00\x01\x02')
     assert Byt('abc') == Byt([97, 98, 99])
     assert Byt(b'abc') == Byt([97, 98, 99])
+    assert Byt(u'abc') == Byt([97, 98, 99])
 
 def test_slice_iter():
     assert Byt('abc')[0] == Byt('a')
