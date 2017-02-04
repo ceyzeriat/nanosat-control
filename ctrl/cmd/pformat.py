@@ -126,7 +126,7 @@ class PFormat(object):
         elif self.typ == 'uint':
             return core.int2hex(value, pad=self.bits // 8)
         elif self.typ == 'int':
-            raise cmdexception.NotImplemented()
+            return core.intSign2hex(value, sz=self.bits // 8)
         elif self.typ == 'float':
             raise cmdexception.NotImplemented()
         else:
