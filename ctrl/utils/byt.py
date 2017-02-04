@@ -59,6 +59,16 @@ if PYTHON3:
             for ch in super().__iter__():
                 yield Byt(ch)
 
+        def __add__(self, txt):
+            if not isinstance(txt, Byt):
+                raise TypeError("can't concat Byt to " + type(txt).__name__)
+            return Byt(super().__add__(txt))
+
+        def __radd__(self, txt):
+            if not isinstance(txt, Byt):
+                raise TypeError("can't concat Byt to " + type(txt).__name__)
+            return Byt(txt.__add__(self))
+
         def iterInts(self):
             """
             Returns the iterator of ints
@@ -72,32 +82,50 @@ if PYTHON3:
             """
             return list(self.iterInts())
 
+        def hex(self):
+            return ' '.join(super(Byt, ch).hex() for ch in self)
+
         def split(self, sep=None, maxsplit=-1):
-            return list(map(Byt, super().split(sep=sep, maxsplit=maxsplit)))
+            if not isinstance(sep, Byt) and sep is not None:
+                raise TypeError("can't split Byt and " + type(sep).__name__)
+            return list(map(Byt, super().split(sep, maxsplit)))
 
         def rsplit(self, sep=None, maxsplit=-1):
-            return list(map(Byt, super().rsplit(sep=sep, maxsplit=maxsplit)))
+            if not isinstance(sep, Byt) and sep is not None:
+                raise TypeError("can't rsplit Byt and " + type(sep).__name__)
+            return list(map(Byt, super().rsplit(sep, maxsplit)))
 
         def replace(self, old, new, count=-1):
+            if not isinstance(old, Byt) or not isinstance(new, Byt):
+                raise TypeError("can't replace with non-Byt characters")
             return Byt(super().replace(old, new, count))
 
         def zfill(self, width):
             return Byt(super().zfill(width))
 
         def strip(self, bytes=None):
+            if not isinstance(bytes, Byt) and bytes is not None:
+                raise TypeError("can't strip Byt and " + type(bytes).__name__)
             return Byt(super().strip(bytes))
 
         def lstrip(self, bytes=None):
+            if not isinstance(bytes, Byt) and bytes is not None:
+                raise TypeError("can't lstrip Byt and " + type(bytes).__name__)
             return Byt(super().lstrip(bytes))
 
         def rstrip(self, bytes=None):
+            if not isinstance(bytes, Byt) and bytes is not None:
+                raise TypeError("can't rstrip Byt and " + type(bytes).__name__)
             return Byt(super().rstrip(bytes))
 
         def join(self, iterable_of_bytes):
-            return Byt(super().join(iterable_of_bytes))
-
-        def hex(self):
-            return ' '.join(super(Byt, ch).hex() for ch in self)
+            if len(iterable_of_bytes) == 0:
+                return Byt()
+            for item in iterable_of_bytes:
+                if not isinstance(item, Byt):
+                    raise TypeError("can't join non-Byt characters")
+            else:
+                return Byt(super().join(iterable_of_bytes))
 
 else:
 
@@ -152,14 +180,17 @@ else:
             """
             return list(self.iterInts())
 
+        def hex(self):
+            return ' '.join(hexlify(ch) for ch in self)
+
         def split(self, sep=None, maxsplit=-1):
             if not isinstance(sep, Byt) and sep is not None:
                 raise TypeError("can't split Byt and " + type(sep).__name__)
             return list(map(Byt, super(Byt, self).split(sep, maxsplit)))
 
         def rsplit(self, sep=None, maxsplit=-1):
-            if not isinstance(sep, Byt):
-                raise TypeError("can't split Byt and " + type(sep).__name__)
+            if not isinstance(sep, Byt) and sep is not None:
+                raise TypeError("can't rsplit Byt and " + type(sep).__name__)
             return list(map(Byt, super(Byt, self).rsplit(sep, maxsplit)))
 
         def replace(self, old, new, count=-1):
@@ -193,6 +224,3 @@ else:
                     raise TypeError("can't join non-Byt characters")
             else:
                 return Byt(super(Byt, self).join(iterable_of_bytes))
-
-        def hex(self):
-            return ' '.join(hexlify(ch) for ch in self)
