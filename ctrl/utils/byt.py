@@ -54,14 +54,20 @@ if PYTHON3:
                 if isinstance(other, (str, bytes)):
                     raise TypeError("can't compare Byt and " +
                                         type(other).__name__)
-            return super().__eq__(other.__str__())
+                else:
+                    return False
+            else:
+                return super().__eq__(other.__str__())
 
         def __ne__(self, other):
             if not isinstance(other, Byt):
                 if isinstance(other, (str, bytes)):
                     raise TypeError("can't compare Byt and " +
                                         type(other).__name__)
-            return super().__ne__(other.__str__())
+                else:
+                    return True
+            else:
+                return super().__ne__(other.__str__())
 
         def __str__(self):
             return self.decode('ISO-8859-1')
@@ -94,7 +100,10 @@ if PYTHON3:
                 if isinstance(other, (str, bytes)):
                     raise TypeError("can't compare Byt to " +
                                         type(other).__name__)
-            return super().__contains__(other)
+                else:
+                    return False
+            else:
+                return super().__contains__(other)
 
         def iterInts(self):
             """
@@ -182,14 +191,18 @@ else:
                 if isinstance(other, (str, unicode)):
                     raise TypeError("can't compare Byt and " +
                                         type(other).__name__)
-            return super(Byt, self).__eq__(other.__str__())
+                else:
+                    return False
+            else:
+                return super(Byt, self).__eq__(other.__str__())
 
         def __ne__(self, other):
             if not isinstance(other, Byt):
                 if isinstance(other, (str, unicode)):
                     raise TypeError("can't compare Byt and " +
                                         type(other).__name__)
-            return super(Byt, self).__ne__(other.__str__())
+            else:
+                return super(Byt, self).__ne__(other.__str__())
 
         def __str__(self):
             return super(Byt, self).__str__()
@@ -222,7 +235,10 @@ else:
                 if isinstance(other, (str, unicode)):
                     raise TypeError("can't compare Byt to " +
                                         type(other).__name__)
-            return super(Byt, self).__contains__(other)
+                else:
+                    return False
+            else:
+                return super(Byt, self).__contains__(other)
 
         def iterInts(self):
             """
