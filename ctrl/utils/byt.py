@@ -72,6 +72,9 @@ if PYTHON3:
         def __str__(self):
             return self.decode('ISO-8859-1')
 
+        def __hash__(self):
+            return super().__hash__()
+
         def __repr__(self):
             return "{}('{}')".format(self.__class__.__name__, self.__str__())
 
@@ -206,6 +209,9 @@ else:
 
         def __str__(self):
             return super(Byt, self).__str__()
+
+        def __hash__(self):
+            return super(Byt, self).__hash__()
 
         def __repr__(self):
             return "{}('{}')".format(self.__class__.__name__, self.__str__())

@@ -171,11 +171,11 @@ def split_socket_info(data, asStr=False):
     dic = {}
     if asStr:
         for k, v in res:
-            dic[Byt(k).str()] = Byt(v.replace(SOCKETESCAPE+SOCKETMAPPER,
-                                                      SOCKETMAPPER)).str()
+            dic[str(Byt(k))] = str(Byt(v.replace(SOCKETESCAPE+SOCKETMAPPER,
+                                                      SOCKETMAPPER)))
     else:
         for k, v in res:
-            dic[Byt(k).str()] = Byt(v.replace(SOCKETESCAPE+SOCKETMAPPER,
+            dic[str(Byt(k))] = Byt(v.replace(SOCKETESCAPE+SOCKETMAPPER,
                                             SOCKETMAPPER))
     return dic
 

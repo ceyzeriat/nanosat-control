@@ -80,7 +80,7 @@ class SocReceiver(object):
         timeout = self._timeout if timeout is None else float(timeout)
         ready = select.select([transmitter], [], [], timeout)
         if ready[0]:
-            return transmitter.recv(int(l))
+            return Byt(transmitter.recv(int(l)))
         else:
             return None
 
@@ -183,7 +183,7 @@ def tellme(self):
     Infinite loop to listen the data from the port
     """
     while self.running:
-        data = self._soc.recv(self.buffer_size)
+        data = Byt(self._soc.recv(self.buffer_size))
         if data == Byt() or not self.running:
             self.close()
             return

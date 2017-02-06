@@ -111,7 +111,7 @@ class SocTransmitter(object):
         timeout = self._timeout if timeout is None else float(timeout)
         ready = select.select([receiver], [], [], timeout)
         if ready[0]:
-            return receiver.recv(int(l))
+            return Byt(receiver.recv(int(l)))
         else:
             return None
 
