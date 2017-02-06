@@ -45,7 +45,7 @@ if PYTHON3:
 
         def __getitem__(self, pos):
             if isinstance(pos, int):
-                return Byt(super().__getitem__(slice(pos, pos+1)))
+                return Byt(super().__getitem__(pos))
             else:
                 return Byt(super().__getitem__(pos))
 
@@ -57,7 +57,7 @@ if PYTHON3:
                 else:
                     return False
             else:
-                return super().__eq__(other.__str__())
+                return super().__eq__(other)
 
         def __ne__(self, other):
             if not isinstance(other, Byt):
@@ -67,7 +67,7 @@ if PYTHON3:
                 else:
                     return True
             else:
-                return super().__ne__(other.__str__())
+                return super().__ne__(other)
 
         def __str__(self):
             return self.decode('ISO-8859-1')
@@ -194,7 +194,7 @@ else:
                 else:
                     return False
             else:
-                return super(Byt, self).__eq__(other.__str__())
+                return super(Byt, self).__eq__(other)
 
         def __ne__(self, other):
             if not isinstance(other, Byt):
@@ -202,7 +202,7 @@ else:
                     raise TypeError("can't compare Byt and " +
                                         type(other).__name__)
             else:
-                return super(Byt, self).__ne__(other.__str__())
+                return super(Byt, self).__ne__(other)
 
         def __str__(self):
             return super(Byt, self).__str__()

@@ -42,8 +42,11 @@ def test_creation():
 
 def test_slice_iter():
     assert Byt('abc')[0] == Byt('a')
+    assert Byt('abc')[-1] == Byt('c')
+    assert Byt('azc')[-2:-1] == Byt('z')
+    assert Byt('azc')[-2:] == Byt('zc')
     assert Byt('abc')[0:1] == Byt('a')
-    assert Byt('azc')[0:2] == Byt('az')
+    assert Byt('azc')[:2] == Byt('az')
     assert [ch for ch in Byt('azc')] == [Byt('a'), Byt('z'), Byt('c')]
     assert [ch for ch in Byt('')] == []
     assert [ch for ch in Byt('azc')[:2]] == [Byt('a'), Byt('z')]
