@@ -175,7 +175,7 @@ def split_socket_info(data, asStr=False):
                                                       SOCKETMAPPER)).str()
     else:
         for k, v in res:
-            dic[bytes2str(k)] = Byt(v.replace(SOCKETESCAPE+SOCKETMAPPER,
+            dic[Byt(k).str()] = Byt(v.replace(SOCKETESCAPE+SOCKETMAPPER,
                                             SOCKETMAPPER))
     return dic
 
@@ -428,7 +428,7 @@ def int2hex(i, pad=0):
     Give an int, returns chars
     """
     hx = hex(i)[2:].replace('L', '')  # replace if long int
-    hx = binascii.unhexlify(('0' * (len(hx) % 2)) + hx)
+    hx = Byt(binascii.unhexlify(('0' * (len(hx) % 2)) + hx))
     if TWINKLETWINKLELITTLEINDIA:
         hx = hx[::-1]
     if pad > 1:
@@ -484,50 +484,3 @@ def fillit(txt, l, ch, right=True):
         return txt + ch*(l-len(txt))
     else:
         return ch*(l-len(txt)) + txt
-
-"""
-def str2ints(txt):
-    "
-    Transforms whatever string or bytes into a int-bytes
-    chain compatible with python 2 and 3
-    "
-    if PYTHON3:
-        if isinstance(txt, bytes):
-            return txt
-        elif not hasattr(txt, '__iter__'):
-            return bytes([txt])
-        else:
-            return bytes([ord(item) for item in txt])
-    else:
-        return [ord(item) for item in txt]
-
-def bytes2str(byt):
-    "
-    Transforms bytes to str
-    "
-    if not isinstance(byt, (str, unicode)):
-        return str(byt.decode('utf-8'))
-    else:
-        return byt
-
-def ints2str(ints):
-    "
-    Transforms whatever int-bytes chain into a string
-    "
-    if not hasattr(ints, '__iter__'):
-        return chr(ints)
-    return ''.join([chr(x) for x in ints])
-
-def ints2bytes(ints):
-    "
-    Transforms whatever int-bytes chain into a string or bytes
-    compatible with python 2 and 3
-    "
-    if PYTHON3:
-        if not hasattr(ints, '__iter__'):
-            return bytes([ints])
-        else:
-            return bytes([x for x in ints])
-    else:
-        return ints2str(ints)
-"""

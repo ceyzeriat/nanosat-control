@@ -49,6 +49,20 @@ if PYTHON3:
             else:
                 return Byt(super().__getitem__(pos))
 
+        def __eq__(self, other):
+            if not isinstance(other, Byt):
+                if isinstance(other, (str, bytes)):
+                    raise TypeError("can't compare Byt and " +
+                                        type(other).__name__)
+            return super().__eq__(other.__str__())
+
+        def __ne__(self, other):
+            if not isinstance(other, Byt):
+                if isinstance(other, (str, bytes)):
+                    raise TypeError("can't compare Byt and " +
+                                        type(other).__name__)
+            return super().__ne__(other.__str__())
+
         def __str__(self):
             return self.decode('ISO-8859-1')
 
@@ -68,6 +82,19 @@ if PYTHON3:
             if not isinstance(txt, Byt):
                 raise TypeError("can't concat Byt to " + type(txt).__name__)
             return Byt(txt.__add__(self))
+
+        def __mul__(self, other):
+            return Byt(super().__mul__(other))
+
+        def __rmul__(self, other):
+            return Byt(super().__rmul__(other))
+
+        def __contains__(self, other):
+            if not isinstance(other, Byt):
+                if isinstance(other, (str, bytes)):
+                    raise TypeError("can't compare Byt to " +
+                                        type(other).__name__)
+            return super().__contains__(other)
 
         def iterInts(self):
             """
@@ -130,11 +157,14 @@ if PYTHON3:
 else:
 
     from binascii import hexlify
+    from types import GeneratorType
 
     class Byt(str):
         def __new__(cls, value=''):
             if isinstance(value, int):
                 value = chr(value)
+            elif isinstance(value, GeneratorType):
+                value = list(value)
             if len(value) > 0:
                 if isinstance(value[0], int):
                     # It's a list of integers
@@ -147,6 +177,20 @@ else:
         def __getslice__(self, deb, fin):
             return Byt(super(Byt, self).__getslice__(deb, fin))
 
+        def __eq__(self, other):
+            if not isinstance(other, Byt):
+                if isinstance(other, (str, unicode)):
+                    raise TypeError("can't compare Byt and " +
+                                        type(other).__name__)
+            return super(Byt, self).__eq__(other.__str__())
+
+        def __ne__(self, other):
+            if not isinstance(other, Byt):
+                if isinstance(other, (str, unicode)):
+                    raise TypeError("can't compare Byt and " +
+                                        type(other).__name__)
+            return super(Byt, self).__ne__(other.__str__())
+
         def __str__(self):
             return super(Byt, self).__str__()
 
@@ -154,7 +198,7 @@ else:
             return "{}('{}')".format(self.__class__.__name__, self.__str__())
 
         def __iter__(self):
-            for ch in str(self):
+            for ch in self.__str__():
                 yield Byt(ch)
 
         def __add__(self, txt):
@@ -165,13 +209,26 @@ else:
         def __radd__(self, txt):
             if not isinstance(txt, Byt):
                 raise TypeError("can't concat Byt to " + type(txt).__name__)
-            return Byt(txt.__add__(self))
+            return txt.__add__(self)
+
+        def __mul__(self, other):
+            return Byt(super(Byt, self).__mul__(other))
+
+        def __rmul__(self, other):
+            return Byt(super(Byt, self).__rmul__(other))
+
+        def __contains__(self, other):
+            if not isinstance(other, Byt):
+                if isinstance(other, (str, unicode)):
+                    raise TypeError("can't compare Byt to " +
+                                        type(other).__name__)
+            return super(Byt, self).__contains__(other)
 
         def iterInts(self):
             """
             Returns the iterator of ints
             """
-            for ch in str(self):
+            for ch in self.__str__():
                 yield ord(ch)
 
         def ints(self):

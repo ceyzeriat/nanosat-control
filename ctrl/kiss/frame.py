@@ -40,16 +40,14 @@ class Frame(object):
         """
         Codes/decodes a KISS frame
         """
-        self.source = Callsign(Byt(source))\
-                        if source is not None else Byt()
-        self.destination = Callsign(Byt(destination))\
+        self.source = Callsign(source) if source is not None else Byt()
+        self.destination = Callsign(destination)\
                             if destination is not None else Byt()
-        self.path = list(map(Callsign, map(Byt, path)))\
-                        if path != [] else []
+        self.path = list(map(Callsign, path)) if path != [] else []
 
     def reinit(self):
-        self.source = Callsign(Byt(core.CSSOURCE))
-        self.destination = Callsign(Byt(core.CSDESTINATION))
+        self.source = Callsign(core.CSSOURCE)
+        self.destination = Callsign(core.CSDESTINATION)
         self.path = []
 
     def encode_kiss(self, text):
@@ -62,7 +60,7 @@ class Frame(object):
                         Byt().join([path_call.encode_kiss()
                                     for path_call in self.path])
         frame = enc_frame[:-1] +\
-                    core.ints2bytes(core.str2ints(enc_frame[-1])[0] | 0x01) +\
+                    Byt(ord(enc_frame[-1]) | 0x01) +\
                     constants.SLOT_TIME +\
                     Byt('\xf0') +\
                     self.text
@@ -79,7 +77,7 @@ class Frame(object):
         frame = utils.strip_df_start(frame)
         # recover special codes
         frame = utils.recover_special_codes(frame)
-        frameints = core.str2ints(frame)
+        frameints = frame.ints()
         frame_len = len(frameints)
         if frame_len > 16:
             for idx, char in enumerate(frameints):
@@ -87,16 +85,14 @@ class Frame(object):
                 # Find the first ODD Byte followed by the next boundary:
                 if (char & 0x01 and ((idx + 1) % 7) == 0):
                     i = (idx + 1) // 7
-                    # Less than 2 callsigns?
-                    if 1 < i < 11:
-                        # For frames <= 70 bytes
-                        if frame_len >= idx + 2:
-                            if (frameints[idx + 1] & 0x03 == 0x03 and
-                                    frameints[idx + 2] in [0xf0, 0xcf]):
-                                text = frame[idx + 3:]
-                                destination = Callsign(frame[:7])
-                                source = Callsign(frame[7:])
-                                #self._extract_kiss_path(frame, i)
+                    # Less than 2 callsigns? For frames <= 70 bytes
+                    if 1 < i < 11 and frame_len >= idx + 2:
+                        if (frameints[idx + 1] & 0x03 == 0x03 and
+                                frameints[idx + 2] in [0xf0, 0xcf]):
+                            text = frame[idx + 3:]
+                            destination = Callsign(frame[:7])
+                            source = Callsign(frame[7:])
+                            #self._extract_kiss_path(frame, i)
                     return source, destination, text
         return source, destination, text
 

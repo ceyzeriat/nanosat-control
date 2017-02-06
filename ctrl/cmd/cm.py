@@ -28,6 +28,7 @@
 import json
 from . import cmdexception
 from ..utils import core
+from ..utils import Byt
 from . import param_commands
 from ..param import param_apid
 from .parameter import Parameter
@@ -118,7 +119,7 @@ class Cm(object):
 
         Kwargs: the input parameters of the command
         """
-        rep = b""
+        rep = Byt()
         inputs = {}
         for param in self._params:
             if param.name not in kwargs.keys():

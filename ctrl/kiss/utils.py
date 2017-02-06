@@ -34,26 +34,25 @@ def valid_callsign(callsign):
     """
     callsign = Byt(callsign).strip()
 
-    if Byt('-') in callsign:
-        if not callsign.count(Byt('-')) == 1:
-            return False
-        else:
+    if callsign.find(Byt('-')) != -1:
+        if callsign.count(Byt('-')) == 1:
             callsign, ssid = callsign.split(Byt('-'))
+        else:
+            return False
     else:
-        ssid = Byt(0)
+        ssid = Byt('0')
 
     # Test length, call should be 2--6
     if not ((2 <= len(callsign) <= 6) and (1 <= len(ssid) <= 2)):
         return False
 
-    cs = core.str2ints(callsign)
-    for char in cs:
-        if not (chr(char).isalpha() or chr(char).isdigit()):
-            if not (char == 42 and cs[-1] == 42):
+    for char in callsign:
+        if not (char.isalpha() or char.isdigit()):
+            if not (char == Byt("*") and callsign[-1] == Byt("*")):
                 return False
 
     # conversion in number fails
-    if core.to_num(ssid) == ssid:
+    if not ssid.isdigit():
         return False
 
     if not (0 <= int(ssid) <= 15):

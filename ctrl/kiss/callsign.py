@@ -76,17 +76,17 @@ class Callsign(object):
         """
         Encodes Callsign (or Callsign-SSID) as KISS
         """
-        encoded_ssid = (int(self.ssid) << 1) | 0x60
-        _callsign = self.callsign
+        encoded_ssid = ((int(self.ssid) << 1) | 0x60)
+        callsign = Byt(self.callsign)
 
         if self.digi:
             encoded_ssid |= 0x80
         # Pad the callsign to 6 characters
-        _callsign = core.str2ints(core.fillit(_callsign, l=6, ch=Byt(' ')))
+        callsign = core.fillit(callsign, l=6, ch=Byt(' ')).ints()
 
-        encoded_callsign = core.ints2bytes([p << 1 for p in _callsign])
+        encoded_callsign = Byt(p << 1 for p in callsign)
 
-        return encoded_callsign + core.ints2bytes(encoded_ssid)
+        return encoded_callsign + Byt(encoded_ssid)
 
     def parse_text(self, callsign):
         """
@@ -96,18 +96,15 @@ class Callsign(object):
         Args:
         * callsign (str): ASCII-Encoded APRS Callsign
         """
-        callsign = Byt(callsign)
-        if Byt('-') in callsign:
-            _callsign, ssid = callsign.split(Byt('-'))
-        else:
-            _callsign = callsign
+        callsign, ssid = Byt(callsign).split(Byt('-')) + [Byt()]
+        if ssid == Byt():
             ssid = Byt('0')
 
-        if _callsign[-1] == Byt('*'):
-            _callsign = _callsign[:-1]
+        if callsign[-1] == Byt('*'):
+            callsign = callsign[:-1]
             self.digi = True
 
-        self.callsign = _callsign.strip()
+        self.callsign = callsign.strip()
         self.ssid = ssid.strip()
 
     def _extract_callsign_from_kiss_frame(self, frame):
@@ -117,7 +114,7 @@ class Callsign(object):
         Args:
         * frame (bytes): KISS-Encoded APRS Frame as str of octs
         """
-        dum = core.str2ints(frame[:7])
-        callsign = core.ints2bytes([x >> 1 for x in dum[:6]])
-        self.callsign = callsign.lstrip().rstrip()
-        self.ssid = core.ints2bytes((dum[6] >> 1) & 0x0f)
+        frame = Byt(frame[:7]).ints()
+        callsign = Byt(x >> 1 for x in frame[:6])
+        self.callsign = callsign.strip()
+        self.ssid = Byt((frame[6] >> 1) & 0x0f)

@@ -183,7 +183,7 @@ class Parameter(object):
         valid, value = self.is_valid(value, withvalue=True)
         if valid is False:
             raise cmdexception.InvalidParameterValue(self.name, value)
-        ret = b""
+        ret = Byt()
         if self._isdict:
             for item in value:
                 ret += Byt(self.rng[item])

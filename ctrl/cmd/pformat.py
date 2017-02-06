@@ -28,6 +28,8 @@
 from . import cmdexception
 from ..utils import core
 from ..utils import Byt
+if core.PYTHON3:
+    long = int
 
 
 __all__ = ['PFormat']
@@ -104,12 +106,12 @@ class PFormat(object):
             if len(value) > 1:
                 return False
         elif self.typ == 'uint':
-            if not isinstance(value, int):
+            if not isinstance(value, (int, long)):
                 return False
             if not 0 <= value < self._maxint:
                 return False
         elif self.typ == 'int':
-            if not isinstance(value, int):
+            if not isinstance(value, (int, long)):
                 return False
             if not -self._halfmaxint <= value < self._halfmaxint:
                 return False
