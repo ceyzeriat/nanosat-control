@@ -65,6 +65,15 @@ class MissingSourceCallsign(CTRLException):
         self.message = "The source callsign file '{}' does not exist".format(f)
 
 
+class MissingDBPasswordFile(CTRLException):
+    """
+    If the source callsign file is missing
+    """
+    def __init__(self, f, *args, **kwargs):
+        self._init(f, *args, **kwargs)
+        self.message = "The password file '{}' does not exist".format(f)
+
+
 class MissingDestinationCallsign(CTRLException):
     """
     If the destination callsign file is missing
@@ -73,6 +82,14 @@ class MissingDestinationCallsign(CTRLException):
         self._init(f, *args, **kwargs)
         self.message = "The destination callsign file '{}' does"\
                        "not exist".format(f)
+
+class MissingPacketIDFile(CTRLException):
+    """
+    If the source callsign file is missing
+    """
+    def __init__(self, f, *args, **kwargs):
+        self._init(f, *args, **kwargs)
+        self.message = "The packet id file '{}' does not exist".format(f)
 
 
 class NoDBConnection(CTRLException):

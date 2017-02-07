@@ -37,6 +37,8 @@ ART = """
                                
 """
 
+# beep char
+BEEP = Byt('\x07')
 
 # to avoid error at import if the DB or folders are not proper
 NOERRORATIMPORT = True
@@ -48,20 +50,22 @@ JUSTALIB = False
 ANTENNALISTENED = 'checkoutbox'
 
 # the path to the file containing the packet id counter
-PACKETIDFILE = ['param', 'tc_packet_id']
+PACKETIDFILE = ['.segsol', 'tc_packet_id']
 
 # the path to the parameter file containing the DB connection settings
 DBFILE = ['param', 'db_server']
+PASSTAG = '<pass>'
+PASSFILE = ['.segsol', 'artichaut']
 
 # the callsign files
-CSSOURCEFILE = ['param', 'callsign_source']
-CSDESTFILE = ['param', 'callsign_destination']
+CSSOURCEFILE = ['.segsol', 'callsign_source']
+CSDESTFILE = ['.segsol', 'callsign_destination']
 
-# who is the emitter
-EMITTERID = 1
+# who is the emitter, cf database
+EMITTERID = 1  # ['.segsol', 'radio_id']
 
-# who is the receiver
-RECEIVERID = 1
+# who is the receiver, cf database
+RECEIVERID = 1  # ['.segsol', 'callsign_source']
 
 # day-reference from unix time
 DATETIME_REF = 0  #16801  # 2016,1,1,0,0,0
@@ -118,7 +122,7 @@ TELEMETRYDUMPFOLDER = ['tm_data']
 # the format of the name for the raw telemetry dumps
 TELEMETRYNAMEFORMAT = 'TM_%Y%m%dT%H%M%S_%f.packet'
 
-# the split between filename and data
+# the split between keys and data when shipping through sockets
 SOCKETSEPARATOR = Byt('###')
 SOCKETESCAPE = Byt('/')
 SOCKETMAPPER = Byt(':::')

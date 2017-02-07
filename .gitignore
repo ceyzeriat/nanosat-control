@@ -49,5 +49,3 @@ develop-eggs
 
 # package
 ctrl/param/db_server
-ctrl/param/callsign_source
-ctrl/param/callsign_destination

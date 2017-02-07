@@ -41,89 +41,28 @@ import inflect
 import json
 from dateutil import parser
 from multiprocessing import current_process
-from sys import stdout
+#from sys import stdout
 from . import ctrlexception
-from ..param.param_all import *
+from .prepare_param import *
 from .byt import Byt, PYTHON3
-
+from IPython.utils.terminal import toggle_set_term_title, set_term_title
+toggle_set_term_title(True)
 
 # make sure that python 3 understands unicode native python 2 function
 if PYTHON3:
     unicode = str
 
-MAXPACKETID = 2**14
-
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-HOME = os.path.expanduser("~")
 
 def prepare_terminal(txt):
-    __import__('os').system("reset")
-    stdout.write("\x1b]2;{}\x07".format(txt))
-
-def concat_dir(*args):
-    """
-    Concatenates the path in ``args`` into a string-path
-    """
-    return os.path.join(*args)
-
-def rel_dir(*args):
-    """
-    Concatenates the path in ``args`` into a relative
-    string-path from the package directory
-    """
-    return concat_dir(ROOT, *args)
-
-TELEMETRYDUMPFOLDER = concat_dir(HOME, *TELEMETRYDUMPFOLDER)
-if not os.path.exists(TELEMETRYDUMPFOLDER):
-    if NOERRORATIMPORT:
-        print(ctrlexception.BrokenTelemetryDumpFolder(TELEMETRYDUMPFOLDER))
-    else:
-        raise ctrlexception.BrokenTelemetryDumpFolder(TELEMETRYDUMPFOLDER)
-
-# preparing the DB server
-try:
-    f = open(rel_dir(*DBFILE), mode='r')
-    DBENGINE = f.readline().strip()
-    f.close()
-    assert len(DBENGINE) > 20
-    assert DBENGINE[:13] == 'postgresql://'
-except IOError:
-    if NOERRORATIMPORT:
-        print(ctrlexception.MissingDBServerFile(rel_dir(*DBFILE)))
-    else:
-        raise ctrlexception.MissingDBServerFile(rel_dir(*DBFILE))
-
-# preparing the source callsign
-try:
-    f = open(rel_dir(*CSSOURCEFILE), mode='r')
-    CSSOURCE = f.readline().strip()
-    f.close()
-except IOError:
-    CSSOURCE = None
-    if NOERRORATIMPORT:
-        print(ctrlexception.MissingSourceCallsign(rel_dir(*CSSOURCEFILE)))
-    else:
-        raise ctrlexception.MissingSourceCallsign(rel_dir(*CSSOURCEFILE))
-
-# preparing the destination callsign
-try:
-    f = open(rel_dir(*CSDESTFILE), mode='r')
-    CSDESTINATION = f.readline().strip()
-    f.close()
-except IOError:
-    CSDESTINATION = None
-    if NOERRORATIMPORT:
-        print(ctrlexception.MissingDestinationCallsign(rel_dir(*CSDESTFILE)))
-    else:
-        raise ctrlexception.MissingDestinationCallsign(rel_dir(*CSDESTFILE))
-
+    os.system("reset")
+    set_term_title("{}".format(txt))
+    #stdout.write("\x1b]2;{}".format(txt))  # {}\x07
 
 def get_tc_packet_id():
     """
     Just reads the packet id from the file
     """
-    f = open(rel_dir(*PACKETIDFILE), mode='r')
+    f = open(PACKETIDFULLFILE, mode='r')
     res = int(f.readline().strip())
     f.close()
     return res
@@ -139,7 +78,7 @@ def get_set_next_tc_packet_id():
     Reads the packet id from the file, adds one and saves new value
     """
     v = get_next_tc_packet_id()
-    f = open(rel_dir(*PACKETIDFILE), mode='w')
+    f = open(PACKETIDFULLFILE, mode='w')
     f.write(str(v))
     f.close()
     return v

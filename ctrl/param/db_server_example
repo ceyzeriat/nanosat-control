@@ -1,1 +1,1 @@
-postgresql://user:password@host/dbname
+postgresql://user:password@host:port/dbname

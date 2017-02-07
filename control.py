@@ -44,4 +44,4 @@ time.sleep(0.5)
 
 core.prepare_terminal('Control')
 print(core.ART)
-
+print(core.BEEP)
