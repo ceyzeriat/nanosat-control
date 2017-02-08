@@ -29,7 +29,7 @@ from sys import version_info
 PYTHON3 = version_info > (3,)
 
 
-__all__ = ['Byt', 'PYTHON3']
+__all__ = ['Byt']
 
 
 if PYTHON3:

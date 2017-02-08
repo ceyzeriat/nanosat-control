@@ -41,12 +41,11 @@ import inflect
 import json
 from dateutil import parser
 from multiprocessing import current_process
-#from sys import stdout
 from . import ctrlexception
 from .prepare_param import *
-from .byt import Byt, PYTHON3
-from IPython.utils.terminal import toggle_set_term_title, set_term_title
-toggle_set_term_title(True)
+from .byt import Byt
+#from IPython.utils.terminal import toggle_set_term_title, set_term_title
+#toggle_set_term_title(True)
 
 # make sure that python 3 understands unicode native python 2 function
 if PYTHON3:
@@ -55,8 +54,8 @@ if PYTHON3:
 
 def prepare_terminal(txt):
     os.system("reset")
-    set_term_title("{}".format(txt))
-    #stdout.write("\x1b]2;{}".format(txt))  # {}\x07
+    #set_term_title("{}".format(txt))
+    os.stdout.write("\x1b]2;{}\x07".format(txt))
 
 def get_tc_packet_id():
     """
