@@ -34,7 +34,6 @@ core.prepare_terminal('Watch')
 print("Initialization...")
 watching.init_watch()
 print("Done")
-print(core.BEEP)
 
 # infinite loop to check processes
 #curses.wrapper(curses_main)

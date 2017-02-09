@@ -177,10 +177,11 @@ else:
                 value = chr(value)
             elif isinstance(value, GeneratorType):
                 value = list(value)
-            if len(value) > 0:
-                if isinstance(value[0], int):
-                    # It's a list of integers
-                    value = ''.join(chr(item) for item in value)
+            if hasattr(value, "__iter__"):
+                if len(value) > 0:
+                    if isinstance(value[0], int):
+                        # It's a list of integers
+                        value = ''.join(chr(item) for item in value)
             return super(Byt, cls).__new__(cls, value)
 
         def __getitem__(self, pos):

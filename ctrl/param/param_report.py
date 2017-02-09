@@ -43,4 +43,10 @@ REPORTSDATA = [
         ['who', 'source', 'll', 'destination']),
     ('savedTM', "'{who}' saved data under id '{dbid}'",
         ['who', 'dbid']),
+    ('myPID', "'{who}' has PID '{pid}'",
+        ['who', 'pid']),
+    ('IamDead', "Process '{who}' is dead",
+        ['who']),
+    ('IamAlive', "Process '{who}' is alive",
+        ['who']),
     ]

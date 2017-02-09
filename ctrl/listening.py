@@ -51,6 +51,7 @@ class ListenTrans(SocTransmitter):
         is extablished
         """
         report('newTransConnection', rec=name)
+        report('myPID', pid=core.get_pid())
 
 
 class ListenRec(SocReceiver):
@@ -59,6 +60,7 @@ class ListenRec(SocReceiver):
         New connection or connection restablished
         """
         report('newRecConnection', port=self.portname)
+        report('myPID', pid=core.get_pid())
 
     def process(self, data):
         """
@@ -85,7 +87,7 @@ def process_data(data):
     now = core.now()
     name = now.strftime(core.TELEMETRYNAMEFORMAT)
     name = core.concat_dir(core.TELEMETRYDUMPFOLDER, name)
-    if len(glob.glob(name)) > 0:
+    if os.path.isfile(name):  # already exists
         name += ".{}".format(len(glob.glob(name))+1)
     # locally saved
     f = open(name, mode='wb')

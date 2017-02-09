@@ -27,4 +27,5 @@
 
 from .byt import *
 from . import ctrlexception
+from .watchdog import *
 # don't import core and day, otherwise you get a circular import

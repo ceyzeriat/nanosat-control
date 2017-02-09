@@ -46,6 +46,7 @@ class ControlTrans(SocTransmitter):
         is extablished
         """
         report('newTransConnection', rec=name)
+        report('myPID', pid=core.get_pid())
 
 
 def broadcast_TC(dbid, packet):

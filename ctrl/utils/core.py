@@ -102,10 +102,11 @@ def split_socket_info(data, asStr=False):
     Splits the data using the socket separator and returns a dictionnary
     of the different pieces in bytes format
     """
-    res = re.split(RESPLITVARS, data)
-    res = [re.split(RESPLITMAP,
-                item.replace(SOCKETESCAPE+SOCKETSEPARATOR, SOCKETSEPARATOR))
-            for item in res]
+    res = re.split(str(RESPLITVARS), str(data))
+    res = [re.split(
+            str(RESPLITMAP),
+            str(item.replace(SOCKETESCAPE+SOCKETSEPARATOR, SOCKETSEPARATOR))
+            ) for item in res]
     dic = {}
     if asStr:
         for k, v in res:

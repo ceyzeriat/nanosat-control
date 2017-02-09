@@ -36,7 +36,6 @@ core.prepare_terminal('Listen')
 print("Initialization...")
 listening.init_listening(antenna=core.ANTENNALISTENED)
 print("Done\n")
-print(core.BEEP)
 
 print("Starting...")
 while 1:
@@ -45,7 +44,7 @@ while 1:
     if n > 0:
         # grab data
         data = listening.ANTENNA.read(size=n)
-        if data != '' and data is not None:
+        if data != Byt('') and data is not None:
             # deal with it in a separate thread
             loopy = Thread(target=listening.process_data, args=(data, ))
             loopy.daemon = True

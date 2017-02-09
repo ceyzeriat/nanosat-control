@@ -57,7 +57,7 @@ class RFCheckoutbox(object):
             print("got: '{}'".format(data.hex()))
             return data
         else:
-            return
+            return None
 
     def write(self, data):
         if data is not None:

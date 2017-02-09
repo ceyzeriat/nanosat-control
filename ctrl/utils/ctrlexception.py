@@ -184,6 +184,15 @@ class OutofboundInteger(CTRLException):
         self.message = "Can't encode int '{}' on '{}' bytes".format(v, b)
 
 
+class WatchDogTimeOut(CTRLException):
+    """
+    When the time of a watchdog is out
+    """
+    def __init__(self, w, *args, **kwargs):
+        self._init(w, *args, **kwargs)
+        self.message = "Watchdog '{}' timed-out".format(w)
+
+
 # not used
 class NoSuchKey(CTRLException):
     """
