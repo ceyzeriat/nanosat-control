@@ -49,6 +49,12 @@ def rel_dir(*args):
     """
     return concat_dir(ROOT, *args)
 
+CRC32TABLE = []
+for _byte in range(256):
+    for _i in range(8):
+        _byte = (_byte >> 1) ^ (0xEDB88320 & (-(_byte & 1)))
+    CRC32TABLE.append(_byte)
+
 if not JUSTALIB:
     TELEMETRYDUMPFOLDER = concat_dir(HOME, *TELEMETRYDUMPFOLDER)
     if not os.path.exists(TELEMETRYDUMPFOLDER):

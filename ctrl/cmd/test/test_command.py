@@ -45,14 +45,20 @@ echo = {'number':1,
         'lparam': 2,
         'param': (('hop', 'blah', ftup(0, 255), 'str', 2), )}
 
-
-
 echo2 = {'number':1,
         'name': 'echo',
         'subsystem': 'obc',
         'pid': "L0ComManager",
         'desc': "blah",
         'lparam': 2,
+        'param': (('hop', 'blah', ftup(0, 255), 'str', ftup(1,2)), )}
+
+echo3 = {'number':1,
+        'name': 'echo',
+        'subsystem': 'obc',
+        'pid': "L0ComManager",
+        'desc': "blah",
+        'lparam': "*",
         'param': (('hop', 'blah', ftup(0, 255), 'str', ftup(1,2)), )}
 
 
@@ -67,6 +73,23 @@ def test_cm_base():
     assert c.lparam == 2
     assert c.nparam == 1
     assert c.p_0_hop.typ.typ == 'str'
+
+def test_cm_base2():
+    ee = copy.deepcopy(echo)
+    ee['lparam'] = '*'
+    ee['param'] = (('hop', 'blah', ftup(0, 255), 'str', ftup(1, 4)), )
+    c = Cm(**ee)
+    assert c.number == 1
+    assert c.name == 'echo'
+    assert c.desc == 'blah'
+    assert c.level == 0
+    assert c.subsystem == "obc"
+    assert c.pid == "L0ComManager"
+    assert c.lparam is None
+    assert c.nparam == 1
+    assert c.p_0_hop.typ.typ == 'str'
+    assert c.generate_data(hop='abab')[0] == Byt('\x61\x62\x61\x62')
+    assert c.generate_data(hop='a')[0] == Byt('\x61')
 
 def test_cm_call():
     c = Cm(**echo)
@@ -95,3 +118,8 @@ def test_cm_MissingCommandInput():
 def test_cm_WrongCommandLength():
     c = Cm(**echo2)
     c.generate_data(hop='a')
+
+@raises(cmdexception.InvalidParameterValue)
+def test_cm_InvalidParameterValue():
+    c = Cm(**echo3)
+    c.generate_data(hop='abc')

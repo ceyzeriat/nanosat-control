@@ -44,6 +44,7 @@ def test_pformat_parse():
 
 def test_pformat_str():
     p = PFormat('str')
+    assert p.minmax == (0, 255)
     assert p.bits == 0
     assert p.typ == 'str'
     assert p.is_valid(['a']) == False
@@ -56,6 +57,7 @@ def test_pformat_str():
 
 def test_pformat_nostr():
     p = PFormat('int', 8)
+    assert p.minmax == (-2**7, 2**7-1)
     assert p.bits == 8
     assert p.typ == 'int'
     assert p._halfmaxint == 2**7
@@ -70,6 +72,7 @@ def test_pformat_int():
 
 def test_pformat_uint():
     p = PFormat('uint', 8)
+    assert p.minmax == (0, 2**8-1)
     assert p.is_valid(256) == False
     assert p.is_valid(255) == True
     assert p.is_valid(0) == True
@@ -82,11 +85,6 @@ def test_pformat_float():
     assert p.is_valid('e') == False
     assert p.is_valid(0) == False
     assert p.is_valid(0.0) == True
-
-@raises(cmdexception.NotImplemented)
-def test_pformat_NotImplemented():
-    p = PFormat('int', 8)
-    p._tohex(12)
 
 @raises(cmdexception.NotImplemented)
 def test_pformat_NotImplemented():

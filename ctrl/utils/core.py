@@ -168,10 +168,21 @@ def to_num(v):
     try:
         v = int(v)
     except:
-        try:
-            v = float(v)
-        except:
-            pass
+        if v[:2] == "0x":
+            try:
+                v = int(v, 16)
+            except:
+                pass
+        elif v[:2] == "0b":
+            try:
+                v = int(v, 2)
+            except:
+                pass
+        else:
+            try:
+                v = float(v)
+            except:
+                pass
     return v
 
 def load_json_cmds(path):
@@ -423,3 +434,20 @@ def fillit(txt, l, ch, right=True):
         return txt + ch*(l-len(txt))
     else:
         return ch*(l-len(txt)) + txt
+
+def two_comp_uint(v, bits):
+    """
+    Give v the value as int and bits the number of bits on which it is
+    encoded
+    """
+    return (1<<bits)-v-1
+
+def crc32(message, crc=None):
+    """
+    Give a message, returns a CRC on 4 octet using
+    basecrc as crc start-value (if given)
+    """
+    crc = 0xffffffff if crc is None else int(crc)
+    for byte in Byt(message).iterInts():
+        crc = (crc >> 8) ^ CRC32TABLE[(crc ^ byte) & 0xFF]
+    return two_comp_uint(crc, 32)

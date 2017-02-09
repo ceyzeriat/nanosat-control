@@ -149,3 +149,20 @@ class PFormat(object):
     @bits.setter
     def bits(self, value):
         raise cmdexception.ReadOnly('bits')
+
+    @property
+    def minmax(self):
+        if self.typ == 'str':
+            return (0, 255)
+        elif self.typ == 'uint':
+            return (0, self._maxint-1)
+        elif self.typ == 'int':
+            return (-self._halfmaxint, self._halfmaxint-1)
+        elif self.typ == 'float':
+            raise cmdexception.NotImplemented()
+        else:
+            raise cmdexception.UnknownFormat(self.typ)
+
+    @minmax.setter
+    def minmax(self, value):
+        raise cmdexception.ReadOnly('minmax')

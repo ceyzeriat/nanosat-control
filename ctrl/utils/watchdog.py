@@ -25,12 +25,11 @@
 ###############################################################################
 
 
-import os
 from threading import Timer
 from . import ctrlexception
 
 
-__all__ = ['WatchDog', 'PIDWatchDog']
+__all__ = ['WatchDog']
 
 
 class WatchDog(object):
@@ -87,47 +86,3 @@ class WatchDog(object):
         Default callback function raising Watchdog
         """
         raise ctrlexception.WatchDogTimeOut(self.name)
-
-
-class PIDWatchDog(WatchDog):
-    def __init__(self, name, pid, timeout, whenDead=None, whenAlive=None,
-                    **kwargs):
-        """
-        Creates a watchdog that checks a pid every timeout
-
-        Args:
-        * name (str): the name of the watchdog
-        * pid (int): the process id to check
-        * timeout (int): the time after which the callback function is called
-        * whenDead (callable): the handler if the process is found dead
-        * whenAlive (callable): the handler if the process is found alive
-        """
-        self.pid = int(pid)
-        self.handlerDead = whenDead\
-                            if whenDead is not None and callable(whenDead)\
-                            else self.defaultHandler
-        self.handlerAlive = whenAlive\
-                            if whenAlive is not None and callable(whenAlive)\
-                            else None
-        super(PIDWatchDog, self).__init__(name=name, timeout=timeout,
-                                            handler=self.pidcheck, **kwargs)
-
-    def pidcheck(self, **kwargs):
-        """
-        Does the pid-checking of the pid
-        """
-        if is_pid_running(self.pid):
-            if callable(getattr(self, "handlerAlive", "")):
-                self.handlerAlive(**kwargs)
-            self.reset()
-        else:
-            self.handlerDead(**kwargs)
-
-
-def is_pid_running(pid):
-    try:
-        os.kill(pid, 0)
-    except:
-        return False
-    else:
-        return True

@@ -33,7 +33,7 @@ PACKETWRAPPERPID = 'L0ComManager'
 
 
 PIDREGISTRATION_OBC_L0 = {  'L0ComManager': 0,
-                            'MemoryManager': 1,
+                            'L0MemoryManager': 1,
                             'Housekeeper': 2,
                             'L0EventProcessor': 3,
                             'EpsManager': 4,

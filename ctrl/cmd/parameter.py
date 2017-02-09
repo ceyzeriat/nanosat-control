@@ -64,6 +64,8 @@ class Parameter(object):
             self._rngdisp = repr(self.rng.keys())
         else:
             self._typ = PFormat(typ)
+            if rng == "":  # just force default range
+                rng = self.typ.minmax
             if core.isStr(rng):
                 self._rng = rng.split(param_commands.RANGESEPARATOR)[:2]
                 self._rng = tuple([core.to_num(item) for item in self._rng])
@@ -94,7 +96,7 @@ class Parameter(object):
                 self._rngdisp = repr(self.rng)
             else:
                 raise cmdexception.WrongParameterDefinition(self.name, 'rng')
-        if core.isStr(size):
+        if core.isStr(size) and not str(size).isdigit():
             self._size = size.split(param_commands.RANGESEPARATOR)[:2]
             self._size = tuple([core.to_num(item) for item in self._size])
             self._sizedisp = "[{}--{}]".format(*self.size)
@@ -104,8 +106,8 @@ class Parameter(object):
             if self.size[0] < 0 or self.size[1] < 0 \
                     or self.size[0] > self.size[1]:
                 raise cmdexception.WrongParameterDefinition(self.name, 'size')
-        elif isinstance(size, int) and size > 0:
-            self._size = size
+        elif (isinstance(size, int) and size > 0) or str(size).isdigit():
+            self._size = int(size)
             self._sizedisp = "[{}]".format(self.size)
         else:
             raise cmdexception.WrongParameterDefinition(self.name, 'size')

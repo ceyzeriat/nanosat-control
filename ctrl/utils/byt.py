@@ -205,6 +205,8 @@ else:
                 if isinstance(other, (str, unicode)):
                     raise TypeError("can't compare Byt and " +
                                         type(other).__name__)
+                else:
+                    return True
             else:
                 return super(Byt, self).__ne__(other)
 
