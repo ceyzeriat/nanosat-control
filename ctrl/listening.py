@@ -26,6 +26,7 @@
 
 
 import time
+import os
 import glob
 from .soc import SocTransmitter
 from .soc import SocReceiver

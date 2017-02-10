@@ -73,7 +73,7 @@ CATEGORY_3 = []  # None
 CATEGORY_4 = []
 CATEGORY_5 = []
 CATEGORY_6 = []
-CATEGORY_7 = []
+CATEGORY_7 = []  # None
 CATEGORY_8 = []
 CATEGORY_9 = []
 
@@ -106,6 +106,6 @@ TABLECATEGORY =    {0: 'TmcatRcpAcknowledgement',
                     4: '',
                     5: '',
                     6: '',
-                    7: '',
+                    7: 'TmcatBeacon',
                     8: '',
                     9: ''}

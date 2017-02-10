@@ -278,6 +278,7 @@ def int2bin(i, pad=True, **kwargs):
     If ``pad`` is int, pads to ``pad`` characters.
     Set `pad`` to ``None`` or ``False`` for no padding.
     """
+    litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
     i = int(i)
     if i < 0:
         raise ctrlexception.NegativeUnsignedInteger(i)
@@ -291,7 +292,7 @@ def int2bin(i, pad=True, **kwargs):
     # padding to pad int value
     elif pad not in ['False', 0, '0', None] and isinstance(pad, int):
         b = "{:0>{pad}}".format(b, pad=pad)
-    if TWINKLETWINKLELITTLEINDIA:
+    if litFucInd:
         return b[::-1]
     else:
         return b
@@ -304,6 +305,7 @@ def intSign2bin(i, sz, **kwargs):
     If ``pad`` is int, pads to ``pad`` characters.
     Set `pad`` to ``None`` or ``False`` for no padding.
     """
+    litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
     sz = int(sz)*8
     i = int(i)
     half = 2**(sz-1)
@@ -312,7 +314,7 @@ def intSign2bin(i, sz, **kwargs):
     if i >= 0:
         return int2bin(i, pad=sz)
     else:
-        if TWINKLETWINKLELITTLEINDIA:
+        if litFucInd:
             return int2bin(half+i, pad=sz)[:-1] + '1'
         else:
             return '1' + int2bin(half+i, pad=sz)[1:]
@@ -321,7 +323,8 @@ def bin2int(b, **kwargs):
     """
     Give bits ``b`` as str or '0b001', returns int
     """
-    if TWINKLETWINKLELITTLEINDIA:
+    litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
+    if litFucInd:
         b = b[::-1]
     return int(b, 2)
 
@@ -329,7 +332,8 @@ def bin2intSign(b, **kwargs):
     """
     Give bits ``b`` as str or '0b001', returns signed int
     """
-    if TWINKLETWINKLELITTLEINDIA:
+    litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
+    if litFucInd:
         b = b[::-1]
     if len(b) == 1:
         return int(b)
@@ -357,9 +361,10 @@ def hex2int(h, **kwargs):
     """
     Give hex ``h`` as chars '\xf0', returns int
     """
+    litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
     if len(h) == 1:
         return ord(h)
-    if TWINKLETWINKLELITTLEINDIA:
+    if litFucInd:
         h = h[::-1]
     return int(binascii.hexlify(Byt(h)), 16)
 
@@ -374,13 +379,14 @@ def hex2intSign(h, **kwargs):
     else:
         return i-2*half
 
-def int2hex(i, pad=0):
+def int2hex(i, pad=0, **kwargs):
     """
     Give an int, returns chars
     """
+    litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
     hx = hex(i)[2:].replace('L', '')  # replace if long int
     hx = Byt(binascii.unhexlify(('0' * (len(hx) % 2)) + hx))
-    if TWINKLETWINKLELITTLEINDIA:
+    if litFucInd:
         hx = hx[::-1]
     if pad > 1:
         hx = padit(txt=hx, l=pad, ch=Byt(0))
@@ -401,8 +407,9 @@ def intSign2hex(i, sz):
     else:
         return int2hex(2*half+i, pad=sz)
 
-def reverse_if_little_endian(bits):
-    if TWINKLETWINKLELITTLEINDIA:
+def reverse_if_little_endian(bits, **kwargs):
+    litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
+    if litFucInd:
         return bits[::-1]
     else:    
         return bits
@@ -415,13 +422,14 @@ def octify(b):
     b = padit(b, ((len(b)-1)//8+1)*8, '0')
     return [b[i:i+8] for i in range(0, len(b), 8)]
 
-def padit(txt, l, ch):
+def padit(txt, l, ch, **kwargs):
     """
     Pads with ``ch`` up to length ``l``, on the right is little endian
     or on the left if big
     ``txt`` and ``ch`` must be the same type (bytes or str)
     """
-    if TWINKLETWINKLELITTLEINDIA:
+    litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
+    if litFucInd:
         return txt + ch * (l - len(txt))
     else:    
         return ch * (l - len(txt)) + txt
