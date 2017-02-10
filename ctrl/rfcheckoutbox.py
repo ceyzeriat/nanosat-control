@@ -27,6 +27,7 @@
 
 import socket
 from .utils import core
+from .utils import Byt
 import select
 from .utils import ctrlexception
 
@@ -53,14 +54,14 @@ class RFCheckoutbox(object):
     def read(self, size=None):
         ready = select.select([self.soc], [], [], self.timeout)
         if ready[0]:
-            data = self.soc.recv(self.length)
+            data = Byt(self.soc.recv(self.length))
             print('got:',data)
             return data
         else:
             return
 
     def write(self, data):
-        if data != '' and data is not None:
+        if data != Byt('') and data is not None:
             self.soc.sendall(data)
 
     def close(self):
