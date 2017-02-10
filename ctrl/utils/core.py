@@ -34,6 +34,7 @@ import time
 import datetime
 import numpy as np
 import os
+import sys
 import glob
 import pytz
 import re
@@ -55,7 +56,7 @@ if PYTHON3:
 def prepare_terminal(txt):
     os.system("reset")
     #set_term_title("{}".format(txt))
-    os.stdout.write("\x1b]2;{}\x07".format(txt))
+    sys.stdout.write("\x1b]2;{}\x07".format(txt))
 
 def get_tc_packet_id():
     """
@@ -102,20 +103,20 @@ def split_socket_info(data, asStr=False):
     Splits the data using the socket separator and returns a dictionnary
     of the different pieces in bytes format
     """
-    res = re.split(str(RESPLITVARS), str(data))
-    res = [re.split(
-            str(RESPLITMAP),
-            str(item.replace(SOCKETESCAPE+SOCKETSEPARATOR, SOCKETSEPARATOR))
-            ) for item in res]
+    res = map(Byt, re.split(str(RESPLITVARS), str(data)))
+    res = [map(Byt, re.split(   str(RESPLITMAP),
+                                str(item.replace(SOCKETESCAPE+SOCKETSEPARATOR,
+                                                    SOCKETSEPARATOR))
+                            )) for item in res]
     dic = {}
     if asStr:
         for k, v in res:
-            dic[str(Byt(k))] = str(Byt(v.replace(SOCKETESCAPE+SOCKETMAPPER,
-                                                      SOCKETMAPPER)))
+            dic[str(Byt(k))] = str(v.replace(SOCKETESCAPE+SOCKETMAPPER,
+                                                    SOCKETMAPPER))
     else:
         for k, v in res:
-            dic[str(Byt(k))] = Byt(v.replace(SOCKETESCAPE+SOCKETMAPPER,
-                                            SOCKETMAPPER))
+            dic[str(Byt(k))] = v.replace(SOCKETESCAPE+SOCKETMAPPER,
+                                            SOCKETMAPPER)
     return dic
 
 def merge_socket_info(**kwargs):

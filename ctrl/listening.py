@@ -141,7 +141,7 @@ def init_listening(antenna):
     print("Setting up antenna: '{}'".format(antenna))
     if antenna == 'checkoutbox':
         init_checkoutbox()
-    if antenna == 'serial':
+    elif antenna == 'serial':
         init_serial()
     else:
         raise ctrlexception.UnknownAntenna(antenna)

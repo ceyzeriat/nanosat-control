@@ -27,7 +27,7 @@
 
 import time
 from threading import Thread
-from ctrl.utils import core
+from ctrl.utils import core, Byt
 from ctrl import listening
 from ctrl import db
 
@@ -44,9 +44,11 @@ while 1:
     if n > 0:
         # grab data
         data = listening.ANTENNA.read(size=n)
-        if data != Byt('') and data is not None:
-            # deal with it in a separate thread
-            loopy = Thread(target=listening.process_data, args=(data, ))
-            loopy.daemon = True
-            loopy.start()
+        if data is not None:
+            if data != Byt(''):
+                print("got: '{}'".format(data.hex()))
+                # deal with it in a separate thread
+                loopy = Thread(target=listening.process_data, args=(data, ))
+                loopy.daemon = True
+                loopy.start()
 

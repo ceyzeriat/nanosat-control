@@ -73,8 +73,9 @@ class WatchRec(SocReceiver):
 def process_report(data):
     global PIDS
     inputs = core.split_socket_info(data, asStr=True)
-    broadcast(key=inputs.pop('key'), **inputs)
-    if inputs['key'] == 'myPID':
+    key = inputs.pop('key')
+    broadcast(key=key, **inputs)
+    if key == 'myPID':
         who = inputs['who']
         if who in PIDS.keys():
             killit = PIDS.pop(who)

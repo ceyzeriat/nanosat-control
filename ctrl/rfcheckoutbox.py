@@ -55,7 +55,6 @@ class RFCheckoutbox(object):
         ready = select.select([self.soc], [], [], self.timeout)
         if ready[0]:
             data = Byt(self.soc.recv(self.length))
-            print("got: '{}'".format(data.hex()))
             return data
         else:
             return None
