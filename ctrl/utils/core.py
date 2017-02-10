@@ -41,12 +41,11 @@ import inflect
 import json
 from dateutil import parser
 from multiprocessing import current_process
-#from sys import stdout
 from . import ctrlexception
 from .prepare_param import *
-from .byt import Byt, PYTHON3
-from IPython.utils.terminal import toggle_set_term_title, set_term_title
-toggle_set_term_title(True)
+from .byt import Byt
+#from IPython.utils.terminal import toggle_set_term_title, set_term_title
+#toggle_set_term_title(True)
 
 # make sure that python 3 understands unicode native python 2 function
 if PYTHON3:
@@ -55,8 +54,8 @@ if PYTHON3:
 
 def prepare_terminal(txt):
     os.system("reset")
-    set_term_title("{}".format(txt))
-    #stdout.write("\x1b]2;{}".format(txt))  # {}\x07
+    #set_term_title("{}".format(txt))
+    os.stdout.write("\x1b]2;{}\x07".format(txt))
 
 def get_tc_packet_id():
     """
@@ -103,10 +102,11 @@ def split_socket_info(data, asStr=False):
     Splits the data using the socket separator and returns a dictionnary
     of the different pieces in bytes format
     """
-    res = re.split(RESPLITVARS, data)
-    res = [re.split(RESPLITMAP,
-                item.replace(SOCKETESCAPE+SOCKETSEPARATOR, SOCKETSEPARATOR))
-            for item in res]
+    res = re.split(str(RESPLITVARS), str(data))
+    res = [re.split(
+            str(RESPLITMAP),
+            str(item.replace(SOCKETESCAPE+SOCKETSEPARATOR, SOCKETSEPARATOR))
+            ) for item in res]
     dic = {}
     if asStr:
         for k, v in res:
@@ -168,10 +168,21 @@ def to_num(v):
     try:
         v = int(v)
     except:
-        try:
-            v = float(v)
-        except:
-            pass
+        if v[:2] == "0x":
+            try:
+                v = int(v, 16)
+            except:
+                pass
+        elif v[:2] == "0b":
+            try:
+                v = int(v, 2)
+            except:
+                pass
+        else:
+            try:
+                v = float(v)
+            except:
+                pass
     return v
 
 def load_json_cmds(path):
@@ -423,3 +434,20 @@ def fillit(txt, l, ch, right=True):
         return txt + ch*(l-len(txt))
     else:
         return ch*(l-len(txt)) + txt
+
+def two_comp_uint(v, bits):
+    """
+    Give v the value as int and bits the number of bits on which it is
+    encoded
+    """
+    return (1<<bits)-v-1
+
+def crc32(message, crc=None):
+    """
+    Give a message, returns a CRC on 4 octet using
+    basecrc as crc start-value (if given)
+    """
+    crc = 0xffffffff if crc is None else int(crc)
+    for byte in Byt(message).iterInts():
+        crc = (crc >> 8) ^ CRC32TABLE[(crc ^ byte) & 0xFF]
+    return two_comp_uint(crc, 32)

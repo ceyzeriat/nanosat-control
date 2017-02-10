@@ -29,7 +29,7 @@ from sys import version_info
 PYTHON3 = version_info > (3,)
 
 
-__all__ = ['Byt', 'PYTHON3']
+__all__ = ['Byt']
 
 
 if PYTHON3:
@@ -177,10 +177,11 @@ else:
                 value = chr(value)
             elif isinstance(value, GeneratorType):
                 value = list(value)
-            if len(value) > 0:
-                if isinstance(value[0], int):
-                    # It's a list of integers
-                    value = ''.join(chr(item) for item in value)
+            if hasattr(value, "__iter__"):
+                if len(value) > 0:
+                    if isinstance(value[0], int):
+                        # It's a list of integers
+                        value = ''.join(chr(item) for item in value)
             return super(Byt, cls).__new__(cls, value)
 
         def __getitem__(self, pos):
@@ -204,6 +205,8 @@ else:
                 if isinstance(other, (str, unicode)):
                     raise TypeError("can't compare Byt and " +
                                         type(other).__name__)
+                else:
+                    return True
             else:
                 return super(Byt, self).__ne__(other)
 

@@ -36,7 +36,6 @@ core.prepare_terminal('Listen')
 print("Initialization...")
 listening.init_listening(antenna=core.ANTENNALISTENED)
 print("Done\n")
-print(core.BEEP)
 
 print("Starting...")
 while 1:

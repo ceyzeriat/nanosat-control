@@ -27,4 +27,6 @@
 
 from .byt import *
 from . import ctrlexception
+from .pidwatchdog import *
+from .bindiff import *
 # don't import core and day, otherwise you get a circular import

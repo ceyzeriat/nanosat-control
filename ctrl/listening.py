@@ -51,6 +51,7 @@ class ListenTrans(SocTransmitter):
         is extablished
         """
         report('newTransConnection', rec=name)
+        report('myPID', pid=core.get_pid())
 
 
 class ListenRec(SocReceiver):
@@ -59,6 +60,7 @@ class ListenRec(SocReceiver):
         New connection or connection restablished
         """
         report('newRecConnection', port=self.portname)
+        report('myPID', pid=core.get_pid())
 
     def process(self, data):
         """
@@ -85,7 +87,7 @@ def process_data(data):
     now = core.now()
     name = now.strftime(core.TELEMETRYNAMEFORMAT)
     name = core.concat_dir(core.TELEMETRYDUMPFOLDER, name)
-    if len(glob.glob(name)) > 0:
+    if os.path.isfile(name):  # already exists
         name += ".{}".format(len(glob.glob(name))+1)
     # locally saved
     f = open(name, mode='wb')
@@ -104,11 +106,7 @@ def init_checkoutbox():
 
 def init_serial():
     global ANTENNA
-    ANTENNA = serial.Serial(core.ANTENNAPORT)
-    ANTENNA.open()
-    ANTENNA.reset_input_buffer()
-    ANTENNA.reset_output_buffer()
-    ANTENNA.timetout = 0
+    ANTENNA = SerialUSB()
 
 
 def report(report_key, **kwargs):
@@ -125,6 +123,7 @@ def init_listening(antenna):
 
     ``antenna`` can be:
       * ``checkoutbox``: the ISIS rfcheckoutbox
+      * ``serial``: the serial/USB port
     """
     global LISTEN_TRANS
     global LISTEN_REC_CONTROL
@@ -142,6 +141,8 @@ def init_listening(antenna):
     print("Setting up antenna: '{}'".format(antenna))
     if antenna == 'checkoutbox':
         init_checkoutbox()
+    if antenna == 'serial':
+        init_serial()
     else:
         raise ctrlexception.UnknownAntenna(antenna)
     listen_running = True

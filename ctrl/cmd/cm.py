@@ -47,7 +47,8 @@ class Cm(object):
         * name (str): the name (code friendly)
         * pid (str): the unique pid identity string
         * desc (str): the description
-        * lparam (int): the total length of the parameters, in octets
+        * lparam (int): the total length of the parameters, in
+            octets, or "*" for any
         * subsystem (str): the subsystem key
         * param (iterable of list): an iterable of parameter lists of
           form and order: (name, desc, rng, typ, size, unit)
@@ -59,7 +60,7 @@ class Cm(object):
             raise cmdexception.WrongPID(pid, self.name)
         self._pid = str(pid)
         self._desc = str(desc)
-        self._lparam = int(lparam)
+        self._lparam = int(lparam) if lparam != "*" else None
         self._subsystem = str(subsystem)
         self._param = [tuple(item) for item in param]
         self._payload = bool(param_apid.PLDREGISTRATION[self.pid])
@@ -80,7 +81,7 @@ class Cm(object):
                             int(self.level),
                             self.desc,
                             self.nparam,
-                            self.lparam,
+                            self.lparam if self.lparam is not None else "*",
                             "\n".join([str(item) for item in self._params]))
 
     __repr__ = __str__
@@ -93,8 +94,9 @@ class Cm(object):
         Returns a dictionnary for initialization or json dumping
         """
         return {'number': self.number, 'name': self.name, 'pid': self.pid,
-                'desc': self.desc, 'lparam': self.lparam,
-                'subsystem': self.subsystem, 'param': self._param}
+                'desc': self.desc, 'subsystem': self.subsystem,
+                'lparam': self.lparam if self.lparam is not None else "*",
+                'param': self._param}
 
     def to_json_file(self):
         """
@@ -126,9 +128,8 @@ class Cm(object):
                 raise cmdexception.MissingCommandInput(self.name, param.name)
             inputs[param.name] = kwargs.pop(param.name)
             rep += param.tohex(inputs[param.name])
-        if len(rep) != self.lparam:
-            raise cmdexception.WrongCommandLength(self.name,
-                                                    len(rep),
+        if len(rep) != self.lparam and self.lparam is not None:
+            raise cmdexception.WrongCommandLength(self.name, len(rep),
                                                     self.lparam)
         return rep, inputs
 

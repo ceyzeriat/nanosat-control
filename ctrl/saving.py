@@ -52,6 +52,7 @@ class SaveTrans(SocTransmitter):
         Call-back function when a new connection is extablished
         """
         report('newTransConnection', rec=name)
+        report('myPID', pid=core.get_pid())
 
 
 class SaveRec(SocReceiver):
@@ -60,6 +61,7 @@ class SaveRec(SocReceiver):
         New connection or connection restablished
         """
         report('newRecConnection', port=self.portname)
+        report('myPID', pid=core.get_pid())
 
     def process(self, data):
         """

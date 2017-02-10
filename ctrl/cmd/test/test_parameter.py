@@ -47,6 +47,8 @@ def test_param_base():
     assert p.typ.bits == 8
     assert p.rng == (0, 10)
     assert p.size == 3
+    p = Parameter('hop', 'blah', "", 'uint8', 3, None)
+    assert list(p.rng) == [0, 255]
 
 def test_param_str_tuple():
     p = Parameter('hop', 'blah', ftup(0,10), 'str')

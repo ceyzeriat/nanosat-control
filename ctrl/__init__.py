@@ -34,7 +34,7 @@ from . import db
 from . import c
 from . import c0
 from . import c1
-from . import clib
+#from . import clib
 from . import xdisp
 from . import kiss
 from ._version import __version__, __major__, __minor__, __micro__

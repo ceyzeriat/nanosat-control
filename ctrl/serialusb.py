@@ -25,46 +25,44 @@
 ###############################################################################
 
 
-import socket
+import serial
 from .utils import core
-from .utils import Byt
-import select
 from .utils import ctrlexception
 
 
-__all__ = ['RFCheckoutbox']
+__all__ = ['SerialUSB']
 
 
-class RFCheckoutbox(object):
+class SerialUSB(object):
     def __init__(self):
-        host = socket.gethostbyname(socket.gethostname())
-        port = int(core.RFCHECKOUTBOXPORT)
-        self.soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        try:
-            self.soc.connect((host, port))
-        except:
-            raise ctrlexception.RFCheckoutBoxIssue()
-        self.timeout = float(core.RFCHECKOUTBOXTIMEOUT)
-        self.length = int(core.RFCHECKOUTBOXLENGTH)
-
-    def in_waiting(self):
-        return self.length
+        serial.Serial(core.ANTENNAPORT)
+        ANTENNA.open()
+        ANTENNA.reset_input_buffer()
+        ANTENNA.reset_output_buffer()
+        ANTENNA.timetout = 0
+        # host = socket.gethostbyname(socket.gethostname())
+        # port = int(core.SERIALUSBPORT)
+        # self.soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # self.soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # try:
+            # self.soc.connect((host, port))
+        # except:
+            # raise ctrlexception.RFCheckoutBoxIssue()
+        self.timeout = float(core.SERIALUSBTIMEOUT)
+        self.length = int(core.SERIALUSBLENGTH)
 
     def read(self, size=None):
         ready = select.select([self.soc], [], [], self.timeout)
         if ready[0]:
-            data = Byt(self.soc.recv(self.length))
-            print("got: '{}'".format(data.hex()))
+            data = self.soc.recv(self.length)
+            print('got:',data)
             return data
         else:
-            return None
+            return
 
     def write(self, data):
-        if data is not None:
-            data = Byt(data)
-            if data != Byt(''):
-                self.soc.sendall(data)
+        if data != '' and data is not None:
+            self.soc.sendall(data)
 
     def close(self):
         pass

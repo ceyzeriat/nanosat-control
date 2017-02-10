@@ -103,12 +103,8 @@ WATCHINGPORT = (50004, WATCHINGNAME)
 WATCHINGPORTLISTENERS = [CONTROLLINGNAME]
 
 
-# SERIAL ANTENNA
-# the serial-antenna port to listen
-ANTENNASERIALPORT = '/dev/ttyS3'
-# how often you should listen to the serial-antenna port
-ANTENNARPORTREADFREQ = 30
-
+# process timeout for the watchdog to get angry
+PROCESSTIMEOUT = 5  # sec
 
 # RFCHECKOUTBOX
 # port
@@ -116,6 +112,12 @@ RFCHECKOUTBOXPORT = 3211
 RFCHECKOUTBOXTIMEOUT = 1  # sec
 RFCHECKOUTBOXLENGTH = 1024  # octet
 
+
+# SERIAL
+# port 
+SERIALUSBPORT = '/dev/ttyS3'
+SERIALUSBTIMEOUT = 1  # sec
+SERIALUSBLENGTH = 1024  # octet
 
 # where the raw telemetry are dumped (locally), relative to HOME
 TELEMETRYDUMPFOLDER = ['tm_data']

@@ -25,14 +25,31 @@
 ###############################################################################
 
 
-import time
-from ctrl.utils import core
-from ctrl import saving
-from ctrl import db
+__all__ = ['Slc']
 
 
-core.prepare_terminal('Save')
-print("Initialization...")
-saving.init_saving()
-db.init_DB()
-print("Done")
+class Slc(object):
+    def __init__(self, s, l=1):
+        self.s = s
+        self.l = l
+
+    def __repr__(self):
+        return "[{}--({})--[{}".format(self.s, self.l, self.f)
+
+    __str__ = __repr__
+
+    def inc(self, q=1):
+        self.l += q
+
+    @property
+    def f(self):
+        return self.s + self.l
+
+    def slice(self):
+        return slice(self.s, self.f)
+
+    def __add__(self, other):
+        if self.s < other.s:
+            return Slc(s=self.s, l=other.f - self.s)
+        else:
+            return Slc(s=other.s, l=self.f - other.s)

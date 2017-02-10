@@ -29,6 +29,7 @@ from .soc import SocTransmitter
 from .soc import SocReceiver
 from .utils import core
 from .utils.report import REPORTS
+from .utils import PIDWatchDog
 
 
 __all__ = ['init_watch', 'close_watch']
@@ -39,76 +40,70 @@ WATCH_REC_LISTEN = None
 WATCH_REC_CONTROL = None
 WATCH_REC_SAVE = None
 watch_running = False
+PIDS = {}
 
 
 class WatchTrans(SocTransmitter):
     def _newconnection(self, name):
         """
-        Call-back function when a new connection
-        is extablished
+        Call-back function when a new connection is extablished
         """
-        r = REPORTS['newTransConnection'].disp(who=core.WATCHINGNAME, rec=name)
-        print(r)
+        broadcast(key='newTransConnection', who=core.WATCHINGNAME,
+                    rec=name)
 
 
-class WatchListenRec(SocReceiver):
+class WatchRec(SocReceiver):
     def _newconnection(self):
         """
         New connection or connection restablished
         """
-        r = REPORTS['newRecConnection'].disp(who=core.WATCHINGNAME,
-                                                port=self.portname)
-        print(r)
+        broadcast(key='newRecConnection', who=core.WATCHINGNAME,
+                    port=self.portname)
 
     def process(self, data):
         """
         Sends the data to the antenna
         """
         if core.is_reporting(data):
-            inputs = core.split_socket_info(data, asStr=True)
-            print('Reporting: '+REPORTS[inputs['key']].disp(**inputs))
+            process_report(data)
         else:
-            print('Raw data: '+repr(data))
+            print('Raw data: {}'.format(data.hex()))
 
 
-class WatchControlRec(SocReceiver):
-    def _newconnection(self):
-        """
-        New connection or connection restablished
-        """
-        r = REPORTS['newRecConnection'].disp(who=core.WATCHINGNAME,
-                                                port=self.portname)
-        print(r)
-
-    def process(self, data):
-        """
-        Sends the data to the antenna
-        """
-        if core.is_reporting(data):
-            inputs = core.split_socket_info(data, asStr=True)
-            print('Reporting: '+REPORTS[inputs['key']].disp(**inputs))
-        else:
-            print('Raw data: '+repr(data))
+def process_report(data):
+    global PIDS
+    inputs = core.split_socket_info(data, asStr=True)
+    broadcast(key=inputs.pop('key'), **inputs)
+    if inputs['key'] == 'myPID':
+        who = inputs['who']
+        if who in PIDS.keys():
+            killit = PIDS.pop(who)
+            killit.stop()
+        PIDS[who] = PIDWatchDog(name=who, pid=inputs['pid'],
+                                timeout=core.PROCESSTIMEOUT,
+                                whenDead=revive_process, whenAlive=say_hi,
+                                who=who)
+    else:
+        pass
 
 
-class WatchSavingRec(SocReceiver):
-    def _newconnection(self):
-        """
-        New connection or connection restablished
-        """
-        r = REPORTS['newRecConnection'].disp(who=core.WATCHINGNAME,
-                                                port=self.portname)
-        print(r)
+def revive_process(who):
+    broadcast(key='IamDead', who=who)
+    #PIDS[who].reset()
 
-    def process(self, data):
-        """
-        Sends the data to the antenna
-        """
-        if core.is_reporting(data):
-            inputs = core.split_socket_info(data, asStr=True)
-            print('Reporting: '+REPORTS[inputs['key']].disp(**inputs))
-        else:
-            print('Raw data: '+repr(data))
+
+def say_hi(who):
+    broadcast(key='IamAlive', who=who)
+
+
+def broadcast(key, **kwargs):
+    """
+    Broacasts info
+    """
+    r = REPORTS[key].disp(**kwargs)
+    print('Reporting: {}'.format(r))
+    rp = REPORTS[key].pack(**kwargs)
+    return WATCH_TRANS.tell(rp)
 
 
 def init_watch():
@@ -125,15 +120,21 @@ def init_watch():
     WATCH_TRANS = WatchTrans(port=core.WATCHINGPORT[0],
                                 nreceivermax=len(core.WATCHINGPORTLISTENERS),
                                 start=True, portname=core.WATCHINGPORT[1])
-    WATCH_REC_LISTEN = WatchListenRec(port=core.LISTENINGPORT[0],
-                                name=core.WATCHINGNAME, connect=True,
-                                connectWait=0.5, portname=core.LISTENINGPORT[1])
-    WATCH_REC_CONTROL = WatchControlRec(port=core.CONTROLLINGPORT[0],
-                                name=core.WATCHINGNAME, connect=True,
-                                connectWait=0.5, portname=core.CONTROLLINGPORT[1])
-    WATCH_REC_SAVE = WatchSavingRec(port=core.SAVINGPORT[0],
-                                name=core.WATCHINGNAME, connect=True,
-                                connectWait=0.5, portname=core.SAVINGPORT[1])
+    WATCH_REC_LISTEN = WatchRec(port=core.LISTENINGPORT[0],
+                                    name=core.WATCHINGNAME,
+                                    connect=True,
+                                    connectWait=0.5,
+                                    portname=core.LISTENINGPORT[1])
+    WATCH_REC_CONTROL = WatchRec(port=core.CONTROLLINGPORT[0],
+                                    name=core.WATCHINGNAME,
+                                    connect=True,
+                                    connectWait=0.5,
+                                    portname=core.CONTROLLINGPORT[1])
+    WATCH_REC_SAVE = WatchRec(port=core.SAVINGPORT[0],
+                                    name=core.WATCHINGNAME,
+                                    connect=True,
+                                    connectWait=0.5,
+                                    portname=core.SAVINGPORT[1])
     watch_running = True
 
 
