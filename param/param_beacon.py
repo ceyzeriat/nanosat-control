@@ -33,6 +33,7 @@ DATABEACON = [  CCSDSKey(name='hkErrorFlags', start=0, l=16, fctunpack=core.bin2
                 CCSDSKey(name='errorCodes3', start=16, l=16, fctunpack=core.bin2int),
                 CCSDSKey(name='errorCodes2', start=32, l=16, fctunpack=core.bin2int),
                 CCSDSKey(name='errorCodes1', start=48, l=16, fctunpack=core.bin2int),
+
                 CCSDSKey(name='ant1Undeployed_2', start=66, l=1, fctunpack=core.bin2int),
                 CCSDSKey(name='ant1Timeout_2', start=67, l=1, fctunpack=core.bin2int),
                 CCSDSKey(name='ant1Deploying_2', start=68, l=1, fctunpack=core.bin2int),
@@ -47,6 +48,7 @@ DATABEACON = [  CCSDSKey(name='hkErrorFlags', start=0, l=16, fctunpack=core.bin2
                 CCSDSKey(name='ant4Timeout_2', start=77, l=1, fctunpack=core.bin2int),
                 CCSDSKey(name='ant4Deploying_2', start=78, l=1, fctunpack=core.bin2int),
                 CCSDSKey(name='armed_2', start=79, l=1, fctunpack=core.bin2int),
+
                 CCSDSKey(name='ant1Undeployed_1', start=82, l=1, fctunpack=core.bin2int),
                 CCSDSKey(name='ant1Timeout_1', start=83, l=1, fctunpack=core.bin2int),
                 CCSDSKey(name='ant1Deploying_1', start=84, l=1, fctunpack=core.bin2int),
@@ -61,6 +63,7 @@ DATABEACON = [  CCSDSKey(name='hkErrorFlags', start=0, l=16, fctunpack=core.bin2
                 CCSDSKey(name='ant4Timeout_1', start=93, l=1, fctunpack=core.bin2int),
                 CCSDSKey(name='ant4Deploying_1', start=94, l=1, fctunpack=core.bin2int),
                 CCSDSKey(name='armed_1', start=95, l=1, fctunpack=core.bin2int),
+                
                 CCSDSKey(name='antsBTemp', start=96, l=16, fctunpack=core.bin2int),
                 CCSDSKey(name='antsATemp', start=112, l=16, fctunpack=core.bin2int),
                 CCSDSKey(name='TrxvuTxPaTemp', start=128, l=16, fctunpack=core.bin2int),
@@ -78,9 +81,6 @@ DATABEACON = [  CCSDSKey(name='hkErrorFlags', start=0, l=16, fctunpack=core.bin2
                 CCSDSKey(name='rebootCause', start=392, l=32, fctunpack=core.bin2int),
                 CCSDSKey(name='nReboots', start=424, l=32, fctunpack=core.bin2int),
                 CCSDSKey(name='satMode', start=456, l=8, fctunpack=core.bin2int)]
-
-# inversion to take into account the Sat-antenna swapping
-#DATABEACON = DATABEACON[::-1]
 
 #b_bin = core.hex2bin(b, pad=len(b)*8)
 

@@ -45,12 +45,12 @@ def get_pid(v, pad, **kwargs):
     get_pid.verbose = "-> binary"
     return core.int2bin(param_apid.PIDREGISTRATION[v], pad=pad)
 
+
 def get_pid_rev(v, pld, lvl, **kwargs):
     get_pid_rev.verbose = "-> unsigned integer"
     dic = param_apid.PIDREGISTRATION_REV[core.bin2int(v)]
     return dic[int(pld)][int(lvl) if int(pld) == 0 else 1]
 
-HEADER_P_SIZE = 6  # octets
 
 PACKETVERSION = CCSDSKey(   name='ccsds_version',
                             dic={0: '000'},
@@ -117,6 +117,9 @@ HEADER_P_KEYS = [PACKETVERSION, PACKETTYPE, SECONDARYHEADERFLAG, PAYLOADFLAG,
     LEVELFLAG, PID, PACKETCATEGORY, SEQUENCEFLAG, PACKETID, DATALENGTH]
 
 
+HEADER_P_SIZE = sum(
+    [item.len for item in HEADER_P_KEYS])//8
+
 
 # SECONDARY HEADER TELEMETRY
 # origin of start/end is end of primary header
@@ -138,8 +141,6 @@ def msec_unpack(v):
     return Ms(core.bin2int(v))
 
 
-HEADER_S_SIZE_TELEMETRY = 6  # octets
-
 DAYSINCEREF_TELEMETRY = CCSDSKey(   name='days_since_ref',
                                     start=0,
                                     l=16,
@@ -156,12 +157,13 @@ MSECSINCEREF_TELEMETRY = CCSDSKey(  name='ms_since_today',
 HEADER_S_KEYS_TELEMETRY = [DAYSINCEREF_TELEMETRY, MSECSINCEREF_TELEMETRY]
 
 
+HEADER_S_SIZE_TELEMETRY = sum(
+    [item.len for item in HEADER_S_KEYS_TELEMETRY])//8
+
 
 # SECONDARY HEADER TELECOMMAND
 # origin of start/end is end of primary header
 # start/end units is bits
-
-HEADER_S_SIZE_TELECOMMAND = 6  # octets
 
 REQACKRECEPTIONTELECOMMAND = CCSDSKey(  name='reqack_reception',
                                         start=0,
@@ -192,10 +194,14 @@ EMITTERID = CCSDSKey(   name='emitter_id',
 
 SIGNATURE = CCSDSKey(   name='signature',
                         start=16,
-                        l=32,
-                        fctunpack=core.bin2int,
-                        fctpack=core.int2bin)
+                        l=128,
+                        fctunpack=core.bin2hex,
+                        fctpack=core.hex2bin)
 
 HEADER_S_KEYS_TELECOMMAND = [REQACKRECEPTIONTELECOMMAND,
     REQACKFORMATTELECOMMAND, REQACKEXECUTIONTELECOMMAND, TELECOMMANDID,
     EMITTERID, SIGNATURE]
+
+
+HEADER_S_SIZE_TELECOMMAND = sum(
+    [item.len for item in HEADER_S_KEYS_TELECOMMAND])//8
