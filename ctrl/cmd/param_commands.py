@@ -27,6 +27,6 @@
 
 MINLENPARAMSTRUCTURE = 3
 
-COMMANDSFILE = ["param", "cmds.json"]
+COMMANDSFILE = ["cmd", "cmds.json"]
 
 RANGESEPARATOR = ';'

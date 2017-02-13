@@ -29,11 +29,11 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from sqlalchemy import desc
+from param import param_category
+from param import param_apid
 from ..utils import core
 from ..utils import ctrlexception
-from ..ccsds import param_category
 from ..ccsds import param_ccsds
-from ..param import param_apid
 
 
 __all__ = ['init_DB', 'get_column_keys', 'save_TC_to_DB', 'close_DB',

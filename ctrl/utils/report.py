@@ -26,7 +26,7 @@
 
 
 from . import core
-from ..param.param_report import REPORTSDATA
+from .param_report import REPORTSDATA
 
 
 __all__ = ['REPORTS', 'REPORTSDATA']

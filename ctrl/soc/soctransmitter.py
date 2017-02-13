@@ -28,7 +28,6 @@
 import socket
 from threading import Thread
 import select
-from ..utils import core
 from ..utils import Byt
 
 

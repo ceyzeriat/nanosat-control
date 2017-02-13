@@ -26,7 +26,7 @@
 
 
 import os
-from ..param.param_all import *
+from param.param_all import *
 from . import ctrlexception
 
 
@@ -42,6 +42,12 @@ def concat_dir(*args):
     """
     return os.path.join(*args)
 
+def home_dir(*args):
+    """
+    Concatenates the path in ``args`` into a string-path
+    """
+    return os.path.join(HOME, *args)
+
 def rel_dir(*args):
     """
     Concatenates the path in ``args`` into a relative
@@ -56,7 +62,7 @@ for _byte in range(256):
     CRC32TABLE.append(_byte)
 
 if not JUSTALIB:
-    TELEMETRYDUMPFOLDER = concat_dir(HOME, *TELEMETRYDUMPFOLDER)
+    TELEMETRYDUMPFOLDER = home_dir(*TELEMETRYDUMPFOLDER)
     if not os.path.exists(TELEMETRYDUMPFOLDER):
         TELEMETRYDUMPFOLDER = None
         if NOERRORATIMPORT:
@@ -66,7 +72,7 @@ if not JUSTALIB:
 
     # preparing the DB server
     try:
-        f = open(rel_dir(*DBFILE), mode='r')
+        f = open(home_dir(*DBFILE), mode='r')
         DBENGINE = f.readline().strip()
         f.close()
         assert len(DBENGINE) > 20
@@ -74,25 +80,27 @@ if not JUSTALIB:
     except IOError:
         DBENGINE = None
         if NOERRORATIMPORT:
-            print(ctrlexception.MissingDBServerFile(rel_dir(*DBFILE)))
+            print(ctrlexception.MissingDBServerFile(home_dir(*DBFILE)))
         else:
-            raise ctrlexception.MissingDBServerFile(rel_dir(*DBFILE))
+            raise ctrlexception.MissingDBServerFile(home_dir(*DBFILE))
 
     # get password if need be
-    if DBENGINE.find(PASSTAG) != -1:
-        _f = concat_dir(HOME, *PASSFILE)
-        try:
-            f = open(_f, mode='r')
-            DBENGINE.replace(PASSTAG, f.readline().strip())
-            f.close()
-        except IOError:
-            if NOERRORATIMPORT:
-                print(ctrlexception.MissingDBPasswordFile(_f))
-            else:
-                raise ctrlexception.MissingDBPasswordFile(_f)
+    for tagname, tag  in PASSTAGS.items():
+        if str(DBENGINE).find(tagname) != -1 and tagname != ''\
+            and isinstance(tag, list):
+            _f = home_dir(*tag)
+            try:
+                f = open(_f, mode='r')
+                DBENGINE.replace(tagname, f.readline().strip())
+                f.close()
+            except IOError:
+                if NOERRORATIMPORT:
+                    print(ctrlexception.MissingDBTagFile(_f, tagname))
+                else:
+                    raise ctrlexception.MissingDBTagFile(_f, tagname)
 
     # preparing the source callsign
-    _f = concat_dir(HOME, *CSSOURCEFILE)
+    _f = home_dir(*CSSOURCEFILE)
     try:
         f = open(_f, mode='r')
         CSSOURCE = f.readline().strip()
@@ -105,7 +113,7 @@ if not JUSTALIB:
             raise ctrlexception.MissingSourceCallsign(_f)
 
     # preparing the destination callsign
-    _f = concat_dir(HOME, *CSDESTFILE)
+    _f = home_dir(*CSDESTFILE)
     try:
         f = open(_f, mode='r')
         CSDESTINATION = f.readline().strip()
@@ -118,7 +126,7 @@ if not JUSTALIB:
             raise ctrlexception.MissingDestinationCallsign(_f)
 
     # packet id file
-    PACKETIDFULLFILE = concat_dir(HOME, *PACKETIDFILE)
+    PACKETIDFULLFILE = home_dir(*PACKETIDFILE)
     if not os.path.isfile(PACKETIDFULLFILE):
         PACKETIDFULLFILE = None
         if NOERRORATIMPORT:

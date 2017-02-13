@@ -65,13 +65,13 @@ class MissingSourceCallsign(CTRLException):
         self.message = "The source callsign file '{}' does not exist".format(f)
 
 
-class MissingDBPasswordFile(CTRLException):
+class MissingDBTagFile(CTRLException):
     """
-    If the source callsign file is missing
+    If the tag file is missing
     """
-    def __init__(self, f, *args, **kwargs):
+    def __init__(self, f, t, *args, **kwargs):
         self._init(f, *args, **kwargs)
-        self.message = "The password file '{}' does not exist".format(f)
+        self.message = "The tag '{}' file '{}' does not exist".format(f)
 
 
 class MissingDestinationCallsign(CTRLException):

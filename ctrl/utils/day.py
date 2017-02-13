@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-from ..param.param_all import DATETIME_REF
+from param.param_all import DATETIME_REF
 import datetime
 import time
 

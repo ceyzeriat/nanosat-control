@@ -27,3 +27,5 @@
 
 from . import param_apid
 from . import param_all
+from . import param_beacon
+from . import param_category

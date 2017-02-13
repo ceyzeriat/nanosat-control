@@ -25,12 +25,12 @@
 ###############################################################################
 
 
+from param import param_apid
+from param import param_category
 from .ccsdskey import CCSDSKey
 from ..utils import core
 from ..utils.day import Day
 from ..utils.ms import Ms
-from ..param import param_apid
-from . import param_category
 
 
 MAXIMUMDATALENGTH = 65536  # octets
@@ -42,9 +42,11 @@ MAXIMUMPACKETLENGTH = MAXIMUMDATALENGTH + 6  # octets
 # start/end units is bits
 
 def get_pid(v, pad, **kwargs):
+    get_pid.verbose = "-> binary"
     return core.int2bin(param_apid.PIDREGISTRATION[v], pad=pad)
 
 def get_pid_rev(v, pld, lvl, **kwargs):
+    get_pid_rev.verbose = "-> unsigned integer"
     dic = param_apid.PIDREGISTRATION_REV[core.bin2int(v)]
     return dic[int(pld)][int(lvl) if int(pld) == 0 else 1]
 
@@ -127,10 +129,12 @@ AUTHPACKETLENGTH = 12
 
 
 def days_unpack(v):
+    days_unpack.verbose = "-> unsigned integer"
     return Day(core.bin2int(v))
 
 
 def msec_unpack(v):
+    msec_unpack.verbose = "-> unsigned integer"
     return Ms(core.bin2int(v))
 
 

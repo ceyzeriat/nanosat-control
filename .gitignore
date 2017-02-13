@@ -48,4 +48,4 @@ develop-eggs
 .DS_Store
 
 # package
-ctrl/param/db_server
+param/param_all.py

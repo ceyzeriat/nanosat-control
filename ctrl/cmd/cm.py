@@ -26,11 +26,11 @@
 
 
 import json
+from param import param_apid
 from . import cmdexception
 from ..utils import core
 from ..utils import Byt
 from . import param_commands
-from ..param import param_apid
 from .parameter import Parameter
 
 

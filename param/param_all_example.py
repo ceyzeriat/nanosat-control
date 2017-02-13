@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-from ..utils import Byt
+from ctrl.utils import Byt
 
 
 ART = """
@@ -53,9 +53,8 @@ ANTENNALISTENED = 'checkoutbox'
 PACKETIDFILE = ['.segsol', 'tc_packet_id']
 
 # the path to the parameter file containing the DB connection settings
-DBFILE = ['param', 'db_server']
-PASSTAG = '<pass>'
-PASSFILE = ['.segsol', 'artichaut']
+DBFILE = ['.segsol', 'db_server']
+PASSTAGS = {'<pass>': ['.segsol', 'artichaut']}
 
 # the callsign files
 CSSOURCEFILE = ['.segsol', 'callsign_source']

@@ -29,7 +29,6 @@ import socket
 from threading import Thread
 import select
 import time
-from ..utils import core
 from ..utils import Byt
 
 

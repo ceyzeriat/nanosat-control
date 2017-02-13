@@ -25,10 +25,10 @@
 ###############################################################################
 
 
+from param import param_category
 from ..utils import core
 from . import ccsdsexception
 from . import param_ccsds
-from . import param_category
 
 
 __all__ = []

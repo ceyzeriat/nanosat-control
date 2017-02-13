@@ -27,8 +27,8 @@
 
 # taken from https://nubes-lesia.obspm.fr/index.php/apps/files?dir=%2FPicSat%2FProjet%2FtrxDoc
 
-from .ccsdskey import CCSDSKey
-from ..utils import core
+from ctrl.ccsds.ccsdskey import CCSDSKey
+from ctrl.utils import core
 
 
 __all__ = ['PACKETCATEGORIES', 'CATEGORYREGISTRATION', 'PACKETCATEGORYSIZES',
@@ -44,8 +44,7 @@ CATEGORYREGISTRATION = {0: '0000',
                         6: '0110',
                         7: '0111',
                         8: '1000',
-                        9: '1001',
-                        10: '1010'}
+                        9: '1001'}
 
 TELECOMMANDID = CCSDSKey(   name='telecommand_id',
                             start=0,

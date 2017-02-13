@@ -25,7 +25,31 @@
 ###############################################################################
 
 
-from .ccsdskey import CCSDSKey
-from ..utils import core
-from ..param import param_apid
-from . import param_category
+__all__ = ['REPORTSDATA']
+
+
+REPORTSDATA = [
+    ('newRecConnection', "Receiver '{who}' connected to port '{port}'",
+        ['who', 'port']),
+    ('newTransConnection', "Port '{who}' got a new receiver: '{rec}'",
+        ['who', 'rec']),
+    ('broadcastTC', "'{who}' broadcasting TC id '{dbid}'",
+        ['who', 'dbid']),
+    ('sendingTC', "'{who}' is sending TC",
+        ['who']),
+    ('sentTC', "'{who}' sent TC at '{t}'",
+        ['who', 't']),
+    ('receivedTM', "'{who}' received data for saving",
+        ['who']),
+    ('receivedCallsignTM', "'{who}' (callsign '{source}') received data of "\
+        "length '{ll}' from callsign '{destination}' for saving",
+        ['who', 'source', 'll', 'destination']),
+    ('savedTM', "'{who}' saved data under id '{dbid}'",
+        ['who', 'dbid']),
+    ('myPID', "'{who}' has PID '{pid}'",
+        ['who', 'pid']),
+    ('IamDead', "Process '{who}' is dead",
+        ['who']),
+    ('IamAlive', "Process '{who}' is alive",
+        ['who']),
+    ]
