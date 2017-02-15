@@ -28,14 +28,14 @@
 import time
 import glob
 
-from .soc import SocTransmitter
-from .soc import SocReceiver
-from .utils import core
-from .utils import ctrlexception
-from .utils.report import REPORTS
-from .telemetry import Telemetry
-from .ccsds import CCSDSBlob
-from .kiss import Framer
+from ctrl.soc import SocTransmitter
+from ctrl.soc import SocReceiver
+from ctrl.utils import core
+from ctrl.utils import ctrlexception
+from ctrl.utils.report import REPORTS
+from ctrl.telemetry import Telemetry
+from ctrl.ccsds import CCSDSBlob
+from ctrl.kiss import Framer
 
 
 __all__ = ['init_saving', 'close_saving', 'report']

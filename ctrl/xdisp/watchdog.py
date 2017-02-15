@@ -26,15 +26,81 @@
 
 
 import curses
+import locale
+
+locale.setlocale(locale.LC_ALL, '')
 
 
-def curses_main(args):
-    w    = curses.initscr()
-    curses.echo()
-    while True:
-        w.addstr(0, 0, ">")
-        w.clrtoeol()
-        s   = w.getstr()
-        if s == "q":    break
-        w.insertln()
-        w.addstr(1, 0, "[" + s + "]")
+CONTROLICO = u'\u262D '.encode('utf-8')
+SAVEICO = u'\u26C3 '.encode('utf-8')
+LISTENICO = u'\u260E '.encode('utf-8')
+
+UPLEFTCORNER = u'\u256D'
+UPRIGHTCORNER = u'\u256E'
+BOTTOMRIGHTCORNER = u'\u256F'
+BOTTOMLEFTCORNER = u'\u2570'
+HORLINE = u'\u2500'
+VERLINE = u'\u2502'
+HORLINESPLITUP = u'\u2534'
+HORLINESPLITDOWN = u'\u252C'
+VERLINESPLITLEFT = u'\u2524'
+VERLINESPLITRIGHT = u'\u251C'
+CROSS = u'\u253C'
+
+
+
+def newwinbox(h, w, y, x, inbox=False):
+    if not inbox:
+        h += 2
+        w += 2
+        y -= 1
+        x -= 1
+    wb = curses.newwin(h, w, y, x)
+    wb.box()
+    wb.refresh()
+    return curses.newwin(h-2, w-2, y+1, x+1)
+
+class Xdisp(object):
+    def __init__(self, stdscr):
+        self.stdscr = stdscr
+        curses.start_color()
+        curses.use_default_colors()
+        curses.echo()
+        self._init_colors()
+        self.stdscr.border()
+        self.stdscr.refresh()
+        self.report = newwinbox(5, 40, 6, 20)
+        self.process = newwinbox(3, 33, 13, 19)
+        self.set_controlico()
+        self.set_saveico()
+        self.set_listenico()
+        self.process.refresh()
+        self.loopit()
+
+    def set_controlico(self, status=0):
+        self.process.addstr(0,0, CONTROLICO, self.BLACK)
+
+    def set_saveico(self, status=0):
+        self.process.addstr(0,2, SAVEICO, self.RED)
+
+    def set_listenico(self, status=0):
+        self.process.addstr(0,4, LISTENICO, self.GREEN)
+
+    def _init_colors(self):
+        for i in range(0, curses.COLORS):
+            curses.init_pair(i + 1, i, -1)
+        self.BLACK = curses.color_pair(1)
+        self.RED = curses.color_pair(2)
+        self.GREEN = curses.color_pair(3)
+        
+    def loopit(self):
+        while True:
+            self.report.addstr(0, 0, ">")
+            self.report.clrtoeol()
+            s   = self.report.getstr()
+            if s == "q":
+                break
+            self.report.insertln()
+            self.report.addstr(1, 0, "[" + s + "]")
+
+curses_main = curses.wrapper(Xdisp)
