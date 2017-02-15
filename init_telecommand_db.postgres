@@ -1,0 +1,193 @@
+-- postgres
+
+CREATE TABLE IF NOT EXISTS emitters
+(
+	id 					serial PRIMARY KEY,
+	name				varchar(125) NOT NULL
+);
+
+
+CREATE TABLE IF NOT EXISTS commands
+(
+	id 					serial PRIMARY KEY,
+	name				varchar(125) NOT NULL
+);
+
+
+CREATE TABLE IF NOT EXISTS pids
+(
+	name				varchar(125) NOT NULL PRIMARY KEY,
+	number				smallint,
+	level_flag			smallint,
+	payload_flag		smallint
+);
+CREATE INDEX ON pids(level_flag);
+CREATE INDEX ON pids(payload_flag);
+
+
+
+CREATE TABLE IF NOT EXISTS telecommands
+(
+	id 						serial PRIMARY KEY,
+	raw_file				varchar(125),
+	time_sent				timestamp with time zone DEFAULT NULL,
+	ccsds_version 			smallint CHECK (ccsds_version = 0),
+	packet_type				smallint CHECK (packet_type = 1),
+	secondary_header_flag	smallint CHECK (secondary_header_flag = 1),
+	payload_flag			smallint,
+	level_flag				smallint,
+	pid 					varchar(125),
+	packet_category			smallint DEFAULT 0,
+	sequence_flag			smallint DEFAULT 3,
+	packet_id				smallint,
+	data_length				integer,
+	reqack_reception		smallint,
+	reqack_format			smallint,
+	reqack_execution		smallint,
+	telecommand_id			smallint,
+	emitter_id				smallint,
+	ack_reception_id		smallint,
+	ack_format_id			smallint,
+	ack_execution_id		smallint
+);
+CREATE INDEX ON telecommands(time_sent);
+CREATE INDEX ON telecommands(payload_flag);
+CREATE INDEX ON telecommands(level_flag);
+CREATE INDEX ON telecommands(pid);
+CREATE INDEX ON telecommands(packet_id);
+CREATE INDEX ON telecommands(reqack_reception);
+CREATE INDEX ON telecommands(reqack_format);
+CREATE INDEX ON telecommands(reqack_execution);
+CREATE INDEX ON telecommands(telecommand_id);
+CREATE INDEX ON telecommands(emitter_id);
+ALTER TABLE telecommands ADD FOREIGN KEY (pid) REFERENCES pids (name);
+ALTER TABLE telecommands ADD FOREIGN KEY (emitter_id) REFERENCES emitters (id);
+ALTER TABLE telecommands ADD FOREIGN KEY (telecommand_id) REFERENCES commands (id);
+
+
+CREATE TABLE IF NOT EXISTS telecommand_data
+(
+	id 					integer,
+	param_key			varchar(15) NOT NULL,
+	value 				text DEFAULT '',
+	PRIMARY KEY(id, param_key)
+);
+ALTER TABLE telecommand_data ADD FOREIGN KEY (id) REFERENCES telecommands (id);
+
+
+CREATE TABLE IF NOT EXISTS packet_categories
+(
+	id 					serial PRIMARY KEY,
+	name				varchar(125) NOT NULL
+);
+
+
+CREATE TABLE IF NOT EXISTS receivers
+(
+	id 					serial PRIMARY KEY,
+	name				varchar(125) NOT NULL,
+	location_lat		real,
+	location_lon		real,
+	location_alt		real,
+	equipment			text
+);
+
+
+INSERT INTO commands (id, name) VALUES (1,'echo');
+
+INSERT INTO emitters (id, name) VALUES (1,'Kirk');
+
+INSERT INTO packet_categories (id, name) VALUES (0,'Reception acknowledge'), (1, 'Format/exec acknowledge'), (2, 'None'), (3, 'Debug'), (4, 'Science reduced'), (5, 'Science HF'), (6, 'Event Reporting'), (7, 'Beacon'), (8, 'House Keeping'), (9, 'House Keeping Full');
+
+INSERT INTO pids (name, level_flag, payload_flag, number) VALUES ('L0ComManager', 0, 0, 0);
+
+INSERT INTO receivers (id, name, location_lat, location_lon, location_alt, equipment) VALUES (1, 'Kirk', 48.8060112, 2.22958422, 162, 'antenne');
+
+
+CREATE TABLE IF NOT EXISTS telemetries
+(
+	id						serial PRIMARY KEY,
+	raw_file				varchar(125),
+	time_sent				timestamp with time zone DEFAULT now(),
+	time_received			timestamp with time zone DEFAULT now(),
+	time_saved				timestamp with time zone DEFAULT now(),
+	ccsds_version			smallint CHECK (ccsds_version = 0),
+	packet_type				smallint CHECK (packet_type = 0),
+	secondary_header_flag	smallint CHECK (secondary_header_flag = 1),
+	payload_flag			smallint,
+	level_flag				smallint,
+	pid						varchar(125),
+	packet_category			smallint,
+	sequence_flag			smallint DEFAULT 3,
+	packet_id				smallint,
+	data_length				integer,
+	days_since_ref			smallint,
+	ms_since_today			integer,
+	receiver_id				smallint
+);
+CREATE INDEX ON telemetries(time_sent);
+CREATE INDEX ON telemetries(time_received);
+CREATE INDEX ON telemetries(time_saved);
+CREATE INDEX ON telemetries(payload_flag);
+CREATE INDEX ON telemetries(level_flag);
+CREATE INDEX ON telemetries(pid);
+CREATE INDEX ON telemetries(packet_category);
+CREATE INDEX ON telemetries(packet_id);
+CREATE INDEX ON telemetries(days_since_ref);
+CREATE INDEX ON telemetries(ms_since_today);
+CREATE INDEX ON telemetries(receiver_id);
+ALTER TABLE telemetries ADD FOREIGN KEY (pid) REFERENCES pids (name);
+ALTER TABLE telemetries ADD FOREIGN KEY (packet_category) REFERENCES packet_categories (id);
+ALTER TABLE telemetries ADD FOREIGN KEY (receiver_id) REFERENCES receivers (id);
+
+
+CREATE TABLE IF NOT EXISTS tmcat_rcp_acknowledgements
+(
+	id 					serial PRIMARY KEY,
+	telemetry_packet	integer UNIQUE
+);
+
+ALTER TABLE tmcat_rcp_acknowledgements ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+
+
+CREATE TABLE IF NOT EXISTS tmcat_fmt_acknowledgements
+(
+	id 					serial PRIMARY KEY,
+	telemetry_packet	integer UNIQUE,
+	telecommand_id		smallint,
+	packet_id_mirror	smallint,
+	error_code			smallint
+);
+CREATE INDEX ON tmcat_fmt_acknowledgements(telecommand_id);
+CREATE INDEX ON tmcat_fmt_acknowledgements(packet_id_mirror);
+CREATE INDEX ON tmcat_fmt_acknowledgements(error_code);
+ALTER TABLE tmcat_fmt_acknowledgements ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+ALTER TABLE tmcat_fmt_acknowledgements ADD FOREIGN KEY (telecommand_id) REFERENCES commands (id);
+
+
+CREATE TABLE IF NOT EXISTS tmcat_exe_acknowledgements
+(
+	id 					serial PRIMARY KEY,
+	telemetry_packet	integer UNIQUE,
+	telecommand_id		smallint,
+	packet_id_mirror	smallint,
+	error_code			smallint
+);
+CREATE INDEX ON tmcat_exe_acknowledgements(telecommand_id);
+CREATE INDEX ON tmcat_exe_acknowledgements(packet_id_mirror);
+CREATE INDEX ON tmcat_exe_acknowledgements(error_code);
+ALTER TABLE tmcat_exe_acknowledgements ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+ALTER TABLE tmcat_exe_acknowledgements ADD FOREIGN KEY (telecommand_id) REFERENCES commands (id);
+
+ALTER TABLE telecommands ADD FOREIGN KEY (ack_reception_id) REFERENCES tmcat_rcp_acknowledgements (id);
+ALTER TABLE telecommands ADD FOREIGN KEY (ack_format_id) REFERENCES tmcat_fmt_acknowledgements (id);
+ALTER TABLE telecommands ADD FOREIGN KEY (ack_execution_id) REFERENCES tmcat_exe_acknowledgements (id);
+
+
+CREATE TABLE IF NOT EXISTS tmcat_debugs
+(
+	id 					serial PRIMARY KEY,
+	telemetry_packet	integer UNIQUE
+);
+
+ALTER TABLE tmcat_debugs ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
