@@ -103,4 +103,4 @@ class Xdisp(object):
             self.report.insertln()
             self.report.addstr(1, 0, "[" + s + "]")
 
-curses_main = curses.wrapper(Xdisp)
+#curses_main = curses.wrapper(Xdisp)
