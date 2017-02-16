@@ -145,6 +145,7 @@ def init_listening(antenna):
     elif antenna == 'serial':
         init_serial()
     else:
+        close_listening()
         raise ctrlexception.UnknownAntenna(antenna)
     listen_running = True
 
