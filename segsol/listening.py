@@ -28,12 +28,12 @@
 import time
 import os
 import glob
-from .soc import SocTransmitter
-from .soc import SocReceiver
-from .utils.report import REPORTS
-from .utils import core
-from .utils import ctrlexception
-from .rfcheckoutbox import RFCheckoutbox
+from ctrl.soc import SocTransmitter
+from ctrl.soc import SocReceiver
+from ctrl.utils.report import REPORTS
+from ctrl.utils import core
+from ctrl.utils import ctrlexception
+from ctrl.rfcheckoutbox import RFCheckoutbox
 
 
 __all__ = ['process_data', 'init_listening', 'close_listening', 'report']
@@ -145,6 +145,7 @@ def init_listening(antenna):
     elif antenna == 'serial':
         init_serial()
     else:
+        close_listening()
         raise ctrlexception.UnknownAntenna(antenna)
     listen_running = True
 

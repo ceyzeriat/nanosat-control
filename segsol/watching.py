@@ -25,11 +25,11 @@
 ###############################################################################
 
 
-from .soc import SocTransmitter
-from .soc import SocReceiver
-from .utils import core
-from .utils.report import REPORTS
-from .utils import PIDWatchDog
+from ctrl.soc import SocTransmitter
+from ctrl.soc import SocReceiver
+from ctrl.utils import core
+from ctrl.utils.report import REPORTS
+from ctrl.utils import PIDWatchDog
 
 
 __all__ = ['init_watch', 'close_watch']

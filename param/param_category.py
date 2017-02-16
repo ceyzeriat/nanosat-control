@@ -35,16 +35,17 @@ __all__ = ['PACKETCATEGORIES', 'CATEGORYREGISTRATION', 'PACKETCATEGORYSIZES',
             'TABLECATEGORY', 'ACKCATEGORIES']
 
 
-CATEGORYREGISTRATION = {0: '0000',
-                        1: '0001',
-                        2: '0010',
-                        3: '0011',
-                        4: '0100',
-                        5: '0101',
-                        6: '0110',
-                        7: '0111',
-                        8: '1000',
-                        9: '1001'}
+CATEGORYREGISTRATION = {0:  '0000',
+                        1:  '0001',
+                        2:  '0010',
+                        3:  '0011',
+                        4:  '0100',
+                        5:  '0101',
+                        6:  '0110',
+                        7:  '0111',
+                        8:  '1000',
+                        9:  '1001',
+                        10: '1010'}
 
 TELECOMMANDID = CCSDSKey(   name='telecommand_id',
                             start=0,
@@ -65,16 +66,17 @@ ERRORCODE = CCSDSKey(       name='error_code',
                             fctpack=core.int2bin)
 
 
-CATEGORY_0 = []  # None
+CATEGORY_0 = []  # NO HEADER
 CATEGORY_1 = [TELECOMMANDID, PACKETIDMIRROR, ERRORCODE]
 CATEGORY_2 = [TELECOMMANDID, PACKETIDMIRROR, ERRORCODE]
-CATEGORY_3 = []  # None
+CATEGORY_3 = []  # NO HEADER
 CATEGORY_4 = []
 CATEGORY_5 = []
-CATEGORY_6 = []
-CATEGORY_7 = []  # None
-CATEGORY_8 = []
-CATEGORY_9 = []
+CATEGORY_6 = []  # NO HEADER
+CATEGORY_7 = []  # NO HEADER
+CATEGORY_8 = []  # NO HEADER
+CATEGORY_9 = []  # NO HEADER
+CATEGORY_10 = []  # NO HEADER
 
 
 ACKCATEGORIES = [0, 1, 2]
@@ -90,7 +92,8 @@ PACKETCATEGORIES = {0: CATEGORY_0,
                     6: CATEGORY_6,
                     7: CATEGORY_7,
                     8: CATEGORY_8,
-                    9: CATEGORY_9}
+                    9: CATEGORY_9,
+                    10: CATEGORY_10}
 
 
 PACKETCATEGORYSIZES = {}

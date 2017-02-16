@@ -44,6 +44,8 @@ class RFCheckoutbox(object):
         try:
             self.soc.connect((host, port))
         except:
+            self.soc.shutdown(socket.SHUT_RDWR)
+            self.soc.close()
             raise ctrlexception.RFCheckoutBoxIssue()
         self.timeout = float(core.RFCHECKOUTBOXTIMEOUT)
         self.length = int(core.RFCHECKOUTBOXLENGTH)
@@ -62,7 +64,7 @@ class RFCheckoutbox(object):
     def write(self, data):
         if data is not None:
             data = Byt(data)
-            if data != Byt(''):
+            if len(data) > 0:
                 self.soc.sendall(data)
 
     def close(self):

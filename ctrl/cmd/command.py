@@ -31,7 +31,7 @@ from ..utils import core
 #from .ccsds import ccsdsexception
 from ..telecommand import Telecommand
 from .. import db
-from ..controlling import broadcast_TC
+from segsol.controlling import broadcast_TC
 
 
 __all__ = ['Command']

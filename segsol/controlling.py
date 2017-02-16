@@ -25,11 +25,11 @@
 ###############################################################################
 
 
-from .soc import SocTransmitter
-from .utils import core
-from .utils.report import REPORTS
-from .kiss import Framer
-from .utils import ctrlexception
+from ctrl.soc import SocTransmitter
+from ctrl.utils import core
+from ctrl.utils import ctrlexception
+from ctrl.utils.report import REPORTS
+from ctrl.kiss import Framer
 
 
 __all__ = ['init_control', 'close_control', 'broadcast_TC', 'report']

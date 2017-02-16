@@ -91,7 +91,7 @@ if not JUSTALIB:
             _f = home_dir(*tag)
             try:
                 f = open(_f, mode='r')
-                DBENGINE.replace(tagname, f.readline().strip())
+                DBENGINE = DBENGINE.replace(tagname, f.readline().strip())
                 f.close()
             except IOError:
                 if NOERRORATIMPORT:
