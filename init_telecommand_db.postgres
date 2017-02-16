@@ -5,6 +5,9 @@ CREATE TABLE IF NOT EXISTS emitters
 	id 					serial PRIMARY KEY,
 	name				varchar(125) NOT NULL
 );
+ALTER TABLE emitters OWNER TO picsat_admin;
+GRANT ALL ON emitters TO picsat_admin;
+GRANT select ON emitters TO picsat_read, picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS commands
@@ -12,6 +15,9 @@ CREATE TABLE IF NOT EXISTS commands
 	id 					serial PRIMARY KEY,
 	name				varchar(125) NOT NULL
 );
+ALTER TABLE commands OWNER TO picsat_admin;
+GRANT ALL ON commands TO picsat_admin;
+GRANT select ON commands TO picsat_read, picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS pids
@@ -21,6 +27,9 @@ CREATE TABLE IF NOT EXISTS pids
 	level_flag			smallint,
 	payload_flag		smallint
 );
+ALTER TABLE pids OWNER TO picsat_admin;
+GRANT ALL ON pids TO picsat_admin;
+GRANT select ON pids TO picsat_read, picsat_edit;
 CREATE INDEX ON pids(level_flag);
 CREATE INDEX ON pids(payload_flag);
 
@@ -50,6 +59,9 @@ CREATE TABLE IF NOT EXISTS telecommands
 	ack_format_id			smallint,
 	ack_execution_id		smallint
 );
+ALTER TABLE telecommands OWNER TO picsat_admin;
+GRANT ALL ON telecommands TO picsat_admin;
+GRANT select ON telecommands TO picsat_read, picsat_edit;
 CREATE INDEX ON telecommands(time_sent);
 CREATE INDEX ON telecommands(payload_flag);
 CREATE INDEX ON telecommands(level_flag);
@@ -72,6 +84,9 @@ CREATE TABLE IF NOT EXISTS telecommand_data
 	value 				text DEFAULT '',
 	PRIMARY KEY(id, param_key)
 );
+ALTER TABLE telecommand_data OWNER TO picsat_admin;
+GRANT ALL ON telecommand_data TO picsat_admin;
+GRANT select ON telecommand_data TO picsat_read, picsat_edit;
 ALTER TABLE telecommand_data ADD FOREIGN KEY (id) REFERENCES telecommands (id);
 
 
@@ -80,6 +95,9 @@ CREATE TABLE IF NOT EXISTS packet_categories
 	id 					serial PRIMARY KEY,
 	name				varchar(125) NOT NULL
 );
+ALTER TABLE packet_categories OWNER TO picsat_admin;
+GRANT ALL ON packet_categories TO picsat_admin;
+GRANT select ON packet_categories TO picsat_read, picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS receivers
@@ -91,6 +109,9 @@ CREATE TABLE IF NOT EXISTS receivers
 	location_alt		real,
 	equipment			text
 );
+ALTER TABLE receivers OWNER TO picsat_admin;
+GRANT ALL ON receivers TO picsat_admin;
+GRANT select ON receivers TO picsat_read, picsat_edit;
 
 
 INSERT INTO commands (id, name) VALUES (1,'echo');
@@ -125,6 +146,9 @@ CREATE TABLE IF NOT EXISTS telemetries
 	ms_since_today			integer,
 	receiver_id				smallint
 );
+ALTER TABLE telemetries OWNER TO picsat_admin;
+GRANT ALL ON telemetries TO picsat_admin;
+GRANT select ON telemetries TO picsat_read, picsat_edit;
 CREATE INDEX ON telemetries(time_sent);
 CREATE INDEX ON telemetries(time_received);
 CREATE INDEX ON telemetries(time_saved);
@@ -146,7 +170,9 @@ CREATE TABLE IF NOT EXISTS tmcat_rcp_acknowledgements
 	id 					serial PRIMARY KEY,
 	telemetry_packet	integer UNIQUE
 );
-
+ALTER TABLE tmcat_rcp_acknowledgements OWNER TO picsat_admin;
+GRANT ALL ON tmcat_rcp_acknowledgements TO picsat_admin;
+GRANT select ON tmcat_rcp_acknowledgements TO picsat_read, picsat_edit;
 ALTER TABLE tmcat_rcp_acknowledgements ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
 
 
@@ -158,6 +184,9 @@ CREATE TABLE IF NOT EXISTS tmcat_fmt_acknowledgements
 	packet_id_mirror	smallint,
 	error_code			smallint
 );
+ALTER TABLE tmcat_fmt_acknowledgements OWNER TO picsat_admin;
+GRANT ALL ON tmcat_fmt_acknowledgements TO picsat_admin;
+GRANT select ON tmcat_fmt_acknowledgements TO picsat_read, picsat_edit;
 CREATE INDEX ON tmcat_fmt_acknowledgements(telecommand_id);
 CREATE INDEX ON tmcat_fmt_acknowledgements(packet_id_mirror);
 CREATE INDEX ON tmcat_fmt_acknowledgements(error_code);
@@ -173,6 +202,9 @@ CREATE TABLE IF NOT EXISTS tmcat_exe_acknowledgements
 	packet_id_mirror	smallint,
 	error_code			smallint
 );
+ALTER TABLE tmcat_exe_acknowledgements OWNER TO picsat_admin;
+GRANT ALL ON tmcat_exe_acknowledgements TO picsat_admin;
+GRANT select ON tmcat_exe_acknowledgements TO picsat_read, picsat_edit;
 CREATE INDEX ON tmcat_exe_acknowledgements(telecommand_id);
 CREATE INDEX ON tmcat_exe_acknowledgements(packet_id_mirror);
 CREATE INDEX ON tmcat_exe_acknowledgements(error_code);
@@ -189,5 +221,14 @@ CREATE TABLE IF NOT EXISTS tmcat_debugs
 	id 					serial PRIMARY KEY,
 	telemetry_packet	integer UNIQUE
 );
+ALTER TABLE tmcat_debugs OWNER TO picsat_admin;
+GRANT ALL ON tmcat_debugs TO picsat_admin;
+GRANT select ON tmcat_debugs TO picsat_read, picsat_edit;
 
 ALTER TABLE tmcat_debugs ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+
+
+-- ###########################################
+
+ALTER TABLE telecommands ADD COLUMN time_given timestamp with time zone DEFAULT now();
+CREATE INDEX ON telecommands(time_given);
