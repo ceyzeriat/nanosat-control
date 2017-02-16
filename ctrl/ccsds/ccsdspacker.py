@@ -82,7 +82,7 @@ class CCSDSPacker(object):
         hd = {}
         hd['pid'] = pid
         if not tm:
-            hd['signature'] = 0
+            hd['signature'] = Byt("\x00"*(param_ccsds.SIGNATURE.len//8))
             hd['telecommand_id'] = int(tcid)
             morevalues = ((param_ccsds.REQACKRECEPTIONTELECOMMAND.name, 'rack',
                             core.REQACKRECEPTION),
