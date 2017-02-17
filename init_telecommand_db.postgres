@@ -235,3 +235,19 @@ CREATE INDEX ON telecommands(time_given);
 
 ALTER TABLE telecommand_data ALTER COLUMN param_key TYPE varchar(25);
 ALTER TABLE telecommand_data ALTER COLUMN param_key SET NOT NULL;
+
+
+CREATE TABLE IF NOT EXISTS tmcat_hf_sciences
+(
+	id 					serial PRIMARY KEY,
+	telemetry_packet	integer UNIQUE,
+	acq_mode			smallint,
+	integration_time	smallint,
+	modulation			smallint,
+	radius				smallint,
+	n_points			smallint
+);
+ALTER TABLE tmcat_hf_sciences OWNER TO picsat_admin;
+GRANT ALL ON tmcat_hf_sciences TO picsat_admin;
+GRANT select ON tmcat_hf_sciences TO picsat_read, picsat_edit;
+ALTER TABLE tmcat_hf_sciences ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);

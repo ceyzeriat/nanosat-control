@@ -130,30 +130,6 @@ class CCSDSPacker(object):
         else:
             return retprim[0] + retsec[0] + maybeAux + data
 
-    def _pack_something(self, thelist, allvalues, totOctetSize, retdbvalues):
-        """
-        Does the packing loop for primHeader and secHeader
-        """
-        values = dict(allvalues)
-        retvals = {}
-        bits = '0' * (totOctetSize * 8)
-        for item in thelist:
-            if item.name not in values.keys() and item.dic_force is None:
-                raise ccsdsexception.PacketValueMissing(item.name)
-            retvals[item.name] = values.get(item.name, '')
-            bits = core.setstr( bits,
-                                item.cut,
-                                item.pack(values.get(item.name, '')))
-            # filling in the forced values not given as input
-            if item.dic_force is not None:
-                retvals[item.name] = item.dic_force
-            # these are special cases that we want to fill manually because the
-            # forced values are not numbers but dictionary keys
-            if retdbvalues and item.non_db_dic:
-                retvals[item.name] = core.bin2int(item.pack(
-                                            values.get(item.name, '')))
-        return bits, retvals
-
     def pack_primHeader(self, values, datalen, retvalues=False,
                         retdbvalues=True, withPacketID=True):
         """
@@ -196,7 +172,7 @@ class CCSDSPacker(object):
         values[param_ccsds.LEVELFLAG.name] =\
             param_apid.LVLREGISTRATION[values[param_ccsds.PID.name]]
         values[param_ccsds.DATALENGTH.name] += datalen
-        bits, retvals = self._pack_something(
+        bits, retvals = _pack_something(
                                 thelist=param_ccsds.HEADER_P_KEYS,
                                 allvalues=values,
                                 totOctetSize=param_ccsds.HEADER_P_SIZE,
@@ -225,7 +201,7 @@ class CCSDSPacker(object):
             hdsz = param_ccsds.HEADER_S_SIZE_TELEMETRY
             values[param_ccsds.DAYSINCEREF_TELEMETRY.name] = core.now2daystamp()
             values[param_ccsds.MSECSINCEREF_TELEMETRY.name] = core.now2msstamp()
-        bits, retvals = self._pack_something(thelist=hdk, allvalues=values,
+        bits, retvals = _pack_something(thelist=hdk, allvalues=values,
                                 totOctetSize=hdsz, retdbvalues=retdbvalues)
         if retvalues:
             return core.bin2hex(bits, pad=hdsz), retvals
@@ -252,7 +228,7 @@ class CCSDSPacker(object):
         hdxsz = param_category.PACKETCATEGORYSIZES[pktCat]
         if hdxsz == 0:
             return (Byt(), {}) if retvalues else Byt()
-        bits, retvals = self._pack_something(
+        bits, retvals = _pack_something(
                             thelist=param_category.PACKETCATEGORIES[pktCat],
                             allvalues=values,
                             totOctetSize=hdxsz,
@@ -281,3 +257,27 @@ class CCSDSPacker(object):
             return Byt(), {}
         else:
             return Byt()
+
+def _pack_something(thelist, allvalues, totOctetSize, retdbvalues):
+    """
+    Does the packing loop for a list of CCSDS keys
+    """
+    values = dict(allvalues)
+    retvals = {}
+    bits = '0' * (totOctetSize * 8)
+    for item in thelist:
+        if item.name not in values.keys() and item.dic_force is None:
+            raise ccsdsexception.PacketValueMissing(item.name)
+        retvals[item.name] = values.get(item.name, '')
+        bits = setstr( bits,
+                            item.cut,
+                            item.pack(values.get(item.name, '')))
+        # filling in the forced values not given as input
+        if item.dic_force is not None:
+            retvals[item.name] = item.dic_force
+        # these are special cases that we want to fill manually because the
+        # forced values are not numbers but dictionary keys
+        if retdbvalues and item.non_db_dic:
+            retvals[item.name] = bin2int(item.pack(
+                                                values.get(item.name, '')))
+    return bits, retvals

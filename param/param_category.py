@@ -44,8 +44,7 @@ CATEGORYREGISTRATION = {0:  '0000',
                         6:  '0110',
                         7:  '0111',
                         8:  '1000',
-                        9:  '1001',
-                        10: '1010'}
+                        9:  '1001'}
 
 TELECOMMANDID = CCSDSKey(   name='telecommand_id',
                             start=0,
@@ -66,17 +65,47 @@ ERRORCODE = CCSDSKey(       name='error_code',
                             fctpack=core.int2bin)
 
 
+ACQMODE = CCSDSKey(         name='acq_mode',
+                            start=0,
+                            l=8,
+                            fctunpack=core.bin2int,
+                            fctpack=core.int2bin)
+
+INTEGRATIONTIME = CCSDSKey( name='integration_time',
+                            start=8,
+                            l=16,
+                            fctunpack=core.bin2int,
+                            fctpack=core.int2bin)
+
+MODULATION = CCSDSKey(      name='modulation',
+                            start=8,
+                            l=8,
+                            fctunpack=core.bin2int,
+                            fctpack=core.int2bin)
+
+RADIUS = CCSDSKey(          name='radius',
+                            start=16,
+                            l=16,
+                            fctunpack=core.bin2int,
+                            fctpack=core.int2bin)
+
+NPOINTS = CCSDSKey(         name='n_points',
+                            start=32,
+                            l=8,
+                            fctunpack=core.bin2int,
+                            fctpack=core.int2bin)
+
+
 CATEGORY_0 = []  # NO HEADER
 CATEGORY_1 = [TELECOMMANDID, PACKETIDMIRROR, ERRORCODE]
 CATEGORY_2 = [TELECOMMANDID, PACKETIDMIRROR, ERRORCODE]
 CATEGORY_3 = []  # NO HEADER
 CATEGORY_4 = []
-CATEGORY_5 = []
+CATEGORY_5 = [ACQMODE, INTEGRATIONTIME, MODULATION, RADIUS, NPOINTS]
 CATEGORY_6 = []  # NO HEADER
 CATEGORY_7 = []  # NO HEADER
 CATEGORY_8 = []  # NO HEADER
 CATEGORY_9 = []  # NO HEADER
-CATEGORY_10 = []  # NO HEADER
 
 
 ACKCATEGORIES = [0, 1, 2]
@@ -92,8 +121,7 @@ PACKETCATEGORIES = {0: CATEGORY_0,
                     6: CATEGORY_6,
                     7: CATEGORY_7,
                     8: CATEGORY_8,
-                    9: CATEGORY_9,
-                    10: CATEGORY_10}
+                    9: CATEGORY_9}
 
 
 PACKETCATEGORYSIZES = {}
@@ -106,8 +134,8 @@ TABLECATEGORY =    {0: 'TmcatRcpAcknowledgement',
                     2: 'TmcatExeAcknowledgement',
                     3: 'TmcatDebug',
                     4: '',
-                    5: '',
+                    5: 'TmcatHfScience',
                     6: '',
-                    7: 'TmcatBeacon',
+                    7: '',
                     8: '',
                     9: ''}
