@@ -269,7 +269,7 @@ def _pack_something(thelist, allvalues, totOctetSize, retdbvalues):
         if item.name not in values.keys() and item.dic_force is None:
             raise ccsdsexception.PacketValueMissing(item.name)
         retvals[item.name] = values.get(item.name, '')
-        bits = setstr( bits,
+        bits = core.setstr( bits,
                             item.cut,
                             item.pack(values.get(item.name, '')))
         # filling in the forced values not given as input
@@ -278,6 +278,6 @@ def _pack_something(thelist, allvalues, totOctetSize, retdbvalues):
         # these are special cases that we want to fill manually because the
         # forced values are not numbers but dictionary keys
         if retdbvalues and item.non_db_dic:
-            retvals[item.name] = bin2int(item.pack(
+            retvals[item.name] = core.bin2int(item.pack(
                                                 values.get(item.name, '')))
     return bits, retvals
