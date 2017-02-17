@@ -3,10 +3,10 @@ import csv
 import ctrl
 
 # columns
-number, name, pid, desc, lparam, subsystem, nparam = 1,6,5,7,12,0,13
-pname, pdesc, prng, ptyp, psize, punit = 15,14,19,16,17,18
+subsystem, number, name, pid, desc, lparam, nparam = 0,1,2,6,7,14,15
+pdesc, pname, ptyp, psize, punit, prng = 16,17,18,19,20,21
 
-a = csv.reader(open('../../../commands.csv'), delimiter='#')
+a = csv.reader(open('commands.csv'), delimiter='#')
 
 a.next()
 
@@ -15,8 +15,8 @@ for line in a:
     if line[subsystem] != "":
         if n is not None:
             if n_nparam != len(n['param']):
-                print "ERROR: nparam not matching length of param"
-            print n
+                print("ERROR: nparam not matching length of param")
+            print(n)
             ctrl.cmd.cm.Cm(**n).to_json_file()
         n = {'number': int(line[number]),
                 'name': str(line[name]).strip().replace(' ', '_'),
@@ -36,5 +36,5 @@ for line in a:
                             str(line[ptyp]).strip().replace('_t', ''),
                             str(line[psize]).strip(),
                             str(line[punit]).strip().replace(' ', '_')])
-print n
+print(n)
 ctrl.cmd.cm.Cm(**n).to_json_file()

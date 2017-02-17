@@ -34,16 +34,16 @@ PACKETWRAPPERPID = 'L0ComManager'
 
 PIDREGISTRATION_OBC_L0 = {  'L0ComManager': 0,
                             'L0MemoryManager': 1,
-                            'Housekeeper': 2,
+                            'L0HouseKeeper': 2,
                             'L0EventProcessor': 3,
-                            'EpsManager': 4,
+                            'L0EpsManager': 4,
                             'L0AdcsManager': 5}
 
 PIDREGISTRATION_OBC_L1 = {  'L1ComManager': 0,
                             'L1EventManager': 1,
                             'L1AdcsManager': 2,
-                            'ModeManager': 3,
-                            'EventManager': 4,
+                            'L1ModeManager': 3,
+                            'L1EventManager': 4,
                             'payloadManager1': 6,
                             'payloadManager2': 7,
                             'payloadManager3': 8}

@@ -54,7 +54,7 @@ class Parameter(object):
           expected input (bounds inclusive), or if 'int' the exact length
         * unit (str or None): the unit of the parameter
         """
-        self._name = core.clean_name(name)
+        self._name = core.clean_name(name)[:param_commands.LENPARAMNAME]
         self._desc = str(desc)
         self._unit = str(unit) if unit is not None else ""
         self._isdict = isinstance(rng, dict)
@@ -64,7 +64,7 @@ class Parameter(object):
             self._rngdisp = repr(self.rng.keys())
         else:
             self._typ = PFormat(typ)
-            if rng == "":  # just force default range
+            if rng == "" or rng == "*":  # just force default range
                 rng = self.typ.minmax
             if core.isStr(rng):
                 self._rng = rng.split(param_commands.RANGESEPARATOR)[:2]

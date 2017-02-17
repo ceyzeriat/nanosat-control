@@ -26,3 +26,4 @@
 
 
 from .allcommand import *
+from .commandlist import *

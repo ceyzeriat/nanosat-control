@@ -232,3 +232,6 @@ ALTER TABLE tmcat_debugs ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetri
 
 ALTER TABLE telecommands ADD COLUMN time_given timestamp with time zone DEFAULT now();
 CREATE INDEX ON telecommands(time_given);
+
+ALTER TABLE telecommand_data ALTER COLUMN param_key TYPE varchar(25);
+ALTER TABLE telecommand_data ALTER COLUMN param_key SET NOT NULL;

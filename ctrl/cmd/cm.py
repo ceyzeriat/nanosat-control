@@ -98,19 +98,6 @@ class Cm(object):
                 'lparam': self.lparam if self.lparam is not None else "*",
                 'param': self._param}
 
-    def to_json_file(self):
-        """
-        Adds the command into the json file if it does not already
-        exist there
-        """
-        allcmds = core.load_json_cmds(param_commands.COMMANDSFILE)
-        allids = [item['number'] for item in allcmds]
-        allnames = [item['name'].lower() for item in allcmds]
-        if self.number in allids or self.name.lower() in allnames:
-            raise cmdexception.RedundantCm(i=self.number, n=self.name)
-        allcmds.append(self.to_dict())
-        core.save_json_cmds(param_commands.COMMANDSFILE, allcmds)
-
     def generate_data(self, *args, **kwargs):
         """
         Returns the packet data (as string) and the dictionnary of

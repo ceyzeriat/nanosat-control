@@ -85,6 +85,7 @@ class Command(Cm):
         hd['raw_file'] = core.RAWPACKETFOLDER
         # left None until confirmation sent by antenna
         hd['time_sent'] = None
+        hd['time_given'] = core.now()
         # save in database
         dbid = db.save_TC_to_DB(hd=hd, hdx=hdx, inputs=inputs)
         # broadcast on socket to the antenna process and watchdog
