@@ -57,8 +57,9 @@ class CCSDSBlob(object):
             possible_head = core.hex2bin(
                                 pk.pack_primHeader(values=vals, datalen=0,
                                         retvalues=False, retdbvalues=False,
-                                        withPacketID=False)[:2]
-                                    )[:param_ccsds.AUTHPACKETLENGTH]
+                                        withPacketID=False)[:2],
+                                pad=16
+                                        )[:param_ccsds.AUTHPACKETLENGTH]
             self.auth_bits.append(possible_head)
 
     def find(self, start=0):
@@ -69,7 +70,7 @@ class CCSDSBlob(object):
         Args:
         * start (int): from where the search should start
         """
-        if self.blob[start:start+2] == Byt():
+        if len(self.blob[start:start+2]) == 0:
             return 0
         for i in range(len(self.blob[start:])):
             if core.hex2bin(self.blob[start+i:start+i+2])\
@@ -88,7 +89,7 @@ class CCSDSBlob(object):
         * start (int): the first bit of the packet in the blob
         """
         dum = core.hex2bin(self.blob[start:start+param_ccsds.HEADER_P_SIZE])
-        return param_ccsds.DATALENGTH.unpack(dum)
+        return param_ccsds.DATALENGTH.unpack(dum) - param_ccsds.LENGTHMODIFIER
 
     def find_first_packet(self, start=0):
         """
@@ -112,7 +113,7 @@ class CCSDSBlob(object):
         if length < param_ccsds.HEADER_P_SIZE:
             return self.find_first_packet(start=start+1)
         # bang on, found a new start where you expected it
-        elif self.find(start=start+param_ccsds.HEADER_P_SIZE+length) == 0:
+        elif self.find(start=start + param_ccsds.HEADER_P_SIZE + length) == 0:
             return slice(start, start + param_ccsds.HEADER_P_SIZE + length)
         # try again
         else:

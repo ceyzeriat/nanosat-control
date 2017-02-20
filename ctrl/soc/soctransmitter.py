@@ -126,7 +126,7 @@ class SocTransmitter(object):
         """
         if not self.running:
             return False
-        if txt == Byt():
+        if len(txt) == 0:
             return None
         ret = {}
         for name, receiver in list(self.receivers.items()):

@@ -30,6 +30,9 @@ from param.param_all import *
 from . import ctrlexception
 
 
+# can't have KISS without AX25
+AX25ENCAPS = AX25ENCAPS or KISSENCAPS
+
 MAXPACKETID = 2**14
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

@@ -83,7 +83,7 @@ def process_data(data):
     A callback function that saves the package and sends it
     over the TM socket
     """
-    if len(data) <= 0:
+    if len(data) == 0:
         return
     now = core.now()
     name = now.strftime(core.TELEMETRYNAMEFORMAT)

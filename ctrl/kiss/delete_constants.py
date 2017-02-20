@@ -28,9 +28,6 @@
 from ..utils import Byt
 
 
-#SERIAL_TIMEOUT = 0.01
-#READ_BYTES = 1000
-
 # KISS Special Characters
 # http://en.wikipedia.org/wiki/KISS_(TNC)#Special_Characters
 # http://k4kpk.com/content/notes-aprs-kiss-and-setting-tnc-x-igate-and-digipeater
@@ -48,16 +45,20 @@ TFESC = Byt('\xdd')
 
 # "FEND is sent as FESC, TFEND"
 # 0xC0 is sent as 0xDB 0xDC
-FESC_TFEND = Byt().join([FESC, TFEND])
+FESC_TFEND = FESC + TFEND
 
 # "FESC is sent as FESC, TFESC"
 # 0xDB is sent as 0xDB 0xDD
-FESC_TFESC = Byt().join([FESC, TFESC])
+FESC_TFESC = FESC + TFESC
 
 # KISS Command Codes
 # http://en.wikipedia.org/wiki/KISS_(TNC)#Command_Codes
 DATA_FRAME = Byt('\x00')
 SLOT_TIME = Byt('\x03')
+
+
+###########################
+
 #TX_DELAY = Byt('\x01')
 #PERSISTENCE = Byt('\x02')
 #TX_TAIL = Byt('\x04')

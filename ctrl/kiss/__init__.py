@@ -27,4 +27,3 @@
 
 from .callsign import *
 from .frame import *
-

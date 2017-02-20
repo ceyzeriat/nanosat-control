@@ -36,6 +36,10 @@ from ..utils.ms import Ms
 MAXIMUMDATALENGTH = 65536  # octets
 MAXIMUMPACKETLENGTH = MAXIMUMDATALENGTH + 6  # octets
 
+# length of packet as recorded in ccsds =
+#   real length of packet + LENGTHMODIFIER
+LENGTHMODIFIER = -1
+
 
 # PRIMARY HEADER
 # origin of start/end is start of packet

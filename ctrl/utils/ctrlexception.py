@@ -193,6 +193,33 @@ class WatchDogTimeOut(CTRLException):
         self.message = "Watchdog '{}' timed-out".format(w)
 
 
+class NotInFramesFlow(CTRLException):
+    """
+    When one tries to split a flow of frames outside framesflow
+    """
+    def __init__(self, *args, **kwargs):
+        self._init(*args, **kwargs)
+        self.message = "Not in Frames-Flow mode"
+
+
+class CantRunAX25FramesFlow(CTRLException):
+    """
+    When one tries to do framesflow without KISS
+    """
+    def __init__(self, *args, **kwargs):
+        self._init(*args, **kwargs)
+        self.message = "Can't use Frames-FLow mode in non-KISS mode"
+
+
+class NotImplemented(CTRLException):
+    """
+    When a feature is not implemented
+    """
+    def __init__(self, m, *args, **kwargs):
+        self._init(m, *args, **kwargs)
+        self.message = "Not implemented: '{}'".format(m)
+
+
 # not used
 class NoSuchKey(CTRLException):
     """

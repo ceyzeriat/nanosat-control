@@ -62,17 +62,17 @@ class Callsign(object):
         if callsign is not None:
             # treat the callsign as a frame, maybe?
             try:
-                self._extract_callsign_from_kiss_frame(callsign)
+                self._extract_callsign_from_AX25_frame(callsign)
             except IndexError:
                 pass
             # if not happy with existing callsign, try parsing it as callsign
             if not utils.valid_callsign(self.callsign):
-                self.parse_text(callsign)
+                self.parse_callsign(callsign)
         # if still no valid callsign at this point
         if not utils.valid_callsign(self.callsign):
             raise kissexception.BadCallsignError(self.callsign)
 
-    def encode_kiss(self):
+    def encode_callsign(self):
         """
         Encodes Callsign (or Callsign-SSID) as KISS
         """
@@ -88,7 +88,7 @@ class Callsign(object):
 
         return encoded_callsign + Byt(encoded_ssid)
 
-    def parse_text(self, callsign):
+    def parse_callsign(self, callsign):
         """
         Parses and extracts a Callsign and SSID from an ASCII-Encoded APRS
         Callsign or Callsign-SSID.
@@ -96,8 +96,8 @@ class Callsign(object):
         Args:
         * callsign (str): ASCII-Encoded APRS Callsign
         """
-        callsign, ssid = Byt(callsign).split(Byt('-')) + [Byt()]
-        if ssid == Byt():
+        callsign, ssid = Byt(callsign).split(Byt('-'), 1) + [Byt()]
+        if len(ssid) == 0:
             ssid = Byt('0')
 
         if callsign[-1] == Byt('*'):
@@ -107,7 +107,7 @@ class Callsign(object):
         self.callsign = callsign.strip()
         self.ssid = ssid.strip()
 
-    def _extract_callsign_from_kiss_frame(self, frame):
+    def _extract_callsign_from_AX25_frame(self, frame):
         """
         Extracts a Callsign and SSID from a KISS-Encoded APRS Frame.
 

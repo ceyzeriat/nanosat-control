@@ -52,4 +52,7 @@ REPORTSDATA = [
         ['who']),
     ('IamAlive', "Process '{who}' is alive",
         ['who']),
+    ('receivedRawTM', "'{who}' received CCSDS-flow data of length '{ll}' "\
+        "for saving",
+        ['who', 'll'])
     ]

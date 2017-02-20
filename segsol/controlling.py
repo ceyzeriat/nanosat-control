@@ -30,7 +30,7 @@ from ctrl.utils import core
 from ctrl.utils import ctrlexception
 from ctrl.utils.report import REPORTS
 from ctrl.kiss import Framer
-
+from param import param_all
 
 __all__ = ['init_control', 'close_control', 'broadcast_TC', 'report']
 
@@ -57,8 +57,12 @@ def broadcast_TC(dbid, packet):
         raise ctrlexception.ControllingNotInitialized()
     report('broadcastTC', dbid=dbid)
     # add the kiss frame
-    kisspacket = Framer.encode_kiss(packet)
-    dum = CONTROL_TRANS.tell(kisspacket)
+    if param_all.AX25ENCAPS:
+        packet = Framer.encode_radio(packet)
+    # or add the ccsds flow splits
+    elif param_all.SPLITCCSDSFLOW:
+        packet = core.merge_ccsds([packet])
+    dum = CONTROL_TRANS.tell(packet)
     ### check who recieved it and report
     return dum
 

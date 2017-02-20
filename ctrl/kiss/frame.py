@@ -25,8 +25,8 @@
 ###############################################################################
 
 
+from param import param_all
 from . import utils
-from . import constants
 from ..utils import core
 from ..utils import Byt
 from .callsign import Callsign
@@ -36,47 +36,57 @@ __all__ = ['Framer']
 
 
 class Frame(object):
-    def __init__(self, source=None, destination=None, path=[]):
+    def __init__(self, source=None, destination=None, path=[],
+                    kiss=None):
         """
-        Codes/decodes a KISS frame
+        Codes/decodes an AX25+KISS frame
+
+        Args:
+        * source, destination (str): the callsigns
+        * path: unused
+        * kiss (bool): whether the frames are AX25, or KISS+AX25
         """
-        self.source = Callsign(source) if source is not None else Byt()
-        self.destination = Callsign(destination)\
-                            if destination is not None else Byt()
+        self.ISKISS = bool(kiss) if kiss is not None else param_all.KISSENCAPS
+        self.reinit(source=source, destination=destination, path=path)
+
+    def reinit(self, source=None, destination=None, path=[]):
+        self.source = Callsign(source) if source is not None\
+                        else Callsign('')
+        self.destination = Callsign(destination) if destination is not None\
+                        else Callsign('')
         self.path = list(map(Callsign, path)) if path != [] else []
 
-    def reinit(self):
-        self.source = Callsign(core.CSSOURCE)
-        self.destination = Callsign(core.CSDESTINATION)
-        self.path = []
-
-    def encode_kiss(self, text):
+    def encode_radio(self, text):
         """
-        Encodes an Frame as KISS.
+        Encodes an Frame as AX25+KISS
         """
         self.text = Byt(text)
-        enc_frame = self.destination.encode_kiss() +\
-                        self.source.encode_kiss() +\
-                        Byt().join([path_call.encode_kiss()
+        enc_frame = self.destination.encode_callsign() +\
+                        self.source.encode_callsign() +\
+                        Byt().join([path_call.encode_callsign()
                                     for path_call in self.path])
         frame = enc_frame[:-1] +\
                     Byt(ord(enc_frame[-1]) | 0x01) +\
-                    constants.SLOT_TIME +\
+                    utils.SLOT_TIME +\
                     Byt('\xf0') +\
                     self.text
-        frame = utils.escape_special_codes(frame)
-        return constants.FEND + constants.DATA_FRAME + frame + constants.FEND
+        if not self.ISKISS:
+            return frame
+        else:
+            frame = utils.escape_special_codes(frame)
+            return utils.FEND + utils.DATA_FRAME + frame + utils.FEND
 
-    def decode_kiss(self, frame):
+    def decode_radio(self, frame):
         """
-        Parses and Extracts the components of an KISS-Encoded Frame.
+        Parses and extracts the components of an AX25+KISS-Encoded Frame
         """
         # init
         source, destination, text = Byt(), Byt(), Byt()
-        # parse KISS away
-        frame = utils.strip_df_start(frame)
-        # recover special codes
-        frame = utils.recover_special_codes(frame)
+        if self.ISKISS:
+            # parse KISS away
+            frame = utils.strip_df_start(frame)
+            # recover special codes
+            frame = utils.recover_special_codes(frame)
         frameints = frame.ints()
         frame_len = len(frameints)
         if frame_len > 16:
@@ -96,6 +106,5 @@ class Frame(object):
                     return source, destination, text
         return source, destination, text
 
-
-if not core.JUSTALIB:
+if not param_all.JUSTALIB:
     Framer = Frame(source=core.CSSOURCE, destination=core.CSDESTINATION)

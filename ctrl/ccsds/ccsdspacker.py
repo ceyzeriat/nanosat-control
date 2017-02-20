@@ -147,8 +147,10 @@ class CCSDSPacker(object):
         """
         # Preparation of the content of values dictionary
         values[param_ccsds.PACKETTYPE.name] = self.mode
+        # CCSDS length has a modifier versus real packet length
+        values[param_ccsds.DATALENGTH.name] = param_ccsds.LENGTHMODIFIER
         if self.mode == 'telecommand':
-            values[param_ccsds.DATALENGTH.name] =\
+            values[param_ccsds.DATALENGTH.name] +=\
                 param_ccsds.HEADER_S_SIZE_TELECOMMAND
             values[param_ccsds.PACKETCATEGORY.name] = '0'
             if withPacketID:
@@ -157,7 +159,7 @@ class CCSDSPacker(object):
             else:
                 values[param_ccsds.PACKETID.name] = '0'
         else:
-            values[param_ccsds.DATALENGTH.name] =\
+            values[param_ccsds.DATALENGTH.name] +=\
                 param_ccsds.HEADER_S_SIZE_TELEMETRY
             values[param_ccsds.PACKETID.name] = '0'
         # adds the header aux size into the packet length

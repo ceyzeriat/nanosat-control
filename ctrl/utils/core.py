@@ -48,6 +48,7 @@ from .byt import Byt
 #from IPython.utils.terminal import toggle_set_term_title, set_term_title
 #toggle_set_term_title(True)
 
+
 # make sure that python 3 understands unicode native python 2 function
 if PYTHON3:
     unicode = str
@@ -98,25 +99,55 @@ def get_pid():
     """
     return current_process().pid
 
+def split_flow(data, n=1):
+    """
+    Splits and returns the ccsds packets if one expects a frames-flow
+    """
+    if not FRAMESFLOW:
+        raise ctrlexception.NotInFramesFlow()
+    # split CCSDS using the special split chars
+    if not AX25ENCAPS:
+        return [item.replace(CCSDSSPLITCHAR+CCSDSESCAPECHAR, CCSDSSPLITCHAR)\
+                for item in Byt(data).split(CCSDSSPLITCHAR*2, n)\
+                    if len(item) > 0]
+    # split KISS using the special split chars
+    elif KISSENCAPS:
+        raise ctrlexception.NotImplemented("Frames-FLow with AX25")
+    else:
+        raise ctrlexception.CantRunAX25FramesFlow()
+
+def merge_flow(datalist):
+    """
+    Merges the ccsds packets contained in datalist if one expects a
+    frames-flow
+    """
+    if not FRAMESFLOW:
+        raise ctrlexception.NotInFramesFlow()
+    # merge CCSDS using the special split chars
+    if not AX25ENCAPS:
+        return (CCSDSSPLITCHAR*2).join([
+                    Byt(item).replace(CCSDSSPLITCHAR,
+                                        CCSDSSPLITCHAR+CCSDSESCAPECHAR)\
+                        for item in datalist if len(item) > 0])\
+                + CCSDSSPLITCHAR*2
+    # merge KISS using the special split chars
+    elif KISSENCAPS:
+        raise ctrlexception.CantRunAX25FramesFlow("Frames-FLow with AX25")
+    else:
+        raise ctrlexception.CantRunAX25FramesFlow()
+
 def split_socket_info(data, asStr=False):
     """
     Splits the data using the socket separator and returns a dictionnary
     of the different pieces in bytes format
     """
-    res = map(Byt, re.split(str(RESPLITVARS), str(data)))
-    res = [map(Byt, re.split(   str(RESPLITMAP),
-                                str(item.replace(SOCKETESCAPE+SOCKETSEPARATOR,
-                                                    SOCKETSEPARATOR))
-                            )) for item in res]
+    res = map(Byt, data.split(SOCKETSEPARATOR*2))
+    res = [map(Byt, item.replace(SOCKETSEPARATOR+SOCKETESCAPE,SOCKETSEPARATOR)\
+                        .split(SOCKETMAPPER, 1))\
+                            for item in res]
     dic = {}
-    if asStr:
-        for k, v in res:
-            dic[str(Byt(k))] = str(v.replace(SOCKETESCAPE+SOCKETMAPPER,
-                                                    SOCKETMAPPER))
-    else:
-        for k, v in res:
-            dic[str(Byt(k))] = v.replace(SOCKETESCAPE+SOCKETMAPPER,
-                                            SOCKETMAPPER)
+    for k, v in res:
+        dic[str(k)] = str(v) if asStr else v
     return dic
 
 def merge_socket_info(**kwargs):
@@ -127,12 +158,10 @@ def merge_socket_info(**kwargs):
     for k, v in kwargs.items():
         if not isStr(v):
             v = str(v)
-        v = Byt(v)
-        v = v.replace(SOCKETMAPPER, SOCKETESCAPE+SOCKETMAPPER)
-        res.append(Byt(k) + SOCKETMAPPER + v)
-    return SOCKETSEPARATOR.join([
-                item.replace(SOCKETSEPARATOR,
-                                SOCKETESCAPE+SOCKETSEPARATOR) for item in res])
+        res.append(Byt(k) + SOCKETMAPPER + Byt(v))
+    return (SOCKETSEPARATOR*2).join([
+                item.replace(SOCKETSEPARATOR, SOCKETSEPARATOR+SOCKETESCAPE)\
+                    for item in res])
 
 def merge_reporting(**kwargs):
     """
@@ -147,18 +176,19 @@ def is_reporting(data):
     """
     lrep = len(REPORTKEY)
     lmap = len(SOCKETMAPPER)
-    lsep = len(SOCKETSEPARATOR)
+    socksep = SOCKETSEPARATOR * 2
+    lsep = len(socksep)
     PROOF = Byt(REPORTKEY) + SOCKETMAPPER + Byt(1)
     # only and just reporting flag
     if data == PROOF:
         return True
     # start with report flag
-    elif data[:lrep+lsep+lmap+1] == PROOF + SOCKETSEPARATOR:
+    elif data[:lrep+lsep+lmap+1] == PROOF + socksep:
         return True
     # ends with report flag
-    elif data[-(lrep+lsep+lmap+1):] == SOCKETSEPARATOR + PROOF:
+    elif data[-(lrep+lsep+lmap+1):] == socksep + PROOF:
         return True
-    elif data.find(SOCKETSEPARATOR + PROOF + SOCKETSEPARATOR) != -1:
+    elif data.find(socksep + PROOF + socksep) != -1:
         return True
     return False
 

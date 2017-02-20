@@ -31,6 +31,7 @@ import glob
 from ctrl.soc import SocTransmitter
 from ctrl.soc import SocReceiver
 from ctrl.utils import core
+from param import param_all
 from ctrl.utils import ctrlexception
 from ctrl.utils.report import REPORTS
 from ctrl.telemetry import Telemetry
@@ -72,10 +73,14 @@ class SaveRec(SocReceiver):
             return
         report('receivedTM')
         inputs = core.split_socket_info(data)
-        source, destination, packet = Framer.decode_kiss(inputs['data'])
-        report('receivedCallsignTM', source=source, ll=len(packet),
-                    destination=destination)
-        blobparser = CCSDSBlob(packet)
+        if param_all.AX25ENCAPS:
+            source, destination, blobish = Framer.decode_radio(inputs['data'])
+            report('receivedCallsignTM', source=source, ll=len(blobish),
+                        destination=destination)
+        else:
+            blobish = inputs['data']
+            report('receivedRawTM', ll=len(blobish))
+        blobparser = CCSDSBlob(blobish)
         start = 0
         pk = blobparser.grab_first_packet(start=start)
         while pk is not None:
@@ -122,12 +127,13 @@ def init_saving():
     global save_running
     if save_running:
         return
-    SAVE_TRANS = SaveTrans(port=core.SAVINGPORT[0],
-                            nreceivermax=len(core.SAVINGPORTLISTENERS),
-                            start=True, portname=core.SAVINGPORT[1])
-    SAVE_REC_LISTEN = SaveRec(port=core.LISTENINGPORT[0], name=core.SAVINGNAME,
-                                connect=True, connectWait=0.5,
-                                portname=core.LISTENINGPORT[1])
+    SAVE_TRANS = SaveTrans(port=param_all.SAVINGPORT[0],
+                            nreceivermax=len(param_all.SAVINGPORTLISTENERS),
+                            start=True, portname=param_all.SAVINGPORT[1])
+    SAVE_REC_LISTEN = SaveRec(port=param_all.LISTENINGPORT[0],
+                                name=param_all.SAVINGNAME, connect=True,
+                                connectWait=0.5,
+                                portname=param_all.LISTENINGPORT[1])
     save_running = True
 
 
