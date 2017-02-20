@@ -124,12 +124,25 @@ TELEMETRYDUMPFOLDER = ['tm_data']
 TELEMETRYNAMEFORMAT = 'TM_%Y%m%dT%H%M%S_%f.packet'
 
 # the split between keys and data when shipping through sockets
-SOCKETSEPARATOR = Byt('###')
-SOCKETESCAPE = Byt('/')
-SOCKETMAPPER = Byt(':::')
-RESPLITVARS = Byt('(?<!') + SOCKETESCAPE + Byt(')') + SOCKETSEPARATOR
-RESPLITMAP = Byt('(?<!') + SOCKETESCAPE + Byt(')') + SOCKETMAPPER
+SOCKETSEPARATOR = Byt('\xac\xdc')
+SOCKETESCAPE = Byt('\xee')
+SOCKETMAPPER = Byt(':')  # must a char that cannot be in a dict key
 REPORTKEY = 'report'
+
+
+# whether the listened flow of data is encapsulated in AX25/KISS standard
+AX25ENCAPS = False
+KISSENCAPS = False
+# note: there can't be a KISS encapsulation without AX25
+
+# whether to expect a continuous flow of CCSDS frames or a natural split
+FRAMESFLOW = True
+
+# for when 
+# the split characters between CCSDS continuous frames
+CCSDSSPLITCHAR = Byt('\xac\xdc')
+# escape character in CCSDS continuous frames
+CCSDSESCAPECHAR = Byt('\xee')
 
 
 # the relative path where the raw packets are stored, on the server
