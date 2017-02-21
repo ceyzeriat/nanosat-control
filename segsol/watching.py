@@ -28,6 +28,7 @@
 from ctrl.soc import SocTransmitter
 from ctrl.soc import SocReceiver
 from ctrl.utils import core
+from param import param_all
 from ctrl.utils import Byt
 from ctrl.utils.report import REPORTS
 from ctrl.utils import PIDWatchDog
@@ -50,7 +51,7 @@ class WatchTrans(SocTransmitter):
         """
         Call-back function when a new connection is extablished
         """
-        broadcast(key='newTransConnection', who=core.WATCHINGNAME,
+        broadcast(key='newTransConnection', who=param_all.WATCHINGNAME,
                     rec=name)
 
 
@@ -59,7 +60,7 @@ class WatchRec(SocReceiver):
         """
         New connection or connection restablished
         """
-        broadcast(key='newRecConnection', who=core.WATCHINGNAME,
+        broadcast(key='newRecConnection', who=param_all.WATCHINGNAME,
                     port=self.portname)
 
     def process(self, data):
@@ -85,16 +86,13 @@ def process_report(data):
             killit = PIDS.pop(who)
             killit.stop()
         PIDS[who] = PIDWatchDog(name=who, pid=inputs['pid'],
-                                timeout=core.PROCESSTIMEOUT,
+                                timeout=param_all.PROCESSTIMEOUT,
                                 whenDead=revive_process, whenAlive=say_hi,
                                 who=who)
     elif key =='GotBlob':
         hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']), retdbvalues=False)
-        print('V: {ccsds_version}, T: {packet_type}, SHF: {secondary_header_flag}, P: {payload_flag}, L: {level_flag}, PID: {pid}, C: {packet_category}, S: {sequence_flag}, ID: {packet_id}, L: {data_length}\nDS: {days_since_ref}, MS: {ms_since_today}'.format(**hd))
-        print('ACQ: {acq_mode}, IT: {integration_time}, M: {modulation}, R: {radius}, NP: {n_points}'.format(**hdx))
-        print(dd['all'].hex())
-        for line in dd['unpacked']:
-            print("S: {step}, C: {counts}, Xc{x_com}, Yc{y_com}, Xp{x_pos}, Yp{y_pos}".format(**line))
+        
+        
         print("\n")
     else:
         pass
@@ -130,24 +128,24 @@ def init_watch():
     global watch_running
     if watch_running:
         return
-    WATCH_TRANS = WatchTrans(port=core.WATCHINGPORT[0],
-                                nreceivermax=len(core.WATCHINGPORTLISTENERS),
-                                start=True, portname=core.WATCHINGPORT[1])
-    WATCH_REC_LISTEN = WatchRec(port=core.LISTENINGPORT[0],
-                                    name=core.WATCHINGNAME,
+    WATCH_TRANS = WatchTrans(port=param_all.WATCHINGPORT[0],
+                             nreceivermax=len(param_all.WATCHINGPORTLISTENERS),
+                             start=True, portname=param_all.WATCHINGPORT[1])
+    WATCH_REC_LISTEN = WatchRec(port=param_all.LISTENINGPORT[0],
+                                    name=param_all.WATCHINGNAME,
                                     connect=True,
                                     connectWait=0.5,
-                                    portname=core.LISTENINGPORT[1])
-    WATCH_REC_CONTROL = WatchRec(port=core.CONTROLLINGPORT[0],
-                                    name=core.WATCHINGNAME,
+                                    portname=param_all.LISTENINGPORT[1])
+    WATCH_REC_CONTROL = WatchRec(port=param_all.CONTROLLINGPORT[0],
+                                    name=param_all.WATCHINGNAME,
                                     connect=True,
                                     connectWait=0.5,
-                                    portname=core.CONTROLLINGPORT[1])
-    WATCH_REC_SAVE = WatchRec(port=core.SAVINGPORT[0],
-                                    name=core.WATCHINGNAME,
+                                    portname=param_all.CONTROLLINGPORT[1])
+    WATCH_REC_SAVE = WatchRec(port=param_all.SAVINGPORT[0],
+                                    name=param_all.WATCHINGNAME,
                                     connect=True,
                                     connectWait=0.5,
-                                    portname=core.SAVINGPORT[1])
+                                    portname=param_all.SAVINGPORT[1])
     watch_running = True
 
 

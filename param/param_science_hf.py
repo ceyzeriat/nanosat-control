@@ -29,16 +29,19 @@ from ctrl.ccsds.ccsdskey import CCSDSKey
 from ctrl.utils import core
 
 
-DATASCIENCEHF = [
-                CCSDSKey(name='step', start=0, l=1, fctunpack=core.bin2int),
-                CCSDSKey(name='counts', start=8, l=2, fctunpack=core.bin2int),
-                CCSDSKey(name='x_com', start=24, l=2, fctunpack=core.bin2int),
-                CCSDSKey(name='y_com', start=40, l=2, fctunpack=core.bin2int),
-                CCSDSKey(name='x_pos', start=56, l=2, fctunpack=core.bin2int),
-                CCSDSKey(name='y_pos', start=72, l=2, fctunpack=core.bin2int)
-                ]
+__all__ = ['KEYS', 'KEYSSIZE', 'unpack', 'disp']
 
-DATASCIENCEHFSIZE = sum([item.len for item in DATASCIENCEHF])
+
+KEYS = [CCSDSKey(name='step', start=0, l=1, fctunpack=core.hex2int),
+        CCSDSKey(name='counts', start=8, l=2, fctunpack=core.hex2int),
+        CCSDSKey(name='x_com', start=24, l=2, fctunpack=core.hex2int),
+        CCSDSKey(name='y_com', start=40, l=2, fctunpack=core.hex2int),
+        CCSDSKey(name='x_pos', start=56, l=2, fctunpack=core.hex2int),
+        CCSDSKey(name='y_pos', start=72, l=2, fctunpack=core.hex2int)
+        ]
+
+
+KEYSSIZE = sum([item.len for item in KEYS])
 
 
 def unpack(data):
@@ -48,12 +51,20 @@ def unpack(data):
     Args:
     * data: the chain of octets to unpack
     """
-    nlines = len(data) // DATASCIENCEHFSIZE
+    nlines = len(data) // KEYSSIZE
     lines = [{}] * nlines
     for idx in range(nlines):
-        thedata = data[idx*DATASCIENCEHFSIZE:(idx+1)*DATASCIENCEHFSIZE]
+        thedata = data[idx*KEYSSIZE:(idx+1)*KEYSSIZE]
         line = {}
-        for key in DATASCIENCEHF:
+        for key in KEYS:
             line[key.name] = key.unpack(thedata)
         lines[idx] = line
     return lines
+
+
+def disp(hdx, data):
+    print("ACQ: {acq_mode}, IT: {integration_time}, M: {modulation}, "\
+          "R: {radius}, NP: {n_points}".format(**hdx))
+    for line in data['unpacked']:
+        print("S: {step}, C: {counts}, Xc{x_com}, Yc{y_com}, Xp{x_pos}, "\
+              "Yp{y_pos}".format(**line))

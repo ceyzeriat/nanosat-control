@@ -129,7 +129,7 @@ for k, cat in PACKETCATEGORIES.items():
     PACKETCATEGORYSIZES[k] = sum([key.len for key in cat])//8
 
 
-TABLECATEGORY =    {0: 'TmcatRcpAcknowledgement',
+TABLECATEGORY = {   0: 'TmcatRcpAcknowledgement',
                     1: 'TmcatFmtAcknowledgement',
                     2: 'TmcatExeAcknowledgement',
                     3: 'TmcatDebug',
@@ -139,3 +139,14 @@ TABLECATEGORY =    {0: 'TmcatRcpAcknowledgement',
                     7: '',
                     8: '',
                     9: ''}
+
+TABLEDATACRUNCHING = {  0: None,
+                        1: None,
+                        2: None,
+                        3: None,
+                        4: None,
+                        5: 'param_science_hf',
+                        6: None,
+                        7: None,
+                        8: None,
+                        9: None}
