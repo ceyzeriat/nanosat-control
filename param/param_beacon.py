@@ -82,7 +82,16 @@ DATABEACON = [  CCSDSKey(name='hkErrorFlags', start=0, l=16, fctunpack=core.bin2
                 CCSDSKey(name='nReboots', start=424, l=32, fctunpack=core.bin2int),
                 CCSDSKey(name='satMode', start=456, l=8, fctunpack=core.bin2int)]
 
-#b_bin = core.hex2bin(b, pad=len(b)*8)
 
-#for key in DATABEACON:
-#    print(key.name, key.unpack(b_bin))
+def unpack(data):
+    """
+    Unpacks the data contained in the Beacon packets
+
+    Args:
+    * data: the chain of octets to unpack
+    """
+    data = core.hex2bin(data, pad=len(data)*8)
+    res = {}
+    for key in DATABEACON:
+        res[key.name] = key.unpack(data)
+    return res

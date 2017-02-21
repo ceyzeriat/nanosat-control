@@ -26,6 +26,7 @@
 
 
 from param import param_category
+from param import param_science_hf
 from ..utils import core
 from . import ccsdsexception
 from . import param_ccsds
@@ -159,4 +160,6 @@ class CCSDSUnPacker(object):
         hsz += param_category.PACKETCATEGORYSIZES[
                             hds[param_ccsds.PACKETCATEGORY.name]]
         data['all'] = packet[hsz:]
+        if hds[param_ccsds.PACKETCATEGORY.name] == 5:
+        data['unpacked'] = param_science_hf.unpack(data['all'])
         return data
