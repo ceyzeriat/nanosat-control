@@ -68,7 +68,9 @@ class WatchRec(SocReceiver):
         if core.is_reporting(data):
             process_report(data)
         else:
-            print('Raw data: {}'.format(data.hex()))
+            #hop = core.split_socket_info(data)
+            #print("Raw data from '{}'".format(hop['who']))
+            pass
 
 
 def process_report(data):
@@ -86,8 +88,10 @@ def process_report(data):
                                 whenDead=revive_process, whenAlive=say_hi,
                                 who=who)
     elif key =='GotBlob':
-        res = TMUnPacker.unpack(inputs['blob'])
-        
+        hd, hdx, dd = TMUnPacker.unpack(inputs['blob'])
+        print('V: {ccsds_version}, T: {packet_type}, SHF: {secondary_header_flag}, P: {payload_flag}, L: {level_flag}, PID: {pid}, C: {packet_category}, S: {sequence_flag}, ID: {packet_id}, L: {data_length}\nDS: {days_since_ref}, MS: {ms_since_today}'.format(**hd))
+        print('ACQ: {acq_mode}, IT: {integration_time}, M: {modulation}, R: {radius}, NP: {n_points}'.format(**hdx))
+        print(dd.hex())
     else:
         pass
 
