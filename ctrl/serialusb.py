@@ -36,8 +36,8 @@ __all__ = ['SerialUSB']
 
 
 class SerialUSB(object):
-    self.timeout = float(param_all.SERIALUSBTIMEOUT)
-    self.length = int(param_all.SERIALUSBLENGTH)
+    timeout = float(param_all.SERIALUSBTIMEOUT)
+    length = int(param_all.SERIALUSBLENGTH)
 
     def __init__(self):
         self.port.Serial(param_all.SERIALUSBPORT,
