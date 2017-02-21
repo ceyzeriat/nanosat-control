@@ -88,7 +88,7 @@ def process_report(data):
                                 whenDead=revive_process, whenAlive=say_hi,
                                 who=who)
     elif key =='GotBlob':
-        hd, hdx, dd = TMUnPacker.unpack(inputs['blob'])
+        hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']))
         print('V: {ccsds_version}, T: {packet_type}, SHF: {secondary_header_flag}, P: {payload_flag}, L: {level_flag}, PID: {pid}, C: {packet_category}, S: {sequence_flag}, ID: {packet_id}, L: {data_length}\nDS: {days_since_ref}, MS: {ms_since_today}'.format(**hd))
         print('ACQ: {acq_mode}, IT: {integration_time}, M: {modulation}, R: {radius}, NP: {n_points}'.format(**hdx))
         print(dd['all'].hex())
