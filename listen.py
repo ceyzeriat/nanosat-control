@@ -46,7 +46,6 @@ if not param_all.FRAMESFLOW:
         n = listening.ANTENNA.in_waiting()
         if n < 0:
             continue
-        print("n bits read: ", n)
         # grab data
         data = listening.ANTENNA.read(size=n)
         # empty data
