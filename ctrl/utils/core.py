@@ -107,6 +107,7 @@ def split_flow(data, n=1):
         raise ctrlexception.NotInFramesFlow()
     # split CCSDS using the special split chars
     if not AX25ENCAPS:
+        print(Byt(data).split(CCSDSSPLITCHAR*2, n))
         return [item.replace(CCSDSSPLITCHAR+CCSDSESCAPECHAR, CCSDSSPLITCHAR)\
                 for item in Byt(data).split(CCSDSSPLITCHAR*2, n)\
                     if len(item) > 0]
