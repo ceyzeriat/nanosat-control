@@ -78,19 +78,19 @@ INTEGRATIONTIME = CCSDSKey( name='integration_time',
                             fctpack=core.int2bin)
 
 MODULATION = CCSDSKey(      name='modulation',
-                            start=8,
+                            start=24,
                             l=8,
                             fctunpack=core.bin2int,
                             fctpack=core.int2bin)
 
 RADIUS = CCSDSKey(          name='radius',
-                            start=16,
+                            start=32,
                             l=16,
                             fctunpack=core.bin2int,
                             fctpack=core.int2bin)
 
 NPOINTS = CCSDSKey(         name='n_points',
-                            start=32,
+                            start=48,
                             l=8,
                             fctunpack=core.bin2int,
                             fctpack=core.int2bin)
