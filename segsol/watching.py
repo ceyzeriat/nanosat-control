@@ -28,6 +28,7 @@
 from ctrl.soc import SocTransmitter
 from ctrl.soc import SocReceiver
 from ctrl.utils import core
+from ctrl.utils import Byt
 from ctrl.utils.report import REPORTS
 from ctrl.utils import PIDWatchDog
 from ctrl.ccsds import TMUnPacker
