@@ -38,7 +38,7 @@ DATASCIENCEHF = [
                 CCSDSKey(name='y_pos', start=72, l=2, fctunpack=core.bin2int)
                 ]
 
-DATASCIENCEHFSIZE = sum([item.len for item in DATASCIENCEHF])//8
+DATASCIENCEHFSIZE = sum([item.len for item in DATASCIENCEHF])
 
 
 def unpack(data):
