@@ -146,13 +146,12 @@ def split_socket_info(data, asStr=False):
     of the different pieces in bytes format
     """
     res = map(Byt, data.split(SOCKETSEPARATOR*2))
-    res = list([map(Byt, item.replace(SOCKETSEPARATOR+SOCKETESCAPE,
-                                        SOCKETSEPARATOR)\
-                                .split(SOCKETMAPPER, 1))\
-                            for item in res])
+    res = [map(Byt, item.replace(SOCKETSEPARATOR+SOCKETESCAPE,SOCKETSEPARATOR)\
+                        .split(SOCKETMAPPER, 1))\
+                            for item in res]
     dic = {}
     for k, v in res:
-        dic[str(k)] = str(v) if asStr else Byt(v)
+        dic[str(k)] = str(v) if asStr else v
     return dic
 
 def merge_socket_info(**kwargs):
