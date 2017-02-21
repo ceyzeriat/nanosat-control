@@ -30,6 +30,7 @@ from ctrl.soc import SocReceiver
 from ctrl.utils import core
 from ctrl.utils.report import REPORTS
 from ctrl.utils import PIDWatchDog
+from ctrl.ccsds import TMUnPacker
 
 
 __all__ = ['init_watch', 'close_watch']
@@ -84,6 +85,9 @@ def process_report(data):
                                 timeout=core.PROCESSTIMEOUT,
                                 whenDead=revive_process, whenAlive=say_hi,
                                 who=who)
+    elif key =='GotBlob':
+        res = TMUnPacker.unpack(inputs['blob'])
+        
     else:
         pass
 

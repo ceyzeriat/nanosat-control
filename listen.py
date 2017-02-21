@@ -69,6 +69,7 @@ else:
         print("n bits read: ", n)
         # grab data
         data = listening.ANTENNA.read(size=n)
+        print(data.hex())
         if data is None:
             continue
         if len(data) == 0:
@@ -78,7 +79,7 @@ else:
         if len(res) < 2:
             continue  # didn't find a full packet yet
         packet, inbuff = res
-        listening.report('GotBlob', ll=len(packet))
+        listening.report('GotBlob', ll=len(packet), blob=packet)
         # deal with it in a separate thread
         loopy = Thread(target=listening.process_data, args=(packet,))
         loopy.daemon = True
