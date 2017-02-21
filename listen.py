@@ -53,7 +53,7 @@ if not param_all.FRAMESFLOW:
             continue
         if len(data) == 0:
             continue
-        listening.report('GotBlob', len(data))
+        listening.report('GotBlob', ll=len(data))
         # deal with it in a separate thread
         loopy = Thread(target=listening.process_data, args=(data,))
         loopy.daemon = True
@@ -76,7 +76,7 @@ else:
         if len(res) < 2:
             continue  # didn't find a full packet yet
         packet, inbuff = res
-        listening.report('GotBlob', len(packet))
+        listening.report('GotBlob', ll=len(packet))
         # deal with it in a separate thread
         loopy = Thread(target=listening.process_data, args=(packet,))
         loopy.daemon = True
