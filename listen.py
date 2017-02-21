@@ -64,7 +64,7 @@ else:
     while 1:
         time.sleep(0.01)  # Don't kill the CPU
         n = listening.ANTENNA.in_waiting()
-        if n < 0:
+        if n <= 0:
             continue
         print("n bits read: ", n)
         # grab data

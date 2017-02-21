@@ -49,7 +49,9 @@ class SerialUSB(object):
 
     def read(self, size=None):
         size = self.length if size is None else int(size)
+        print('starting select', size)
         ready = select.select([self.port], [], [], self.timeout)
+        print('finished select')
         if ready[0]:
             return Byt(self.port.read(self.length))
         else:
