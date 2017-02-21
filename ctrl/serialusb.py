@@ -56,7 +56,7 @@ class SerialUSB(object):
             return None
 
     def in_waiting(self):
-        return self.port.in_waiting()
+        return self.port.in_waiting
 
     def write(self, data):
         if data is not None:
