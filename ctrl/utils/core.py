@@ -107,10 +107,13 @@ def split_flow(data, n=1):
         raise ctrlexception.NotInFramesFlow()
     # split CCSDS using the special split chars
     if not AX25ENCAPS:
-        print([hop.hex() for hop in Byt(data).split(CCSDSSPLITCHAR*2, n)])
-        return [item.replace(CCSDSSPLITCHAR+CCSDSESCAPECHAR, CCSDSSPLITCHAR)\
-                for item in Byt(data).split(CCSDSSPLITCHAR*2, n)\
-                    if len(item) > 0]
+        res = Byt(data).split(CCSDSSPLITCHAR*2, n)
+        for idx, item in enumerate(res[:n]):
+            if len(item) <= 0:
+                continue
+            res[idx] = item.replace(CCSDSSPLITCHAR+CCSDSESCAPECHAR,
+                                    CCSDSSPLITCHAR)
+        return res
     # split KISS using the special split chars
     elif KISSENCAPS:
         raise ctrlexception.NotImplemented("Frames-FLow with KISS")
