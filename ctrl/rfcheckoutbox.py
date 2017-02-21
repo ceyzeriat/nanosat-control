@@ -26,9 +26,9 @@
 
 
 import socket
-from .utils import core
-from .utils import Byt
 import select
+from param import param_all
+from .utils import Byt
 from .utils import ctrlexception
 
 
@@ -36,28 +36,26 @@ __all__ = ['RFCheckoutbox']
 
 
 class RFCheckoutbox(object):
+    self.timeout = float(param_all.RFCHECKOUTBOXTIMEOUT)
+    self.length = int(param_all.RFCHECKOUTBOXLENGTH)
+
     def __init__(self):
         host = socket.gethostbyname(socket.gethostname())
-        port = int(core.RFCHECKOUTBOXPORT)
-        self.soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.port = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.port.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
-            self.soc.connect((host, port))
+            self.port.connect((host, int(param_all.RFCHECKOUTBOXPORT)))
         except:
-            self.soc.shutdown(socket.SHUT_RDWR)
-            self.soc.close()
+            self.close()
             raise ctrlexception.RFCheckoutBoxIssue()
-        self.timeout = float(core.RFCHECKOUTBOXTIMEOUT)
-        self.length = int(core.RFCHECKOUTBOXLENGTH)
 
     def in_waiting(self):
         return self.length
 
     def read(self, size=None):
-        ready = select.select([self.soc], [], [], self.timeout)
+        ready = select.select([self.port], [], [], self.timeout)
         if ready[0]:
-            data = Byt(self.soc.recv(self.length))
-            return data
+            return Byt(self.port.recv(self.length))
         else:
             return None
 
@@ -65,7 +63,8 @@ class RFCheckoutbox(object):
         if data is not None:
             data = Byt(data)
             if len(data) > 0:
-                self.soc.sendall(data)
+                self.port.sendall(data)
 
     def close(self):
-        pass
+        self.port.shutdown(socket.SHUT_RDWR)
+        self.port.close()

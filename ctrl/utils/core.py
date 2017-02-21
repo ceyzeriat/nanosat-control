@@ -112,7 +112,7 @@ def split_flow(data, n=1):
                     if len(item) > 0]
     # split KISS using the special split chars
     elif KISSENCAPS:
-        raise ctrlexception.NotImplemented("Frames-FLow with AX25")
+        raise ctrlexception.NotImplemented("Frames-FLow with KISS")
     else:
         raise ctrlexception.CantRunAX25FramesFlow()
 
@@ -132,7 +132,7 @@ def merge_flow(datalist):
                 + CCSDSSPLITCHAR*2
     # merge KISS using the special split chars
     elif KISSENCAPS:
-        raise ctrlexception.CantRunAX25FramesFlow("Frames-FLow with AX25")
+        raise ctrlexception.NotImplemented("Frames-FLow with KISS")
     else:
         raise ctrlexception.CantRunAX25FramesFlow()
 

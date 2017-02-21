@@ -55,4 +55,8 @@ REPORTSDATA = [
     ('receivedRawTM', "'{who}' received CCSDS-flow data of length '{ll}' "\
         "for saving",
         ['who', 'll'])
+    ('GotBlob', "'{who}' got blob of data of len '{ll}'",
+        ['who', 'll'])
+    ('SettingUpAntenna', "Setting up antenna '{antenna}'",
+        ['who', 'antenna'])
     ]

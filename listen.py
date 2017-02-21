@@ -53,8 +53,7 @@ if not core.FRAMESFLOW:
             continue
         if len(data) == 0:
             continue
-        # do stuff
-        print("got: '{}'".format(data.hex()))
+        listening.report('GotBlob', len(data))
         # deal with it in a separate thread
         loopy = Thread(target=listening.process_data, args=(data,))
         loopy.daemon = True
@@ -73,12 +72,11 @@ else:
         if len(data) == 0:
             continue
         inbuff += data
-        res = core.split_flow(inbuff, 1)
-        # didn't find a full packet yet
+        res = core.split_flow(inbuff, 1)  # just take first packet
         if len(res) < 2:
-            continue
+            continue  # didn't find a full packet yet
         packet, inbuff = res
-        print("got: '{}'".format(packet.hex()))
+        listening.report('GotBlob', len(packet))
         # deal with it in a separate thread
         loopy = Thread(target=listening.process_data, args=(packet,))
         loopy.daemon = True

@@ -26,7 +26,9 @@
 
 
 import serial
-from .utils import core
+import select
+from param import param_all
+from .utils import Byt
 from .utils import ctrlexception
 
 
@@ -34,35 +36,34 @@ __all__ = ['SerialUSB']
 
 
 class SerialUSB(object):
-    def __init__(self):
-        serial.Serial(core.ANTENNAPORT)
-        ANTENNA.open()
-        ANTENNA.reset_input_buffer()
-        ANTENNA.reset_output_buffer()
-        ANTENNA.timetout = 0
-        # host = socket.gethostbyname(socket.gethostname())
-        # port = int(core.SERIALUSBPORT)
-        # self.soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # self.soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        # try:
-            # self.soc.connect((host, port))
-        # except:
-            # raise ctrlexception.RFCheckoutBoxIssue()
-        self.timeout = float(core.SERIALUSBTIMEOUT)
-        self.length = int(core.SERIALUSBLENGTH)
+    self.timeout = float(param_all.SERIALUSBTIMEOUT)
+    self.length = int(param_all.SERIALUSBLENGTH)
 
-    def read(self, size=None):
-        ready = select.select([self.soc], [], [], self.timeout)
+    def __init__(self):
+        self.port.Serial(param_all.SERIALUSBPORT,
+                        baudrate=param_all.SERIALUSBBAUDRATE,
+                        parity=param_all.SERIALUSBPARITY)
+        self.port.open()
+        assert self.port.is_open()
+        self.port.reset_input_buffer()
+        self.port.reset_output_buffer()
+        self.port.timetout = 0
+
+    def read(self, size=self.length):
+        ready = select.select([self.port], [], [], self.timeout)
         if ready[0]:
-            data = self.soc.recv(self.length)
-            print('got:',data)
-            return data
+            return Byt(self.port.read(self.length))
         else:
-            return
+            return None
+
+    def in_waiting(self):
+        return self.port.in_waiting()
 
     def write(self, data):
-        if data != '' and data is not None:
-            self.soc.sendall(data)
+        if data is not None:
+            data = Byt(data)
+            if len(data) > 0:
+                self.port.write(data)
 
     def close(self):
-        pass
+        self.port.close()

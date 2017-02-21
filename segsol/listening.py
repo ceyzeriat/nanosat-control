@@ -32,6 +32,7 @@ from ctrl.soc import SocTransmitter
 from ctrl.soc import SocReceiver
 from ctrl.utils.report import REPORTS
 from ctrl.utils import core
+from param improt param_all
 from ctrl.utils import ctrlexception
 from ctrl.rfcheckoutbox import RFCheckoutbox
 
@@ -86,8 +87,8 @@ def process_data(data):
     if len(data) == 0:
         return
     now = core.now()
-    name = now.strftime(core.TELEMETRYNAMEFORMAT)
-    name = core.concat_dir(core.TELEMETRYDUMPFOLDER, name)
+    name = now.strftime(param_all.TELEMETRYNAMEFORMAT)
+    name = core.concat_dir(param_all.TELEMETRYDUMPFOLDER, name)
     if os.path.isfile(name):  # already exists
         name += ".{}".format(len(glob.glob(name))+1)
     # locally saved
@@ -95,7 +96,8 @@ def process_data(data):
     f.write(data)
     f.close()
     # sends packets on the socket
-    dum = LISTEN_TRANS.tell(core.merge_socket_info(t=now, path=name, data=data))
+    dum = LISTEN_TRANS.tell(core.merge_socket_info(t=now, path=name,
+                                                    data=data))
     ### check who recieved it and report
     return dum
 
@@ -114,7 +116,7 @@ def report(report_key, **kwargs):
     """
     Reports to watchdog
     """
-    rp = REPORTS[report_key].pack(who=core.LISTENINGNAME, **kwargs)
+    rp = REPORTS[report_key].pack(who=param_all.LISTENINGNAME, **kwargs)
     return LISTEN_TRANS.tell(rp)
 
 
@@ -132,14 +134,14 @@ def init_listening(antenna):
     global listen_running
     if listen_running:
         return
-    LISTEN_TRANS = ListenTrans(port=core.LISTENINGPORT[0],
-                                nreceivermax=len(core.LISTENINGPORTLISTENERS),
-                                start=True, portname=core.LISTENINGPORT[1])
-    LISTEN_REC_CONTROL = ListenRec(port=core.CONTROLLINGPORT[0],
-                                name=core.LISTENINGNAME, connect=True,
+    LISTEN_TRANS = ListenTrans(port=param_all.LISTENINGPORT[0],
+                            nreceivermax=len(param_all.LISTENINGPORTLISTENERS),
+                            start=True, portname=param_all.LISTENINGPORT[1])
+    LISTEN_REC_CONTROL = ListenRec(port=param_all.CONTROLLINGPORT[0],
+                                name=param_all.LISTENINGNAME, connect=True,
                                 connectWait=0.5,
-                                portname=core.CONTROLLINGPORT[1])
-    print("Setting up antenna: '{}'".format(antenna))
+                                portname=param_all.CONTROLLINGPORT[1])
+    report('SettingUpAntenna', antenna)
     if antenna == 'checkoutbox':
         init_checkoutbox()
     elif antenna == 'serial':
