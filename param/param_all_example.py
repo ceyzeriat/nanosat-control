@@ -47,7 +47,7 @@ NOERRORATIMPORT = True
 JUSTALIB = False
 
 # which antenna are you using
-ANTENNALISTENED = 'checkoutbox'
+ANTENNALISTENED = 'serial'  # or 'checkoutbox' or 'serial'
 
 # the path to the file containing the packet id counter
 PACKETIDFILE = ['.segsol', 'tc_packet_id']
@@ -114,9 +114,10 @@ RFCHECKOUTBOXLENGTH = 1024  # octet
 
 # SERIAL
 # port 
-SERIALUSBPORT = '/dev/ttyS3'
+SERIALUSBPORT = '/dev/ttyUSB0'
 SERIALUSBTIMEOUT = 1  # sec
 SERIALUSBLENGTH = 1024  # octet
+SERIALUSBBAUDRATE = 329200  # bananas per pencil
 
 # where the raw telemetry are dumped (locally), relative to HOME
 TELEMETRYDUMPFOLDER = ['tm_data']
