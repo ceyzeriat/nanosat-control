@@ -117,7 +117,7 @@ RFCHECKOUTBOXLENGTH = 1024  # octet
 SERIALUSBPORT = '/dev/ttyUSB0'
 SERIALUSBTIMEOUT = 1  # sec
 SERIALUSBLENGTH = 1024  # octet
-SERIALUSBBAUDRATE = 329200  # bananas per pencil
+SERIALUSBBAUDRATE = 349200  # bananas per pencil
 
 # where the raw telemetry are dumped (locally), relative to HOME
 TELEMETRYDUMPFOLDER = ['tm_data']

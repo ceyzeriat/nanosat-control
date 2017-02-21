@@ -35,6 +35,7 @@ from ctrl.utils import core
 from param import param_all
 from ctrl.utils import ctrlexception
 from ctrl.rfcheckoutbox import RFCheckoutbox
+from ctrl.serialusb import SerialUSB
 
 
 __all__ = ['process_data', 'init_listening', 'close_listening', 'report']
