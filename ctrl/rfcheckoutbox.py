@@ -36,8 +36,8 @@ __all__ = ['RFCheckoutbox']
 
 
 class RFCheckoutbox(object):
-    self.timeout = float(param_all.RFCHECKOUTBOXTIMEOUT)
-    self.length = int(param_all.RFCHECKOUTBOXLENGTH)
+    timeout = float(param_all.RFCHECKOUTBOXTIMEOUT)
+    length = int(param_all.RFCHECKOUTBOXLENGTH)
 
     def __init__(self):
         host = socket.gethostbyname(socket.gethostname())
