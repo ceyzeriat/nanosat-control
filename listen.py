@@ -27,20 +27,20 @@
 
 import time
 from threading import Thread
+from param import param_all
 from ctrl.utils import core
 from ctrl.utils import Byt
-from ctrl import listening
-from ctrl import db
+from segsol import listening
 
 
 core.prepare_terminal('Listen')
 print("Initialization...")
-listening.init_listening(antenna=core.ANTENNALISTENED)
+listening.init_listening(antenna=param_all.ANTENNALISTENED)
 print("Done\n")
 
 print("Starting...")
 
-if not core.FRAMESFLOW:
+if not param_all.FRAMESFLOW:
     while 1:
         time.sleep(0.01)  # Don't kill the CPU
         n = listening.ANTENNA.in_waiting()
