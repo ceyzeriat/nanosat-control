@@ -27,10 +27,10 @@
 
 import time
 from threading import Thread
-from param import param_all
 from ctrl.utils import core
 from ctrl.utils import Byt
 from segsol import listening
+from param import param_all
 
 
 core.prepare_terminal('Listen')
