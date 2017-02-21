@@ -27,8 +27,8 @@
 
 import time
 from ctrl.utils import core
-from ctrl import saving
 from ctrl import db
+from segsol import saving
 
 
 core.prepare_terminal('Save')

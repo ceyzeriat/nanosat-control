@@ -26,7 +26,7 @@
 
 
 from ctrl.utils import core
-from ctrl import watching
+from segsol import watching
 #from ctrl.xdisp.watchdog import Watchdog
 
 

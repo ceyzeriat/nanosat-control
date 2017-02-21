@@ -27,11 +27,11 @@
 
 import time
 from ctrl.utils import core
-from ctrl import controlling
 from ctrl import c
 from ctrl import c0
 from ctrl import c1
 from ctrl import db
+from segsol import controlling
 
 
 core.prepare_terminal('Control')
