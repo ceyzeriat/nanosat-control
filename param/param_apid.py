@@ -72,7 +72,7 @@ for k, v in PIDREGISTRATION_PLD.items():
     LVLREGISTRATION[k] = '0'
 
 
-# PIDREGISTRATION_REV[pld][lvl]
+# PIDREGISTRATION_REV[v][pld][lvl]
 
 PIDREGISTRATION_REV = {}
 for k, v in PIDREGISTRATION_OBC_L0.items():
@@ -88,4 +88,4 @@ for k, v in PIDREGISTRATION_OBC_L1.items():
 for k, v in PIDREGISTRATION_PLD.items():
     if not v in PIDREGISTRATION_REV.keys():
         PIDREGISTRATION_REV[v] = [['', ''], ['', '']]
-    PIDREGISTRATION_REV[v][1][0] = k
+    PIDREGISTRATION_REV[v][1][1] = k
