@@ -141,7 +141,7 @@ def init_listening(antenna):
                                 name=param_all.LISTENINGNAME, connect=True,
                                 connectWait=0.5,
                                 portname=param_all.CONTROLLINGPORT[1])
-    report('SettingUpAntenna', antenna)
+    report('SettingUpAntenna', antenna=antenna)
     if antenna == 'checkoutbox':
         init_checkoutbox()
     elif antenna == 'serial':
