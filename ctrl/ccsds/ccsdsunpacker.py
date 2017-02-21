@@ -160,6 +160,7 @@ class CCSDSUnPacker(object):
         hsz += param_category.PACKETCATEGORYSIZES[
                             hds[param_ccsds.PACKETCATEGORY.name]]
         data['all'] = packet[hsz:]
+        ### crado, à modifier
         if hds[param_ccsds.PACKETCATEGORY.name] == 5:
-        data['unpacked'] = param_science_hf.unpack(data['all'])
+            data['unpacked'] = param_science_hf.unpack(data['all'])
         return data
