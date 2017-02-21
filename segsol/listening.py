@@ -32,7 +32,7 @@ from ctrl.soc import SocTransmitter
 from ctrl.soc import SocReceiver
 from ctrl.utils.report import REPORTS
 from ctrl.utils import core
-from param improt param_all
+from param import param_all
 from ctrl.utils import ctrlexception
 from ctrl.rfcheckoutbox import RFCheckoutbox
 
