@@ -42,7 +42,6 @@ class SerialUSB(object):
     def __init__(self):
         self.port = serial.Serial(param_all.SERIALUSBPORT,
                                     baudrate=param_all.SERIALUSBBAUDRATE)
-        self.port.open()
         assert self.port.is_open()
         self.port.reset_input_buffer()
         self.port.reset_output_buffer()
