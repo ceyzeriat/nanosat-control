@@ -77,7 +77,6 @@ else:
         if len(res) < 2:
             continue  # didn't find a full packet yet
         packet, inbuff = res
-        print(packet)
         listening.report('GotBlob', ll=len(packet), blob=packet)
         # deal with it in a separate thread
         loopy = Thread(target=listening.process_data, args=(packet,))
