@@ -104,7 +104,7 @@ def process_incoming(t, path, data):
     if len(glob.glob(path)) == 0:
         raise ctrlexception.PacketFileMissing(path)
     f = open(path, mode='rb')
-    dd = f.read()
+    dd = Byt(f.read())
     f.close()
     if not dd == data:
         raise ctrlexception.PacketMismatch(path)
