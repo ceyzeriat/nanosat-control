@@ -61,7 +61,7 @@ def broadcast_TC(dbid, packet):
         packet = Framer.encode_radio(packet)
     # or add the ccsds flow splits
     elif param_all.FRAMESFLOW:
-        packet = core.merge_ccsds([packet])
+        packet = core.merge_flow([packet])
     dum = CONTROL_TRANS.tell(packet)
     ### check who recieved it and report
     return dum
