@@ -93,7 +93,7 @@ def process_report(data):
                                 whenDead=revive_process, whenAlive=say_hi,
                                 who=who)
     elif key =='GotBlob':
-        hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']), retdbvalues=False)
+        hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']), retdbvalues=True)
         param_ccsds.disp(hd)
         cat_params = param_category.TABLEDATACRUNCHING.get(\
                             hd[param_ccsds.PACKETCATEGORY.name], None)
