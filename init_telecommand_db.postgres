@@ -251,3 +251,4 @@ ALTER TABLE tmcat_hf_sciences OWNER TO picsat_admin;
 GRANT ALL ON tmcat_hf_sciences TO picsat_admin;
 GRANT select ON tmcat_hf_sciences TO picsat_read, picsat_edit;
 ALTER TABLE tmcat_hf_sciences ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+
