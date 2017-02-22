@@ -73,7 +73,6 @@ class SaveRec(SocReceiver):
             return
         report('receivedTM')
         inputs = core.split_socket_info(data)
-        print(inputs.kexy())
         if param_all.AX25ENCAPS:
             source, destination, blobish = Framer.decode_radio(inputs['data'])
             report('receivedCallsignTM', source=source, ll=len(blobish),
