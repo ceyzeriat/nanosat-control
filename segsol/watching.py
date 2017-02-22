@@ -98,7 +98,7 @@ def process_report(data):
         cat_params = param_category.TABLEDATACRUNCHING.get(\
                             hd[param_ccsds.PACKETCATEGORY.name], None)
         if cat_params is not None:
-            getattr(param, cat_params).disp(hdx=hdx, data=dd['all'])
+            getattr(param, cat_params).disp(hdx=hdx, data=dd)
     else:
         pass
 
