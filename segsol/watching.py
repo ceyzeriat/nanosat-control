@@ -93,7 +93,10 @@ def process_report(data):
                                 whenDead=revive_process, whenAlive=say_hi,
                                 who=who)
     elif key =='GotBlob':
-        hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']), retdbvalues=True)
+        try:
+            hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']), retdbvalues=True)
+        except:
+            print('Tried to unpack.. but an error occurred')
         param_ccsds.disp(hd)
         cat_params = param_category.TABLEDATACRUNCHING.get(\
                             hd[param_ccsds.PACKETCATEGORY.name], None)
