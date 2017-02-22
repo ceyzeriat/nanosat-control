@@ -25,8 +25,8 @@
 ###############################################################################
 
 
+import param
 from param import param_category
-from param import param_science_hf
 from ..utils import core
 from . import ccsdsexception
 from . import param_ccsds
@@ -160,9 +160,9 @@ class CCSDSUnPacker(object):
         hsz += param_category.PACKETCATEGORYSIZES[
                             hds[param_ccsds.PACKETCATEGORY.name]]
         data['all'] = packet[hsz:]
-        if param_category.TABLEDATACRUNCHING is None:
+        cat_params = param_category.TABLEDATACRUNCHING[\
+                            hds[param_ccsds.PACKETCATEGORY.name]]
+        if cat_params is None:
             return data  # no specifics unpacking data
-        params = getattr(param, param_category.TABLEDATACRUNCHING[
-                                    hds[param_ccsds.PACKETCATEGORY.name]])
-        data['unpacked'] = params.unpack(data['all'])
+        data['unpacked'] = getattr(param, cat_params).unpack(data['all'])
         return data

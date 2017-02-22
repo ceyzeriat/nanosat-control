@@ -34,6 +34,10 @@ locale.setlocale(locale.LC_ALL, '')
 CONTROLICO = u'\u262D '.encode('utf-8')
 SAVEICO = u'\u26C3 '.encode('utf-8')
 LISTENICO = u'\u260E '.encode('utf-8')
+PAYLOADICO = u'\u03C0'.encode('utf-8')
+OBCICO = u'\u03A9'.encode('utf-8')
+L0ICO = u'\u24DE'.encode('utf-8')
+L1ICO = u'\u2461'.encode('utf-8')
 
 UPLEFTCORNER = u'\u256D'
 UPRIGHTCORNER = u'\u256E'
@@ -71,20 +75,20 @@ class Xdisp(object):
         self.stdscr.refresh()
         self.report = newwinbox(5, 40, 6, 20)
         self.process = newwinbox(3, 33, 13, 19)
-        self.set_controlico()
-        self.set_saveico()
-        self.set_listenico()
+        self.set_controlico(status=self.NOSTARTED)
+        self.set_saveico(status=self.NOSTARTED)
+        self.set_listenico(status=self.NOSTARTED)
         self.process.refresh()
         self.loopit()
 
-    def set_controlico(self, status=0):
-        self.process.addstr(0,0, CONTROLICO, self.BLACK)
+    def set_controlico(self, status):
+        self.process.addstr(0,0, CONTROLICO, status)
 
-    def set_saveico(self, status=0):
-        self.process.addstr(0,2, SAVEICO, self.RED)
+    def set_saveico(self, status):
+        self.process.addstr(0,2, SAVEICO, status)
 
-    def set_listenico(self, status=0):
-        self.process.addstr(0,4, LISTENICO, self.GREEN)
+    def set_listenico(self, status):
+        self.process.addstr(0,4, LISTENICO, status)
 
     def _init_colors(self):
         for i in range(0, curses.COLORS):
@@ -92,6 +96,9 @@ class Xdisp(object):
         self.BLACK = curses.color_pair(1)
         self.RED = curses.color_pair(2)
         self.GREEN = curses.color_pair(3)
+        self.NOSTARTED = self.BLACK
+        self.ALIVE = self.GREEN
+        self.DEAD = self.RED
         
     def loopit(self):
         while True:

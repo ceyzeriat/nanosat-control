@@ -28,11 +28,13 @@
 from ctrl.soc import SocTransmitter
 from ctrl.soc import SocReceiver
 from ctrl.utils import core
-from param import param_all
 from ctrl.utils import Byt
 from ctrl.utils.report import REPORTS
 from ctrl.utils import PIDWatchDog
 from ctrl.ccsds import TMUnPacker
+import param
+from param import param_category
+from param import param_all
 
 
 __all__ = ['init_watch', 'close_watch']
@@ -91,9 +93,11 @@ def process_report(data):
                                 who=who)
     elif key =='GotBlob':
         hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']), retdbvalues=False)
-        
-        
-        print("\n")
+        param_ccsds.disp(hd)
+        cat_params = param_category.TABLEDATACRUNCHING[\
+                            hd[param_ccsds.PACKETCATEGORY.name]]
+        if cat_params is not None:
+            getattr(param, cat_params).disp(dd['all'])
     else:
         pass
 

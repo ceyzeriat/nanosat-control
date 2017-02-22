@@ -210,6 +210,7 @@ HEADER_S_KEYS_TELECOMMAND = [REQACKRECEPTIONTELECOMMAND,
 HEADER_S_SIZE_TELECOMMAND = sum(
     [item.len for item in HEADER_S_KEYS_TELECOMMAND])//8
 
+
 def disp(hd):
     print("V: {ccsds_version}, T: {packet_type}, SHF: {secondary_header_flag}"\
           ", P: {payload_flag}, L: {level_flag}, PID: {pid}, C: "\

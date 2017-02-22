@@ -33,11 +33,11 @@ __all__ = ['KEYS', 'KEYSSIZE', 'unpack', 'disp']
 
 
 KEYS = [CCSDSKey(name='step', start=0, l=1, fctunpack=core.hex2int),
-        CCSDSKey(name='counts', start=8, l=2, fctunpack=core.hex2int),
-        CCSDSKey(name='x_com', start=24, l=2, fctunpack=core.hex2int),
-        CCSDSKey(name='y_com', start=40, l=2, fctunpack=core.hex2int),
-        CCSDSKey(name='x_pos', start=56, l=2, fctunpack=core.hex2int),
-        CCSDSKey(name='y_pos', start=72, l=2, fctunpack=core.hex2int)
+        CCSDSKey(name='counts', start=1, l=2, fctunpack=core.hex2int),
+        CCSDSKey(name='x_com', start=3, l=2, fctunpack=core.hex2int),
+        CCSDSKey(name='y_com', start=5, l=2, fctunpack=core.hex2int),
+        CCSDSKey(name='x_pos', start=7, l=2, fctunpack=core.hex2int),
+        CCSDSKey(name='y_pos', start=9, l=2, fctunpack=core.hex2int)
         ]
 
 
