@@ -69,11 +69,11 @@ class SaveRec(SocReceiver):
         Saves the packet in the database and does 
         """
         # ignores the reporting
-        print(data, core.is_reporting(data))
         if core.is_reporting(data):
             return
         report('receivedTM')
         inputs = core.split_socket_info(data)
+        print(inputs.kexy())
         if param_all.AX25ENCAPS:
             source, destination, blobish = Framer.decode_radio(inputs['data'])
             report('receivedCallsignTM', source=source, ll=len(blobish),
@@ -84,6 +84,7 @@ class SaveRec(SocReceiver):
         blobparser = CCSDSBlob(blobish)
         start = 0
         pk = blobparser.grab_first_packet(start=start)
+        print(pk)
         while pk is not None:
             inputs['data'] = pk
             process_incoming(**inputs)
