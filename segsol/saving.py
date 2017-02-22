@@ -27,7 +27,7 @@
 
 import time
 import glob
-
+from byt import Byt
 from ctrl.soc import SocTransmitter
 from ctrl.soc import SocReceiver
 from ctrl.utils import core
