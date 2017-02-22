@@ -69,7 +69,7 @@ class SaveRec(SocReceiver):
         Saves the packet in the database and does 
         """
         # ignores the reporting
-        print(data)
+        print(data, core.is_reporting(data))
         if core.is_reporting(data):
             return
         report('receivedTM')
