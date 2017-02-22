@@ -25,11 +25,11 @@
 ###############################################################################
 
 
+from byt import Byt
 import json
 from param import param_apid
 from . import cmdexception
 from ..utils import core
-from ..utils import Byt
 from . import param_commands
 from .parameter import Parameter
 

@@ -28,7 +28,7 @@
 import socket
 from threading import Thread
 import select
-from ..utils import Byt
+from byt import Byt
 
 
 __all__ = ['SocTransmitter']

@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-from ..utils import Byt
+from byt import Byt
 
 
 __all__ = ['escape_special_codes', 'valid_callsign', 'recover_special_codes',

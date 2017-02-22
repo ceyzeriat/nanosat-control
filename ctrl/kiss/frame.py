@@ -25,10 +25,10 @@
 ###############################################################################
 
 
+from byt import Byt
 from param import param_all
 from . import utils
 from ..utils import core
-from ..utils import Byt
 from .callsign import Callsign
 
 

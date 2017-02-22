@@ -24,7 +24,7 @@
 #
 ###############################################################################
 
-
+import param
 from . import utils
 from . import ccsds
 from . import cmd

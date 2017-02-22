@@ -25,17 +25,17 @@
 ###############################################################################
 
 
+from byt import Byt
 from ctrl.soc import SocTransmitter
 from ctrl.soc import SocReceiver
 from ctrl.utils import core
-from ctrl.utils import Byt
 from ctrl.utils.report import REPORTS
 from ctrl.utils import PIDWatchDog
 from ctrl.ccsds import TMUnPacker
+from ctrl.ccsds import param_ccsds
 import param
 from param import param_category
 from param import param_all
-from param import param_ccsds
 
 
 __all__ = ['init_watch', 'close_watch']

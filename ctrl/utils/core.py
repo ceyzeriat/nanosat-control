@@ -42,11 +42,9 @@ import inflect
 import json
 from dateutil import parser
 from multiprocessing import current_process
+from byt import Byt
 from . import ctrlexception
 from .prepare_param import *
-from .byt import Byt
-#from IPython.utils.terminal import toggle_set_term_title, set_term_title
-#toggle_set_term_title(True)
 
 
 # make sure that python 3 understands unicode native python 2 function

@@ -25,9 +25,9 @@
 ###############################################################################
 
 
+from byt import Byt
 from . import cmdexception
 from ..utils import core
-from ..utils import Byt
 if core.PYTHON3:
     long = int
 

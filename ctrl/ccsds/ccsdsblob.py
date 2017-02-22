@@ -25,10 +25,10 @@
 ###############################################################################
 
 
+from byt import Byt
 from param import param_apid
 from . import param_ccsds
 from ..utils import core
-from ..utils import Byt
 from . import ccsdsexception as exc
 from .ccsdspacker import CCSDSPacker
 

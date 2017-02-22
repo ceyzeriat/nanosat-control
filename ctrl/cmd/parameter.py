@@ -25,10 +25,10 @@
 ###############################################################################
 
 
+from byt import Byt
 from . import cmdexception
 from . import param_commands
 from ..utils import core
-from ..utils import Byt
 from .pformat import PFormat
 
 

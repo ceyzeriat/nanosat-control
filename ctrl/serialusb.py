@@ -27,8 +27,8 @@
 
 import serial
 import select
+from byt import Byt
 from param import param_all
-from .utils import Byt
 from .utils import ctrlexception
 
 

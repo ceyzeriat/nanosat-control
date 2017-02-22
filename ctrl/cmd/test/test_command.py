@@ -25,12 +25,12 @@
 ###############################################################################
 
 
+from byt import Byt
 from nose.tools import raises
 from ctrl.cmd.cm import Cm
 from ctrl.cmd import cmdexception
 import copy
 from ctrl.cmd.param_commands import RANGESEPARATOR
-from ctrl.utils import Byt
 
 
 def ftup(x, y):

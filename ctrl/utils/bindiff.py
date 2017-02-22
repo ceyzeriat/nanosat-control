@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-from . import Byt
+from byt import Byt
 from .slc import Slc
 
 

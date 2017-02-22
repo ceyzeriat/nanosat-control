@@ -25,8 +25,8 @@
 ###############################################################################
 
 
+from byt import Byt
 from ..utils import core
-from ..utils import Byt
 from . import utils
 from . import kissexception
 

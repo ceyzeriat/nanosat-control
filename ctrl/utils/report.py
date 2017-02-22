@@ -24,7 +24,7 @@
 #
 ###############################################################################
 
-
+from param import param_all
 from . import core
 from .param_report import REPORTSDATA
 
@@ -73,5 +73,6 @@ class Report(object):
         return self.message.format(**kwargs)
 
 
-for key, message, params in REPORTSDATA:
-    REPORTS[key] = Report(key=key, message=message, params=params)
+if not param_all.JUSTALIB:
+    for key, message, params in REPORTSDATA:
+        REPORTS[key] = Report(key=key, message=message, params=params)
