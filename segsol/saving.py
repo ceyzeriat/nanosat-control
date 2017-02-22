@@ -83,7 +83,10 @@ class SaveRec(SocReceiver):
         blobparser = CCSDSBlob(blobish)
         start = 0
         pk = blobparser.grab_first_packet(start=start)
-        print(pk)
+        if pk is not None:
+            print(pk.hex())
+        else:
+            print(pk)
         while pk is not None:
             inputs['data'] = pk
             process_incoming(**inputs)
@@ -97,6 +100,7 @@ def process_incoming(t, path, data):
     A callback function that saves the package in the database after
     parsing it
     """
+    path = str(path)
     if len(glob.glob(path)) == 0:
         raise ctrlexception.PacketFileMissing(path)
     f = open(path, mode='rb')

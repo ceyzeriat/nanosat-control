@@ -239,7 +239,7 @@ def strISOstamp2datetime(txt):
     """
     Tranforms a ISO date as string into a datetime
     """
-    return parser.parse(txt)
+    return parser.parse(str(txt))
 
 def packetfilename2datetime(txt):
     """

@@ -69,7 +69,7 @@ for k, v in PIDREGISTRATION_OBC_L1.items():
 for k, v in PIDREGISTRATION_PLD.items():
     PIDREGISTRATION[k] = v
     PLDREGISTRATION[k] = '1'
-    LVLREGISTRATION[k] = '0'
+    LVLREGISTRATION[k] = '1'
 
 
 # PIDREGISTRATION_REV[v][pld][lvl]
