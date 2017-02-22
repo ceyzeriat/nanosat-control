@@ -26,6 +26,7 @@
 
 
 import time
+import sys
 from threading import Thread
 from byt import Byt
 from ctrl.utils import core
@@ -40,44 +41,47 @@ print("Done\n")
 
 print("Starting...")
 
+
+def get_data():
+    time.sleep(0.01)  # Don't kill the CPU
+    n = listening.ANTENNA.in_waiting()
+    if n < 0:
+        return None
+    # grab data
+    data = listening.ANTENNA.read(size=n)
+    # empty data
+    if data is None:
+        return None
+    if len(data) == 0:
+        return None
+    return data
+
+
+def proceed(data):
+    listening.report('GotBlob', ll=len(data), blob=data)
+    # deal with it in a separate thread
+    loopy = Thread(target=listening.process_data, args=(data,))
+    loopy.daemon = True
+    loopy.start()
+
+
 if not param_all.FRAMESFLOW:
     while 1:
-        time.sleep(0.01)  # Don't kill the CPU
-        n = listening.ANTENNA.in_waiting()
-        if n < 0:
-            continue
-        # grab data
-        data = listening.ANTENNA.read(size=n)
-        # empty data
+        data = get_data()
         if data is None:
             continue
-        if len(data) == 0:
-            continue
-        listening.report('GotBlob', ll=len(data))
-        # deal with it in a separate thread
-        loopy = Thread(target=listening.process_data, args=(data,))
-        loopy.daemon = True
-        loopy.start()
+        proceed(data)
 else:
     inbuff = Byt()
     while 1:
-        time.sleep(0.01)  # Don't kill the CPU
-        n = listening.ANTENNA.in_waiting()
-        if n <= 0:
-            continue
-        # grab data
-        data = listening.ANTENNA.read(size=n)
+        data = get_data()
         if data is None:
-            continue
-        if len(data) == 0:
             continue
         inbuff += data
         res = core.split_flow(inbuff, 1)  # just take first packet
         if len(res) < 2:
             continue  # didn't find a full packet yet
         packet, inbuff = res
-        listening.report('GotBlob', ll=len(packet), blob=packet)
-        # deal with it in a separate thread
-        loopy = Thread(target=listening.process_data, args=(packet,))
-        loopy.daemon = True
-        loopy.start()
+        proceed(packet)
+
+sys.exit()
