@@ -83,10 +83,6 @@ class SaveRec(SocReceiver):
         blobparser = CCSDSBlob(blobish)
         start = 0
         pk = blobparser.grab_first_packet(start=start)
-        if pk is not None:
-            print(pk.hex())
-        else:
-            print(pk)
         while pk is not None:
             inputs['data'] = pk
             process_incoming(**inputs)

@@ -98,12 +98,11 @@ def process_report(data):
         except:
             print('Tried to unpack.. but an error occurred')
             return
-        #param_ccsds.disp(hd)
+        param_ccsds.disp(hd)
         cat_params = param_category.TABLEDATACRUNCHING.get(\
                             hd[param_ccsds.PACKETCATEGORY.name], None)
         if cat_params is not None:
-            print('hop')
-            pass#getattr(param, cat_params).disp(hdx=hdx, data=dd)
+            getattr(param, cat_params).disp(hdx=hdx, data=dd)
     else:
         pass
 
