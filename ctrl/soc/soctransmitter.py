@@ -188,7 +188,10 @@ def accept_receivers(self):
         else:
             continue
         if not self.running:
-            receiver.close()
+            try:
+                receiver.close()
+            except:
+                pass
             break
         if self.nreceivers < self._nreceivermax:
             receiver.sendall(Byt(0))

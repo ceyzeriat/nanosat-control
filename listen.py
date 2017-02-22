@@ -58,6 +58,7 @@ def get_data():
 
 
 def proceed(data):
+    print('hop')
     listening.report('GotBlob', ll=len(data), blob=data)
     # deal with it in a separate thread
     loopy = Thread(target=listening.process_data, args=(data,))

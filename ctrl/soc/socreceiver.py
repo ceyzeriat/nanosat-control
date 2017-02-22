@@ -183,7 +183,6 @@ def tellme(self):
     """
     while self.running:
         data = Byt(self._soc.recv(self.buffer_size))
-        print(data)
         if len(data) == 0 or not self.running:
             self.close()
             return
