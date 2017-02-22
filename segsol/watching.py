@@ -35,6 +35,7 @@ from ctrl.ccsds import TMUnPacker
 import param
 from param import param_category
 from param import param_all
+from param import param_ccsds
 
 
 __all__ = ['init_watch', 'close_watch']
