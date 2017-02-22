@@ -33,6 +33,6 @@ from segsol import saving
 
 core.prepare_terminal('Save')
 print("Initialization...")
-saving.init_saving()
 db.init_DB()
+saving.init_saving()
 print("Done")
