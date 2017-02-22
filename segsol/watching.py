@@ -94,8 +94,8 @@ def process_report(data):
     elif key =='GotBlob':
         hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']), retdbvalues=False)
         param_ccsds.disp(hd)
-        cat_params = param_category.TABLEDATACRUNCHING[\
-                            hd[param_ccsds.PACKETCATEGORY.name]]
+        cat_params = param_category.TABLEDATACRUNCHING.get(\
+                            hd[param_ccsds.PACKETCATEGORY.name], None)
         if cat_params is not None:
             getattr(param, cat_params).disp(dd['all'])
     else:
