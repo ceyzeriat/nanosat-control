@@ -31,9 +31,9 @@ import locale
 locale.setlocale(locale.LC_ALL, '')
 
 
-CONTROLICO = u'\u262D '.encode('utf-8')
-SAVEICO = u'\u26C3 '.encode('utf-8')
-LISTENICO = u'\u260E '.encode('utf-8')
+LISTENICO = (9, u'\u260E '.encode('utf-8'))
+CONTROLICO = (11, u'\u262D '.encode('utf-8'))
+SAVEICO = (13, u'\u26C3 '.encode('utf-8'))
 PAYLOADICO = u'\u03C0'.encode('utf-8')
 OBCICO = u'\u03A9'.encode('utf-8')
 L0ICO = u'\u24DE'.encode('utf-8')
@@ -52,43 +52,45 @@ VERLINESPLITRIGHT = u'\u251C'
 CROSS = u'\u253C'
 
 
-
-def newwinbox(h, w, y, x, inbox=False):
-    if not inbox:
-        h += 2
-        w += 2
-        y -= 1
-        x -= 1
-    wb = curses.newwin(h, w, y, x)
-    wb.box()
-    wb.refresh()
-    return curses.newwin(h-2, w-2, y+1, x+1)
+def newlinebox(h, w, y, x, title=None):
+    wb = curses.newwin(1, w, y, x-1)
+    if title is not None:
+        wb.addstr(2, 0, str(title))
+        wb.refresh()
+    return curses.newwin(h, w, y, x)
 
 class Xdisp(object):
     def __init__(self, stdscr):
         self.stdscr = stdscr
+        self.height, self.width = stdscr.getmaxyx()
         curses.start_color()
         curses.use_default_colors()
         curses.echo()
         self._init_colors()
-        self.stdscr.border()
-        self.stdscr.refresh()
-        self.report = newwinbox(5, 40, 6, 20)
-        self.process = newwinbox(3, 33, 13, 19)
+        #self.stdscr.border()
+        #self.stdscr.refresh()
+        self.bar = curses.newwin(1, self.width, 0, 0)
+        self.TC = newlinebox(8, self.width, 2, 0)
+        self.TM = newlinebox(8, self.width, 11, 0)
+        self.report = newlinebox(8, self.width, 20, 0)
         self.set_controlico(status=self.NOSTARTED)
         self.set_saveico(status=self.NOSTARTED)
         self.set_listenico(status=self.NOSTARTED)
-        self.process.refresh()
+        self.set_time()
+        self.TM.refresh()
         self.loopit()
 
     def set_controlico(self, status):
-        self.process.addstr(0,0, CONTROLICO, status)
+        self.bar.addstr(0, CONTROLICO[0], CONTROLICO[1], status)
 
     def set_saveico(self, status):
-        self.process.addstr(0,2, SAVEICO, status)
+        self.bar.addstr(0, SAVEICO[0], SAVEICO[1], status)
 
     def set_listenico(self, status):
-        self.process.addstr(0,4, LISTENICO, status)
+        self.bar.addstr(0, LISTENICO[0], LISTENICO[1], status)
+
+    def set_time(self):
+        self.bar.addstr(0, LISTENICO[0], LISTENICO[1], status)
 
     def _init_colors(self):
         for i in range(0, curses.COLORS):
