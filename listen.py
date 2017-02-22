@@ -27,8 +27,8 @@
 
 import time
 from threading import Thread
+from byt import Byt
 from ctrl.utils import core
-from ctrl.utils import Byt
 from segsol import listening
 from param import param_all
 
