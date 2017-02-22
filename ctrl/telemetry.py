@@ -59,7 +59,9 @@ class Telemetry(object):
         cls.hd['time_received'] = time_received\
                 if isinstance(time_received, core.datetime.datetime)\
                 else core.now()
+        print(packet)
         dbid = db.save_TM_to_DB(cls.hd, cls.hdx, cls.data)
+        print(dbid)
         return cls(dbid=dbid)
 
     def find_ack_TC(self):
