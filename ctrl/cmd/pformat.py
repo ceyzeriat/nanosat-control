@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-from np import floating
+from numpy import floating
 from byt import Byt
 from sys import version_info
 if version_info > (3,):
