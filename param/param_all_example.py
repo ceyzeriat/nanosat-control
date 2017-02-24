@@ -69,9 +69,6 @@ RECEIVERID = 1  # ['.segsol', 'callsign_source']
 # day-reference from unix time
 DATETIME_REF = 0  #16801  # 2016,1,1,0,0,0
 
-# little or big endian
-TWINKLETWINKLELITTLEINDIA = False
-
 # Global default settings to recieve acknowledgements
 REQACKRECEPTION = True
 REQACKFORMAT = True

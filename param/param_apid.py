@@ -50,7 +50,8 @@ PIDREGISTRATION_OBC_L1 = {  'L1ComManager': 0,
 
 PIDREGISTRATION_PLD = {     'hkPayload': 2,
                             'sciencePayload': 3,
-                            'debugPayload': 4}
+                            'debugPayload': 4,
+                            'bootloader': 0}
 
 
 PIDREGISTRATION = {}
