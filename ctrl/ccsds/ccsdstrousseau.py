@@ -45,6 +45,7 @@ class CCSDSTrousseau(object):
         """
         self.keys = []
         self.size = 0
+        self.octets = bool(octets)
         pos = 0
         for item in keylist:
             if isinstance(item, CCSDSKey):
@@ -58,7 +59,7 @@ class CCSDSTrousseau(object):
             if pos > self.size:
                 self.size = pos
             self.keys.append(new_key)
-        if not octets:
+        if not self.octets:
             # size is always in octets
             self.size //= 8
 
