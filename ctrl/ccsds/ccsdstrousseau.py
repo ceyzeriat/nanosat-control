@@ -117,7 +117,7 @@ class CCSDSTrousseau(object):
         * data (byts): the data to unpack, given as chain of bytes
         """
         res = {}
-        if not self.octet:
+        if not self.octets:
             data = bincore.hex2bin(data[:self.size], pad=self.size*8)
         else:
             data = data[:self.size]
