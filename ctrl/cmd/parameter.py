@@ -65,7 +65,9 @@ class Parameter(object):
         else:
             self._typ = PFormat(typ)
             if rng == "" or rng == "*":  # just force default range
-                rng = self.typ.minmax
+                rng = "{}{}{}".format(self.typ.minmax[0],
+                                      param_commands.RANGESEPARATOR,
+                                      self.typ.minmax[1])
             if core.isStr(rng):
                 self._rng = rng.split(param_commands.RANGESEPARATOR)[:2]
                 self._rng = tuple([core.to_num(item) for item in self._rng])
