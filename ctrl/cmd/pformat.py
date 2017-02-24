@@ -25,11 +25,14 @@
 ###############################################################################
 
 
+from np import floating
 from byt import Byt
-from . import cmdexception
-from ..utils import core
-if core.PYTHON3:
+from sys import version_info
+if version_info > (3,):
     long = int
+
+from . import cmdexception
+from ..utils import bincore
 
 
 __all__ = ['PFormat']
@@ -116,7 +119,7 @@ class PFormat(object):
             if not -self._halfmaxint <= value < self._halfmaxint:
                 return False
         elif self.typ == 'float':
-            if not isinstance(value, (float, core.np.floating)):
+            if not isinstance(value, (float, floating)):
                 return False
         else:
             raise cmdexception.UnknownFormat(self.typ)
@@ -126,9 +129,9 @@ class PFormat(object):
         if self.typ == 'str':
             return Byt(value)
         elif self.typ == 'uint':
-            return core.int2hex(value, pad=self.bits // 8)
+            return bincore.int2hex(value, pad=self.bits // 8)
         elif self.typ == 'int':
-            return core.intSign2hex(value, sz=self.bits // 8)
+            return bincore.intSign2hex(value, sz=self.bits // 8)
         elif self.typ == 'float':
             raise cmdexception.NotImplemented()
         else:

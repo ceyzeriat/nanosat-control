@@ -252,3 +252,27 @@ GRANT ALL ON tmcat_hf_sciences TO picsat_admin;
 GRANT select ON tmcat_hf_sciences TO picsat_read, picsat_edit;
 ALTER TABLE tmcat_hf_sciences ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
 
+
+-- ###########################################
+
+CREATE TABLE IF NOT EXISTS tmcat_hk_payload
+(
+	id 					serial PRIMARY KEY,
+	telemetry_packet	integer UNIQUE,
+	volt_5V				real,
+	current_5V			real,
+	current_3V			real,
+	volt_piezo			real,
+	current_piezo		real,
+	current_peltier		real,
+	temp_diode			real,
+	voltage_peltier_err	real,
+	voltage_peltier 	real,
+	temp1				real,
+	temp2				real,
+	temp3				real,
+);
+ALTER TABLE tmcat_hk_payload OWNER TO picsat_admin;
+GRANT ALL ON tmcat_hk_payload TO picsat_admin;
+GRANT select ON tmcat_hk_payload TO picsat_read, picsat_edit;
+ALTER TABLE tmcat_hk_payload ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);

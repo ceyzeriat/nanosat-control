@@ -28,12 +28,13 @@
 from byt import Byt
 from param import param_category
 from param import param_apid
+from param import param_all
 from ..utils import core
 from . import ccsdsexception
 from . import param_ccsds
 
 
-__all__ = []
+__all__ = ['CCSDSPacker']
 
 
 class CCSDSPacker(object):
@@ -55,7 +56,7 @@ class CCSDSPacker(object):
 
         Args:
         * pid (str): the process id related to the packet
-        * data (str): only for TC-mode, the data to include in the
+        * data (byts): only for TC-mode, the data to include in the
           packet
         * tcid (int): only for TC-mode, the id of the telecommand
         * pktCat (int): only for TM-mode, the packet category
@@ -66,18 +67,17 @@ class CCSDSPacker(object):
           packet id determination
 
         Kwargs for TC-mode:
-        * rack (bool) [default: {}]: ``True`` to recieve the
+        * rack (bool) [default: REQACKRECEPTION]: ``True`` to recieve the
           acknowledgement of reception
-        * fack (bool) [default: {}]: ``True`` to recieve the
+        * fack (bool) [default: REQACKFORMAT]: ``True`` to recieve the
           acknowledgement of format
-        * eack (bool) [default: {}]: ``True`` to recieve the
+        * eack (bool) [default: REQACKEXECUTION]: ``True`` to recieve the
           acknowledgement of execution
-        * emitter (int) [default: {}]: the id of the emitter
+        * emitter (int) [default: EMITTERID]: the id of the emitter
 
         Kwargs for TM-mode:
         * auxiliary header and data keys-values
-        """.format(core.REQACKRECEPTION, core.REQACKFORMAT,
-                    core.REQACKEXECUTION, core.EMITTERID)
+        """
         tm = (self.mode == 'telemetry')
         hd = {}
         hd['pid'] = pid
@@ -85,13 +85,13 @@ class CCSDSPacker(object):
             hd['signature'] = Byt("\x00"*(param_ccsds.SIGNATURE.len//8))
             hd['telecommand_id'] = int(tcid)
             morevalues = ((param_ccsds.REQACKRECEPTIONTELECOMMAND.name, 'rack',
-                            core.REQACKRECEPTION),
+                            param_all.REQACKRECEPTION),
                           (param_ccsds.REQACKFORMATTELECOMMAND.name, 'fack',
-                            core.REQACKFORMAT),
+                            param_all.REQACKFORMAT),
                           (param_ccsds.REQACKEXECUTIONTELECOMMAND.name, 'eack',
-                            core.REQACKEXECUTION),
+                            param_all.REQACKEXECUTION),
                           (param_ccsds.EMITTERID.name, 'emitter',
-                            core.EMITTERID))
+                            param_all.EMITTERID))
             # priority on short-names, then on long-names then default
             for (key, sht, defa) in morevalues:
                 hd[key] = int(kwargs.pop(sht, hd.get(key, defa)))
@@ -151,7 +151,7 @@ class CCSDSPacker(object):
         values[param_ccsds.DATALENGTH.name] = param_ccsds.LENGTHMODIFIER
         if self.mode == 'telecommand':
             values[param_ccsds.DATALENGTH.name] +=\
-                param_ccsds.HEADER_S_SIZE_TELECOMMAND
+                param_ccsds.HEADER_S_KEYS_TELECOMMAND.size
             values[param_ccsds.PACKETCATEGORY.name] = '0'
             if withPacketID:
                 values[param_ccsds.PACKETID.name] =\
@@ -160,7 +160,7 @@ class CCSDSPacker(object):
                 values[param_ccsds.PACKETID.name] = '0'
         else:
             values[param_ccsds.DATALENGTH.name] +=\
-                param_ccsds.HEADER_S_SIZE_TELEMETRY
+                param_ccsds.HEADER_S_KEYS_TELEMETRY.size
             values[param_ccsds.PACKETID.name] = '0'
         # adds the header aux size into the packet length
         values[param_ccsds.DATALENGTH.name] +=\
@@ -174,15 +174,12 @@ class CCSDSPacker(object):
         values[param_ccsds.LEVELFLAG.name] =\
             param_apid.LVLREGISTRATION[values[param_ccsds.PID.name]]
         values[param_ccsds.DATALENGTH.name] += datalen
-        bits, retvals = _pack_something(
-                                thelist=param_ccsds.HEADER_P_KEYS,
-                                allvalues=values,
-                                totOctetSize=param_ccsds.HEADER_P_SIZE,
-                                retdbvalues=retdbvalues)
+        data, retvals = param_ccsds.HEADER_P_KEYS.pack(allvalues=values,
+                                                    retdbvalues=retdbvalues)
         if retvalues:
-            return core.bin2hex(bits, pad=param_ccsds.HEADER_P_SIZE), retvals
+            return data, retvals
         else:
-            return core.bin2hex(bits, pad=param_ccsds.HEADER_P_SIZE)
+            return data
 
     def pack_secHeader(self, values, retvalues=False, retdbvalues=True):
         """
@@ -197,18 +194,15 @@ class CCSDSPacker(object):
         """
         if self.mode == 'telecommand':
             hdk = param_ccsds.HEADER_S_KEYS_TELECOMMAND
-            hdsz = param_ccsds.HEADER_S_SIZE_TELECOMMAND
         else:
             hdk = param_ccsds.HEADER_S_KEYS_TELEMETRY
-            hdsz = param_ccsds.HEADER_S_SIZE_TELEMETRY
             values[param_ccsds.DAYSINCEREF_TELEMETRY.name] = core.now2daystamp()
             values[param_ccsds.MSECSINCEREF_TELEMETRY.name] = core.now2msstamp()
-        bits, retvals = _pack_something(thelist=hdk, allvalues=values,
-                                totOctetSize=hdsz, retdbvalues=retdbvalues)
+        data, retvals = hdk.pack(allvalues=values, retdbvalues=retdbvalues)
         if retvalues:
-            return core.bin2hex(bits, pad=hdsz), retvals
+            return data, retvals
         else:
-            return core.bin2hex(bits, pad=hdsz)
+            return data
 
     def pack_auxHeader(self, values, pktCat, retvalues=False, retdbvalues=True):
         """
@@ -227,18 +221,14 @@ class CCSDSPacker(object):
         pktCat = int(pktCat)
         if pktCat not in param_category.PACKETCATEGORIES.keys():
             raise ccsdsexception.CategoryMissing(pktCat)
-        hdxsz = param_category.PACKETCATEGORYSIZES[pktCat]
-        if hdxsz == 0:
+        hdx = param_category.PACKETCATEGORIES[pktCat]
+        if hdx.size == 0:
             return (Byt(), {}) if retvalues else Byt()
-        bits, retvals = _pack_something(
-                            thelist=param_category.PACKETCATEGORIES[pktCat],
-                            allvalues=values,
-                            totOctetSize=hdxsz,
-                            retdbvalues=retdbvalues)
+        data, retvals = hdx.pack(allvalues=values, retdbvalues=retdbvalues)
         if retvalues:
-            return core.bin2hex(bits, pad=hdxsz), retvals
+            return data, retvals
         else:
-            return core.bin2hex(bits, pad=hdxsz)
+            return data
 
     def pack_data(self, values, header, retvalues=False, retdbvalues=True):
         """
@@ -259,27 +249,3 @@ class CCSDSPacker(object):
             return Byt(), {}
         else:
             return Byt()
-
-def _pack_something(thelist, allvalues, totOctetSize, retdbvalues):
-    """
-    Does the packing loop for a list of CCSDS keys
-    """
-    values = dict(allvalues)
-    retvals = {}
-    bits = '0' * (totOctetSize * 8)
-    for item in thelist:
-        if item.name not in values.keys() and item.dic_force is None:
-            raise ccsdsexception.PacketValueMissing(item.name)
-        retvals[item.name] = values.get(item.name, '')
-        bits = core.setstr( bits,
-                            item.cut,
-                            item.pack(values.get(item.name, '')))
-        # filling in the forced values not given as input
-        if item.dic_force is not None:
-            retvals[item.name] = item.dic_force
-        # these are special cases that we want to fill manually because the
-        # forced values are not numbers but dictionary keys
-        if retdbvalues and item.non_db_dic:
-            retvals[item.name] = core.bin2int(item.pack(
-                                                values.get(item.name, '')))
-    return bits, retvals

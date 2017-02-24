@@ -27,8 +27,9 @@
 
 from param import param_apid
 from param import param_category
+from .ccsdstrousseau import CCSDSTrousseau
 from .ccsdskey import CCSDSKey
-from ..utils import core
+from ..utils import bincore
 from ..utils.day import Day
 from ..utils.ms import Ms
 
@@ -38,7 +39,7 @@ MAXIMUMPACKETLENGTH = MAXIMUMDATALENGTH + 6  # octets
 
 # length of packet as recorded in ccsds =
 #   real length of packet + LENGTHMODIFIER
-LENGTHMODIFIER = -1
+LENGTHMODIFIER = 0
 
 
 # PRIMARY HEADER
@@ -47,12 +48,12 @@ LENGTHMODIFIER = -1
 
 def get_pid(v, pad, **kwargs):
     get_pid.verbose = "-> binary"
-    return core.int2bin(param_apid.PIDREGISTRATION[v], pad=pad)
+    return bincore.int2bin(param_apid.PIDREGISTRATION[v], pad=pad)
 
 
 def get_pid_rev(v, pld, lvl, **kwargs):
     get_pid_rev.verbose = "-> unsigned integer"
-    dic = param_apid.PIDREGISTRATION_REV[core.bin2int(v)]
+    dic = param_apid.PIDREGISTRATION_REV[bincore.bin2int(v)]
     return dic[int(pld)][int(lvl) if int(pld) == 0 else 1]
 
 
@@ -106,23 +107,20 @@ SEQUENCEFLAG = CCSDSKey(name='sequence_flag',
 PACKETID = CCSDSKey(name='packet_id',
                     start=18,
                     l=14,
-                    fctunpack=core.bin2int,
-                    fctpack=core.int2bin)
+                    fctunpack=bincore.bin2int,
+                    fctpack=bincore.int2bin)
 
 DATALENGTH = CCSDSKey(  name='data_length',
                         start=32,
                         l=16,
-                        fctunpack=core.bin2int,
-                        fctpack=core.int2bin)
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
 
 
 # all keys in the right order
 HEADER_P_KEYS = [PACKETVERSION, PACKETTYPE, SECONDARYHEADERFLAG, PAYLOADFLAG,
     LEVELFLAG, PID, PACKETCATEGORY, SEQUENCEFLAG, PACKETID, DATALENGTH]
-
-
-HEADER_P_SIZE = sum(
-    [item.len for item in HEADER_P_KEYS])//8
+HEADER_P_KEYS = CCSDSTrousseau(HEADER_P_KEYS, octets=False)
 
 
 # SECONDARY HEADER TELEMETRY
@@ -137,32 +135,29 @@ AUTHPACKETLENGTH = 12
 
 def days_unpack(v):
     days_unpack.verbose = "-> unsigned integer"
-    return Day(core.bin2int(v))
+    return Day(bincore.bin2int(v))
 
 
 def msec_unpack(v):
     msec_unpack.verbose = "-> unsigned integer"
-    return Ms(core.bin2int(v))
+    return Ms(bincore.bin2int(v))
 
 
 DAYSINCEREF_TELEMETRY = CCSDSKey(   name='days_since_ref',
                                     start=0,
                                     l=16,
                                     fctunpack=days_unpack,
-                                    fctpack=core.int2bin)
+                                    fctpack=bincore.int2bin)
 
 MSECSINCEREF_TELEMETRY = CCSDSKey(  name='ms_since_today',
                                     start=16,
                                     l=32,
                                     fctunpack=msec_unpack,
-                                    fctpack=core.int2bin)
+                                    fctpack=bincore.int2bin)
 
 # all keys in the right order
 HEADER_S_KEYS_TELEMETRY = [DAYSINCEREF_TELEMETRY, MSECSINCEREF_TELEMETRY]
-
-
-HEADER_S_SIZE_TELEMETRY = sum(
-    [item.len for item in HEADER_S_KEYS_TELEMETRY])//8
+HEADER_S_KEYS_TELEMETRY = CCSDSTrousseau(HEADER_S_KEYS_TELEMETRY, octets=False)
 
 
 # SECONDARY HEADER TELECOMMAND
@@ -187,33 +182,31 @@ REQACKEXECUTIONTELECOMMAND = CCSDSKey(  name='reqack_execution',
 TELECOMMANDID = CCSDSKey(   name='telecommand_id',
                             start=3,
                             l=10,
-                            fctunpack=core.bin2int,
-                            fctpack=core.int2bin)
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin)
 
 EMITTERID = CCSDSKey(   name='emitter_id',
                         start=13,
                         l=3,
-                        fctunpack=core.bin2int,
-                        fctpack=core.int2bin)
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
 
 SIGNATURE = CCSDSKey(   name='signature',
                         start=16,
                         l=128,
-                        fctunpack=core.bin2hex,
-                        fctpack=core.hex2bin)
+                        fctunpack=bincore.bin2hex,
+                        fctpack=bincore.hex2bin)
 
 HEADER_S_KEYS_TELECOMMAND = [REQACKRECEPTIONTELECOMMAND,
     REQACKFORMATTELECOMMAND, REQACKEXECUTIONTELECOMMAND, TELECOMMANDID,
     EMITTERID, SIGNATURE]
+HEADER_S_KEYS_TELECOMMAND = CCSDSTrousseau(HEADER_S_KEYS_TELECOMMAND,
+                                            octets=False)
 
 
-HEADER_S_SIZE_TELECOMMAND = sum(
-    [item.len for item in HEADER_S_KEYS_TELECOMMAND])//8
-
-
-def disp(hd):
+"""def disp(hd):
     print("V: {ccsds_version}, T: {packet_type}, SHF: {secondary_header_flag}"\
           ", P: {payload_flag}, L: {level_flag}, PID: {pid}, C: "\
           "{packet_category}, S: {sequence_flag}, ID: {packet_id}, L: "\
           "{data_length}\nDS: {days_since_ref}, MS: "\
-          "{ms_since_today}".format(**hd))
+          "{ms_since_today}".format(**hd))"""

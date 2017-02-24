@@ -29,7 +29,7 @@ from byt import Byt
 from nose.tools import raises
 from ctrl.ccsds.ccsdskey import CCSDSKey
 from ctrl.ccsds import ccsdsexception
-from ctrl.utils import core
+from ctrl.utils import bincore
 
 
 def test_ccsdskey_base():
@@ -64,43 +64,43 @@ def test_unpack():
     assert p.unpack('0', rel=True) is 0
     p = CCSDSKey('pt', l=1, fctpack=bool)
     assert p.unpack('0', rel=True, raw=True) == '0'
-    p = CCSDSKey('pt', start=0, l=4, fctunpack=core.bin2int)
-    core.TWINKLETWINKLELITTLEINDIA = True
+    p = CCSDSKey('pt', start=0, l=4, fctunpack=bincore.bin2int)
+    bincore.TWINKLETWINKLELITTLEINDIA = True
     assert p.unpack('0011') == 12
-    core.TWINKLETWINKLELITTLEINDIA = False
+    bincore.TWINKLETWINKLELITTLEINDIA = False
     assert p.unpack('0011') == 3
     p = CCSDSKey('pt', dic={'aa': '01', 'bb': '10'}, start=0, l=2)
-    core.TWINKLETWINKLELITTLEINDIA = True
+    bincore.TWINKLETWINKLELITTLEINDIA = True
     assert p.unpack('01') == 'bb'
-    core.TWINKLETWINKLELITTLEINDIA = False
+    bincore.TWINKLETWINKLELITTLEINDIA = False
     assert p.unpack('01') == 'aa'
 
 
 def test_pack():
     p = CCSDSKey('pt', dic={'aa': '01', 'bb': '10'}, start=3, l=1)
     assert p.can_pack == True
-    core.TWINKLETWINKLELITTLEINDIA = True
+    bincore.TWINKLETWINKLELITTLEINDIA = True
     assert p.pack('aa') == '10'
     assert p.pack('bb') == '01'
-    core.TWINKLETWINKLELITTLEINDIA = False
+    bincore.TWINKLETWINKLELITTLEINDIA = False
     assert p.pack('aa') == '01'
     assert p.pack('bb') == '10'
-    p = CCSDSKey('pt', start=3, l=2, fctpack=core.int2bin)
-    core.TWINKLETWINKLELITTLEINDIA = True
+    p = CCSDSKey('pt', start=3, l=2, fctpack=bincore.int2bin)
+    bincore.TWINKLETWINKLELITTLEINDIA = True
     assert p.pack(1, raw=True) == '10'
     assert p.pack(1, raw=True, pad=3) == '100'
     assert p.pack(3, pad=3) == '110'
     assert p.pack(1) == '10'
-    core.TWINKLETWINKLELITTLEINDIA = False
+    bincore.TWINKLETWINKLELITTLEINDIA = False
     assert p.pack(1, raw=True) == '01'
     assert p.pack(1, raw=True, pad=3) == '001'
     assert p.pack(3, pad=3) == '011'
     assert p.pack(1) == '01'
     p = CCSDSKey('pt', dic={'aa': '01', 'bb': '10'}, start=0, l=2, dic_force='aa')
-    core.TWINKLETWINKLELITTLEINDIA = True
+    bincore.TWINKLETWINKLELITTLEINDIA = True
     assert p.pack('aa') == '10'
     assert p.pack('bb') == '10'
-    core.TWINKLETWINKLELITTLEINDIA = False
+    bincore.TWINKLETWINKLELITTLEINDIA = False
     assert p.pack('aa') == '01'
     assert p.pack('bb') == '01'
 

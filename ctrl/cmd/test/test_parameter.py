@@ -30,7 +30,7 @@ from nose.tools import raises
 from ctrl.cmd.parameter import Parameter
 from ctrl.cmd import cmdexception
 from ctrl.cmd.param_commands import RANGESEPARATOR
-from ctrl.utils import core
+from ctrl.utils import bincore
 
 
 def ftup(x, y):
@@ -111,9 +111,9 @@ def test_param_uint_list():
 
 def test_param_list():
     p = Parameter('hop', 'blah', ftup(0,65535), 'uint16', 2, None)
-    core.TWINKLETWINKLELITTLEINDIA = True
+    bincore.TWINKLETWINKLELITTLEINDIA = True
     assert p.tohex([4, 260]) == Byt('\x04\x00\x04\x01')
-    core.TWINKLETWINKLELITTLEINDIA = False
+    bincore.TWINKLETWINKLELITTLEINDIA = False
     assert p.tohex([4, 260]) == Byt('\x00\x04\x01\x04')
 
 def test_param_dict():

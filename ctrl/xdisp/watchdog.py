@@ -39,24 +39,25 @@ OBCICO = u'\u03A9'.encode('utf-8')
 L0ICO = u'\u24DE'.encode('utf-8')
 L1ICO = u'\u2461'.encode('utf-8')
 
-UPLEFTCORNER = u'\u256D'
-UPRIGHTCORNER = u'\u256E'
-BOTTOMRIGHTCORNER = u'\u256F'
-BOTTOMLEFTCORNER = u'\u2570'
-HORLINE = u'\u2500'
-VERLINE = u'\u2502'
-HORLINESPLITUP = u'\u2534'
-HORLINESPLITDOWN = u'\u252C'
-VERLINESPLITLEFT = u'\u2524'
-VERLINESPLITRIGHT = u'\u251C'
-CROSS = u'\u253C'
+UPLEFTCORNER = u'\u256D'.encode('utf-8')
+UPRIGHTCORNER = u'\u256E'.encode('utf-8')
+BOTTOMRIGHTCORNER = u'\u256F'.encode('utf-8')
+BOTTOMLEFTCORNER = u'\u2570'.encode('utf-8')
+HORLINE = u'\u2500'.encode('utf-8')
+VERLINE = u'\u2502'.encode('utf-8')
+HORLINESPLITUP = u'\u2534'.encode('utf-8')
+HORLINESPLITDOWN = u'\u252C'.encode('utf-8')
+VERLINESPLITLEFT = u'\u2524'.encode('utf-8')
+VERLINESPLITRIGHT = u'\u251C'.encode('utf-8')
+CROSS = u'\u253C'.encode('utf-8')
 
 
 def newlinebox(h, w, y, x, title=None):
-    wb = curses.newwin(1, w, y, x-1)
+    wb = curses.newwin(2, w, y-1, x)
+    wb.addstr(0, 0, u"-"*80)
     if title is not None:
-        wb.addstr(2, 0, str(title))
-        wb.refresh()
+        wb.addstr(0, 2, title.encode('utf-8'))
+    wb.refresh()
     return curses.newwin(h, w, y, x)
 
 class Xdisp(object):
@@ -67,16 +68,16 @@ class Xdisp(object):
         curses.use_default_colors()
         curses.echo()
         self._init_colors()
-        #self.stdscr.border()
-        #self.stdscr.refresh()
         self.bar = curses.newwin(1, self.width, 0, 0)
-        self.TC = newlinebox(8, self.width, 2, 0)
-        self.TM = newlinebox(8, self.width, 11, 0)
-        self.report = newlinebox(8, self.width, 20, 0)
+        self.TC = newlinebox(8, self.width, 2, 0, "Telecommands")
+        self.TM = newlinebox(8, self.width, 11, 0, "Telemetries")
+        self.report = newlinebox(8, self.width, 20, 0, "Reporting")
         self.set_controlico(status=self.NOSTARTED)
         self.set_saveico(status=self.NOSTARTED)
         self.set_listenico(status=self.NOSTARTED)
         self.set_time()
+        self.bar.refresh()
+        self.TC.refresh()
         self.TM.refresh()
         self.loopit()
 
@@ -90,14 +91,19 @@ class Xdisp(object):
         self.bar.addstr(0, LISTENICO[0], LISTENICO[1], status)
 
     def set_time(self):
-        self.bar.addstr(0, LISTENICO[0], LISTENICO[1], status)
+        self.bar.addstr(0, 0, '23:42:55', self.BLUE)
 
     def _init_colors(self):
         for i in range(0, curses.COLORS):
             curses.init_pair(i + 1, i, -1)
+        self.WHITE = curses.color_pair(0)
         self.BLACK = curses.color_pair(1)
         self.RED = curses.color_pair(2)
         self.GREEN = curses.color_pair(3)
+        self.YELLOW = curses.color_pair(4)
+        self.BLUE = curses.color_pair(5)
+        self.PURPLE = curses.color_pair(6)
+        self.CYAN = curses.color_pair(7)
         self.NOSTARTED = self.BLACK
         self.ALIVE = self.GREEN
         self.DEAD = self.RED

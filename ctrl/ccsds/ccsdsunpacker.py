@@ -27,12 +27,12 @@
 
 import param
 from param import param_category
-from ..utils import core
+from ..utils import bincore
 from . import ccsdsexception
 from . import param_ccsds
 
 
-__all__ = []
+__all__ = ['CCSDSUnPacker']
 
 
 class CCSDSUnPacker(object):
@@ -57,11 +57,10 @@ class CCSDSUnPacker(object):
         """
         headers = {}
         headers.update(self.unpack_primHeader(packet, retdbvalues=retdbvalues))
-        headers.update(self.unpack_secHeader(packet, retdbvalues=retdbvalues))
+        headers.update(self.unpack_secHeader(packet))
         headersx = self.unpack_auxHeader(packet,
-                    packetCategory=headers[param_ccsds.PACKETCATEGORY.name],
-                    retdbvalues=retdbvalues)
-        data = self.unpack_data(packet, hds=headers, retdbvalues=retdbvalues)
+                    packetCategory=headers[param_ccsds.PACKETCATEGORY.name])
+        data = self.unpack_data(packet, hds=headers)
         return headers, headersx, data
 
     def unpack_primHeader(self, packet, retdbvalues=True):
@@ -70,99 +69,84 @@ class CCSDSUnPacker(object):
         dictionary
 
         Args:
-        * packet (str): the string that contains the full packet
+        * packet (byts): the string that contains the full packet
         * retdbvalues (bool): if ``True``, returns the encoded values
           in a format directly compatible with the database
         """
         header_p = {}
-        bits = core.hex2bin(packet[:param_ccsds.HEADER_P_SIZE],
-                                pad=param_ccsds.HEADER_P_SIZE * 8)
+        bits = bincore.hex2bin(packet[:param_ccsds.HEADER_P_KEYS.size],
+                                pad=param_ccsds.HEADER_P_KEYS.size * 8)
         # prepare optionnal inputs
         header_p[param_ccsds.PAYLOADFLAG.name] = ''
         header_p[param_ccsds.LEVELFLAG.name] = ''
-        for item in param_ccsds.HEADER_P_KEYS:
+        for item in param_ccsds.HEADER_P_KEYS.keys:
             if retdbvalues and item.non_db_dic:
-                header_p[item.name] = core.bin2int(item.unpack(bits, raw=True))
+                header_p[item.name] = bincore.bin2int(item.unpack(bits,
+                                                                  raw=True))
             else:
                 header_p[item.name] = item.unpack(bits,
                                 pld=header_p[param_ccsds.PAYLOADFLAG.name],
                                 lvl=header_p[param_ccsds.LEVELFLAG.name])
         return header_p
 
-    def unpack_secHeader(self, packet, retdbvalues=True):
+    def unpack_secHeader(self, packet):
         """
         Unpacks the secodnary header of the packet, returns a
         dictionary
 
         Args:
-        * packet (str): the string that contains the full packet
-        * retdbvalues (bool): if ``True``, returns the encoded values
-          in a format directly compatible with the database
+        * packet (byts): the string that contains the full packet
         """
-        header_s = {}
         if self.mode == 'telemetry':
             hskey = param_ccsds.HEADER_S_KEYS_TELEMETRY
-            hssz = param_ccsds.HEADER_S_SIZE_TELEMETRY
         else:
             hskey = param_ccsds.HEADER_S_KEYS_TELECOMMAND
-            hssz = param_ccsds.HEADER_S_SIZE_TELECOMMAND
-        start = param_ccsds.HEADER_P_SIZE
-        bits = core.hex2bin(packet[start:start+hssz], pad=hssz*8)
-        for item in hskey:
-            header_s[item.name] = item.unpack(bits)
-        return header_s
+        return hskey.unpack(packet[param_ccsds.HEADER_P_KEYS.size:])
 
-    def unpack_auxHeader(self, packet, packetCategory, retdbvalues=True):
+    def unpack_auxHeader(self, packet, packetCategory):
         """
         Unpacks the auxiliary header of the packet, returns a
         dictionary
 
         Args:
-        * packet (str): the string that contains the full packet
+        * packet (byts): the string that contains the full packet
         * packetCategory (int): the packet category
-        * retdbvalues (bool): if ``True``, returns the encoded values
-          in a format directly compatible with the database
         """
-        header_x = {}
         if self.mode == 'telecommand':
-            return header_x
+            return {}
         if packetCategory not in param_category.PACKETCATEGORIES.keys():
             raise ccsdsexception.CategoryMissing(packetCategory)
-        hxsz = param_category.PACKETCATEGORYSIZES[packetCategory]
-        if hxsz == 0:
-            return header_x
-        hpssz = param_ccsds.HEADER_P_SIZE
+        hx = param_category.PACKETCATEGORIES[packetCategory]
+        if hx.size == 0:
+            return {}
+        start = param_ccsds.HEADER_P_KEYS.size
         if self.mode == 'telemetry':
-            hpssz += param_ccsds.HEADER_S_SIZE_TELEMETRY
+            start += param_ccsds.HEADER_S_KEYS_TELEMETRY.size
         else:
-            hpssz += param_ccsds.HEADER_S_SIZE_TELECOMMAND
-        bits = core.hex2bin(packet[hpssz:hpssz+hxsz], pad=hxsz*8)
-        for item in param_category.PACKETCATEGORIES[packetCategory]:
-            header_x[item.name] = item.unpack(bits)
-        return header_x
+            start += param_ccsds.HEADER_S_KEYS_TELECOMMAND.size
+        return hx.unpack(packet[start:])
 
-    def unpack_data(self, packet, hds, retdbvalues=True):
+    def unpack_data(self, packet, hds):
         """
         Unpacks the data of the packet, returns a dictionary
 
         Args:
-        * packet (str): the string that contains the full packet
-        * hds (int): the packet header
-        * retdbvalues (bool): if ``True``, returns the encoded values
-          in a format directly compatible with the database
+        * packet (byts): the string that contains the full packet
+        * hds (int): the packet headers
         """
         data = {}
-        hsz = param_ccsds.HEADER_P_SIZE
+        start = param_ccsds.HEADER_P_KEYS.size
         if self.mode == 'telemetry':
-            hsz += param_ccsds.HEADER_S_SIZE_TELEMETRY
+            start += param_ccsds.HEADER_S_KEYS_TELEMETRY.size
         else:
-            hsz += param_ccsds.HEADER_S_SIZE_TELECOMMAND
-        hsz += param_category.PACKETCATEGORYSIZES[
-                            hds[param_ccsds.PACKETCATEGORY.name]]
-        data['all'] = packet[hsz:]
-        cat_params = param_category.TABLEDATACRUNCHING[\
-                            hds[param_ccsds.PACKETCATEGORY.name]]
+            start += param_ccsds.HEADER_S_KEYS_TELECOMMAND.size
+        cat = hds[param_ccsds.PACKETCATEGORY.name]
+        start += param_category.PACKETCATEGORYSIZES[cat]
+        data['all'] = packet[start:]
+        cat_params = param_category.TABLEDATACRUNCHING[cat]
         if cat_params is None:
-            return data  # no specifics unpacking data
-        data['unpacked'] = getattr(param, cat_params).unpack(data['all'])
+            return data  # no specifics for unpacking data
+        else:
+            TROUSSEAU = getattr(param, cat_params).TROUSSEAU
+        data['unpacked'] = TROUSSEAU.unpack(data['all'])
         return data

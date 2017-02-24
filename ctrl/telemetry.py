@@ -27,7 +27,6 @@
 
 from param import param_category
 from .utils import core
-#from . import ccsdsexception
 from .ccsds import TMUnPacker
 from .ccsds import param_ccsds
 from . import db

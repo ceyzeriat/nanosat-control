@@ -25,84 +25,66 @@
 ###############################################################################
 
 
-from ctrl.ccsds.ccsdskey import CCSDSKey
-from ctrl.utils import core
+from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from ctrl.utils import bincore
 
 
-__all__ = ['KEYS', 'KEYSSIZE', 'unpack', 'disp']
+__all__ = ['TROUSSEAU']
 
 
-KEYS = [CCSDSKey(name='hkErrorFlags', start=0, l=16, fctunpack=core.bin2int),
-        CCSDSKey(name='errorCodes3', start=16, l=16, fctunpack=core.bin2int),
-        CCSDSKey(name='errorCodes2', start=32, l=16, fctunpack=core.bin2int),
-        CCSDSKey(name='errorCodes1', start=48, l=16, fctunpack=core.bin2int),
+KEYS = [dict(name='hkErrorFlags', start=0, l=16, fctunpack=bincore.bin2int),
+        dict(name='errorCodes3', start=16, l=16, fctunpack=bincore.bin2int),
+        dict(name='errorCodes2', start=32, l=16, fctunpack=bincore.bin2int),
+        dict(name='errorCodes1', start=48, l=16, fctunpack=bincore.bin2int),
 
-        CCSDSKey(name='ant1Undeployed_2', start=66, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant1Timeout_2', start=67, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant1Deploying_2', start=68, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant2Undeployed_2', start=69, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant2Timeout_2', start=70, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant2Deploying_2', start=71, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ignoreFlag_2', start=72, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant3Undeployed_2', start=73, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant3Timeout_2', start=74, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant3Deploying_2', start=75, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant4Undeployed_2', start=76, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant4Timeout_2', start=77, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant4Deploying_2', start=78, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='armed_2', start=79, l=1, fctunpack=core.bin2int),
+        dict(name='ant1Undeployed_2', start=66, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant1Timeout_2', start=67, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant1Deploying_2', start=68, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant2Undeployed_2', start=69, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant2Timeout_2', start=70, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant2Deploying_2', start=71, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ignoreFlag_2', start=72, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant3Undeployed_2', start=73, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant3Timeout_2', start=74, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant3Deploying_2', start=75, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant4Undeployed_2', start=76, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant4Timeout_2', start=77, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant4Deploying_2', start=78, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='armed_2', start=79, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
 
-        CCSDSKey(name='ant1Undeployed_1', start=82, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant1Timeout_1', start=83, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant1Deploying_1', start=84, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant2Undeployed_1', start=85, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant2Timeout_1', start=86, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant2Deploying_1', start=87, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ignoreFlag_1', start=88, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant3Undeployed_1', start=89, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant3Timeout_1', start=90, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant3Deploying_1', start=91, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant4Undeployed_1', start=92, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant4Timeout_1', start=93, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='ant4Deploying_1', start=94, l=1, fctunpack=core.bin2int),
-        CCSDSKey(name='armed_1', start=95, l=1, fctunpack=core.bin2int),
+        dict(name='ant1Undeployed_1', start=82, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant1Timeout_1', start=83, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant1Deploying_1', start=84, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant2Undeployed_1', start=85, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant2Timeout_1', start=86, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant2Deploying_1', start=87, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ignoreFlag_1', start=88, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant3Undeployed_1', start=89, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant3Timeout_1', start=90, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant3Deploying_1', start=91, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant4Undeployed_1', start=92, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant4Timeout_1', start=93, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='ant4Deploying_1', start=94, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+        dict(name='armed_1', start=95, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
         
-        CCSDSKey(name='antsBTemp', start=96, l=16, fctunpack=core.bin2int),
-        CCSDSKey(name='antsATemp', start=112, l=16, fctunpack=core.bin2int),
-        CCSDSKey(name='TrxvuTxPaTemp', start=128, l=16, fctunpack=core.bin2int),
-        CCSDSKey(name='TrxvuRxPaTemp', start=144, l=16, fctunpack=core.bin2int),
-        CCSDSKey(name='TrxvuRxBoardTemp', start=160, l=16, fctunpack=core.bin2int),
-        CCSDSKey(name='solarPanelTemp5', start=176, l=32, fctunpack=core.bin2int),
-        CCSDSKey(name='solarPanelTemp4', start=208, l=32, fctunpack=core.bin2int),
-        CCSDSKey(name='solarPanelTemp3', start=240, l=32, fctunpack=core.bin2int),
-        CCSDSKey(name='solarPanelTemp2', start=272, l=32, fctunpack=core.bin2int),
-        CCSDSKey(name='solarPanelTemp1', start=304, l=32, fctunpack=core.bin2int),
-        CCSDSKey(name='tempBat2', start=336, l=16, fctunpack=core.bin2intSign),
-        CCSDSKey(name='tempBat1', start=352, l=16, fctunpack=core.bin2intSign),
-        CCSDSKey(name='batMode', start=368, l=8, fctunpack=core.bin2intSign),
-        CCSDSKey(name='vBat', start=376, l=16, fctunpack=core.bin2int),
-        CCSDSKey(name='rebootCause', start=392, l=32, fctunpack=core.bin2int),
-        CCSDSKey(name='nReboots', start=424, l=32, fctunpack=core.bin2int),
-        CCSDSKey(name='satMode', start=456, l=8, fctunpack=core.bin2int)
+        dict(name='antsBTemp', start=96, l=16, fctunpack=bincore.bin2int),
+        dict(name='antsATemp', start=112, l=16, fctunpack=bincore.bin2int),
+        dict(name='TrxvuTxPaTemp', start=128, l=16, fctunpack=bincore.bin2int),
+        dict(name='TrxvuRxPaTemp', start=144, l=16, fctunpack=bincore.bin2int),
+        dict(name='TrxvuRxBoardTemp', start=160, l=16, fctunpack=bincore.bin2int),
+        dict(name='solarPanelTemp5', start=176, l=32, fctunpack=bincore.bin2int),
+        dict(name='solarPanelTemp4', start=208, l=32, fctunpack=bincore.bin2int),
+        dict(name='solarPanelTemp3', start=240, l=32, fctunpack=bincore.bin2int),
+        dict(name='solarPanelTemp2', start=272, l=32, fctunpack=bincore.bin2int),
+        dict(name='solarPanelTemp1', start=304, l=32, fctunpack=bincore.bin2int),
+        dict(name='tempBat2', start=336, l=16, fctunpack=bincore.bin2intSign),
+        dict(name='tempBat1', start=352, l=16, fctunpack=bincore.bin2intSign),
+        dict(name='batMode', start=368, l=8, fctunpack=bincore.bin2intSign),
+        dict(name='vBat', start=376, l=16, fctunpack=bincore.bin2int),
+        dict(name='rebootCause', start=392, l=32, fctunpack=bincore.bin2int),
+        dict(name='nReboots', start=424, l=32, fctunpack=bincore.bin2int),
+        dict(name='satMode', start=456, l=8, fctunpack=bincore.bin2int)
         ]
 
 
-KEYSSIZE = sum([item.len for item in KEYS])
-
-
-def unpack(data):
-    """
-    Unpacks the data contained in the Beacon packets
-
-    Args:
-    * data: the chain of octets to unpack
-    """
-    data = core.hex2bin(data, pad=len(data)*8)
-    res = {}
-    for key in KEYS:
-        res[key.name] = key.unpack(data)
-    return res
-
-
-def disp(*args):
-    pass
+TROUSSEAU = CCSDSTrousseau(KEYS, octets=False)

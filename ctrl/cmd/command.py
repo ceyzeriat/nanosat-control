@@ -25,10 +25,10 @@
 ###############################################################################
 
 
+from param import param_all
 from .cm import Cm
 from ..ccsds import TCPacker
 from ..utils import core
-#from .ccsds import ccsdsexception
 from ..telecommand import Telecommand
 from .. import db
 from segsol.controlling import broadcast_TC
@@ -82,7 +82,7 @@ class Command(Cm):
         """
         # generates the packet
         packet, hd, hdx, inputs = self._generate_packet(**kwargs)
-        hd['raw_file'] = core.RAWPACKETFOLDER
+        hd['raw_file'] = param_all.RAWPACKETFOLDER
         # left None until confirmation sent by antenna
         hd['time_sent'] = None
         hd['time_given'] = core.now()

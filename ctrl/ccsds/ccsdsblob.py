@@ -28,7 +28,7 @@
 from byt import Byt
 from param import param_apid
 from . import param_ccsds
-from ..utils import core
+from ..utils import bincore
 from . import ccsdsexception as exc
 from .ccsdspacker import CCSDSPacker
 
@@ -54,7 +54,7 @@ class CCSDSBlob(object):
         self.auth_bits = []
         for item in param_apid.PIDREGISTRATION.keys():
             vals[param_ccsds.PID.name] = item
-            possible_head = core.hex2bin(
+            possible_head = bincore.hex2bin(
                                 pk.pack_primHeader(values=vals, datalen=0,
                                         retvalues=False, retdbvalues=False,
                                         withPacketID=False)[:2],
@@ -73,7 +73,7 @@ class CCSDSBlob(object):
         if len(self.blob[start:start+2]) == 0:
             return 0
         for i in range(len(self.blob[start:])):
-            if core.hex2bin(self.blob[start+i:start+i+2])\
+            if bincore.hex2bin(self.blob[start+i:start+i+2])\
                     [:param_ccsds.AUTHPACKETLENGTH]\
                                     in self.auth_bits:
                 return i
@@ -88,7 +88,8 @@ class CCSDSBlob(object):
         Args:
         * start (int): the first bit of the packet in the blob
         """
-        dum = core.hex2bin(self.blob[start:start+param_ccsds.HEADER_P_SIZE])
+        dum = bincore.hex2bin(self.blob[start:
+                                        start+param_ccsds.HEADER_P_KEYS.size])
         return param_ccsds.DATALENGTH.unpack(dum) - param_ccsds.LENGTHMODIFIER
 
     def find_first_packet(self, start=0):
@@ -110,11 +111,11 @@ class CCSDSBlob(object):
             # issue, maybe the packet is cut before the data length bit
             return None
         # bullshit length, just restart search further
-        if length < param_ccsds.HEADER_P_SIZE:
+        if length < param_ccsds.HEADER_P_KEYS.size:
             return self.find_first_packet(start=start+1)
         # bang on, found a new start where you expected it
-        elif self.find(start=start + param_ccsds.HEADER_P_SIZE + length) == 0:
-            return slice(start, start + param_ccsds.HEADER_P_SIZE + length)
+        elif self.find(start=start+param_ccsds.HEADER_P_KEYS.size+length) == 0:
+            return slice(start, start + param_ccsds.HEADER_P_KEYS.size + length)
         # try again
         else:
             return self.find_first_packet(start=start+1)

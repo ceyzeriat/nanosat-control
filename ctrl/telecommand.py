@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-from .utils import core
+#from .utils import core
 
 
 __all__ = ['Telecommand']

@@ -27,8 +27,9 @@
 
 # taken from https://nubes-lesia.obspm.fr/index.php/apps/files?dir=%2FPicSat%2FProjet%2FtrxDoc
 
-from ctrl.ccsds.ccsdskey import CCSDSKey
-from ctrl.utils import core
+
+from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from ctrl.utils import bincore
 
 
 __all__ = ['PACKETCATEGORIES', 'CATEGORYREGISTRATION', 'PACKETCATEGORYSIZES',
@@ -46,66 +47,66 @@ CATEGORYREGISTRATION = {0:  '0000',
                         8:  '1000',
                         9:  '1001'}
 
-TELECOMMANDID = CCSDSKey(   name='telecommand_id',
-                            start=0,
-                            l=10,
-                            fctunpack=core.bin2int,
-                            fctpack=core.int2bin)
+TELECOMMANDID = dict(   name='telecommand_id',
+                        start=0,
+                        l=10,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
 
-PACKETIDMIRROR = CCSDSKey(  name='packet_id_mirror',
-                            start=10,
-                            l=14,
-                            fctunpack=core.bin2int,
-                            fctpack=core.int2bin)
+PACKETIDMIRROR = dict(  name='packet_id_mirror',
+                        start=10,
+                        l=14,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
 
-ERRORCODE = CCSDSKey(       name='error_code',
-                            start=24,
-                            l=8,
-                            fctunpack=core.bin2int,
-                            fctpack=core.int2bin)
-
-
-ACQMODE = CCSDSKey(         name='acq_mode',
-                            start=0,
-                            l=8,
-                            fctunpack=core.bin2int,
-                            fctpack=core.int2bin)
-
-INTEGRATIONTIME = CCSDSKey( name='integration_time',
-                            start=8,
-                            l=16,
-                            fctunpack=core.bin2int,
-                            fctpack=core.int2bin)
-
-MODULATION = CCSDSKey(      name='modulation',
-                            start=24,
-                            l=8,
-                            fctunpack=core.bin2int,
-                            fctpack=core.int2bin)
-
-RADIUS = CCSDSKey(          name='radius',
-                            start=32,
-                            l=16,
-                            fctunpack=core.bin2int,
-                            fctpack=core.int2bin)
-
-NPOINTS = CCSDSKey(         name='n_points',
-                            start=48,
-                            l=8,
-                            fctunpack=core.bin2int,
-                            fctpack=core.int2bin)
+ERRORCODE = dict(       name='error_code',
+                        start=24,
+                        l=8,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
 
 
-CATEGORY_0 = []  # NO HEADER
-CATEGORY_1 = [TELECOMMANDID, PACKETIDMIRROR, ERRORCODE]
-CATEGORY_2 = [TELECOMMANDID, PACKETIDMIRROR, ERRORCODE]
-CATEGORY_3 = []  # NO HEADER
-CATEGORY_4 = []
-CATEGORY_5 = [ACQMODE, INTEGRATIONTIME, MODULATION, RADIUS, NPOINTS]
-CATEGORY_6 = []  # NO HEADER
-CATEGORY_7 = []  # NO HEADER
-CATEGORY_8 = []  # NO HEADER
-CATEGORY_9 = []  # NO HEADER
+ACQMODE = dict(         name='acq_mode',
+                        start=0,
+                        l=1,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
+
+INTEGRATIONTIME = dict( name='integration_time',
+                        start=1,
+                        l=2,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
+
+MODULATION = dict(      name='modulation',
+                        start=3,
+                        l=1,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
+
+RADIUS = dict(          name='radius',
+                        start=4,
+                        l=2,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
+
+NPOINTS = dict(         name='n_points',
+                        start=6,
+                        l=1,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
+
+
+CATEGORY_0 = CCSDSTrousseau([], octets=False)  # Rec Ack, NO HEADER
+CATEGORY_1 = CCSDSTrousseau([TELECOMMANDID, PACKETIDMIRROR, ERRORCODE], octets=False)  # Fmt Ack, 
+CATEGORY_2 = CCSDSTrousseau([TELECOMMANDID, PACKETIDMIRROR, ERRORCODE], octets=False)  # Exe Ack, 
+CATEGORY_3 = CCSDSTrousseau([], octets=False)  # Debug, NO HEADER
+CATEGORY_4 = CCSDSTrousseau([], octets=False)  # HK payload, NO HEADER
+CATEGORY_5 = CCSDSTrousseau([ACQMODE, INTEGRATIONTIME, MODULATION, RADIUS, NPOINTS], octets=True)  # science HF
+CATEGORY_6 = CCSDSTrousseau([], octets=False)  # ???
+CATEGORY_7 = CCSDSTrousseau([], octets=False)  # beacon, NO HEADER
+CATEGORY_8 = CCSDSTrousseau([], octets=False)  # ???
+CATEGORY_9 = CCSDSTrousseau([], octets=False)  # ???
 
 
 ACKCATEGORIES = [0, 1, 2]
@@ -126,14 +127,14 @@ PACKETCATEGORIES = {0: CATEGORY_0,
 
 PACKETCATEGORYSIZES = {}
 for k, cat in PACKETCATEGORIES.items():
-    PACKETCATEGORYSIZES[k] = sum([key.len for key in cat])//8
+    PACKETCATEGORYSIZES[k] = cat.size
 
 
 TABLECATEGORY = {   0: 'TmcatRcpAcknowledgement',
                     1: 'TmcatFmtAcknowledgement',
                     2: 'TmcatExeAcknowledgement',
                     3: 'TmcatDebug',
-                    4: '',
+                    4: 'TmcatHkPayload',
                     5: 'TmcatHfScience',
                     6: '',
                     7: '',
@@ -144,9 +145,9 @@ TABLEDATACRUNCHING = {  0: None,
                         1: None,
                         2: None,
                         3: None,
-                        4: None,
+                        4: 'param_hk_payload',
                         5: 'param_science_hf',
                         6: None,
-                        7: None,
+                        7: 'param_beacon',
                         8: None,
                         9: None}

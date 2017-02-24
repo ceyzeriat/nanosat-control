@@ -37,6 +37,7 @@ from ctrl.utils.report import REPORTS
 from ctrl.telemetry import Telemetry
 from ctrl.ccsds import CCSDSBlob
 from ctrl.kiss import Framer
+from param import param_all
 
 
 __all__ = ['init_saving', 'close_saving', 'report']
@@ -115,7 +116,7 @@ def report(report_key, **kwargs):
     """
     Reports to watchdog
     """
-    rp = REPORTS[report_key].pack(who=core.SAVINGNAME, **kwargs)
+    rp = REPORTS[report_key].pack(who=param_all.SAVINGNAME, **kwargs)
     return SAVE_TRANS.tell(rp)
 
 

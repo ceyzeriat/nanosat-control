@@ -26,7 +26,7 @@
 
 
 from . import ccsdsexception
-from ..utils import core
+from ..utils import bincore
 
 
 __all__ = ['CCSDSKey']
@@ -140,7 +140,7 @@ class CCSDSKey(object):
         if raw:
             return bits
         elif self._fctunpack is None:
-            return self._dic_rev(core.reverse_if_little_endian(bits))
+            return self._dic_rev(bincore.reverse_if_little_endian(bits))
         else:
             return self._fctunpack(bits, **kwargs)
 
@@ -166,11 +166,11 @@ class CCSDSKey(object):
             raise ccsdsexception.NoPack(name=self.name)
         pad = self.len if pad is None else int(pad)
         if raw:
-            return core.int2bin(value, pad=pad)
+            return bincore.int2bin(value, pad=pad)
         elif self._fctpack is None:
-            return core.reverse_if_little_endian(self[value])
+            return bincore.reverse_if_little_endian(self[value])
         else:
-            return core.padit(self._fctpack(value, pad=pad, **kwargs),
+            return bincore.padit(self._fctpack(value, pad=pad, **kwargs),
                               l=pad, ch='0')
 
     def _dic_rev(self, value):

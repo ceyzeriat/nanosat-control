@@ -71,7 +71,7 @@ def report(report_key, **kwargs):
     """
     Reports to watchdog
     """
-    rp = REPORTS[report_key].pack(who=core.CONTROLLINGNAME, **kwargs)
+    rp = REPORTS[report_key].pack(who=param_all.CONTROLLINGNAME, **kwargs)
     return CONTROL_TRANS.tell(rp)
 
 
@@ -83,9 +83,9 @@ def init_control():
     global control_running
     if control_running:
         return
-    CONTROL_TRANS = ControlTrans(port=core.CONTROLLINGPORT[0],
-                            nreceivermax=len(core.CONTROLLINGPORTLISTENERS),
-                            start=True, portname=core.CONTROLLINGPORT[1])
+    CONTROL_TRANS = ControlTrans(port=param_all.CONTROLLINGPORT[0],
+                            nreceivermax=len(param_all.CONTROLLINGPORTLISTENERS),
+                            start=True, portname=param_all.CONTROLLINGPORT[1])
     control_running = True
 
 
