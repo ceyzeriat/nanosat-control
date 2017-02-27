@@ -48,10 +48,10 @@ PIDREGISTRATION_OBC_L1 = {  'L1ComManager': 0,
                             'payloadManager2': 7,
                             'payloadManager3': 8}
 
-PIDREGISTRATION_PLD = {     'hkPayload': 2,
+PIDREGISTRATION_PLD = {     'bootloader': 0,
+                            'hkPayload': 2,
                             'sciencePayload': 3,
-                            'debugPayload': 4,
-                            'bootloader': 0}
+                            'debugPayload': 4}
 
 
 # pid string as key, int as value
