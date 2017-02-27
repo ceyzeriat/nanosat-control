@@ -160,7 +160,7 @@ def init_watch():
                                     connectWait=0.5,
                                     portname=param_all.SAVINGPORT[1])
     watch_running = True
-    DISP.start()
+    #DISP.start()
 
 
 
