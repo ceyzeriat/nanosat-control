@@ -349,6 +349,22 @@ INSERT INTO pids (name, level_flag, payload_flag, number) VALUES ('sciencePayloa
 INSERT INTO pids (name, level_flag, payload_flag, number) VALUES ('debugPayload', 1, 1, 4);
 
 
+GRANT ALL ON SEQUENCE commands_id_seq TO picsat_edit;
+GRANT ALL ON SEQUENCE data_hf_sciences_id_seq TO picsat_edit;
+GRANT ALL ON SEQUENCE data_payload_hks_id_seq TO picsat_edit;
+GRANT ALL ON SEQUENCE emitters_id_seq TO picsat_edit;
+GRANT ALL ON SEQUENCE packet_categories_id_seq TO picsat_edit;
+GRANT ALL ON SEQUENCE receivers_id_seq TO picsat_edit;
+GRANT ALL ON SEQUENCE telecommands_id_seq TO picsat_edit;
+GRANT ALL ON SEQUENCE telemetries_id_seq TO picsat_edit;
+GRANT ALL ON SEQUENCE tmcat_debugs_id_seq TO picsat_edit;
+GRANT ALL ON SEQUENCE tmcat_exe_acknowledgements_id_seq TO picsat_edit;
+GRANT ALL ON SEQUENCE tmcat_fmt_acknowledgements_id_seq TO picsat_edit;
+GRANT ALL ON SEQUENCE tmcat_hf_sciences_id_seq TO picsat_edit;
+GRANT ALL ON SEQUENCE tmcat_payload_hks_id_seq TO picsat_edit;
+GRANT ALL ON SEQUENCE tmcat_rcp_acknowledgements_id_seq TO picsat_edit;
+
+
 
 -- ###########################################
 
