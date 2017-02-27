@@ -101,8 +101,8 @@ def append_logfile(message):
     """
     Appends message at the end of the log file, with a timestamp
     """
-    f = open(core.LOGFILE, mode="a")
-    f.write('{} {}'.format(core.now().strftime('%Y/%m/%d %H:%M:%S'), message))
+    f = open(LOGFILE, mode="a")
+    f.write('{} {}'.format(now().strftime('%Y/%m/%d %H:%M:%S'), message))
     f.close()
 
 def split_flow(data, n=1):
