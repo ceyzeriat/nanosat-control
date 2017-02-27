@@ -62,6 +62,8 @@ if [[ $DOINSTALL == "all" -o $DOINSTALL == "server" ]]; then
     cd $WHEREBINS
 
     echo '#!/bin/bash' > piccontrol
+    echo 'if [[ $1 == "gui" ]]' >> piccontrol
+    echo 'then' >> piccontrol
     chmod a+x piccontrol
     cp piccontrol piclisten
     cp piccontrol picwatch
@@ -69,13 +71,25 @@ if [[ $DOINSTALL == "all" -o $DOINSTALL == "server" ]]; then
 
     BASICFONT="-bg black -fg lightgrey -fa 'Monospace' -fs 10"
 
-    echo "xterm -T 'Control' $BASICFONT -geometry 80x24+30+400 -e '$IPY -i $WHERESEGSOL/control.py'" >> piccontrol
+    echo "    xterm -T 'Control' $BASICFONT -geometry 80x24+30+400 -e '$IPY -i $WHERESEGSOL/control.py';" >> piccontrol
+    echo "else" >> piccontrol
+    echo "    $IPY -i $WHERESEGSOL/control.py" >> piccontrol
+    echo "fi" >> piccontrol
 
-    echo "xterm -T 'Listen' $BASICFONT -geometry 80x10+30-50 -e '$IPY -i $WHERESEGSOL/listen.py'" >> piclisten
+    echo "    xterm -T 'Listen' $BASICFONT -geometry 80x10+30-50 -e '$IPY -i $WHERESEGSOL/listen.py';" >> piclisten
+    echo "else" >> piclisten
+    echo "    $IPY -i $WHERESEGSOL/listen.py" >> piclisten
+    echo "fi" >> piclisten
 
-    echo "xterm -T 'Watch' $BASICFONT -geometry 150x12+30+150 -e '$IPY -i $WHERESEGSOL/watch.py'" >> picwatch
+    echo "    xterm -T 'Watch' $BASICFONT -geometry 150x12+30+150 -e '$IPY -i $WHERESEGSOL/watch.py';" >> picwatch
+    echo "else" >> picwatch
+    echo "    $IPY -i $WHERESEGSOL/watch.py" >> picwatch
+    echo "fi" >> picwatch
 
-    echo "xterm -T 'Save' $BASICFONT -geometry 80x10-30+150 -e '$IPY -i $WHERESEGSOL/save.py'" >> picsave
+    echo "    xterm -T 'Save' $BASICFONT -geometry 80x10-30+150 -e '$IPY -i $WHERESEGSOL/save.py';" >> picsave
+    echo "else" >> picsave
+    echo "    $IPY -i $WHERESEGSOL/save.py" >> picsave
+    echo "fi" >> picsave
 fi
 
 
@@ -98,33 +112,33 @@ if [[ $DOINSTALL == "all" -o $DOINSTALL == "desk" ]]; then
 
     echo 'Name=PicControl' >> PicControl.desktop
     echo 'Comment=' >> PicControl.desktop
-    echo 'Exec='"$WHEREBINS"'/piccontrol' >> PicControl.desktop
+    echo 'Exec='"$WHEREBINS"'/piccontrol gui' >> PicControl.desktop
     echo 'Icon='"$WHERESEGSOL"'/img/control.gif' >> PicControl.desktop
-    echo 'Path=' >> PicControl.desktop
+    echo 'Path='"$HOME" >> PicControl.desktop
     echo 'Terminal=false' >> PicControl.desktop
     echo 'StartupNotify=false' >> PicControl.desktop
 
     echo 'Name=PicListen' >> PicListen.desktop
     echo 'Comment=' >> PicListen.desktop
-    echo 'Exec='"$WHEREBINS"'/piclisten' >> PicListen.desktop
+    echo 'Exec='"$WHEREBINS"'/piclisten gui' >> PicListen.desktop
     echo 'Icon='"$WHERESEGSOL"'/img/listen.gif' >> PicListen.desktop
-    echo 'Path=' >> PicListen.desktop
+    echo 'Path='"$HOME" >> PicListen.desktop
     echo 'Terminal=false' >> PicListen.desktop
     echo 'StartupNotify=false' >> PicListen.desktop
 
     echo 'Name=PicSave' >> PicSave.desktop
     echo 'Comment=' >> PicSave.desktop
-    echo 'Exec='"$WHEREBINS"'/picsave' >> PicSave.desktop
+    echo 'Exec='"$WHEREBINS"'/picsave gui' >> PicSave.desktop
     echo 'Icon='"$WHERESEGSOL"'/img/save.gif' >> PicSave.desktop
-    echo 'Path=' >> PicSave.desktop
+    echo 'Path='"$HOME" >> PicSave.desktop
     echo 'Terminal=false' >> PicSave.desktop
     echo 'StartupNotify=false' >> PicSave.desktop
 
     echo 'Name=PicWatch' >> PicWatch.desktop
     echo 'Comment=' >> PicWatch.desktop
-    echo 'Exec='"$WHEREBINS"'/picwatch' >> PicWatch.desktop
+    echo 'Exec='"$WHEREBINS"'/picwatch gui' >> PicWatch.desktop
     echo 'Icon='"$WHERESEGSOL"'/img/watch.gif' >> PicWatch.desktop
-    echo 'Path=' >> PicWatch.desktop
+    echo 'Path='"$HOME" >> PicWatch.desktop
     echo 'Terminal=false' >> PicWatch.desktop
     echo 'StartupNotify=false' >> PicWatch.desktop
 fi

@@ -42,7 +42,7 @@ KEYS = [dict(name='step', start=0, l=1, fctunpack=bincore.hex2int, fctpack=binco
 
 
 class HFScienceCCSDSTrousseau(CCSDSTrousseau):
-    def unpack(self, data, retdbvalues=True):
+    def unpack(self, data, **kwargs):
         """
         Unpacks the data contained in the Science HF packets
 

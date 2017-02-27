@@ -97,6 +97,14 @@ def get_pid():
     """
     return current_process().pid
 
+def append_logfile(message):
+    """
+    Appends message at the end of the log file, with a timestamp
+    """
+    f = open(core.LOGFILE, mode="a")
+    f.write('{} {}'.format(core.now().strftime('%Y/%m/%d %H:%M:%S'), message))
+    f.close()
+
 def split_flow(data, n=1):
     """
     Splits and returns the ccsds packets if one expects a frames-flow

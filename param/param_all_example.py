@@ -56,6 +56,11 @@ PACKETIDFILE = ['.segsol', 'tc_packet_id']
 DBFILE = ['.segsol', 'db_server']
 PASSTAGS = {'<pass>': ['.segsol', 'artichaut']}
 
+
+# the log file
+LOGFILE = ['watch.log']
+
+
 # the callsign files
 CSSOURCEFILE = ['.segsol', 'callsign_source']
 CSDESTFILE = ['.segsol', 'callsign_destination']

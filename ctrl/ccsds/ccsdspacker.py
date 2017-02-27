@@ -30,6 +30,7 @@ from param import param_category
 from param import param_apid
 from param import param_all
 from ..utils import core
+from ..utils import bincore
 from . import ccsdsexception
 from . import param_ccsds
 
@@ -48,7 +49,7 @@ class CCSDSPacker(object):
         self.mode = 'telemetry' if str(mode).lower()[1] == 'm'\
                         else 'telecommand'
 
-    def pack(self, pid, data='', tcid='', pktCat=0, retvalues=True,
+    def pack(self, pid, TCdata='', TCid='', pktCat=0, retvalues=True,
                 retdbvalues=True, withPacketID=True, **kwargs):
         """
         Creates a packet, returns the packet string and optionally
@@ -56,9 +57,9 @@ class CCSDSPacker(object):
 
         Args:
         * pid (str): the process id related to the packet
-        * data (byts): only for TC-mode, the data to include in the
+        * TCdata (byts): only for TC-mode, the data to include in the
           packet
-        * tcid (int): only for TC-mode, the id of the telecommand
+        * TCid (int): only for TC-mode, the id of the telecommand
         * pktCat (int): only for TM-mode, the packet category
         * retvalues (bool): if ``True``, returns the encoded values
         * retdbvalues (bool): if ``True``, returns the encoded values
@@ -83,7 +84,7 @@ class CCSDSPacker(object):
         hd['pid'] = pid
         if not tm:
             hd['signature'] = Byt("\x00"*(param_ccsds.SIGNATURE.len//8))
-            hd['telecommand_id'] = int(tcid)
+            hd['telecommand_id'] = int(TCid)
             morevalues = ((param_ccsds.REQACKRECEPTIONTELECOMMAND.name, 'rack',
                             param_all.REQACKRECEPTION),
                           (param_ccsds.REQACKFORMATTELECOMMAND.name, 'fack',
@@ -98,7 +99,7 @@ class CCSDSPacker(object):
         else:
             hd[param_ccsds.PACKETCATEGORY.name] = int(pktCat)
         # header prim
-        retprim = self.pack_primHeader(values=hd, datalen=len(data),
+        retprim = self.pack_primHeader(values=hd, datalen=len(TCdata),
                                         retvalues=True,
                                         retdbvalues=retdbvalues)
         # header sec
@@ -125,12 +126,18 @@ class CCSDSPacker(object):
                                         retdbvalues=retdbvalues)
             data = retdata[0]
             retd.update(retdata[1])
+            retprim = self.increment_data_length(
+                                    datalen=len(data),
+                                    primaryHDpacket=retprim[0],
+                                    primaryHDdict=(retprim[1:]+[None])[1])
+        else:
+            data = TCdata
         if retvalues:
             return retprim[0] + retsec[0] + maybeAux + data, hds, hdx, retd
         else:
             return retprim[0] + retsec[0] + maybeAux + data
 
-    def pack_primHeader(self, values, datalen, retvalues=False,
+    def pack_primHeader(self, values, datalen=0, retvalues=False,
                         retdbvalues=True, withPacketID=True):
         """
         Encodes the values into a CCSDS primary header, returns hex
@@ -138,7 +145,9 @@ class CCSDSPacker(object):
 
         Args:
         * values (dict): the values to pack
-        * datalen (int): the octet-length of the data in the packet
+        * datalen (int): the length of the data. If not known yet, it
+            can be be 'manually' updated using ``increment_data_length``
+            method
         * retvalues (bool): if ``True``, returns the encoded values
         * retdbvalues (bool): if ``True``, returns the encoded values
           in a format directly compatible with the database
@@ -152,7 +161,9 @@ class CCSDSPacker(object):
         if self.mode == 'telecommand':
             values[param_ccsds.DATALENGTH.name] +=\
                 param_ccsds.HEADER_S_KEYS_TELECOMMAND.size
+            # force packet category to 0
             values[param_ccsds.PACKETCATEGORY.name] = '0'
+            # want to increment packet id?
             if withPacketID:
                 values[param_ccsds.PACKETID.name] =\
                     core.get_set_next_tc_packet_id()
@@ -161,25 +172,52 @@ class CCSDSPacker(object):
         else:
             values[param_ccsds.DATALENGTH.name] +=\
                 param_ccsds.HEADER_S_KEYS_TELEMETRY.size
+            # don't bother about packet id, not supported
             values[param_ccsds.PACKETID.name] = '0'
-        # adds the header aux size into the packet length
+        # add the header aux size into the packet length
         values[param_ccsds.DATALENGTH.name] +=\
             param_category.PACKETCATEGORYSIZES[\
                 int(values.get(param_ccsds.PACKETCATEGORY.name, 0))]
-                                        
+        # update the length with data length
+        values[param_ccsds.DATALENGTH.name] += int(datalen)
+        # check pid string
         if param_ccsds.PID.name not in values.keys():
             raise ccsdsexception.PacketValueMissing(param_ccsds.PID.name)
+        # fill in payload and level flags from pid string
         values[param_ccsds.PAYLOADFLAG.name] =\
             param_apid.PLDREGISTRATION[values[param_ccsds.PID.name]]
         values[param_ccsds.LEVELFLAG.name] =\
             param_apid.LVLREGISTRATION[values[param_ccsds.PID.name]]
-        values[param_ccsds.DATALENGTH.name] += datalen
         data, retvals = param_ccsds.HEADER_P_KEYS.pack(allvalues=values,
                                                     retdbvalues=retdbvalues)
         if retvalues:
             return data, retvals
         else:
             return data
+
+    def increment_data_length(self, datalen, primaryHDpacket,
+                                primaryHDdict=None):
+        """
+        Updates the primary header with the real data length
+        NB: this method increments the packet information with the value
+        of ``datalen``, meaning that it does know nor care
+
+        Args:
+        * datalen (int): the length of the data
+        * primaryHDpacket (Byt): the primary header as octets
+        * primaryHDdict (dict): the primary packet as dictionary.
+            If not provided, (default is ``None``), ``None`` will
+            be returned instead of the dictionary
+        """
+        lenkey = param_ccsds.DATALENGTH
+        bits = bincore.hex2bin(primaryHDpacket)
+        ll = lenkey.unpack(bits) + datalen
+        bits = core.setstr(bits, lenkey.cut, lenkey.pack(ll))
+        primaryHDpacket = bincore.bin2hex(bits, pad=len(primaryHDpacket))
+        values[param_ccsds.DATALENGTH.name] += datalen
+        if primaryHDdict is not None:
+            primaryHDdict[param_ccsds.DATALENGTH.name] += datalen
+        return primaryHDpacket, primaryHDdict
 
     def pack_secHeader(self, values, retvalues=False, retdbvalues=True):
         """

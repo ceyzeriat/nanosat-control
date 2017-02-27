@@ -69,7 +69,7 @@ class CCSDSTrousseau(object):
         """
         return [item.name for item in self.keys]
 
-    def pack(self, allvalues, retdbvalues):
+    def pack(self, allvalues, retdbvalues, **kwargs):
         """
         Does the packing loop for the list of CCSDS keys
         Returns the bytes chain and the values encoded
@@ -78,10 +78,16 @@ class CCSDSTrousseau(object):
         * allvalues (dict): the values to pack
         * retdbvalues (bool): if ``True``, returns the encoded values
           in a format directly compatible with the database
+
+        Kwargs:
+        * passed on to the pack method of each key
         """
         values = dict(allvalues)
         retvals = {}
-        bits = '0' * (self.size * 8)
+        if not self.octets:
+            bits = '0' * (self.size * 8)
+        else:
+            bits = '\x00' * self.size
         pos = 0
         for item in self.keys:
             if item.name not in values.keys() and item.dic_force is None:
@@ -92,12 +98,12 @@ class CCSDSTrousseau(object):
             if item.relative_only:
                 bits = core.setstr( bits,
                                     item.cut_offset(pos),
-                                    item.pack(thevalue))
+                                    item.pack(thevalue, **kwargs))
                 pos += item.len
             else:
                 bits = core.setstr( bits,
                                     item.cut,
-                                    item.pack(thevalue))
+                                    item.pack(thevalue, **kwargs))
                 pos = item.start + item.len
             # filling in the forced values not given as input
             if item.dic_force is not None:
@@ -107,8 +113,10 @@ class CCSDSTrousseau(object):
             # gotta be valid values for the database
             if retdbvalues and item.non_db_dic:
                 retvals[item.name] = bincore.bin2int(item.pack(thevalue))
-
-        return bincore.bin2hex(bits, pad=self.size), retvals
+        if not self.octets:
+            return bincore.bin2hex(bits, pad=self.size), retvals
+        else:
+            return bits, retvals
 
     def unpack(self, data):
         """
@@ -129,4 +137,3 @@ class CCSDSTrousseau(object):
     def disp(self, *args, **kwargs):
         return ''
 
-    

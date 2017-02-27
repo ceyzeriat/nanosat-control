@@ -27,6 +27,12 @@
 
 import curses
 import locale
+import time
+from threading import Thread
+from ..utils import core
+
+__all__ = ['Xdisp']
+
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -39,6 +45,7 @@ OBCICO = u'\u03A9'.encode('utf-8')
 L0ICO = u'\u24DE'.encode('utf-8')
 L1ICO = u'\u2461'.encode('utf-8')
 
+"""
 UPLEFTCORNER = u'\u256D'.encode('utf-8')
 UPRIGHTCORNER = u'\u256E'.encode('utf-8')
 BOTTOMRIGHTCORNER = u'\u256F'.encode('utf-8')
@@ -50,6 +57,7 @@ HORLINESPLITDOWN = u'\u252C'.encode('utf-8')
 VERLINESPLITLEFT = u'\u2524'.encode('utf-8')
 VERLINESPLITRIGHT = u'\u251C'.encode('utf-8')
 CROSS = u'\u253C'.encode('utf-8')
+"""
 
 
 def newlinebox(h, w, y, x, title=None):
@@ -60,9 +68,21 @@ def newlinebox(h, w, y, x, title=None):
     wb.refresh()
     return curses.newwin(h, w, y, x)
 
+def loop_time(self, freq):
+    while self.running:
+        self.set_time()
+        time.sleep(1./freq)
+
 class Xdisp(object):
-    def __init__(self, stdscr):
+    def __init__(self):
+        pass
+
+    def start(self):
+        curses.wrapper(self.init)
+
+    def init(self, stdscr):
         self.stdscr = stdscr
+        curses.curs_set(0)
         self.height, self.width = stdscr.getmaxyx()
         curses.start_color()
         curses.use_default_colors()
@@ -76,9 +96,10 @@ class Xdisp(object):
         self.set_saveico(status=self.NOSTARTED)
         self.set_listenico(status=self.NOSTARTED)
         self.set_time()
-        self.bar.refresh()
         self.TC.refresh()
         self.TM.refresh()
+        self.running = True
+        self.start_set_time(3)
         self.loopit()
 
     def set_controlico(self, status):
@@ -90,8 +111,14 @@ class Xdisp(object):
     def set_listenico(self, status):
         self.bar.addstr(0, LISTENICO[0], LISTENICO[1], status)
 
+    def start_set_time(self, freq=3):
+        loopy = Thread(target=loop_time, args=(self, float(freq)))
+        loopy.daemon = True
+        loopy.start()
+
     def set_time(self):
-        self.bar.addstr(0, 0, '23:42:55', self.BLUE)
+        self.bar.addstr(0, 0, core.now().strftime('%H:%M:%S'), self.BLUE)
+        self.bar.refresh()
 
     def _init_colors(self):
         for i in range(0, curses.COLORS):
@@ -109,13 +136,12 @@ class Xdisp(object):
         self.DEAD = self.RED
         
     def loopit(self):
-        while True:
+        while self.running:
             self.report.addstr(0, 0, ">")
             self.report.clrtoeol()
-            s   = self.report.getstr()
+            s = self.report.getstr()
             if s == "q":
-                break
+                self.running = False
             self.report.insertln()
             self.report.addstr(1, 0, "[" + s + "]")
-
-#curses_main = curses.wrapper(Xdisp)
+        self.running = False

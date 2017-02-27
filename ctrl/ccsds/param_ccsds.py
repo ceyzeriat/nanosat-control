@@ -46,13 +46,13 @@ LENGTHMODIFIER = 0
 # origin of start/end is start of packet
 # start/end units is bits
 
-def get_pid(v, pad, **kwargs):
-    get_pid.verbose = "-> binary"
+def pid_pack(v, pad, **kwargs):
+    pid_pack.verbose = "pid string -> binary"
     return bincore.int2bin(param_apid.PIDREGISTRATION[v], pad=pad)
 
 
-def get_pid_rev(v, pld, lvl, **kwargs):
-    get_pid_rev.verbose = "-> unsigned integer"
+def pid_unpack(v, pld, lvl, **kwargs):
+    pid_unpack.verbose = "binary, payload flag and level flag -> pid string"
     dic = param_apid.PIDREGISTRATION_REV[bincore.bin2int(v)]
     return dic[int(pld)][int(lvl) if int(pld) == 0 else 1]
 
@@ -88,8 +88,8 @@ LEVELFLAG = CCSDSKey(   name='level_flag',
 PID = CCSDSKey( name='pid',
                 start=7,
                 l=5,
-                fctunpack=get_pid_rev,
-                fctpack=get_pid)
+                fctunpack=pid_unpack,
+                fctpack=pid_pack)
 
 PACKETCATEGORY = CCSDSKey(  name='packet_category',
                             dic=param_category.CATEGORYREGISTRATION,
@@ -110,6 +110,8 @@ PACKETID = CCSDSKey(name='packet_id',
                     fctunpack=bincore.bin2int,
                     fctpack=bincore.int2bin)
 
+# this CCSDSKey must not be relative, i.e. there must be a "start" defined
+# cf ccsdspacker.increment_data_length()
 DATALENGTH = CCSDSKey(  name='data_length',
                         start=32,
                         l=16,
@@ -134,12 +136,12 @@ AUTHPACKETLENGTH = 12
 
 
 def days_unpack(v):
-    days_unpack.verbose = "-> unsigned integer"
+    days_unpack.verbose = "binary -> unsigned integer"
     return Day(bincore.bin2int(v))
 
 
 def msec_unpack(v):
-    msec_unpack.verbose = "-> unsigned integer"
+    msec_unpack.verbose = "binary -> unsigned integer"
     return Ms(bincore.bin2int(v))
 
 

@@ -42,7 +42,7 @@ __all__ = ['init_DB', 'get_column_keys', 'save_TC_to_DB', 'close_DB',
 
 running = False
 DB = None
-TABLES = []
+TABLES = {}
 
 
 def init_DB():
@@ -57,11 +57,11 @@ def init_DB():
     Base = automap_base()
     engine = create_engine(core.DBENGINE)
     Base.prepare(engine, reflect=True)
-    TABLES = []
+    TABLES = {}
     for k in Base.classes.keys():
         nk = core.camelize_singular(k)
-        TABLES.append(nk)
-        globals()[nk] = Base.classes[k]
+        TABLES[nk] = Base.classes[k]
+        #globals()[nk] = Base.classes[k]
     DB = Session(engine)
     running = True
 
@@ -95,11 +95,11 @@ def save_TC_to_DB(hd, hdx, inputs):
     if not running:
         raise ctrlexception.NoDBConnection()
     hd.pop('signature', '')
-    TC = Telecommand(**hd)
+    TC = TABLES['Telecommand'](**hd)
     DB.add(TC)
     DB.flush()
     for k, v in inputs.items():
-        DB.add(TelecommandDatum(id=TC.id, param_key=k, value=v))
+        DB.add(TABLES['TelecommandDatum'](id=TC.id, param_key=k, value=v))
     DB.commit()
     return TC.id
 
@@ -121,17 +121,23 @@ def save_TM_to_DB(hd, hdx, data):
                                             hd['ms_since_today'])
     # force DB default
     hd.pop('time_saved', '')
-    TM = Telemetry(**hd)
+    TM = TABLES['Telemetry'](**hd)
     DB.add(TM)
     DB.flush()
+    catnum = hd[param_ccsds.PACKETCATEGORY.name]
     # saving the aux header
-    tbl = param_category.TABLECATEGORY[hd[param_ccsds.PACKETCATEGORY.name]]
-    tbl = globals()[tbl]
+    tbl = param_category.TABLECATEGORY[catnum]
     hdx = dict(hdx)
     hdx['telemetry_packet'] = TM.id
-    DB.add(tbl(**hdx))
+    DB.add(TABLES[tbl](**hdx))
+    # saving the data
+    if param_category.TABLEDATA[catnum] is not None:
+        tbl = param_category.TABLEDATA[catnum]
+        dt = dict(data['unpacked'])
+        dt['telemetry_packet'] = TM.id
+        DB.add(TABLES[tbl](**dt))
+    # save changes
     DB.commit()
-    ### save the data
     return TM.id
 
 

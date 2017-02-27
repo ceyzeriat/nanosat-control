@@ -60,8 +60,8 @@ class Command(Cm):
         input parameters used to generate the data (dict).
         """
         data, inputs = self.generate_data(**kwargs)
-        packet, hd, hdx, dat = TCPacker.pack(pid=self.pid, data=data,
-                                             tcid=self.number, retvalues=True,
+        packet, hd, hdx, dat = TCPacker.pack(pid=self.pid, TCdata=data,
+                                             TCid=self.number, retvalues=True,
                                              retdbvalues=True, **kwargs)
         return packet, hd, hdx, inputs
 

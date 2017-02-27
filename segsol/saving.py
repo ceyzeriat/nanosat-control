@@ -26,7 +26,7 @@
 
 
 import time
-import glob
+import os
 from byt import Byt
 from ctrl.soc import SocTransmitter
 from ctrl.soc import SocReceiver
@@ -98,7 +98,7 @@ def process_incoming(t, path, data):
     parsing it
     """
     path = str(path)
-    if len(glob.glob(path)) == 0:
+    if not os.path.isfile(path):
         raise ctrlexception.PacketFileMissing(path)
     f = open(path, mode='rb')
     dd = Byt(f.read())

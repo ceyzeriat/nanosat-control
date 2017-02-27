@@ -38,14 +38,14 @@ def bool2bin(i, **kwargs):
     """
     Give a boolean, returns a bin
     """
-    bool2bin.verbose = "-> boolean"
+    bool2bin.verbose = "boolean -> binary"
     return str(int(i))
 
 def bin2bool(i, **kwargs):
     """
     Give a binary, returns a bool
     """
-    bin2bool.verbose = "-> binary"
+    bin2bool.verbose = "binary -> boolean"
     return bool(int(i))
 
 def int2bin(i, pad=True, **kwargs):
@@ -55,7 +55,7 @@ def int2bin(i, pad=True, **kwargs):
     If ``pad`` is int, pads to ``pad`` characters.
     Set `pad`` to ``None`` or ``False`` for no padding.
     """
-    int2bin.verbose = "-> binary"
+    int2bin.verbose = "unsigned integer -> binary"
     litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
     i = int(i)
     if i < 0:
@@ -83,7 +83,7 @@ def intSign2bin(i, sz, **kwargs):
     If ``pad`` is int, pads to ``pad`` characters.
     Set `pad`` to ``None`` or ``False`` for no padding.
     """
-    intSign2bin.verbose = "-> binary"
+    intSign2bin.verbose = "signed integer -> binary"
     litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
     sz = int(sz)*8
     i = int(i)
@@ -102,7 +102,7 @@ def bin2int(b, **kwargs):
     """
     Give bits ``b`` as str or '0b001', returns int
     """
-    bin2int.verbose = "-> unsigned integer"
+    bin2int.verbose = "binary -> unsigned integer"
     litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
     if litFucInd:
         b = b[::-1]
@@ -112,7 +112,7 @@ def bin2intSign(b, **kwargs):
     """
     Give bits ``b`` as str or '0b001', returns signed int
     """
-    bin2intSign.verbose = "-> signed integer"
+    bin2intSign.verbose = "binary -> signed integer"
     litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
     if litFucInd:
         b = b[::-1]
@@ -127,7 +127,7 @@ def bin2hex(b, pad=0, **kwargs):
     """
     Give bits ``b`` as str or '0b001', returns chars
     """
-    bin2hex.verbose = "-> hexadecimal"
+    bin2hex.verbose = "binary -> hexadecimal"
     return int2hex(bin2int(b), pad=pad)
 
 def hex2bin(h, pad=True, **kwargs):
@@ -137,14 +137,14 @@ def hex2bin(h, pad=True, **kwargs):
     If ``pad`` is int, pads to ``pad`` characters.
     Set `pad`` to ``None`` or ``False`` for no padding.
     """
-    hex2bin.verbose = "-> unsigned integer"
+    hex2bin.verbose = "hexadecimal -> binary"
     return int2bin(hex2int(h), pad=pad)
 
 def hex2int(h, **kwargs):
     """
     Give hex ``h`` as chars '\xf0', returns int
     """
-    hex2int.verbose = "-> unsigned integer"
+    hex2int.verbose = "hexadecimal -> unsigned integer"
     litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
     if len(h) == 1:
         return ord(h)
@@ -156,7 +156,7 @@ def hex2intSign(h, **kwargs):
     """
     Give hex ``h`` as chars '\xf0', returns signed int
     """
-    hex2intSign.verbose = "-> signed integer"
+    hex2intSign.verbose = "hexadecimal -> signed integer"
     i = hex2int(h)
     half = 2**(len(h)*8-1)
     if i < half:
@@ -168,7 +168,7 @@ def int2hex(i, pad=0, **kwargs):
     """
     Give an int, returns chars
     """
-    int2hex.verbose = "-> hexadecimal"
+    int2hex.verbose = "unsigned integer -> hexadecimal"
     litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
     hx = hex(i)[2:].replace('L', '')  # replace if long int
     hx = Byt(binascii.unhexlify(('0' * (len(hx) % 2)) + hx))
@@ -183,7 +183,7 @@ def intSign2hex(i, sz):
     Give a signed int ``i`` as int or str with its size ``sz`` in
     octet, returns chars
     """
-    intSign2hex.verbose = "-> hexadecimal"
+    intSign2hex.verbose = "signed integer -> hexadecimal"
     sz = int(sz)
     i = int(i)
     half = 2**(sz*8-1)

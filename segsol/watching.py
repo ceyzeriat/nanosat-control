@@ -33,6 +33,7 @@ from ctrl.utils.report import REPORTS
 from ctrl.utils import PIDWatchDog
 from ctrl.ccsds import TMUnPacker
 from ctrl.ccsds import param_ccsds
+from ctrl.xdisp import watchdog
 import param
 from param import param_category
 from param import param_all
@@ -45,6 +46,7 @@ WATCH_TRANS = None
 WATCH_REC_LISTEN = None
 WATCH_REC_CONTROL = None
 WATCH_REC_SAVE = None
+DISP = watchdog.Xdisp()
 watch_running = False
 PIDS = {}
 
@@ -99,7 +101,7 @@ def process_report(data):
             print('Tried to unpack.. but an error occurred')
             return
         param_ccsds.disp(hd)
-        cat_params = param_category.TABLEDATACRUNCHING.get(\
+        cat_params = param_category.FILEDATACRUNCHING.get(\
                             hd[param_ccsds.PACKETCATEGORY.name], None)
         if cat_params is not None:
             getattr(param, cat_params).disp(hdx=hdx, data=dd)
@@ -122,6 +124,7 @@ def broadcast(key, **kwargs):
     """
     r = REPORTS[key].disp(**kwargs)
     print('Reporting: {}'.format(r))
+    core.append_logfile(r)
     rp = REPORTS[key].pack(**kwargs)
     return WATCH_TRANS.tell(rp)
 
@@ -134,6 +137,7 @@ def init_watch():
     global WATCH_REC_LISTEN
     global WATCH_REC_CONTROL
     global WATCH_REC_SAVE
+    global DISP
     global watch_running
     if watch_running:
         return
@@ -156,6 +160,8 @@ def init_watch():
                                     connectWait=0.5,
                                     portname=param_all.SAVINGPORT[1])
     watch_running = True
+    DISP.start()
+
 
 
 def close_watch():
@@ -166,6 +172,7 @@ def close_watch():
     global WATCH_REC_LISTEN
     global WATCH_REC_CONTROL
     global WATCH_REC_SAVE
+    global DISP
     global watch_running
     if not watch_running:
         return
@@ -181,3 +188,4 @@ def close_watch():
     WATCH_REC_LISTEN = None
     WATCH_REC_CONTROL = None
     WATCH_REC_SAVE = None
+    DISP = None

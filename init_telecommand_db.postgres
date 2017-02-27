@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS emitters
 ALTER TABLE emitters OWNER TO picsat_admin;
 GRANT ALL ON emitters TO picsat_admin;
 GRANT select ON emitters TO picsat_read, picsat_edit;
+GRANT select ON emitters TO picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS commands
@@ -18,6 +19,7 @@ CREATE TABLE IF NOT EXISTS commands
 ALTER TABLE commands OWNER TO picsat_admin;
 GRANT ALL ON commands TO picsat_admin;
 GRANT select ON commands TO picsat_read, picsat_edit;
+GRANT select ON commands TO picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS pids
@@ -30,6 +32,7 @@ CREATE TABLE IF NOT EXISTS pids
 ALTER TABLE pids OWNER TO picsat_admin;
 GRANT ALL ON pids TO picsat_admin;
 GRANT select ON pids TO picsat_read, picsat_edit;
+GRANT select ON pids TO picsat_edit;
 CREATE INDEX ON pids(level_flag);
 CREATE INDEX ON pids(payload_flag);
 
@@ -62,6 +65,7 @@ CREATE TABLE IF NOT EXISTS telecommands
 ALTER TABLE telecommands OWNER TO picsat_admin;
 GRANT ALL ON telecommands TO picsat_admin;
 GRANT select ON telecommands TO picsat_read, picsat_edit;
+GRANT select ON telecommands TO picsat_edit;
 CREATE INDEX ON telecommands(time_sent);
 CREATE INDEX ON telecommands(payload_flag);
 CREATE INDEX ON telecommands(level_flag);
@@ -72,6 +76,9 @@ CREATE INDEX ON telecommands(reqack_format);
 CREATE INDEX ON telecommands(reqack_execution);
 CREATE INDEX ON telecommands(telecommand_id);
 CREATE INDEX ON telecommands(emitter_id);
+CREATE INDEX ON telecommands(ack_reception_id);
+CREATE INDEX ON telecommands(ack_format_id);
+CREATE INDEX ON telecommands(ack_execution_id);
 ALTER TABLE telecommands ADD FOREIGN KEY (pid) REFERENCES pids (name);
 ALTER TABLE telecommands ADD FOREIGN KEY (emitter_id) REFERENCES emitters (id);
 ALTER TABLE telecommands ADD FOREIGN KEY (telecommand_id) REFERENCES commands (id);
@@ -87,6 +94,7 @@ CREATE TABLE IF NOT EXISTS telecommand_data
 ALTER TABLE telecommand_data OWNER TO picsat_admin;
 GRANT ALL ON telecommand_data TO picsat_admin;
 GRANT select ON telecommand_data TO picsat_read, picsat_edit;
+GRANT select ON telecommand_data TO picsat_edit;
 ALTER TABLE telecommand_data ADD FOREIGN KEY (id) REFERENCES telecommands (id);
 
 
@@ -98,6 +106,7 @@ CREATE TABLE IF NOT EXISTS packet_categories
 ALTER TABLE packet_categories OWNER TO picsat_admin;
 GRANT ALL ON packet_categories TO picsat_admin;
 GRANT select ON packet_categories TO picsat_read, picsat_edit;
+GRANT select ON packet_categories TO picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS receivers
@@ -112,6 +121,7 @@ CREATE TABLE IF NOT EXISTS receivers
 ALTER TABLE receivers OWNER TO picsat_admin;
 GRANT ALL ON receivers TO picsat_admin;
 GRANT select ON receivers TO picsat_read, picsat_edit;
+GRANT select ON receivers TO picsat_edit;
 
 
 INSERT INTO commands (id, name) VALUES (1,'echo');
@@ -149,6 +159,7 @@ CREATE TABLE IF NOT EXISTS telemetries
 ALTER TABLE telemetries OWNER TO picsat_admin;
 GRANT ALL ON telemetries TO picsat_admin;
 GRANT select ON telemetries TO picsat_read, picsat_edit;
+GRANT select ON telemetries TO picsat_edit;
 CREATE INDEX ON telemetries(time_sent);
 CREATE INDEX ON telemetries(time_received);
 CREATE INDEX ON telemetries(time_saved);
@@ -173,6 +184,8 @@ CREATE TABLE IF NOT EXISTS tmcat_rcp_acknowledgements
 ALTER TABLE tmcat_rcp_acknowledgements OWNER TO picsat_admin;
 GRANT ALL ON tmcat_rcp_acknowledgements TO picsat_admin;
 GRANT select ON tmcat_rcp_acknowledgements TO picsat_read, picsat_edit;
+GRANT select ON tmcat_rcp_acknowledgements TO picsat_edit;
+CREATE INDEX ON tmcat_rcp_acknowledgements(telemetry_packet);
 ALTER TABLE tmcat_rcp_acknowledgements ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
 
 
@@ -187,6 +200,8 @@ CREATE TABLE IF NOT EXISTS tmcat_fmt_acknowledgements
 ALTER TABLE tmcat_fmt_acknowledgements OWNER TO picsat_admin;
 GRANT ALL ON tmcat_fmt_acknowledgements TO picsat_admin;
 GRANT select ON tmcat_fmt_acknowledgements TO picsat_read, picsat_edit;
+GRANT select ON tmcat_fmt_acknowledgements TO picsat_edit;
+CREATE INDEX ON tmcat_fmt_acknowledgements(telemetry_packet);
 CREATE INDEX ON tmcat_fmt_acknowledgements(telecommand_id);
 CREATE INDEX ON tmcat_fmt_acknowledgements(packet_id_mirror);
 CREATE INDEX ON tmcat_fmt_acknowledgements(error_code);
@@ -205,6 +220,8 @@ CREATE TABLE IF NOT EXISTS tmcat_exe_acknowledgements
 ALTER TABLE tmcat_exe_acknowledgements OWNER TO picsat_admin;
 GRANT ALL ON tmcat_exe_acknowledgements TO picsat_admin;
 GRANT select ON tmcat_exe_acknowledgements TO picsat_read, picsat_edit;
+GRANT select ON tmcat_exe_acknowledgements TO picsat_edit;
+CREATE INDEX ON tmcat_exe_acknowledgements(telemetry_packet);
 CREATE INDEX ON tmcat_exe_acknowledgements(telecommand_id);
 CREATE INDEX ON tmcat_exe_acknowledgements(packet_id_mirror);
 CREATE INDEX ON tmcat_exe_acknowledgements(error_code);
@@ -224,6 +241,8 @@ CREATE TABLE IF NOT EXISTS tmcat_debugs
 ALTER TABLE tmcat_debugs OWNER TO picsat_admin;
 GRANT ALL ON tmcat_debugs TO picsat_admin;
 GRANT select ON tmcat_debugs TO picsat_read, picsat_edit;
+GRANT select ON tmcat_debugs TO picsat_edit;
+CREATE INDEX ON tmcat_debugs(telemetry_packet);
 
 ALTER TABLE tmcat_debugs ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
 
@@ -250,29 +269,77 @@ CREATE TABLE IF NOT EXISTS tmcat_hf_sciences
 ALTER TABLE tmcat_hf_sciences OWNER TO picsat_admin;
 GRANT ALL ON tmcat_hf_sciences TO picsat_admin;
 GRANT select ON tmcat_hf_sciences TO picsat_read, picsat_edit;
+GRANT select ON tmcat_hf_sciences TO picsat_edit;
+CREATE INDEX ON tmcat_hf_sciences(telemetry_packet);
 ALTER TABLE tmcat_hf_sciences ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
 
 
 -- ###########################################
 
-CREATE TABLE IF NOT EXISTS tmcat_hk_payload
+CREATE TABLE IF NOT EXISTS tmcat_payload_hks
 (
 	id 					serial PRIMARY KEY,
-	telemetry_packet	integer UNIQUE,
-	volt_5V				real,
-	current_5V			real,
-	current_3V			real,
-	volt_piezo			real,
-	current_piezo		real,
-	current_peltier		real,
-	temp_diode			real,
-	voltage_peltier_err	real,
-	voltage_peltier 	real,
-	temp1				real,
-	temp2				real,
-	temp3				real,
+	telemetry_packet	integer UNIQUE
+);
+ALTER TABLE tmcat_payload_hks OWNER TO picsat_admin;
+GRANT ALL ON tmcat_payload_hks TO picsat_admin;
+GRANT select ON tmcat_payload_hks TO picsat_read, picsat_edit;
+GRANT select ON tmcat_payload_hks TO picsat_edit;
+CREATE INDEX ON tmcat_payload_hks(telemetry_packet);
+ALTER TABLE tmcat_payload_hks ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+
+
+CREATE TABLE IF NOT EXISTS data_payload_hks
+(
+	id 						serial PRIMARY KEY,
+	telemetry_packet		integer UNIQUE,
+	volt_5V					real,
+	current_5V				real,
+	current_3V				real,
+	volt_piezo				real,
+	current_piezo			real,
+	current_peltier			real,
+	temp_diode				real,
+	voltage_peltier_err		real,
+	voltage_peltier 		real,
+	temp1					real,
+	temp2					real,
+	temp3					real,
+	f_volt_5V				boolean DEFAULT FALSE,
+	f_current_5V			boolean DEFAULT FALSE,
+	f_current_3V			boolean DEFAULT FALSE,
+	f_volt_piezo			boolean DEFAULT FALSE,
+	f_current_piezo			boolean DEFAULT FALSE,
+	f_current_peltier		boolean DEFAULT FALSE,
+	f_temp_diode			boolean DEFAULT FALSE,
+	f_voltage_peltier_err	boolean DEFAULT FALSE,
+	f_voltage_peltier 		boolean DEFAULT FALSE,
+	f_temp1					boolean DEFAULT FALSE,
+	f_temp2					boolean DEFAULT FALSE,
+	f_temp3					boolean DEFAULT FALSE,
+);
+ALTER TABLE data_payload_hks OWNER TO picsat_admin;
+GRANT ALL ON data_payload_hks TO picsat_admin;
+GRANT select ON data_payload_hks TO picsat_read, picsat_edit;
+GRANT select ON data_payload_hks TO picsat_edit;
+CREATE INDEX ON data_payload_hks(telemetry_packet);
+ALTER TABLE data_payload_hks ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+
+
+CREATE TABLE IF NOT EXISTS data_hf_sciences
+(
+	id 					serial PRIMARY KEY,
+	telemetry_packet	integer,
+	step				integer,
+	counts				integer,
+	x_com				integer,
+	y_com				integer,
+	x_pos				integer,
+	y_pos				integer 
 );
 ALTER TABLE tmcat_hk_payload OWNER TO picsat_admin;
 GRANT ALL ON tmcat_hk_payload TO picsat_admin;
 GRANT select ON tmcat_hk_payload TO picsat_read, picsat_edit;
+GRANT select ON tmcat_hk_payload TO picsat_edit;
+CREATE INDEX ON data_hf_sciences(telemetry_packet);
 ALTER TABLE tmcat_hk_payload ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);

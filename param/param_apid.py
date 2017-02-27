@@ -54,6 +54,7 @@ PIDREGISTRATION_PLD = {     'hkPayload': 2,
                             'bootloader': 0}
 
 
+# pid string as key, int as value
 PIDREGISTRATION = {}
 PLDREGISTRATION = {}
 LVLREGISTRATION = {}
@@ -75,6 +76,7 @@ for k, v in PIDREGISTRATION_PLD.items():
 
 # PIDREGISTRATION_REV[v][pld][lvl]
 
+# pld, lvl and pid ints as keys, pid string as output
 PIDREGISTRATION_REV = {}
 for k, v in PIDREGISTRATION_OBC_L0.items():
     if not v in PIDREGISTRATION_REV.keys():

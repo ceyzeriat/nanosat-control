@@ -134,14 +134,26 @@ TABLECATEGORY = {   0: 'TmcatRcpAcknowledgement',
                     1: 'TmcatFmtAcknowledgement',
                     2: 'TmcatExeAcknowledgement',
                     3: 'TmcatDebug',
-                    4: 'TmcatHkPayload',
+                    4: 'TmcatPayloadHk',
                     5: 'TmcatHfScience',
                     6: '',
                     7: '',
                     8: '',
                     9: ''}
 
-TABLEDATACRUNCHING = {  0: None,
+TABLEDATA = {   0: None,
+                1: None,
+                2: None,
+                3: None,
+                4: 'DataPayloadHk',
+                5: 'DataHfScience',
+                6: None,
+                7: None,
+                8: None,
+                9: None}
+
+
+FILEDATACRUNCHING = {   0: None,
                         1: None,
                         2: None,
                         3: None,

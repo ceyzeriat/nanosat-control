@@ -134,7 +134,7 @@ class CCSDSUnPacker(object):
         * packet (byts): the string that contains the full packet
         * hds (int): the packet headers
         """
-        data = {}
+        data = {'all': Byt(), 'unpacked': {}}
         start = param_ccsds.HEADER_P_KEYS.size
         if self.mode == 'telemetry':
             start += param_ccsds.HEADER_S_KEYS_TELEMETRY.size
@@ -143,7 +143,7 @@ class CCSDSUnPacker(object):
         cat = hds[param_ccsds.PACKETCATEGORY.name]
         start += param_category.PACKETCATEGORYSIZES[cat]
         data['all'] = packet[start:]
-        cat_params = param_category.TABLEDATACRUNCHING[cat]
+        cat_params = param_category.FILEDATACRUNCHING[cat]
         if cat_params is None:
             return data  # no specifics for unpacking data
         else:

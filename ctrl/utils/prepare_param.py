@@ -65,6 +65,10 @@ for _byte in range(256):
     CRC32TABLE.append(_byte)
 
 if not JUSTALIB:
+    LOGFILE = home_dir(*LOGFILE)
+    if not os.path.isfile(LOGFILE):
+        open(LOGFILE, mode='w').close()
+
     TELEMETRYDUMPFOLDER = home_dir(*TELEMETRYDUMPFOLDER)
     if not os.path.exists(TELEMETRYDUMPFOLDER):
         TELEMETRYDUMPFOLDER = None
