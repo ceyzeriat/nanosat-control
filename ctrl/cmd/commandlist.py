@@ -198,11 +198,12 @@ class CommandList(object):
                             or item['name'].lower() in allnames:
                     raise cmdexception.RedundantCm(i=item['number'],
                                                    n=item['name'])
-                else:
-                    copyitem = dict(item)
-                    copyitem.pop('n_nparam')
-                    to_add.append(Command(**copyitem))
-                    cnt += 1
+                copyitem = dict(item)
+                copyitem.pop('n_nparam')
+                to_add.append(Command(**copyitem))
+                cnt += 1
+                allids.append(item['number'])
+                allnames.append(item['name'])
         else:
             self.allcmds += to_add
             print("Added {:d} commands from CSV".format(cnt))
