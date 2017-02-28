@@ -33,7 +33,7 @@ REPORTSDATA = [
         ['who', 'port']),
     ('newTransConnection', "Port '{who}' got a new receiver: '{rec}'",
         ['who', 'rec']),
-    ('broadcastTC', "'{who}' broadcasting TC '{command}' dbid '{dbid}'",
+    ('broadcastTC', "'{who}' broadcasting TC '{cmdname}' dbid '{dbid}'",
         ['who', 'dbid']),
     ('sendingTC', "'{who}' is sending TC",
         ['who']),

@@ -37,6 +37,7 @@ from ctrl.xdisp import watchdog
 import param
 from param import param_category
 from param import param_all
+from ctrl.xdisp.watchdog import XDISP
 
 
 __all__ = ['init_watch', 'close_watch']
@@ -46,7 +47,6 @@ WATCH_TRANS = None
 WATCH_REC_LISTEN = None
 WATCH_REC_CONTROL = None
 WATCH_REC_SAVE = None
-DISP = watchdog.Xdisp()
 watch_running = False
 PIDS = {}
 
@@ -94,17 +94,17 @@ def process_report(data):
                                 timeout=param_all.PROCESSTIMEOUT,
                                 whenDead=revive_process, whenAlive=say_hi,
                                 who=who)
-    elif key =='GotBlob':
-        try:
-            hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']), retdbvalues=True)
-        except:
-            print('Tried to unpack.. but an error occurred')
-            return
-        param_ccsds.disp(hd)
-        cat_params = param_category.FILEDATACRUNCHING.get(\
-                            hd[param_ccsds.PACKETCATEGORY.name], None)
-        if cat_params is not None:
-            getattr(param, cat_params).disp(hdx=hdx, data=dd)
+    #elif key =='GotBlob':
+        #try:
+            #hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']), retdbvalues=True)
+        #except:
+            #print('Tried to unpack.. but an error occurred')
+            #return
+        #print(param_ccsds.disp(hd))
+        #cat_params = param_category.FILEDATACRUNCHING.get(\
+                            #hd[param_ccsds.PACKETCATEGORY.name], None)
+        #if cat_params is not None:
+            #print(getattr(param, cat_params).disp(hdx=hdx, data=dd))
     else:
         pass
 
@@ -123,7 +123,8 @@ def broadcast(key, **kwargs):
     Broacasts info
     """
     r = REPORTS[key].disp(**kwargs)
-    print('Reporting: {}'.format(r))
+    print(r)
+    XDISP.report(r)
     core.append_logfile(r)
     rp = REPORTS[key].pack(**kwargs)
     return WATCH_TRANS.tell(rp)
@@ -137,7 +138,7 @@ def init_watch():
     global WATCH_REC_LISTEN
     global WATCH_REC_CONTROL
     global WATCH_REC_SAVE
-    global DISP
+    global XDISP
     global watch_running
     if watch_running:
         return
@@ -160,7 +161,8 @@ def init_watch():
                                     connectWait=0.5,
                                     portname=param_all.SAVINGPORT[1])
     watch_running = True
-    #DISP.start()
+    #XDISP.start()
+    #close_watch()
 
 
 
@@ -172,7 +174,7 @@ def close_watch():
     global WATCH_REC_LISTEN
     global WATCH_REC_CONTROL
     global WATCH_REC_SAVE
-    global DISP
+    global XDISP
     global watch_running
     if not watch_running:
         return
@@ -188,4 +190,4 @@ def close_watch():
     WATCH_REC_LISTEN = None
     WATCH_REC_CONTROL = None
     WATCH_REC_SAVE = None
-    DISP = None
+    XDISP = None

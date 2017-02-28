@@ -49,13 +49,13 @@ class ControlTrans(SocTransmitter):
         report('myPID', pid=core.get_pid())
 
 
-def broadcast_TC(dbid, packet):
+def broadcast_TC(cmdname, dbid, packet):
     """
     Sends the packet on the socket
     """
     if not control_running:
         raise ctrlexception.ControllingNotInitialized()
-    report('broadcastTC', command=command, dbid=dbid)
+    report('broadcastTC', cmdname=cmdname, dbid=dbid)
     # add the AX25/KISS framing
     if param_all.AX25ENCAPS:
         packet = Framer.encode_radio(packet)
@@ -84,8 +84,8 @@ def init_control():
     if control_running:
         return
     CONTROL_TRANS = ControlTrans(port=param_all.CONTROLLINGPORT[0],
-                            nreceivermax=len(param_all.CONTROLLINGPORTLISTENERS),
-                            start=True, portname=param_all.CONTROLLINGPORT[1])
+                        nreceivermax=len(param_all.CONTROLLINGPORTLISTENERS),
+                        start=True, portname=param_all.CONTROLLINGPORT[1])
     control_running = True
 
 

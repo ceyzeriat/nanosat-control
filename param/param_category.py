@@ -69,32 +69,32 @@ ERRORCODE = dict(       name='error_code',
 ACQMODE = dict(         name='acq_mode',
                         start=0,
                         l=1,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin)
+                        fctunpack=bincore.hex2int,
+                        fctpack=bincore.int2hex)
 
 INTEGRATIONTIME = dict( name='integration_time',
                         start=1,
                         l=2,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin)
+                        fctunpack=bincore.hex2int,
+                        fctpack=bincore.int2hex)
 
 MODULATION = dict(      name='modulation',
                         start=3,
                         l=1,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin)
+                        fctunpack=bincore.hex2int,
+                        fctpack=bincore.int2hex)
 
 RADIUS = dict(          name='radius',
                         start=4,
                         l=2,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin)
+                        fctunpack=bincore.hex2int,
+                        fctpack=bincore.int2hex)
 
 NPOINTS = dict(         name='n_points',
                         start=6,
                         l=1,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin)
+                        fctunpack=bincore.hex2int,
+                        fctpack=bincore.int2hex)
 
 
 CATEGORY_0 = CCSDSTrousseau([], octets=False)  # Rec Ack, NO HEADER
