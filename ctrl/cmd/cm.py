@@ -68,7 +68,7 @@ class Cm(object):
         self._params = []
         for idx, item in enumerate(self._param):
             if len(item) < param_commands.MINLENPARAMSTRUCTURE:
-                raise cmdexception.WrongParameterDefinition(self.name, item[0])
+                raise cmdexception.WrongParameterDefinition(item[0], 'all')
             p = Parameter(*item)
             self._params.append(p)
             setattr(self, "p_{}_{}".format(idx, p.name), self._params[-1])

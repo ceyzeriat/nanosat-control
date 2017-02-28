@@ -168,10 +168,17 @@ class CommandList(object):
                     item['name'],
                     len(item['param']),
                     item['lparam'] if item['lparam'] is not None else "*"))
+            if item['pid'] not in param_apid.PIDREGISTRATION.keys():
+                print("!!!! Issue, PID is unknown (case sensitive)")
+            if core.clean_name(item['name']) != item['name']:
+                print("!!!! Issue, your name is not code friendly")
             if len(item['param']) != item['n_nparam']:
                 print("!!!! Issue, length of param is different from lparam")
-            if item['pid'] not in param_apid.PIDREGISTRATION.keys():
-                print("!!!! Issue, PID is unknown")
+            for itemp in item['param']:
+                if len(itemp[0]) > param_commands.LENPARAMNAME:
+                    print("!!!! Issue, param name is too long")
+                if core.clean_name(itemp[0]) != itemp[0]:
+                    print("!!!! Issue, param name is not code friendly")
 
     def addCSV(self, ids_to_add=[]):
         """

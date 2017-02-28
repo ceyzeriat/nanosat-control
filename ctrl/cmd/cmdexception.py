@@ -100,10 +100,10 @@ class WrongParameterDefinition(CMDException):
     """
     If a param of a command is badly defined
     """
-    def __init__(self, cmd, par, *args, **kwargs):
-        self._init(cmd, par, *args, **kwargs)
+    def __init__(self, par, pro, *args, **kwargs):
+        self._init(par, pro, *args, **kwargs)
         self.message = "Bad parameter definition '{}', in "\
-                       "CMD '{}'".format(par, cmd)
+                       "parameter '{}'".format(pro, par)
 
 class InvalidParameterValue(CMDException):
     """

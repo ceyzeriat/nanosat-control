@@ -68,6 +68,10 @@ class Parameter(object):
                 rng = "{}{}{}".format(self.typ.minmax[0],
                                       param_commands.RANGESEPARATOR,
                                       self.typ.minmax[1])
+            elif rng.find(param_commands.LISTSEPARATOR) != -1:  # we got a list
+                rng = [item.strip()
+                        for item in rng.split(param_commands.LISTSEPARATOR)]
+            # if we have a min-max range
             if core.isStr(rng):
                 self._rng = rng.split(param_commands.RANGESEPARATOR)[:2]
                 self._rng = tuple([core.to_num(item) for item in self._rng])
@@ -83,7 +87,7 @@ class Parameter(object):
                                                                     'rng')
                 self._rngdisp = "[{}--{}]".format(*self.rng)
             elif hasattr(rng, "__iter__"):
-                self._rng = list(rng)
+                self._rng = list(map(core.to_num, rng))
                 for item in self.rng:
                     if self.typ.typ != 'str':
                         if not self.typ.is_valid(item):
