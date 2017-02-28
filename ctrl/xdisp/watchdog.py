@@ -174,7 +174,7 @@ class Xdisp(object):
         self.RP.move(0, 0)
         self.RP.insertln()
         self.RP.addstr(0, 0, '{} {}'.format(core.now().strftime('%T'),\
-                                            message))
+                                            message), self.WHITE)
         self.RP.refresh()
 
     def set_TC_sent(self, dbid, statut):

@@ -94,6 +94,11 @@ def process_report(data):
                                 timeout=param_all.PROCESSTIMEOUT,
                                 whenDead=revive_process, whenAlive=say_hi,
                                 who=who)
+    elif key =='broadcastTC':
+        pass
+
+        #XDISP.add_TC(dbid=dbid, cmdname=self.name, hd=hd, hdx=hdx, inputs=inputs)
+        
     #elif key =='GotBlob':
         #try:
             #hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']), retdbvalues=True)
@@ -124,7 +129,7 @@ def broadcast(key, **kwargs):
     """
     r = REPORTS[key].disp(**kwargs)
     print(r)
-    XDISP.report(r)
+    ### XDISP.report(r)
     core.append_logfile(r)
     rp = REPORTS[key].pack(**kwargs)
     return WATCH_TRANS.tell(rp)
@@ -161,8 +166,8 @@ def init_watch():
                                     connectWait=0.5,
                                     portname=param_all.SAVINGPORT[1])
     watch_running = True
-    #XDISP.start()
-    #close_watch()
+    ### XDISP.start()
+    ### close_watch()
 
 
 
@@ -190,4 +195,4 @@ def close_watch():
     WATCH_REC_LISTEN = None
     WATCH_REC_CONTROL = None
     WATCH_REC_SAVE = None
-    XDISP = None
+    ### XDISP = None

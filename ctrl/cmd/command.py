@@ -32,7 +32,6 @@ from ..utils import core
 from ..telecommand import Telecommand
 from .. import db
 from segsol.controlling import broadcast_TC
-from ..xdisp.watchdog import XDISP
 
 
 __all__ = ['Command']
@@ -91,8 +90,6 @@ class Command(Cm):
         dbid = db.save_TC_to_DB(hd=hd, hdx=hdx, inputs=inputs)
         # broadcast on socket to the antenna process and watchdog
         dum = broadcast_TC(cmdname=self.name, dbid=dbid, packet=packet)
-        XDISP.add_TC(dbid=dbid, cmdname=self.name, hd=hd, hdx=hdx,
-                        inputs=inputs)
         return Telecommand(dbid=dbid)
 
     def show(self, *args, **kwargs):
