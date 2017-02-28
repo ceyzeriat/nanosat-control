@@ -55,7 +55,7 @@ def broadcast_TC(dbid, packet):
     """
     if not control_running:
         raise ctrlexception.ControllingNotInitialized()
-    report('broadcastTC', dbid=dbid)
+    report('broadcastTC', command=command, dbid=dbid)
     # add the AX25/KISS framing
     if param_all.AX25ENCAPS:
         packet = Framer.encode_radio(packet)

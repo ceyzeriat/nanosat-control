@@ -89,7 +89,7 @@ class Command(Cm):
         # save in database
         dbid = db.save_TC_to_DB(hd=hd, hdx=hdx, inputs=inputs)
         # broadcast on socket to the antenna process and watchdog
-        dum = broadcast_TC(dbid=dbid, packet=packet)
+        dum = broadcast_TC(command=hd['telecommand_id'], dbid=dbid, packet=packet)
         return Telecommand(dbid=dbid)
 
     def show(self, *args, **kwargs):

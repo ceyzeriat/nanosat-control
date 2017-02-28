@@ -33,7 +33,7 @@ REPORTSDATA = [
         ['who', 'port']),
     ('newTransConnection', "Port '{who}' got a new receiver: '{rec}'",
         ['who', 'rec']),
-    ('broadcastTC', "'{who}' broadcasting TC id '{dbid}'",
+    ('broadcastTC', "'{who}' broadcasting TC '{command}' dbid '{dbid}'",
         ['who', 'dbid']),
     ('sendingTC', "'{who}' is sending TC",
         ['who']),
@@ -44,7 +44,7 @@ REPORTSDATA = [
     ('receivedCallsignTM', "'{who}' (callsign '{source}') received data of "\
         "length '{ll}' from callsign '{destination}' for saving",
         ['who', 'source', 'll', 'destination']),
-    ('savedTM', "'{who}' saved data under id '{dbid}'",
+    ('savedTM', "'{who}' saved data under dbid '{dbid}'",
         ['who', 'dbid']),
     ('myPID', "'{who}' has PID '{pid}'",
         ['who', 'pid']),
