@@ -26,10 +26,11 @@
 
 
 __all__ = ['param_apid', 'param_all', 'param_category', 'param_beacon',
-			'param_science_hf']
+			'param_science_hf', 'param_hk_payload']
 
 from . import param_apid
 from . import param_all
 from . import param_beacon
 from . import param_science_hf
+from . import param_hk_payload
 #from . import param_category  # circular import here

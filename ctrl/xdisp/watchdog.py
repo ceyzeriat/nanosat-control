@@ -91,16 +91,15 @@ class Xdisp(object):
         self.bar = curses.newwin(1, self.width, 0, 0)
         self.TC = newlinebox(8, self.width, 2, 0, "Telecommands")
         self.TM = newlinebox(8, self.width, 11, 0, "Telemetries")
-        self.report = newlinebox(8, self.width, 20, 0, "Reporting")
+        self.RP = newlinebox(8, self.width, 20, 0, "Reporting")
         self.set_controlico(status=self.NOSTARTED)
         self.set_saveico(status=self.NOSTARTED)
         self.set_listenico(status=self.NOSTARTED)
-        self.set_time()
         self.TC.refresh()
         self.TM.refresh()
         self.running = True
-        self.start_set_time(3)
-        self.loopit()
+        self._start_set_time(3)
+        self._loopit()
 
     def set_controlico(self, status):
         self.bar.addstr(0, CONTROLICO[0], CONTROLICO[1], status)
@@ -111,7 +110,7 @@ class Xdisp(object):
     def set_listenico(self, status):
         self.bar.addstr(0, LISTENICO[0], LISTENICO[1], status)
 
-    def start_set_time(self, freq=3):
+    def _start_set_time(self, freq=3):
         loopy = Thread(target=loop_time, args=(self, float(freq)))
         loopy.daemon = True
         loopy.start()
@@ -135,13 +134,13 @@ class Xdisp(object):
         self.ALIVE = self.GREEN
         self.DEAD = self.RED
         
-    def loopit(self):
+    def _loopit(self):
         while self.running:
-            self.report.addstr(0, 0, ">")
-            self.report.clrtoeol()
-            s = self.report.getstr()
+            self.RP.addstr(0, 0, ">")
+            self.RP.clrtoeol()
+            s = self.RP.getstr()
             if s == "q":
                 self.running = False
-            self.report.insertln()
-            self.report.addstr(1, 0, "[" + s + "]")
+            self.RP.insertln()
+            self.RP.addstr(1, 0, "[" + s + "]")
         self.running = False

@@ -26,6 +26,7 @@
 
 
 import param
+from byt import Byt
 from param import param_category
 from ..utils import bincore
 from . import ccsdsexception

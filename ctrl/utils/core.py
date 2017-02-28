@@ -202,6 +202,15 @@ def is_reporting(data):
         return True
     return False
 
+def rchop(txt, ending):
+    """
+    Removes ``ending`` at the end of ``txt`` and returns the shortened string
+    """
+    if txt.lower().endswith(ending.lower()):
+        return txt[:-len(ending)]
+    else:
+        return txt
+
 def to_num(v):
     if not isStr(v):
         return v

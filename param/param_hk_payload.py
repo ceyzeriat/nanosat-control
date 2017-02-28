@@ -34,21 +34,6 @@ from ctrl.utils import bincore
 __all__ = ['TROUSSEAU']
 
 
-V_KEYS = [  dict(name='volt_5V', start=16, l=16, fctunpack=volt_line_unpack, fctpack=volt_line_pack),
-            dict(name='current_5V', start=32, l=16, fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='current_3V', start=48, l=16, fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='volt_piezo', start=64, l=16, fctunpack=volt_piezo_unpack, fctpack=volt_piezo_pack),
-            dict(name='current_piezo', start=80, l=16, fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='voltage_peltier', start=144, l=16, fctunpack=volt_peltier_unpack, fctpack=volt_peltier_pack),
-            dict(name='current_peltier', start=96, l=16, fctunpack=current_peltier_unpack, fctpack=current_peltier_pack),
-            dict(name='temp_diode', start=112, l=16, fctunpack=temp_diode_unpack, fctpack=temp_diode_pack),
-            dict(name='voltage_peltier_err', start=128, l=16, fctunpack=volt_peltier_err_unpack, fctpack=volt_peltier_err_pack),
-            dict(name='temp1', start=160, l=16, fctunpack=temp_unpack, fctpack=temp_pack),
-            dict(name='temp2', start=176, l=16, fctunpack=temp_unpack, fctpack=temp_pack),
-            dict(name='temp3', start=192, l=16, fctunpack=temp_unpack, fctpack=temp_pack),
-            ]
-
-
 def volt_line_unpack(v, **kwargs):
     volt_line_unpack.verbose = "(binary -> unsigned integer) * 0.00459"
     return bincore.bin2int(v) * 0.00459
@@ -56,7 +41,7 @@ def volt_line_unpack(v, **kwargs):
 
 def volt_line_pack(v, pad, **kwargs):
     volt_line_pack.verbose = "round(float / 0.00459) -> binary"
-    return bincore.int2bin(v / 0.00459, pad=pad)
+    return bincore.int2bin(np.round(v / 0.00459), pad=pad)
 
 
 def current_line_unpack(v, **kwargs):
@@ -66,7 +51,7 @@ def current_line_unpack(v, **kwargs):
 
 def current_line_pack(v, pad, **kwargs):
     current_line_pack.verbose = "round(float / 0.00161) -> binary"
-    return bincore.int2bin(v / 0.00161, pad=pad)
+    return bincore.int2bin(np.round(v / 0.00161), pad=pad)
 
 
 def volt_piezo_unpack(v, **kwargs):
@@ -76,7 +61,7 @@ def volt_piezo_unpack(v, **kwargs):
 
 def volt_piezo_pack(v, pad, **kwargs):
     volt_piezo_pack.verbose = "round(float / 3.3 * 4096 / 213.77) -> binary"
-    return bincore.int2bin(v / 3.3 * 4096.0 / 213.77, pad=pad)
+    return bincore.int2bin(np.round(v / 3.3 * 4096.0 / 213.77), pad=pad)
 
 
 def temp_unpack(v, **kwargs):
@@ -86,53 +71,69 @@ def temp_unpack(v, **kwargs):
 
 def temp_pack(v, pad, **kwargs):
     temp_pack.verbose = "round(float / 0.0625) -> binary"
-    return bincore.int2bin(v / 0.0625, pad=pad)
+    return bincore.int2bin(np.round(v / 0.0625), pad=pad)
 
 
 def volt_peltier_unpack(v, **kwargs):
-    temp_unpack.verbose = "(binary -> unsigned integer) * 3.3 / 4096"
+    volt_peltier_unpack.verbose = "(binary -> unsigned integer) * 3.3 / 4096"
     return bincore.bin2int(v) * 3.3 / 4096.0
 
 
 def volt_peltier_pack(v, pad, **kwargs):
-    temp_pack.verbose = "round(float / 3.3 * 4096.0) -> binary"
-    return bincore.int2bin(v / 3.3 * 4096.0, pad=pad)
+    volt_peltier_pack.verbose = "round(float / 3.3 * 4096.0) -> binary"
+    return bincore.int2bin(np.round(v / 3.3 * 4096), pad=pad)
 
 
 def current_peltier_unpack(v, Vref, **kwargs):
-    temp_unpack.verbose = "((binary -> unsigned integer) * 3.3 / 4096.0 - Voltage Peltier) / 0.00016"
+    current_peltier_unpack.verbose = "((binary -> unsigned integer) * 3.3 / 4096.0 - Voltage Peltier) / 0.00016"
     return (bincore.bin2int(v) * 3.3 / 4096.0 - Vref) / 0.00016
 
 
 def current_peltier_pack(v, Vref, pad, **kwargs):
-    temp_pack.verbose = "round((float * 0.00016 + Vref) * 4096 / 3.3) -> binary"
-    return bincore.int2bin((v * 0.00016 + Vref) * 4096 / 3.3, pad=pad)
+    current_peltier_pack.verbose = "round((float * 0.00016 + Vref) * 4096 / 3.3) -> binary"
+    return bincore.int2bin(np.round((v * 0.00016 + Vref) * 4096 / 3.3), pad=pad)
 
 
 def volt_peltier_err_unpack(v, Vref, **kwargs):
-    temp_unpack.verbose = "((binary -> unsigned integer) * 3.3 / 4096.0 - Voltage Peltier) / 25"
+    volt_peltier_err_unpack.verbose = "((binary -> unsigned integer) * 3.3 / 4096.0 - Voltage Peltier) / 25"
     return (bincore.bin2int(v) * 3.3 / 4096.0 - Vref) / 25
 
 
 def volt_peltier_err_pack(v, Vref, pad, **kwargs):
-    temp_pack.verbose = "round((float * 25 + Vref) * 4096 / 3.3) -> binary"
-    return bincore.int2bin((v * 25 + Vref) * 4096 / 3.3, pad=pad)
+    volt_peltier_err_pack.verbose = "round((float * 25 + Vref) * 4096 / 3.3) -> binary"
+    return bincore.int2bin(np.round((v * 25 + Vref) * 4096 / 3.3), pad=pad)
 
 
 def temp_diode_unpack(v, Vref, **kwargs):
-    temp_unpack.verbose = "293 / (293 / 2918.9 * LOG(50 / 11 * (binary -> unsigned integer) / (Voltage Peltier / 3.3 * 4096 - (binary -> unsigned integer))) + 1) - 273"
+    temp_diode_unpack.verbose = "293 / (293 / 2918.9 * LOG(50 / 11 * (binary -> unsigned integer) / (Voltage Peltier / 3.3 * 4096 - (binary -> unsigned integer))) + 1) - 273"
     X = bincore.bin2int(v)
     return 293 / (293 / 2918.9\
                     * np.log(50 / 11.0 * X / (Vref / 3.3 * 4096 - X)) + 1) - 273
 
 
 def temp_diode_pack(v, Vref, pad, **kwargs):
-    temp_pack.verbose = "round((Voltage Peltier / 3.3 * 4096) / (1 + 50 / (11 * np.exp(2918.9 / 293 * (293 / (float + 273.0) - 1))))) -> binary"
-    return bincore.int2bin((Vref / 3.3 * 4096) /\
+    temp_diode_pack.verbose = "round((Voltage Peltier / 3.3 * 4096) / (1 + 50 / (11 * np.exp(2918.9 / 293 * (293 / (float + 273.0) - 1))))) -> binary"
+    return bincore.int2bin(np.round(
+                            (Vref / 3.3 * 4096) /\
                             (1 + 50 /\
                                 (11 * np.exp(2918.9 / 293.0 *\
-                                                (293 / (T + 273.0) - 1)))),
+                                                (293 / (v + 273.0) - 1))))),
                            pad=pad)
+
+
+V_KEYS = [  dict(name='volt_5V', start=16, l=16, fctunpack=volt_line_unpack, fctpack=volt_line_pack),
+            dict(name='current_5V', start=32, l=16, fctunpack=current_line_unpack, fctpack=current_line_pack),
+            dict(name='current_3V', start=48, l=16, fctunpack=current_line_unpack, fctpack=current_line_pack),
+            dict(name='volt_piezo', start=64, l=16, fctunpack=volt_piezo_unpack, fctpack=volt_piezo_pack),
+            dict(name='current_piezo', start=80, l=16, fctunpack=current_line_unpack, fctpack=current_line_pack),
+            dict(name='volt_peltier', start=144, l=16, fctunpack=volt_peltier_unpack, fctpack=volt_peltier_pack),
+            dict(name='current_peltier', start=96, l=16, fctunpack=current_peltier_unpack, fctpack=current_peltier_pack),
+            dict(name='temp_diode', start=112, l=16, fctunpack=temp_diode_unpack, fctpack=temp_diode_pack),
+            dict(name='volt_peltier_err', start=128, l=16, fctunpack=volt_peltier_err_unpack, fctpack=volt_peltier_err_pack),
+            dict(name='temp1', start=160, l=16, fctunpack=temp_unpack, fctpack=temp_pack),
+            dict(name='temp2', start=176, l=16, fctunpack=temp_unpack, fctpack=temp_pack),
+            dict(name='temp3', start=192, l=16, fctunpack=temp_unpack, fctpack=temp_pack),
+            ]
 
 
 # names will be filled in automatically afterwards
@@ -155,7 +156,7 @@ F_KEYS = [  dict(name='-', start=4, l=1, fctunpack=bincore.bin2bool, fctpack=bin
 def value_to_flag_name(txt):
     return 'f_'+txt
 for idx, item in enumerate(V_KEYS):
-    F_KEYS[idx].name = value_to_flag_name(item.name)
+    F_KEYS[idx]['name'] = value_to_flag_name(item['name'])
 
 
 class HKPayloadCCSDSTrousseau(CCSDSTrousseau):

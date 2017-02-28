@@ -119,7 +119,7 @@ class CommandList(object):
                 if cm is not None:
                     ll.append(cm)
                 cm = {'number': int(line[param_commands.CSVNUMBER]),
-                        'name': _rchop(str(line[param_commands.CSVNAME])\
+                        'name': core.rchop(str(line[param_commands.CSVNAME])\
                                         .strip().replace(' ', '_'), '_TM'),
                         'pid': str(line[param_commands.CSVPID]).strip(),
                         'desc': str(line[param_commands.CSVDESC]).strip(),
@@ -215,9 +215,3 @@ class CommandList(object):
         core.save_json_cmds(param_commands.COMMANDSFILE,
                             cmds=[item.to_dict() for item in self.allcmds])
         print("Saved {:d} commands".format(len(self.allcmds)))
-
-def _rchop(txt, ending):
-    if txt.lower().endswith(ending.lower()):
-        return txt[:-len(ending)]
-    else:
-        return txt

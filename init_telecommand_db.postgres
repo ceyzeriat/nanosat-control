@@ -296,8 +296,8 @@ CREATE TABLE IF NOT EXISTS data_payload_hks
 	current_piezo			real,
 	current_peltier			real,
 	temp_diode				real,
-	voltage_peltier_err		real,
-	voltage_peltier 		real,
+	volt_peltier_err		real,
+	volt_peltier 			real,
 	temp1					real,
 	temp2					real,
 	temp3					real,
@@ -308,8 +308,8 @@ CREATE TABLE IF NOT EXISTS data_payload_hks
 	f_current_piezo			boolean DEFAULT FALSE,
 	f_current_peltier		boolean DEFAULT FALSE,
 	f_temp_diode			boolean DEFAULT FALSE,
-	f_voltage_peltier_err	boolean DEFAULT FALSE,
-	f_voltage_peltier 		boolean DEFAULT FALSE,
+	f_volt_peltier_err		boolean DEFAULT FALSE,
+	f_volt_peltier 			boolean DEFAULT FALSE,
 	f_temp1					boolean DEFAULT FALSE,
 	f_temp2					boolean DEFAULT FALSE,
 	f_temp3					boolean DEFAULT FALSE
@@ -340,6 +340,13 @@ GRANT select, insert, update ON data_hf_sciences TO picsat_edit;
 CREATE INDEX ON data_hf_sciences(telemetry_packet);
 ALTER TABLE data_hf_sciences ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
 
+
+-- ###########################################
+
+ALTER TABLE data_payload_hks RENAME voltage_peltier TO volt_peltier;
+ALTER TABLE data_payload_hks RENAME voltage_peltier_err TO volt_peltier_err;
+ALTER TABLE data_payload_hks RENAME f_voltage_peltier_err TO f_volt_peltier_err;
+ALTER TABLE data_payload_hks RENAME f_voltage_peltier TO f_volt_peltier;
 
 -- ###########################################
 
