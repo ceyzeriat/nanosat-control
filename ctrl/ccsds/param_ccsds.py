@@ -195,7 +195,7 @@ EMITTERID = CCSDSKey(   name='emitter_id',
 
 SIGNATURE = CCSDSKey(   name='signature',
                         start=16,
-                        l=128,
+                        l=32,  # 128
                         fctunpack=bincore.bin2hex,
                         fctpack=bincore.hex2bin)
 
@@ -204,11 +204,3 @@ HEADER_S_KEYS_TELECOMMAND = [REQACKRECEPTIONTELECOMMAND,
     EMITTERID, SIGNATURE]
 HEADER_S_KEYS_TELECOMMAND = CCSDSTrousseau(HEADER_S_KEYS_TELECOMMAND,
                                             octets=False)
-
-
-"""def disp(hd):
-    print("V: {ccsds_version}, T: {packet_type}, SHF: {secondary_header_flag}"\
-          ", P: {payload_flag}, L: {level_flag}, PID: {pid}, C: "\
-          "{packet_category}, S: {sequence_flag}, ID: {packet_id}, L: "\
-          "{data_length}\nDS: {days_since_ref}, MS: "\
-          "{ms_since_today}".format(**hd))"""

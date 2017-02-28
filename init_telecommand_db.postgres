@@ -124,7 +124,7 @@ GRANT select ON receivers TO picsat_read;
 GRANT select, insert, update ON receivers TO picsat_edit;
 
 
-INSERT INTO commands (id, name) VALUES (1,'echo');
+INSERT INTO commands (VALUES, name) VALUES (1,'echo');
 
 INSERT INTO emitters (id, name) VALUES (1,'Kirk');
 
@@ -370,6 +370,26 @@ GRANT ALL ON SEQUENCE tmcat_fmt_acknowledgements_id_seq TO picsat_edit;
 GRANT ALL ON SEQUENCE tmcat_hf_sciences_id_seq TO picsat_edit;
 GRANT ALL ON SEQUENCE tmcat_payload_hks_id_seq TO picsat_edit;
 GRANT ALL ON SEQUENCE tmcat_rcp_acknowledgements_id_seq TO picsat_edit;
+
+
+INSERT INTO commands VALUES (251, 'flash_write');
+INSERT INTO commands VALUES (250, 'flash_read');
+INSERT INTO commands VALUES (252, 'flash_erase');
+INSERT INTO commands VALUES (255, 'soft_reboot');
+INSERT INTO commands VALUES (253, 'launch_application_A');
+INSERT INTO commands VALUES (254, 'launch_application_B');
+INSERT INTO commands VALUES (260, 'move_piezo');
+INSERT INTO commands VALUES (262, 'hv_switch');
+INSERT INTO commands VALUES (264, 'diode_switch');
+INSERT INTO commands VALUES (266, 'dac_switch');
+INSERT INTO commands VALUES (268, 'tec_switch');
+INSERT INTO commands VALUES (270, 'set_param');
+INSERT INTO commands VALUES (272, 'get_param');
+INSERT INTO commands VALUES (274, 'change_mode');
+INSERT INTO commands VALUES (276, 'reset');
+INSERT INTO commands VALUES (278, 'set_datetime');
+INSERT INTO commands VALUES (280, 'start_hk');
+INSERT INTO commands VALUES (282, 'stop_hk');
 
 
 
