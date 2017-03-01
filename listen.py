@@ -78,10 +78,11 @@ else:
         if data is None:
             continue
         inbuff += data
-        res = core.split_flow(inbuff, 1)  # just take first packet
+        res = core.split_flow(inbuff, -1)
         if len(res) < 2:
             continue  # didn't find a full packet yet
-        packet, inbuff = res
-        proceed(packet)
+        inbuff = res.pop(-1)
+        for packet in res:
+            proceed(packet)
 
 sys.exit()

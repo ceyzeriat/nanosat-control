@@ -101,7 +101,8 @@ def process_report(data):
         
     elif key =='GotBlob':
         try:
-            hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']), retdbvalues=True)
+            hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']),\
+                                            retdbvalues=True)
         except:
             print('Tried to unpack.. but an error occurred')
             return
