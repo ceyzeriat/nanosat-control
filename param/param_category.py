@@ -96,6 +96,43 @@ NPOINTS = dict(         name='n_points',
                         fctunpack=bincore.hex2int,
                         fctpack=bincore.int2hex)
 
+REPPLDRACK  = dict(     name='requestAckReception',
+                        start=0,
+                        l=1,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
+REPPLDFACK  = dict(     name='requestAckFormat',
+                        start=1,
+                        l=1,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
+REPPLDEACK  = dict(     name='requestAckExecution',
+                        start=2,
+                        l=1,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
+REPPLDTCID  = dict(     name='telecommandID',
+                        start=3,
+                        l=10,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
+REPPLDEID   = dict(     name='emitterID',
+                        start=13,
+                        l=3,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
+REPPLDSF    = dict(     name='sequenceFlag',
+                        start=16,
+                        l=2,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
+REPPLDPKID  = dict(     name='PacketCounter',
+                        start=18,
+                        l=14,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin)
+
+
 
 CATEGORY_0 = CCSDSTrousseau([], octets=False)  # Rec Ack, NO HEADER
 CATEGORY_1 = CCSDSTrousseau([TELECOMMANDID, PACKETIDMIRROR, ERRORCODE], octets=False)  # Fmt Ack, 
@@ -103,7 +140,7 @@ CATEGORY_2 = CCSDSTrousseau([TELECOMMANDID, PACKETIDMIRROR, ERRORCODE], octets=F
 CATEGORY_3 = CCSDSTrousseau([], octets=False)  # Debug, NO HEADER
 CATEGORY_4 = CCSDSTrousseau([], octets=False)  # HK payload, NO HEADER
 CATEGORY_5 = CCSDSTrousseau([ACQMODE, INTEGRATIONTIME, MODULATION, RADIUS, NPOINTS], octets=True)  # science HF
-CATEGORY_6 = CCSDSTrousseau([], octets=False)  # ???
+CATEGORY_6 = CCSDSTrousseau([REPPLDRACK, REPPLDFACK, REPPLDEACK, REPPLDTCID, REPPLDEID, REPPLDSF, REPPLDPKID], octets=False)  # Reply TC PLD
 CATEGORY_7 = CCSDSTrousseau([], octets=False)  # beacon, NO HEADER
 CATEGORY_8 = CCSDSTrousseau([], octets=False)  # ???
 CATEGORY_9 = CCSDSTrousseau([], octets=False)  # ???
@@ -136,10 +173,10 @@ TABLECATEGORY = {   0: 'TmcatRcpAcknowledgement',
                     3: 'TmcatDebug',
                     4: 'TmcatPayloadHk',
                     5: 'TmcatHfScience',
-                    6: '',
-                    7: '',
-                    8: '',
-                    9: ''}
+                    6: None,
+                    7: None,
+                    8: None,
+                    9: None}
 
 TABLEDATA = {   0: None,
                 1: None,
@@ -159,7 +196,7 @@ FILEDATACRUNCHING = {   0: None,
                         3: None,
                         4: 'param_hk_payload',
                         5: 'param_science_hf',
-                        6: None,
+                        6: 'param_rep_tc_pld,
                         7: 'param_beacon',
                         8: None,
                         9: None}

@@ -127,9 +127,10 @@ def save_TM_to_DB(hd, hdx, data):
     catnum = hd[param_ccsds.PACKETCATEGORY.name]
     # saving the aux header
     tbl = param_category.TABLECATEGORY[catnum]
-    hdx = dict(hdx)
-    hdx['telemetry_packet'] = TM.id
-    DB.add(TABLES[tbl](**hdx))
+    if tbl is not None:
+        hdx = dict(hdx)
+        hdx['telemetry_packet'] = TM.id
+        DB.add(TABLES[tbl](**hdx))
     # saving the data
     if param_category.TABLEDATA[catnum] is not None:
         tbl = param_category.TABLEDATA[catnum]
