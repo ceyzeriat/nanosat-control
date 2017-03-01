@@ -71,8 +71,11 @@ def report(report_key, **kwargs):
     """
     Reports to watchdog
     """
+    time.sleep(0.01)
     rp = REPORTS[report_key].pack(who=param_all.CONTROLLINGNAME, **kwargs)
-    return CONTROL_TRANS.tell(rp)
+    dum = CONTROL_TRANS.tell(rp)
+    time.sleep(0.01)
+    return dum
 
 
 def init_control():
