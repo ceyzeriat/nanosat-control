@@ -66,12 +66,12 @@ def volt_piezo_pack(v, pad, **kwargs):
 
 def temp_unpack(v, **kwargs):
     temp_unpack.verbose = "(binary -> unsigned integer) * 0.0625"
-    return bincore.bin2int(v) * 0.0625
+    return bincore.bin2intSign(v) * 0.0625
 
 
 def temp_pack(v, pad, **kwargs):
     temp_pack.verbose = "round(float / 0.0625) -> binary"
-    return bincore.int2bin(np.round(v / 0.0625), pad=pad)
+    return bincore.intSign2bin(np.round(v / 0.0625), pad=pad)
 
 
 def volt_peltier_unpack(v, **kwargs):
