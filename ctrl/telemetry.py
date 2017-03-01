@@ -53,6 +53,7 @@ class Telemetry(object):
         * time_received (datetime+tz): the reception time of the packet
         """
         cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet, retdbvalues=True)
+        print cls.data['unpacked']
         cls.hd['raw_file'] = core.RAWPACKETFOLDER
         cls.hd['receiver_id'] = core.RECEIVERID
         cls.hd['time_received'] = time_received\

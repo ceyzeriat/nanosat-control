@@ -133,12 +133,14 @@ def temp_diode_pack(v, Vref, pad, **kwargs):
                            pad=pad)
 
 
+VOLTPELTIER = 'volt_peltier'
+
 V_KEYS = [  dict(name='volt_5v', start=16, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volt_line_unpack, fctpack=volt_line_pack),
             dict(name='current_5v', start=32, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_line_unpack, fctpack=current_line_pack),
             dict(name='current_3v', start=48, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_line_unpack, fctpack=current_line_pack),
             dict(name='volt_piezo', start=64, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volt_piezo_unpack, fctpack=volt_piezo_pack),
             dict(name='current_piezo', start=80, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='volt_peltier', start=144, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volt_peltier_unpack, fctpack=volt_peltier_pack),
+            dict(name=VOLTPELTIER, start=144, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volt_peltier_unpack, fctpack=volt_peltier_pack),
             dict(name='current_peltier', start=96, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_peltier_unpack, fctpack=current_peltier_pack),
             dict(name='temp_diode', start=112, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_diode_unpack, fctpack=temp_diode_pack),
             dict(name='volt_peltier_err', start=128, l=16, fctunpack=volt_peltier_err_unpack, fctpack=volt_peltier_err_pack),
@@ -182,7 +184,7 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         nlines = len(data) // self.size
         lines = [{}] * nlines
         for idx in range(nlines):
-            lines[idx]['voltage_peltier'] = 0
+            lines[idx][VOLTPELTIER] = 0
             dt = data[idx*self.size:(idx+1)*self.size]
             # octets is False
             dt = bincore.hex2bin(dt[:self.size], pad=self.size*8)
@@ -190,7 +192,7 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
             for item in self.keys:
                 lines[idx][item.name] = item.unpack(
                                             dt,
-                                            Vref=lines[idx]['voltage_peltier'])
+                                            Vref=lines[idx][VOLTPELTIER])
             for item in V_KEYS:
                 v_key = item['name']
                 f_key = value_to_flag_name(v_key)
@@ -214,7 +216,7 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         Args:
         * allvalues (dict): the values to pack
         """
-        Vref = allvalues['voltage_peltier']
+        Vref = allvalues[VOLTPELTIER]
         return Super(HKPayloadCCSDSTrousseau, self).\
                         pack(allvalues, retdbvalues=True, Vref=Vref)
 
