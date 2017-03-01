@@ -134,6 +134,5 @@ class CCSDSTrousseau(object):
             res[item.name] = item.unpack(data)
         return res
 
-    def disp(self, *args, **kwargs):
+    def disp(self, **kwargs):
         return ''
-

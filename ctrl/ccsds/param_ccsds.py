@@ -204,3 +204,10 @@ HEADER_S_KEYS_TELECOMMAND = [REQACKRECEPTIONTELECOMMAND,
     EMITTERID, SIGNATURE]
 HEADER_S_KEYS_TELECOMMAND = CCSDSTrousseau(HEADER_S_KEYS_TELECOMMAND,
                                             octets=False)
+
+
+def disp(**hd):
+    res = []
+    res += ["V:{ccsds_version} T:{packet_type} SHF:{secondary_header_flag} PLD:{payload_flag} LVL:{level_flag} PID:{pid} CAT:{packet_category} SF:{sequence_flag} #:{packet_id} len:{data_length}".format(**hd)]
+    res += ["Ds:{days_since_ref} Ms:{ms_since_today}".format(**hd)]
+    return "\n".join(res)

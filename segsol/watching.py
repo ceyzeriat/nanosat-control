@@ -99,17 +99,17 @@ def process_report(data):
 
         #XDISP.add_TC(dbid=dbid, cmdname=self.name, hd=hd, hdx=hdx, inputs=inputs)
         
-    #elif key =='GotBlob':
-        #try:
-            #hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']), retdbvalues=True)
-        #except:
-            #print('Tried to unpack.. but an error occurred')
-            #return
-        #print(param_ccsds.disp(hd))
-        #cat_params = param_category.FILEDATACRUNCHING.get(\
-                            #hd[param_ccsds.PACKETCATEGORY.name], None)
-        #if cat_params is not None:
-            #print(getattr(param, cat_params).disp(hdx=hdx, data=dd))
+    elif key =='GotBlob':
+        try:
+            hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']), retdbvalues=True)
+        except:
+            print('Tried to unpack.. but an error occurred')
+            return
+        print(param_ccsds.disp(hd))
+        cat_params = param_category.FILEDATACRUNCHING.get(\
+                            hd[param_ccsds.PACKETCATEGORY.name], None)
+        if cat_params is not None:
+            print(getattr(param, cat_params).disp(hdx=hdx, data=dd))
     else:
         pass
 
