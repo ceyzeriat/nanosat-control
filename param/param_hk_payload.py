@@ -86,26 +86,36 @@ def volt_peltier_pack(v, pad, **kwargs):
 
 def current_peltier_unpack(v, Vref, **kwargs):
     current_peltier_unpack.verbose = "((binary -> unsigned integer) * 3.3 / 4096.0 - Voltage Peltier) / 0.00016"
+    if Vref == 0:
+        Vref = 1
     return (bincore.bin2int(v) * 3.3 / 4096.0 - Vref) / 0.00016
 
 
 def current_peltier_pack(v, Vref, pad, **kwargs):
     current_peltier_pack.verbose = "round((float * 0.00016 + Vref) * 4096 / 3.3) -> binary"
+    if Vref == 0:
+        Vref = 1
     return bincore.int2bin(np.round((v * 0.00016 + Vref) * 4096 / 3.3), pad=pad)
 
 
 def volt_peltier_err_unpack(v, Vref, **kwargs):
     volt_peltier_err_unpack.verbose = "((binary -> unsigned integer) * 3.3 / 4096.0 - Voltage Peltier) / 25"
+    if Vref == 0:
+        Vref = 1
     return (bincore.bin2int(v) * 3.3 / 4096.0 - Vref) / 25
 
 
 def volt_peltier_err_pack(v, Vref, pad, **kwargs):
     volt_peltier_err_pack.verbose = "round((float * 25 + Vref) * 4096 / 3.3) -> binary"
+    if Vref == 0:
+        Vref = 1
     return bincore.int2bin(np.round((v * 25 + Vref) * 4096 / 3.3), pad=pad)
 
 
 def temp_diode_unpack(v, Vref, **kwargs):
     temp_diode_unpack.verbose = "293 / (293 / 2918.9 * LOG(50 / 11 * (binary -> unsigned integer) / (Voltage Peltier / 3.3 * 4096 - (binary -> unsigned integer))) + 1) - 273"
+    if Vref == 0:
+        Vref = 1
     X = bincore.bin2int(v)
     return 293 / (293 / 2918.9\
                     * np.log(50 / 11.0 * X / (Vref / 3.3 * 4096 - X)) + 1) - 273
@@ -113,6 +123,8 @@ def temp_diode_unpack(v, Vref, **kwargs):
 
 def temp_diode_pack(v, Vref, pad, **kwargs):
     temp_diode_pack.verbose = "round((Voltage Peltier / 3.3 * 4096) / (1 + 50 / (11 * np.exp(2918.9 / 293 * (293 / (float + 273.0) - 1))))) -> binary"
+    if Vref == 0:
+        Vref = 1
     return bincore.int2bin(np.round(
                             (Vref / 3.3 * 4096) /\
                             (1 + 50 /\
@@ -121,18 +133,18 @@ def temp_diode_pack(v, Vref, pad, **kwargs):
                            pad=pad)
 
 
-V_KEYS = [  dict(name='volt_5V', start=16, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volt_line_unpack, fctpack=volt_line_pack),
-            dict(name='current_5V', start=32, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='current_3V', start=48, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='volt_piezo', start=64, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volt_piezo_unpack, fctpack=volt_piezo_pack),
-            dict(name='current_piezo', start=80, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='volt_peltier', start=144, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volt_peltier_unpack, fctpack=volt_peltier_pack),
-            dict(name='current_peltier', start=96, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_peltier_unpack, fctpack=current_peltier_pack),
-            dict(name='temp_diode', start=112, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_diode_unpack, fctpack=temp_diode_pack),
-            dict(name='volt_peltier_err', start=128, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volt_peltier_err_unpack, fctpack=volt_peltier_err_pack),
-            dict(name='temp1', start=160, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack),
-            dict(name='temp2', start=176, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack),
-            dict(name='temp3', start=192, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin)#fctunpack=temp_unpack, fctpack=temp_pack),
+V_KEYS = [  dict(name='volt_5V', start=16, l=16, fctunpack=volt_line_unpack, fctpack=volt_line_pack),
+            dict(name='current_5V', start=32, l=16, fctunpack=current_line_unpack, fctpack=current_line_pack),
+            dict(name='current_3V', start=48, l=16, fctunpack=current_line_unpack, fctpack=current_line_pack),
+            dict(name='volt_piezo', start=64, l=16, fctunpack=volt_piezo_unpack, fctpack=volt_piezo_pack),
+            dict(name='current_piezo', start=80, l=16, fctunpack=current_line_unpack, fctpack=current_line_pack),
+            dict(name='volt_peltier', start=144, l=16, fctunpack=volt_peltier_unpack, fctpack=volt_peltier_pack),
+            dict(name='current_peltier', start=96, l=16, fctunpack=current_peltier_unpack, fctpack=current_peltier_pack),
+            dict(name='temp_diode', start=112, l=16, fctunpack=temp_diode_unpack, fctpack=temp_diode_pack),
+            dict(name='volt_peltier_err', start=128, l=16, fctunpack=volt_peltier_err_unpack, fctpack=volt_peltier_err_pack),
+            dict(name='temp1', start=160, l=16, fctunpack=temp_unpack, fctpack=temp_pack),
+            dict(name='temp2', start=176, l=16, fctunpack=temp_unpack, fctpack=temp_pack),
+            dict(name='temp3', start=192, l=16, fctunpack=temp_unpack, fctpack=temp_pack)
             ]
 
 
