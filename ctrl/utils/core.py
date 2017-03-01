@@ -53,8 +53,7 @@ if PYTHON3:
 
 
 def prepare_terminal(txt):
-    os.system("reset")
-    #set_term_title("{}".format(txt))
+    ### os.system("reset")
     sys.stdout.write("\x1b]2;{}\x07".format(txt))
 
 def get_tc_packet_id():
