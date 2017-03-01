@@ -192,7 +192,7 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
             res += ["volt_5V:({f_volt_5V}){volt_5V}, current_5V:({f_current_5V}){current_5V}, current_3V:({f_current_3V}){current_3V}, volt_piezo:({f_volt_piezo}){volt_piezo}, "
                "current_piezo:({f_current_piezo}){current_piezo}, volt_peltier:({f_volt_peltier}){volt_peltier}, current_peltier:({f_current_peltier}){current_peltier}, "
                "temp_diode:({f_temp_diode}){temp_diode}, volt_peltier_err:({f_volt_peltier_err}){volt_peltier_err}, temp1:({f_temp1}){temp1}, temp2:({f_temp2}){temp2}, "
-               "temp3:({f_temp3}){temp3}".format(**data)]
+               "temp3:({f_temp3}){temp3}".format(**line)]
         return "\n".join(res)
 
     def pack(self, allvalues, **kwargs):
