@@ -72,6 +72,7 @@ class WatchRec(SocReceiver):
         """
         Sends the data to the antenna
         """
+        print(data.hex())
         if core.is_reporting(data):
             process_report(data)
         else:
@@ -83,6 +84,7 @@ class WatchRec(SocReceiver):
 def process_report(data):
     global PIDS
     inputs = core.split_socket_info(data, asStr=True)
+    print(inputs)
     key = inputs.pop('key')
     broadcast(key=key, **inputs)
     if key == 'myPID':
