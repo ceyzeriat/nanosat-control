@@ -73,9 +73,7 @@ class SaveRec(SocReceiver):
         if core.is_reporting(data):
             return
         report('receivedTM')
-        print(data)
         inputs = core.split_socket_info(data)
-        print(inputs)
         if param_all.AX25ENCAPS:
             source, destination, blobish = Framer.decode_radio(inputs['data'])
             report('receivedCallsignTM', source=source, ll=len(blobish),
@@ -86,10 +84,8 @@ class SaveRec(SocReceiver):
         blobparser = CCSDSBlob(blobish)
         start = 0
         pk = blobparser.grab_first_packet(start=start)
-        print(pk)
         while pk is not None:
             inputs['data'] = pk
-            print(inputs)
             process_incoming(**inputs)
             start += len(pk)
             pk = blobparser.grab_first_packet(start=start)

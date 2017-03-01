@@ -134,9 +134,15 @@ def save_TM_to_DB(hd, hdx, data):
     # saving the data
     if param_category.TABLEDATA[catnum] is not None:
         tbl = param_category.TABLEDATA[catnum]
-        dt = dict(data['unpacked'])
-        dt['telemetry_packet'] = TM.id
-        DB.add(TABLES[tbl](**dt))
+        if hasattr(data['unpacked'], "__iter__"):
+            for item in data['unpacked']:
+                item = dict(item)
+                item['telemetry_packet'] = TM.id
+                DB.add(TABLES[tbl](**item))
+        else:
+            dt = dict(data['unpacked'])
+            dt['telemetry_packet'] = TM.id
+            DB.add(TABLES[tbl](**dt))
     # save changes
     DB.commit()
     return TM.id
