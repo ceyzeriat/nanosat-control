@@ -33,4 +33,5 @@ from . import param_all
 from . import param_beacon
 from . import param_science_hf
 from . import param_hk_payload
+from . import param_rep_tc_pld
 #from . import param_category  # circular import here
