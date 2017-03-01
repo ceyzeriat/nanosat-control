@@ -25,6 +25,7 @@
 ###############################################################################
 
 
+import time
 from ctrl.soc import SocTransmitter
 from ctrl.utils import core
 from ctrl.utils import ctrlexception
