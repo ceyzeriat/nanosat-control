@@ -109,7 +109,7 @@ def process_report(data):
         cat_params = param_category.FILEDATACRUNCHING.get(\
                             hd[param_ccsds.PACKETCATEGORY.name], None)
         if cat_params is not None:
-            print(getattr(param, cat_params).disp(hdx=hdx, data=dd))
+            print(getattr(param, cat_params).TROUSSEAU.disp(hdx=hdx, data=dd))
     else:
         pass
 
