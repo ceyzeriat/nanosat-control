@@ -103,8 +103,8 @@ def process_incoming(t, path, data):
     f = open(path, mode='rb')
     dd = Byt(f.read())
     f.close()
-    if not dd == data:
-        raise ctrlexception.PacketMismatch(path)
+    #if not dd == data:
+        #raise ctrlexception.PacketMismatch(path)
     t = core.strISOstamp2datetime(t)
     #if not t == core.packetfilename2datetime(path):
     #    raise ctrlexception.PacketDateMismatch(path)

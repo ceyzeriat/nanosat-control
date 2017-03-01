@@ -52,7 +52,8 @@ PIDREGISTRATION_PLD = {     'bootloader': 0,
                             'director': 1,
                             'hkPayload': 2,
                             'sciencePayload': 3,
-                            'debugPayload': 4}
+                            'debugPayload': 4,
+                            'ObcInterfaceManager': 5}
 
 
 # pid string as key, int as value
