@@ -92,7 +92,7 @@ class SaveRec(SocReceiver):
         return
 
 
-def process_incoming(t, path, data):
+def process_incoming(t, path, data, **kwargs):
     """
     A callback function that saves the package in the database after
     parsing it
