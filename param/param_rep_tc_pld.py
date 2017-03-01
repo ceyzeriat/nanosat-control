@@ -27,6 +27,7 @@
 
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.utils import bincore
+from byt import Byt
 
 
 __all__ = ['TROUSSEAU']
