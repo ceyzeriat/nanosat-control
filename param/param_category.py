@@ -196,7 +196,7 @@ FILEDATACRUNCHING = {   0: None,
                         3: None,
                         4: 'param_hk_payload',
                         5: 'param_science_hf',
-                        6: 'param_rep_tc_pld,
+                        6: 'param_rep_tc_pld',
                         7: 'param_beacon',
                         8: None,
                         9: None}
