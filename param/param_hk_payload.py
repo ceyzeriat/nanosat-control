@@ -40,7 +40,7 @@ def volt_line_unpack(v, **kwargs):
 
 
 def volt_line_pack(v, pad, **kwargs):
-    volt_line_pack.verbose = "round(float / 0.00459) -> binary"
+    volt_line_pack.verbose = "UnsignedInt(float / 0.00459) -> binary"
     return bincore.int2bin(np.round(v / 0.00459), pad=pad)
 
 
@@ -50,7 +50,7 @@ def current_line_unpack(v, **kwargs):
 
 
 def current_line_pack(v, pad, **kwargs):
-    current_line_pack.verbose = "round(float / 0.00161) -> binary"
+    current_line_pack.verbose = "UnsignedInt(float / 0.00161) -> binary"
     return bincore.int2bin(np.round(v / 0.00161), pad=pad)
 
 
@@ -60,17 +60,17 @@ def volt_piezo_unpack(v, **kwargs):
 
 
 def volt_piezo_pack(v, pad, **kwargs):
-    volt_piezo_pack.verbose = "round(float / 3.3 * 4096 / 213.77) -> binary"
+    volt_piezo_pack.verbose = "UnsignedInt(float / 3.3 * 4096 / 213.77) -> binary"
     return bincore.int2bin(np.round(v / 3.3 * 4096.0 / 213.77), pad=pad)
 
 
 def temp_unpack(v, **kwargs):
-    temp_unpack.verbose = "(binary -> unsigned integer) * 0.0625"
+    temp_unpack.verbose = "(binary -> signed integer) * 0.0625"
     return bincore.bin2intSign(v) * 0.0625
 
 
 def temp_pack(v, pad, **kwargs):
-    temp_pack.verbose = "round(float / 0.0625) -> binary"
+    temp_pack.verbose = "SignedInt(float / 0.0625) -> binary"
     return bincore.intSign2bin(np.round(v / 0.0625), pad=pad)
 
 
@@ -80,7 +80,7 @@ def volt_peltier_unpack(v, **kwargs):
 
 
 def volt_peltier_pack(v, pad, **kwargs):
-    volt_peltier_pack.verbose = "round(float / 3.3 * 4096.0) -> binary"
+    volt_peltier_pack.verbose = "UnsignedInt(float / 3.3 * 4096.0) -> binary"
     return bincore.int2bin(np.round(v / 3.3 * 4096), pad=pad)
 
 
@@ -92,7 +92,7 @@ def current_peltier_unpack(v, Vref, **kwargs):
 
 
 def current_peltier_pack(v, Vref, pad, **kwargs):
-    current_peltier_pack.verbose = "round((float * 0.00016 + Vref) * 4096 / 3.3) -> binary"
+    current_peltier_pack.verbose = "UnsignedInt((float * 0.00016 + Vref) * 4096 / 3.3) -> binary"
     if Vref == 0:
         Vref = 1
     return bincore.int2bin(np.round((v * 0.00016 + Vref) * 4096 / 3.3), pad=pad)
@@ -106,7 +106,7 @@ def volt_peltier_err_unpack(v, Vref, **kwargs):
 
 
 def volt_peltier_err_pack(v, Vref, pad, **kwargs):
-    volt_peltier_err_pack.verbose = "round((float * 25 + Vref) * 4096 / 3.3) -> binary"
+    volt_peltier_err_pack.verbose = "UnsignedInt((float * 25 + Vref) * 4096 / 3.3) -> binary"
     if Vref == 0:
         Vref = 1
     return bincore.int2bin(np.round((v * 25 + Vref) * 4096 / 3.3), pad=pad)
@@ -122,7 +122,7 @@ def temp_diode_unpack(v, Vref, **kwargs):
 
 
 def temp_diode_pack(v, Vref, pad, **kwargs):
-    temp_diode_pack.verbose = "round((Voltage Peltier / 3.3 * 4096) / (1 + 50 / (11 * np.exp(2918.9 / 293 * (293 / (float + 273.0) - 1))))) -> binary"
+    temp_diode_pack.verbose = "UnsignedInt((Voltage Peltier / 3.3 * 4096) / (1 + 50 / (11 * np.exp(2918.9 / 293 * (293 / (float + 273.0) - 1))))) -> binary"
     if Vref == 0:
         Vref = 1
     return bincore.int2bin(np.round(
