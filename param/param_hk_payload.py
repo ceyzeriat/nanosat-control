@@ -143,7 +143,7 @@ V_KEYS = [  dict(name='volt_5v', start=16, l=16, fctunpack=bincore.bin2int, fctp
             dict(name=VOLTPELTIER, start=144, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volt_peltier_unpack, fctpack=volt_peltier_pack),
             dict(name='current_peltier', start=96, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_peltier_unpack, fctpack=current_peltier_pack),
             dict(name='temp_diode', start=112, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_diode_unpack, fctpack=temp_diode_pack),
-            dict(name='volt_peltier_err', start=128, l=16, fctunpack=volt_peltier_err_unpack, fctpack=volt_peltier_err_pack),
+            dict(name='volt_peltier_err', start=128, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volt_peltier_err_unpack, fctpack=volt_peltier_err_pack),
             dict(name='temp1', start=160, l=16, fctunpack=bincore.bin2intSign, fctpack=bincore.intSign2bin),#fctunpack=temp_unpack, fctpack=temp_pack),
             dict(name='temp2', start=176, l=16, fctunpack=bincore.bin2intSign, fctpack=bincore.intSign2bin),#fctunpack=temp_unpack, fctpack=temp_pack),
             dict(name='temp3', start=192, l=16, fctunpack=bincore.bin2intSign, fctpack=bincore.intSign2bin)#fctunpack=temp_unpack, fctpack=temp_pack)
