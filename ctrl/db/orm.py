@@ -61,7 +61,7 @@ def init_DB():
     for k in Base.classes.keys():
         nk = core.camelize_singular(k)
         TABLES[nk] = Base.classes[k]
-        #globals()[nk] = Base.classes[k]
+        globals()[nk] = Base.classes[k]
     DB = Session(engine)
     running = True
 

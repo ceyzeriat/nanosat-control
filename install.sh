@@ -3,8 +3,8 @@
 # input can be "all", "server", "desk"
 
 if [ $# -eq 0 ];
-  then DOINSTALL = "server"
-  else DOINSTALL = "$1"
+  then DOINSTALL="server"
+  else DOINSTALL="$1"
 fi
 
 
@@ -21,7 +21,7 @@ INITPWD=$(pwd)
 ############################################
 
 
-if [[ $DOINSTALL == "all" -o $DOINSTALL == "server" ]]; then
+if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     # create directories
     mkdir -p $WHERESEGSOL
     mkdir -p $WHEREPARAM
@@ -96,7 +96,7 @@ fi
 ############################################
 
 
-if [[ $DOINSTALL == "all" -o $DOINSTALL == "desk" ]]; then
+if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "desk" ]; then
     # create directory
     mkdir -p $DESKTOP
 
