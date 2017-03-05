@@ -28,10 +28,13 @@
 import socket
 from threading import Thread
 import select
-from byt import Byt
+import time
 
 
 __all__ = ['SocTransmitter']
+
+
+ACK = "\xaa"
 
 
 class SocTransmitter(object):
@@ -54,6 +57,7 @@ class SocTransmitter(object):
         self.portname = str(portname)[:15]
         self._nreceivermax = max(1, min(5, int(nreceivermax)))
         self.receivers = {}
+        self.sending_buffer = []
         if start:
             self.start()
 
@@ -80,6 +84,9 @@ class SocTransmitter(object):
         loopy = Thread(target=accept_receivers, args=(self,))
         loopy.daemon = True
         loopy.start()
+        loopy = Thread(target=send_buffer, args=(self,))
+        loopy.daemon = True
+        loopy.start()
 
     @property
     def nreceivers(self):
@@ -88,7 +95,7 @@ class SocTransmitter(object):
         Note that the active receivers are updated at each communication
         and some receivers may have dropped since then
         """
-        return len(self.receivers.keys())
+        return len(self.receivers)
 
     @nreceivers.setter
     def nreceivers(self, value):
@@ -98,19 +105,16 @@ class SocTransmitter(object):
         try:
             receiver.getpeername()
         except:
-            return False
-        receiver.sendall(Byt(txt))
-        if self._receive(receiver, l=1, timeout=0.1) == Byt(0):
-            return True
-        else:
-            self.receivers.pop(name)
-            return False
+            return
+        receiver.sendall(txt)
+        if not self._receive(receiver, l=1, timeout=0.1) == ACK:
+            del self.receivers[name]
 
     def _receive(self, receiver, l=15, timeout=None):
         timeout = self._timeout if timeout is None else float(timeout)
         ready = select.select([receiver], [], [], timeout)
         if ready[0]:
-            return Byt(receiver.recv(int(l)))
+            return receiver.recv(int(l))
         else:
             return None
 
@@ -128,16 +132,14 @@ class SocTransmitter(object):
             return False
         if len(txt) == 0:
             return None
-        ret = {}
-        for name, receiver in list(self.receivers.items()):
-            ret[name] = self._tell_receiver(name, receiver, txt)
-        return ret
+        self.sending_buffer.append(str(txt))
+        return True
 
     def close_receivers(self):
         """
         Forces all receivers to drop listening
         """
-        self.tell(Byt('__die__'))
+        self.tell('__die__')
         self.receivers = {}
 
     def close(self):
@@ -148,6 +150,7 @@ class SocTransmitter(object):
         """
         if not self.running:
             return
+        self.sending_buffer = []
         self._running = False
         self.close_receivers()
         self._soc.shutdown(socket.SHUT_RDWR)
@@ -174,31 +177,71 @@ class SocTransmitter(object):
         print('hello: {}'.format(name))
 
 
+def send_buffer(self):
+    """
+    Infinite loop sending messages
+    """
+    while self.running:
+        # make a list-copy
+        for line in list(self.sending_buffer):
+            # make a list-copy
+            for name, receiver in list(self.receivers.items()):
+                self._tell_receiver(name, receiver, line)
+            del self.sending_buffer[0]
+            time.sleep(0.03)
+        # crash of process
+        try:
+            time.sleep(0.01)
+        except:
+            pass
+
+
 def accept_receivers(self):
     """
     Infinite loop registering all new receivers
     """
     while self.running:
+        receiver = None
+        # blocking with 1 sec timeout
         ready = select.select([self._soc], [], [], 1)
         if ready[0]:
+            # should be a new connection here, but just in case...
             try:
                 receiver, addr = self._soc.accept()
             except:
-                pass
+                continue
         else:
             continue
+        # maybe _soc broke while select
         if not self.running:
-            try:
-                receiver.close()
-            except:
-                pass
+            receiver.shutdown(socket.SHUT_RDWR)
+            receiver.close()
             break
-        if self.nreceivers < self._nreceivermax:
-            receiver.sendall(Byt(0))
-            name = self._receive(receiver, l=15, timeout=5.)
-            if name is not None:
-                receiver.sendall(Byt(0))
-                self.receivers[name] = receiver
-                self._newconnection(name)
+        trusty = True
+        if self.nreceivers >= self._nreceivermax:
+            # maybe replace old droped connection with new one
+            trusty = False
+        receiver.send(ACK)
+        name = self._receive(receiver, l=15, timeout=5.)
+        if name is not None:
+            if not trusty:  # replace old connection
+                if name not in self.receivers:  # name does not exist already
+                    receiver.shutdown(socket.SHUT_RDWR)
+                    receiver.close()
+                else:
+                    # close broken socket
+                    self.receivers[name].shutdown(socket.SHUT_RDWR)
+                    self.receivers[name].close()
+                    receiver.send(ACK)
+                    self.receivers[name] = receiver
+                    self._newconnection(name)
+            else:
+                if name not in self.receivers:
+                    receiver.send(ACK)
+                    self.receivers[name] = receiver
+                    self._newconnection(name)
+                else:  # redundant socket name
+                    pass
         else:
+            receiver.shutdown(socket.SHUT_RDWR)
             receiver.close()

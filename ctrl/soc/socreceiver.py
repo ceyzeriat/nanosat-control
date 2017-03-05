@@ -29,10 +29,12 @@ import socket
 from threading import Thread
 import select
 import time
-from byt import Byt
 
 
 __all__ = ['SocReceiver']
+
+
+ACK = "\xaa"
 
 
 class SocReceiver(object):
@@ -79,7 +81,7 @@ class SocReceiver(object):
         timeout = self._timeout if timeout is None else float(timeout)
         ready = select.select([transmitter], [], [], timeout)
         if ready[0]:
-            return Byt(transmitter.recv(int(l)))
+            return transmitter.recv(int(l))
         else:
             return None
 
@@ -161,7 +163,8 @@ class SocReceiver(object):
         """
         Replace this function with proper data processing
         """
-        print(data)
+        #print(data)
+        print(set(data), len(data), time.time())
 
     def _newconnection(self):
         """
@@ -174,7 +177,7 @@ class SocReceiver(object):
         Returns ``True`` if the transmitter got the message else
         ``Flase``
         """
-        return self._receive(self._soc, l=1, timeout=self._timeout) == Byt(0)
+        return self._receive(self._soc, l=1, timeout=self._timeout) == ACK
 
 
 def tellme(self):
@@ -182,12 +185,12 @@ def tellme(self):
     Infinite loop to listen the data from the port
     """
     while self.running:
-        data = Byt(self._soc.recv(self.buffer_size))
+        data = self._soc.recv(self.buffer_size)
         if len(data) == 0 or not self.running:
             self.close()
             return
-        self._soc.sendall(Byt(0))
-        if data == Byt('__die__'):
+        self._soc.send(ACK)
+        if data == '__die__':
             self.close()
         else:
             self.process(data)
@@ -217,7 +220,7 @@ def connectme(self, oneshot):
                 if not self.loopConnect:
                     return False
             else:
-                self._soc.sendall(Byt(self.name))
+                self._soc.sendall(self.name)
                 if not self._get_AR():
                     self.close()
                     if not self.loopConnect:
