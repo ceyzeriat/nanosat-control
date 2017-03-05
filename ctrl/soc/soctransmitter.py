@@ -31,6 +31,9 @@ import select
 import time
 
 
+
+from byt import Byt
+
 __all__ = ['SocTransmitter']
 
 
@@ -107,7 +110,9 @@ class SocTransmitter(object):
         except:
             return
         receiver.sendall(txt)
-        if not self._receive(receiver, l=1, timeout=0.1) == ACK:
+        a = self._receive(receiver, l=1, timeout=0.1)
+        print(Byt(a).hex(), time.time())
+        if not a == ACK:
             del self.receivers[name]
 
     def _receive(self, receiver, l=15, timeout=None):
@@ -128,10 +133,8 @@ class SocTransmitter(object):
         Args:
         * txt (str): the message
         """
-        if not self.running:
+        if not self.running or len(txt) == 0:
             return False
-        if len(txt) == 0:
-            return None
         self.sending_buffer.append(str(txt))
         return True
 
@@ -189,11 +192,7 @@ def send_buffer(self):
                 self._tell_receiver(name, receiver, line)
             del self.sending_buffer[0]
             time.sleep(0.03)
-        # crash of process
-        try:
-            time.sleep(0.01)
-        except:
-            pass
+        time.sleep(0.001)
 
 
 def accept_receivers(self):
@@ -221,27 +220,29 @@ def accept_receivers(self):
         if self.nreceivers >= self._nreceivermax:
             # maybe replace old droped connection with new one
             trusty = False
+        print('sent ack', time.time())
         receiver.send(ACK)
         name = self._receive(receiver, l=15, timeout=5.)
         if name is not None:
-            if not trusty:  # replace old connection
-                if name not in self.receivers:  # name does not exist already
+            if name in self.receivers:  # replace old connection
+                print('replace old')
+                # close broken socket
+                self.receivers[name].shutdown(socket.SHUT_RDWR)
+                self.receivers[name].close()
+                print('sent ack', time.time())
+                receiver.send(ACK)
+                self.receivers[name] = receiver
+                self._newconnection(name)
+            else:  # name does not exist already
+                if trusty:
+                    print('sent ack', time.time())
+                    receiver.send(ACK)
+                    self.receivers[name] = receiver
+                    self._newconnection(name)
+                else:
+                    print('nope.. no more')
                     receiver.shutdown(socket.SHUT_RDWR)
                     receiver.close()
-                else:
-                    # close broken socket
-                    self.receivers[name].shutdown(socket.SHUT_RDWR)
-                    self.receivers[name].close()
-                    receiver.send(ACK)
-                    self.receivers[name] = receiver
-                    self._newconnection(name)
-            else:
-                if name not in self.receivers:
-                    receiver.send(ACK)
-                    self.receivers[name] = receiver
-                    self._newconnection(name)
-                else:  # redundant socket name
-                    pass
         else:
             receiver.shutdown(socket.SHUT_RDWR)
             receiver.close()

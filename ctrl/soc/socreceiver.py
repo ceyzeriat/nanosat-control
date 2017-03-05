@@ -31,6 +31,9 @@ import select
 import time
 
 
+from byt import Byt
+
+
 __all__ = ['SocReceiver']
 
 
@@ -177,6 +180,9 @@ class SocReceiver(object):
         Returns ``True`` if the transmitter got the message else
         ``Flase``
         """
+        a = self._receive(self._soc, l=1, timeout=self._timeout)
+        print(Byt(a).hex(), time.time())
+        return a == ACK
         return self._receive(self._soc, l=1, timeout=self._timeout) == ACK
 
 
@@ -189,6 +195,7 @@ def tellme(self):
         if len(data) == 0 or not self.running:
             self.close()
             return
+        print('sent ack', time.time())
         self._soc.send(ACK)
         if data == '__die__':
             self.close()
