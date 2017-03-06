@@ -48,7 +48,7 @@ def get_data():
     if n < 0:
         return None
     # grab data
-    data = listening.ANTENNA.read(size=n)
+    data = Byt(listening.ANTENNA.read(size=n))
     # empty data
     if data is None:
         return None
@@ -73,7 +73,7 @@ if not param_all.FRAMESFLOW:
         proceed(data)
 else:
     inbuff = Byt()
-    while 1:
+    while True:
         data = get_data()
         if data is None:
             continue

@@ -47,12 +47,16 @@ LENGTHMODIFIER = 0
 # start/end units is bits
 
 def pid_pack(v, pad, **kwargs):
-    pid_pack.verbose = "pid string -> binary"
+    """
+    verbose = "pid string -> binary"
+    """
     return bincore.int2bin(param_apid.PIDREGISTRATION[v], pad=pad)
 
 
 def pid_unpack(v, pld, lvl, **kwargs):
-    pid_unpack.verbose = "binary, payload flag and level flag -> pid string"
+    """
+    verbose = "binary, payload flag and level flag -> pid string"
+    """
     dic = param_apid.PIDREGISTRATION_REV[bincore.bin2int(v)]
     return dic[int(pld)][int(lvl) if int(pld) == 0 else 1]
 
@@ -136,13 +140,19 @@ AUTHPACKETLENGTH = 12
 
 
 def days_unpack(v):
-    days_unpack.verbose = "binary -> unsigned integer"
-    return Day(bincore.bin2int(v))
+    """
+    verbose = "binary -> unsigned integer"
+    """
+    # apply a maximum to the rounded number of days from 1970 to 2050
+    return Day(max(30001, bincore.bin2int(v)))
 
 
 def msec_unpack(v):
-    msec_unpack.verbose = "binary -> unsigned integer"
-    return Ms(bincore.bin2int(v))
+    """
+    verbose = "binary -> unsigned integer"
+    """
+    # apply a maximum to the possible number of msec per day
+    return Ms(max(86399999, bincore.bin2int(v)))
 
 
 DAYSINCEREF_TELEMETRY = CCSDSKey(   name='days_since_ref',

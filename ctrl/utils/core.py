@@ -87,7 +87,8 @@ def camelize_singular(txt):
     e.g. 'the_underscores' -> 'TheUnderscore'
     """
     camelize = str(txt[0].upper() +\
-                    re.sub(r'_([a-z])', lambda m: m.group(1).upper(), txt[1:]))
+                    re.sub(r'_([a-z])',
+                           lambda m: m.group(1).upper(), txt[1:]))
     return inflect.engine().singular_noun(camelize)
 
 def get_pid():
@@ -99,46 +100,86 @@ def get_pid():
 def append_logfile(message):
     """
     Appends message at the end of the log file, with a timestamp
+
+    Args:
+    * message (str): the message to append
     """
     f = open(LOGFILE, mode="a")
-    f.write('{} {}\n'.format(now().strftime('%F %T.%f'), message))
+    f.write('{} {}\n'.format(now().strftime(LOGFILETIMESTAMPFMT),
+                             str(message)))
     f.close()
 
-def split_flow(data, n=1):
+def recover_ccsds(txt):
     """
-    Splits and returns the ccsds packets if one expects a frames-flow
+    Recovers the escaped split characters
+    Returns string or list depending on ``txt``
+
+    Args:
+    * txt (str or list of str): the text to process
+    """
+    def esc(text):
+        return text.replace(CCSDSESCAPEDSPLIT, CCSDSSPLITCHAR)
+    if isStr(txt):
+        return esc(txt)
+    elif hasattr(txt, "__iter__"):
+        return [esc(item) for item in txt]
+
+def split_ccsds(txt, n):
+    """
+    Splits the ccsds according to the defined split ccsds character.
+    Returns a list of size 1 at minimum, and ``n+1`` at maximum, which
+    [-1] element is the remainder of the operation
+    
+    Args:
+    * txt (Byt): the bytes-chain to split
+    * n (int): the maximum number of packets to split
+    """
+    return data.split(CCSDSSPLITCHAR*2, n)
+
+def split_flow(data, n=-1):
+    """
+    Splits packets from flow if flow mode activated
+
+    Args:
+    * data (Byt): the data flow to split
+    * n (int): how many packets should be splited, at maximum,
+        set to -1 for all
     """
     if not FRAMESFLOW:
         raise ctrlexception.NotInFramesFlow()
     # split CCSDS using the special split chars
     if not AX25ENCAPS:
-        res = Byt(data).split(CCSDSSPLITCHAR*2, n)
-        for idx, item in enumerate(res[:n]):
-            if len(item) <= 0:
-                continue
-            res[idx] = item.replace(CCSDSSPLITCHAR+CCSDSESCAPECHAR,
-                                    CCSDSSPLITCHAR)
-        return res
+        res = split_ccsds(Byt(data), int(n))
+        # no split found
+        if len(res) <= 1:
+            return res
+        # apply recovery of escaped chars to all splits found except last one
+        return recover_ccsds(res[:len(n)-1]) + res[-1:]
     # split KISS using the special split chars
     elif KISSENCAPS:
         raise ctrlexception.NotImplemented("Frames-FLow with KISS")
     else:
         raise ctrlexception.CantRunAX25FramesFlow()
 
-def merge_flow(datalist):
+def merge_flow(datalist, trailingSplit=True):
     """
-    Merges the ccsds packets contained in datalist if one expects a
-    frames-flow
+    Merges the packets if the flow mode is activated
+
+    Args:
+    * datalist (list of Byt): the packets to merge together
+    * trailingSplit (bool): whether to add a trailing split character
     """
     if not FRAMESFLOW:
         raise ctrlexception.NotInFramesFlow()
     # merge CCSDS using the special split chars
     if not AX25ENCAPS:
-        return (CCSDSSPLITCHAR*2).join([
-                    Byt(item).replace(CCSDSSPLITCHAR,
-                                        CCSDSSPLITCHAR+CCSDSESCAPECHAR)\
-                        for item in datalist if len(item) > 0])\
-                + CCSDSSPLITCHAR*2
+        res = (CCSDSSPLITCHAR*2).join([
+                    Byt(item).replace(CCSDSSPLITCHAR, CCSDSESCAPEDSPLIT)\
+                        for item in datalist\
+                            if len(item) > 0])
+        if trailingSplit:
+            res += CCSDSSPLITCHAR*2
+        return res
     # merge KISS using the special split chars
     elif KISSENCAPS:
         raise ctrlexception.NotImplemented("Frames-FLow with KISS")
@@ -162,29 +203,36 @@ def split_socket_info(data, asStr=False):
 def merge_socket_info(**kwargs):
     """
     Merges the data using the socket separator and returns a string
+
+    Kwargs:
+    * the keys to merge into a socket-compatible string
     """
-    res = []
+    ret = Byt()
     for k, v in kwargs.items():
         if not isStr(v):
             v = str(v)
-        res.append(Byt(k) + SOCKETMAPPER + Byt(v))
-    return (SOCKETSEPARATOR*2).join([
-                item.replace(SOCKETSEPARATOR, SOCKETSEPARATOR+SOCKETESCAPE)\
-                    for item in res])
+        abit = Byt(k) + SOCKETMAPPER + Byt(v)
+        ret += abit.replace(SOCKETSEPARATOR, SOCKETSEPARATOR+SOCKETESCAPE)
+        ret += SOCKETSEPARATOR*2
+    return ret
 
 def merge_reporting(**kwargs):
     """
     Merges the data using the socket separator and returns a string
     """
-    kwargs[REPORTKEY] = Byt(1)
-    return merge_socket_info(**kwargs)
+    # remove the reporting key in case it is in the dictionary to merge
+    del kwargs[REPORTKEY]
+    res = merge_socket_info(**kwargs)
+    # prepend the reporting key
+    return Byt(REPORTKEY) + SOCKETMAPPER + Byt(1) + SOCKETSEPARATOR*2 + res
 
 def is_reporting(data):
     """
-    Returns ``True`` if the data is some reporting
+    Tells if the data is of reporting format
+
+    Args:
+    * data (Byt): the text to evaluate
     """
-    lrep = len(REPORTKEY)
-    lmap = len(SOCKETMAPPER)
     socksep = SOCKETSEPARATOR * 2
     lsep = len(socksep)
     PROOF = Byt(REPORTKEY) + SOCKETMAPPER + Byt(1)
@@ -192,12 +240,7 @@ def is_reporting(data):
     if data == PROOF:
         return True
     # start with report flag
-    elif data[:lrep+lsep+lmap+1] == PROOF + socksep:
-        return True
-    # ends with report flag
-    elif data[-(lrep+lsep+lmap+1):] == socksep + PROOF:
-        return True
-    elif data.find(socksep + PROOF + socksep) != -1:
+    elif data[:len(PROOF)+lsep] == PROOF + socksep:
         return True
     return False
 

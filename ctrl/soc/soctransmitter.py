@@ -31,9 +31,6 @@ import select
 import time
 
 
-
-from byt import Byt
-
 __all__ = ['SocTransmitter']
 
 
@@ -110,9 +107,7 @@ class SocTransmitter(object):
         except:
             return
         receiver.sendall(txt)
-        a = self._receive(receiver, l=1, timeout=0.1)
-        print(Byt(a).hex(), time.time())
-        if not a == ACK:
+        if not(self._receive(receiver, l=1, timeout=0.1) == ACK):
             del self.receivers[name]
 
     def _receive(self, receiver, l=15, timeout=None):
@@ -143,7 +138,10 @@ class SocTransmitter(object):
         Forces all receivers to drop listening
         """
         self.tell('__die__')
-        self.receivers = {}
+        for idx, item in enumerate(list(self.receivers)):
+            item.shutdown(socket.SHUT_RDWR)
+            item.close()
+            del self.receivers[idx]
 
     def close(self):
         """
@@ -153,8 +151,8 @@ class SocTransmitter(object):
         """
         if not self.running:
             return
-        self.sending_buffer = []
         self._running = False
+        self.sending_buffer = []
         self.close_receivers()
         self._soc.shutdown(socket.SHUT_RDWR)
         self._soc.close()
@@ -192,7 +190,13 @@ def send_buffer(self):
                 self._tell_receiver(name, receiver, line)
             del self.sending_buffer[0]
             time.sleep(0.03)
+            # process might have died in between
+            if time is None:
+                break
         time.sleep(0.001)
+        # process might have died in between
+        if time is None:
+            break
 
 
 def accept_receivers(self):
@@ -216,31 +220,26 @@ def accept_receivers(self):
             receiver.shutdown(socket.SHUT_RDWR)
             receiver.close()
             break
-        trusty = True
+        upToLimit = False
         if self.nreceivers >= self._nreceivermax:
             # maybe replace old droped connection with new one
-            trusty = False
-        print('sent ack', time.time())
+            upToLimit = True
         receiver.send(ACK)
         name = self._receive(receiver, l=15, timeout=5.)
         if name is not None:
             if name in self.receivers:  # replace old connection
-                print('replace old')
                 # close broken socket
                 self.receivers[name].shutdown(socket.SHUT_RDWR)
                 self.receivers[name].close()
-                print('sent ack', time.time())
                 receiver.send(ACK)
                 self.receivers[name] = receiver
                 self._newconnection(name)
             else:  # name does not exist already
-                if trusty:
-                    print('sent ack', time.time())
+                if not upToLimit:
                     receiver.send(ACK)
                     self.receivers[name] = receiver
                     self._newconnection(name)
                 else:
-                    print('nope.. no more')
                     receiver.shutdown(socket.SHUT_RDWR)
                     receiver.close()
         else:

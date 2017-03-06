@@ -31,9 +31,6 @@ import select
 import time
 
 
-from byt import Byt
-
-
 __all__ = ['SocReceiver']
 
 
@@ -166,8 +163,7 @@ class SocReceiver(object):
         """
         Replace this function with proper data processing
         """
-        #print(data)
-        print(set(data), len(data), time.time())
+        print(data)
 
     def _newconnection(self):
         """
@@ -180,9 +176,6 @@ class SocReceiver(object):
         Returns ``True`` if the transmitter got the message else
         ``Flase``
         """
-        a = self._receive(self._soc, l=1, timeout=self._timeout)
-        print(Byt(a).hex(), time.time())
-        return a == ACK
         return self._receive(self._soc, l=1, timeout=self._timeout) == ACK
 
 
@@ -195,7 +188,6 @@ def tellme(self):
         if len(data) == 0 or not self.running:
             self.close()
             return
-        print('sent ack', time.time())
         self._soc.send(ACK)
         if data == '__die__':
             self.close()
@@ -238,3 +230,6 @@ def connectme(self, oneshot):
                     if not self.loopConnect:
                         return status
         time.sleep(self._connectWait)
+        # process might have died in between
+        if time is None:
+            break
