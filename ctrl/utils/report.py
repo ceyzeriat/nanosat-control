@@ -25,7 +25,6 @@
 ###############################################################################
 
 from param import param_all
-from . import core
 from .param_report import REPORTSDATA
 
 
@@ -58,9 +57,11 @@ class Report(object):
         Kwargs:
         * The parameters required for the report, see ``params`` attribute
         """
+        dic = {}
         for k in self.params:
-            kwargs.setdefault(k, '')
-        return kwargs
+            dic[k] = kwargs.get(k, '')
+        dic[param_all.REPORTKEY] = self.key
+        return dic
 
     def disp(self, **kwargs):
         """

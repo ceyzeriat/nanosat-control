@@ -80,7 +80,7 @@ class WatchRec(hein.SocReceiver):
 
 def process_report(inputs):
     global PIDS
-    key = inputs.pop('key')
+    key = inputs.pop(param_all.REPORTKEY)
     broadcast(key=key, **inputs)
     if key == 'myPID':
         who = inputs['who']
