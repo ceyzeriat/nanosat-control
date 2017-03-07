@@ -55,7 +55,7 @@ class WatchTrans(hein.SocTransmitter):
         """
         Call-back function when a new connection is extablished
         """
-        broadcast(key='newTransConnection', who=param_all.WATCHINGNAME,
+        broadcast('newTransConnection', who=param_all.WATCHINGNAME,
                     rec=name)
 
 
@@ -64,7 +64,7 @@ class WatchRec(hein.SocReceiver):
         """
         New connection or connection restablished
         """
-        broadcast(key='newRecConnection', who=param_all.WATCHINGNAME,
+        broadcast('newRecConnection', who=param_all.WATCHINGNAME,
                     port=self.portname)
 
     def process(self, key, data):
@@ -81,7 +81,7 @@ class WatchRec(hein.SocReceiver):
 def process_report(inputs):
     global PIDS
     key = inputs.pop(param_all.REPORTKEY)
-    broadcast(key=key, **inputs)
+    broadcast(key, **inputs)
     if key == 'myPID':
         who = inputs['who']
         if who in PIDS.keys():
@@ -113,18 +113,19 @@ def process_report(inputs):
 
 
 def revive_process(who):
-    broadcast(key='IamDead', who=who)
+    broadcast('IamDead', who=who)
     #PIDS[who].reset()
 
 
 def say_hi(who):
-    broadcast(key='IamAlive', who=who)
+    broadcast('IamAlive', who=who)
 
 
-def broadcast(key, **kwargs):
+def broadcast(*args, **kwargs):
     """
     Broacasts info
     """
+    key = args[0]
     rp = REPORTS[key].pack(**kwargs)
     rpt_verb = REPORTS[key].disp(**rp)
     print(rpt_verb)
