@@ -154,7 +154,7 @@ def split_flow(data, n=-1):
         if len(res) <= 1:
             return res
         # apply recovery of escaped chars to all splits found except last one
-        return recover_ccsds(res[:len(n)-1]) + res[-1:]
+        return recover_ccsds(res[:-1]) + res[-1:]
     # split KISS using the special split chars
     elif KISSENCAPS:
         raise ctrlexception.NotImplemented("Frames-FLow with KISS")
@@ -185,64 +185,6 @@ def merge_flow(datalist, trailingSplit=True):
         raise ctrlexception.NotImplemented("Frames-FLow with KISS")
     else:
         raise ctrlexception.CantRunAX25FramesFlow()
-
-def split_socket_info(data, asStr=False):
-    """
-    Splits the data using the socket separator and returns a dictionnary
-    of the different pieces in bytes format
-    """
-    res = map(Byt, data.split(SOCKETSEPARATOR*2))
-    res = [map(Byt, item.replace(SOCKETSEPARATOR+SOCKETESCAPE,SOCKETSEPARATOR)\
-                        .split(SOCKETMAPPER, 1))\
-                            for item in res]
-    dic = {}
-    for k, v in res:
-        dic[str(k)] = str(v) if asStr else v
-    return dic
-
-def merge_socket_info(**kwargs):
-    """
-    Merges the data using the socket separator and returns a string
-
-    Kwargs:
-    * the keys to merge into a socket-compatible string
-    """
-    ret = Byt()
-    for k, v in kwargs.items():
-        if not isStr(v):
-            v = str(v)
-        abit = Byt(k) + SOCKETMAPPER + Byt(v)
-        ret += abit.replace(SOCKETSEPARATOR, SOCKETSEPARATOR+SOCKETESCAPE)
-        ret += SOCKETSEPARATOR*2
-    return ret
-
-def merge_reporting(**kwargs):
-    """
-    Merges the data using the socket separator and returns a string
-    """
-    # remove the reporting key in case it is in the dictionary to merge
-    del kwargs[REPORTKEY]
-    res = merge_socket_info(**kwargs)
-    # prepend the reporting key
-    return Byt(REPORTKEY) + SOCKETMAPPER + Byt(1) + SOCKETSEPARATOR*2 + res
-
-def is_reporting(data):
-    """
-    Tells if the data is of reporting format
-
-    Args:
-    * data (Byt): the text to evaluate
-    """
-    socksep = SOCKETSEPARATOR * 2
-    lsep = len(socksep)
-    PROOF = Byt(REPORTKEY) + SOCKETMAPPER + Byt(1)
-    # only and just reporting flag
-    if data == PROOF:
-        return True
-    # start with report flag
-    elif data[:len(PROOF)+lsep] == PROOF + socksep:
-        return True
-    return False
 
 def rchop(txt, ending):
     """
