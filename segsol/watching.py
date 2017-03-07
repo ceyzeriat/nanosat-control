@@ -26,8 +26,8 @@
 
 
 from byt import Byt
-from ctrl.soc import SocTransmitter
-from ctrl.soc import SocReceiver
+from hein import SocTransmitter
+from hein import SocReceiver
 from ctrl.utils import core
 from ctrl.utils.report import REPORTS
 from ctrl.utils import PIDWatchDog

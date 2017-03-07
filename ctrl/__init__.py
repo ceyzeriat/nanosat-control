@@ -28,7 +28,6 @@ import param
 from . import utils
 from . import ccsds
 from . import cmd
-from . import soc
 from . import db
 from . import c
 from . import c0

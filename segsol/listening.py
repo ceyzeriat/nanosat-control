@@ -28,8 +28,8 @@
 import time
 import os
 import glob
-from ctrl.soc import SocTransmitter
-from ctrl.soc import SocReceiver
+from hein import SocTransmitter
+from hein import SocReceiver
 from ctrl.utils.report import REPORTS
 from ctrl.utils import core
 from param import param_all

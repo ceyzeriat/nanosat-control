@@ -26,7 +26,7 @@
 
 
 import time
-from ctrl.soc import SocTransmitter
+from hein import SocTransmitter
 from ctrl.utils import core
 from ctrl.utils import ctrlexception
 from ctrl.utils.report import REPORTS

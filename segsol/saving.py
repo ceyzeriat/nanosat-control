@@ -28,8 +28,8 @@
 import time
 import os
 from byt import Byt
-from ctrl.soc import SocTransmitter
-from ctrl.soc import SocReceiver
+from hein import SocTransmitter
+from hein import SocReceiver
 from ctrl.utils import core
 from param import param_all
 from ctrl.utils import ctrlexception
