@@ -110,12 +110,13 @@ def process_incoming(t, path, data, **kwargs):
     report('savedTM', dbid=tm.dbid)
 
 
-def report(report_key, **kwargs):
+def report(*args, **kwargs):
     """
     Reports to watchdog
     """
-    rp = REPORTS[report_key].pack(who=param_all.SAVINGNAME, **kwargs)
-    SAVE_TRANS.tell(**rp)
+    key = str(args[0])
+    rp = REPORTS[key].pack(who=param_all.SAVINGNAME, **kwargs)
+    SAVE_TRANS.tell_report(**rp)
 
 
 def init_saving():

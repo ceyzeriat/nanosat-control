@@ -110,11 +110,12 @@ def init_serial():
     ANTENNA = SerialUSB()
 
 
-def report(report_key, **kwargs):
+def report(*args, **kwargs):
     """
     Reports to watchdog
     """
-    rp = REPORTS[report_key].pack(who=param_all.LISTENINGNAME, **kwargs)
+    key = str(args[0])
+    rp = REPORTS[key].pack(who=param_all.LISTENINGNAME, **kwargs)
     LISTEN_TRANS.tell_report(**rp)
 
 
