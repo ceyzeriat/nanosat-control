@@ -26,7 +26,7 @@
 
 
 import time
-from hein import SocTransmitter
+import hein
 from ctrl.utils import core
 from ctrl.utils import ctrlexception
 from ctrl.utils.report import REPORTS
@@ -40,7 +40,7 @@ CONTROL_TRANS = None
 control_running = False
 
 
-class ControlTrans(SocTransmitter):
+class ControlTrans(hein.SocTransmitter):
     def _newconnection(self, name):
         """
         Call-back function when a new connection
@@ -63,20 +63,15 @@ def broadcast_TC(cmdname, dbid, packet):
     # or add the ccsds flow splits
     elif param_all.FRAMESFLOW:
         packet = core.merge_flow([packet])
-    dum = CONTROL_TRANS.tell(packet)
-    ### check who recieved it and report
-    return dum
+    CONTROL_TRANS.tell_raw(packet)
 
 
 def report(report_key, **kwargs):
     """
     Reports to watchdog
     """
-    time.sleep(0.01)
     rp = REPORTS[report_key].pack(who=param_all.CONTROLLINGNAME, **kwargs)
-    dum = CONTROL_TRANS.tell(rp)
-    time.sleep(0.01)
-    return dum
+    CONTROL_TRANS.tell_report(rp)
 
 
 def init_control():

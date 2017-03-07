@@ -25,9 +25,8 @@
 ###############################################################################
 
 
+import hein
 from byt import Byt
-from hein import SocTransmitter
-from hein import SocReceiver
 from ctrl.utils import core
 from ctrl.utils.report import REPORTS
 from ctrl.utils import PIDWatchDog
@@ -51,7 +50,7 @@ watch_running = False
 PIDS = {}
 
 
-class WatchTrans(SocTransmitter):
+class WatchTrans(hein.SocTransmitter):
     def _newconnection(self, name):
         """
         Call-back function when a new connection is extablished
@@ -60,7 +59,7 @@ class WatchTrans(SocTransmitter):
                     rec=name)
 
 
-class WatchRec(SocReceiver):
+class WatchRec(hein.SocReceiver):
     def _newconnection(self):
         """
         New connection or connection restablished
@@ -135,7 +134,7 @@ def broadcast(key, **kwargs):
     ### XDISP.report(r)
     core.append_logfile(r)
     rp = REPORTS[key].pack(**kwargs)
-    return WATCH_TRANS.tell(rp)
+    return WATCH_TRANS.tell_report(rp)
 
 
 def init_watch():

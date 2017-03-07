@@ -27,9 +27,8 @@
 
 import time
 import os
+import hein
 from byt import Byt
-from hein import SocTransmitter
-from hein import SocReceiver
 from ctrl.utils import core
 from param import param_all
 from ctrl.utils import ctrlexception
@@ -48,7 +47,7 @@ SAVE_REC_LISTEN = None
 save_running = False
 
 
-class SaveTrans(SocTransmitter):
+class SaveTrans(hein.SocTransmitter):
     def _newconnection(self, name):
         """
         Call-back function when a new connection is extablished
@@ -57,7 +56,7 @@ class SaveTrans(SocTransmitter):
         report('myPID', pid=core.get_pid())
 
 
-class SaveRec(SocReceiver):
+class SaveRec(hein.SocReceiver):
     def _newconnection(self):
         """
         New connection or connection restablished

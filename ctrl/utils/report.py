@@ -60,7 +60,7 @@ class Report(object):
         """
         for k in self.params:
             kwargs.setdefault(k, '')
-        return core.merge_reporting(key=self.key, **kwargs)
+        return kwargs
 
     def disp(self, **kwargs):
         """

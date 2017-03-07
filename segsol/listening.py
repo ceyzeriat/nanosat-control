@@ -28,8 +28,7 @@
 import time
 import os
 import glob
-from hein import SocTransmitter
-from hein import SocReceiver
+import hein
 from ctrl.utils.report import REPORTS
 from ctrl.utils import core
 from param import param_all
@@ -47,7 +46,7 @@ ANTENNA = None
 listen_running = False
 
 
-class ListenTrans(SocTransmitter):
+class ListenTrans(hein.SocTransmitter):
     def _newconnection(self, name):
         """
         Call-back function when a new connection
@@ -57,7 +56,7 @@ class ListenTrans(SocTransmitter):
         report('myPID', pid=core.get_pid())
 
 
-class ListenRec(SocReceiver):
+class ListenRec(hein.SocReceiver):
     def _newconnection(self):
         """
         New connection or connection restablished
@@ -98,8 +97,7 @@ def process_data(data):
     f.write(data)
     f.close()
     # sends packets on the socket
-    dum = LISTEN_TRANS.tell(core.merge_socket_info(t=now, path=name,
-                                                    data=data))
+    dum = LISTEN_TRANS.tell_dict(t=now, path=name, data=data)
     ### check who recieved it and report
     return dum
 
@@ -118,11 +116,8 @@ def report(report_key, **kwargs):
     """
     Reports to watchdog
     """
-    time.sleep(0.01)
     rp = REPORTS[report_key].pack(who=param_all.LISTENINGNAME, **kwargs)
-    dum = LISTEN_TRANS.tell(rp)
-    time.sleep(0.01)
-    return dum
+    LISTEN_TRANS.tell_report(rp)
 
 
 def init_listening(antenna):

@@ -126,12 +126,6 @@ TELEMETRYDUMPFOLDER = ['tm_data']
 # the format of the name for the raw telemetry dumps
 TELEMETRYNAMEFORMAT = 'TM_%Y%m%dT%H%M%S_%f.packet'
 
-# the split between keys and data when shipping through sockets
-SOCKETSEPARATOR = Byt('\xac\xdc')
-SOCKETESCAPE = Byt('\xee')
-SOCKETMAPPER = Byt(':')  # must a char that cannot be in a dict key
-REPORTKEY = 'report'
-
 
 # whether the listened flow of data is encapsulated in AX25/KISS standard
 AX25ENCAPS = False
@@ -146,7 +140,13 @@ FRAMESFLOW = True
 CCSDSSPLITCHAR = Byt('\xac\xdc')
 # escape character in CCSDS continuous frames
 CCSDSESCAPECHAR = Byt('\xee')
+# the escaped split character
+CCSDSESCAPEDSPLIT = CCSDSSPLITCHAR + CCSDSESCAPECHAR
 
 
 # the relative path where the raw packets are stored, on the server
 RAWPACKETFOLDER = './raw_data'
+
+
+# the format of the timestamp in the log file
+LOGFILETIMESTAMPFMT = '%F %T.%f'
