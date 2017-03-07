@@ -125,7 +125,7 @@ def broadcast(*args, **kwargs):
     """
     Broacasts info
     """
-    key = args[0]
+    key = str(args[0])
     rp = REPORTS[key].pack(**kwargs)
     rpt_verb = REPORTS[key].disp(**rp)
     print(rpt_verb)
