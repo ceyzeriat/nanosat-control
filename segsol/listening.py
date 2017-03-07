@@ -97,9 +97,7 @@ def process_data(data):
     f.write(data)
     f.close()
     # sends packets on the socket
-    dum = LISTEN_TRANS.tell_dict(t=now, path=name, data=data)
-    ### check who recieved it and report
-    return dum
+    LISTEN_TRANS.tell_dict(t=now, path=name, data=data)
 
 
 def init_checkoutbox():
@@ -117,7 +115,7 @@ def report(report_key, **kwargs):
     Reports to watchdog
     """
     rp = REPORTS[report_key].pack(who=param_all.LISTENINGNAME, **kwargs)
-    LISTEN_TRANS.tell_report(rp)
+    LISTEN_TRANS.tell_report(**rp)
 
 
 def init_listening(antenna):

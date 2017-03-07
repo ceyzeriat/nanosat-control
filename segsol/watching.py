@@ -134,7 +134,7 @@ def broadcast(key, **kwargs):
     ### XDISP.report(r)
     core.append_logfile(r)
     rp = REPORTS[key].pack(**kwargs)
-    return WATCH_TRANS.tell_report(rp)
+    WATCH_TRANS.tell_report(**rp)
 
 
 def init_watch():
