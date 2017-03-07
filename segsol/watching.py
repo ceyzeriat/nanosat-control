@@ -67,14 +67,13 @@ class WatchRec(hein.SocReceiver):
         broadcast(key='newRecConnection', who=param_all.WATCHINGNAME,
                     port=self.portname)
 
-    def process(self, data):
+    def process(self, key, data):
         """
         Sends the data to the antenna
         """
-        print(data.hex())
-        if core.is_reporting(data):
+        if key == 'rpt':
             process_report(data)
-        else:
+        elif key == 'dic':
             #hop = core.split_socket_info(data)
             #print("Raw data from '{}'".format(hop['who']))
             pass

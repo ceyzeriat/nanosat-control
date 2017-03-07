@@ -64,28 +64,27 @@ class SaveRec(hein.SocReceiver):
         report('newRecConnection', port=self.portname)
         report('myPID', pid=core.get_pid())
 
-    def process(self, data):
+    def process(self, key, data):
         """
         Saves the packet in the database and does 
         """
         # ignores the reporting
-        if core.is_reporting(data):
+        if key == 'rpt':
             return
         report('receivedTM')
-        inputs = core.split_socket_info(data)
         if param_all.AX25ENCAPS:
-            source, destination, blobish = Framer.decode_radio(inputs['data'])
+            source, destination, blobish = Framer.decode_radio(data['data'])
             report('receivedCallsignTM', source=source, ll=len(blobish),
                         destination=destination)
         else:
-            blobish = inputs['data']
+            blobish = data['data']
             report('receivedRawTM', ll=len(blobish))
         blobparser = CCSDSBlob(blobish)
         start = 0
         pk = blobparser.grab_first_packet(start=start)
         while pk is not None:
-            inputs['data'] = pk
-            process_incoming(**inputs)
+            data['data'] = pk
+            process_incoming(**data)
             start += len(pk)
             pk = blobparser.grab_first_packet(start=start)
         return

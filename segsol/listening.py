@@ -64,14 +64,14 @@ class ListenRec(hein.SocReceiver):
         report('newRecConnection', port=self.portname)
         report('myPID', pid=core.get_pid())
 
-    def process(self, data):
+    def process(self, key, data):
         """
         Sends the data to the antenna
         """
         # ignores the reporting
-        if core.is_reporting(data):
+        if key == 'rpt':
             return
-        else:
+        elif key == 'raw':
             report('sendingTC')
             ANTENNA.write(data)
             now = core.now()
