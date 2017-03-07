@@ -134,7 +134,7 @@ def split_ccsds(txt, n):
     * txt (Byt): the bytes-chain to split
     * n (int): the maximum number of packets to split
     """
-    return data.split(CCSDSSPLITCHAR*2, n)
+    return txt.split(CCSDSSPLITCHAR*2, n)
 
 def split_flow(data, n=-1):
     """
