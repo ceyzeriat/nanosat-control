@@ -74,15 +74,12 @@ class WatchRec(hein.SocReceiver):
         if key == 'rpt':
             process_report(data)
         elif key == 'dic':
-            #hop = core.split_socket_info(data)
-            #print("Raw data from '{}'".format(hop['who']))
+            #print("Raw data from '{}'".format(data['who']))
             pass
 
 
-def process_report(data):
+def process_report(inputs):
     global PIDS
-    inputs = core.split_socket_info(data, asStr=True)
-    print(inputs)
     key = inputs.pop('key')
     broadcast(key=key, **inputs)
     if key == 'myPID':
@@ -128,11 +125,11 @@ def broadcast(key, **kwargs):
     """
     Broacasts info
     """
-    r = REPORTS[key].disp(**kwargs)
-    print(r)
-    ### XDISP.report(r)
-    core.append_logfile(r)
     rp = REPORTS[key].pack(**kwargs)
+    rpt_verb = REPORTS[key].disp(**rp)
+    print(rpt_verb)
+    ### XDISP.report(rpt_verb)
+    core.append_logfile(rpt_verb)
     WATCH_TRANS.tell_report(**rp)
 
 
