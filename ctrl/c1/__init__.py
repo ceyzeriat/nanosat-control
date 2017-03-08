@@ -25,12 +25,33 @@
 ###############################################################################
 
 
+from datetime import datetime
 from ..cmd import L1CMDS as _ALL
+from ..cmd import Command
+from ..utils import bincore
 
 
 __all__ = []
 
 
+class setDatetime(Command):
+    def generate_data(self, *args, **kwargs):
+        stamp = kwargs.get('datetime')
+        if not isinstance(stamp, datetime):
+            raise TypeError
+        res = ((stamp.month // 10) << 4) + (stamp.month % 10)
+        res = (res << 6) + ((stamp.day // 10) << 4) + (stamp.day % 10)
+        res = (res << 6) + ((stamp.hour // 10) << 4) + (stamp.hour % 10)
+        res = (res << 7) + ((stamp.minute // 10) << 4) + (stamp.minute % 10)
+        res = (res << 7) + ((stamp.second // 10) << 4) + (stamp.second % 10)
+        kwargs['datetime'] = res
+        return super(Command, self).generate_data(*args, **kwargs)
+
+
 for _cmd in _ALL:
+    if _cmd.name == 'set_datetime':
+        _cmd = setDatetime(**_cmd.to_dict())
     locals()[_cmd.name] = _cmd
     __all__.append(_cmd.name)
+
+
