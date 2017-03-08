@@ -109,32 +109,26 @@ def append_logfile(message):
                              str(message)))
     f.close()
 
-def recover_ccsds(txt):
+def recover_ccsds(data):
     """
-    Recovers the escaped split characters
-    Returns string or list depending on ``txt``
+    Recovers the un-escaped split characters
 
     Args:
-    * txt (str or list of str): the text to process
+    * data (str or list of str): the text to process
     """
-    def esc(text):
-        return text.replace(CCSDSESCAPEDSPLIT, CCSDSSPLITCHAR)
-    if isStr(txt):
-        return esc(txt)
-    elif hasattr(txt, "__iter__"):
-        return [esc(item) for item in txt]
+    return data.replace(CCSDSESCAPEDSPLIT, CCSDSSPLITCHAR)
 
-def split_ccsds(txt, n):
+def split_ccsds(data, n):
     """
     Splits the ccsds according to the defined split ccsds character.
     Returns a list of size 1 at minimum, and ``n+1`` at maximum, which
     [-1] element is the remainder of the operation
     
     Args:
-    * txt (Byt): the bytes-chain to split
+    * data (Byt): the bytes-chain to split
     * n (int): the maximum number of packets to split
     """
-    return txt.split(CCSDSSPLITCHAR*2, n)
+    return data.split(CCSDSSPLITCHAR*2, n)
 
 def split_flow(data, n=-1):
     """
@@ -151,10 +145,10 @@ def split_flow(data, n=-1):
     if not AX25ENCAPS:
         res = split_ccsds(Byt(data), int(n))
         # no split found
-        if len(res) <= 1:
+        if len(res) < 2:
             return res
         # apply recovery of escaped chars to all splits found except last one
-        return recover_ccsds(res[:-1]) + res[-1:]
+        return list(map(recover_ccsds, res[:-1])) + res[-1:]
     # split KISS using the special split chars
     elif KISSENCAPS:
         raise ctrlexception.NotImplemented("Frames-FLow with KISS")

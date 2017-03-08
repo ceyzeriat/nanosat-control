@@ -379,18 +379,19 @@ INSERT INTO commands VALUES (252, 'flash_erase');
 INSERT INTO commands VALUES (255, 'soft_reboot');
 INSERT INTO commands VALUES (253, 'launch_application_A');
 INSERT INTO commands VALUES (254, 'launch_application_B');
-INSERT INTO commands VALUES (260, 'move_piezo');
-INSERT INTO commands VALUES (262, 'hv_switch');
-INSERT INTO commands VALUES (264, 'diode_switch');
-INSERT INTO commands VALUES (266, 'dac_switch');
-INSERT INTO commands VALUES (268, 'tec_switch');
-INSERT INTO commands VALUES (270, 'set_param');
-INSERT INTO commands VALUES (272, 'get_param');
-INSERT INTO commands VALUES (274, 'change_mode');
-INSERT INTO commands VALUES (276, 'reset');
-INSERT INTO commands VALUES (278, 'set_datetime');
-INSERT INTO commands VALUES (280, 'start_hk');
-INSERT INTO commands VALUES (282, 'stop_hk');
+INSERT INTO commands VALUES (101, 'echo_pld');
+INSERT INTO commands VALUES (102, 'move_piezo');
+INSERT INTO commands VALUES (103, 'hv_switch');
+INSERT INTO commands VALUES (104, 'diode_switch');
+INSERT INTO commands VALUES (105, 'dac_switch');
+INSERT INTO commands VALUES (106, 'tec_switch');
+INSERT INTO commands VALUES (107, 'set_param');
+INSERT INTO commands VALUES (108, 'get_param');
+INSERT INTO commands VALUES (109, 'change_mode');
+INSERT INTO commands VALUES (110, 'reset');
+INSERT INTO commands VALUES (111, 'set_datetime');
+INSERT INTO commands VALUES (112, 'start_hk');
+INSERT INTO commands VALUES (113, 'stop_hk');
 
 
 
