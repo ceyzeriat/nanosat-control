@@ -143,8 +143,9 @@ def days_unpack(v):
     """
     verbose = "binary -> unsigned integer"
     """
-    # apply a maximum to the rounded number of days from 1970 to 2050
-    return Day(max(30001, bincore.bin2int(v)))
+    # apply a maximum to the rounded number of days from 1970 to the
+    # maximum of gmtime
+    return Day(min(24001, bincore.bin2int(v)))
 
 
 def msec_unpack(v):
@@ -152,7 +153,7 @@ def msec_unpack(v):
     verbose = "binary -> unsigned integer"
     """
     # apply a maximum to the possible number of msec per day
-    return Ms(max(86399999, bincore.bin2int(v)))
+    return Ms(min(86399999, bincore.bin2int(v)))
 
 
 DAYSINCEREF_TELEMETRY = CCSDSKey(   name='days_since_ref',
