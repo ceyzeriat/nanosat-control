@@ -58,6 +58,7 @@ def get_data():
 
 
 def proceed(data):
+    print("Proceed: "+data.hex())
     listening.report('GotBlob', ll=len(data), blob=data)
     # deal with it in a separate thread
     loopy = Thread(target=listening.process_data, args=(data,))
@@ -77,8 +78,11 @@ else:
         data = get_data()
         if data is None:
             continue
+        print("Raw: "+data.hex())
         inbuff += data
+        print("Full buffer: "+inbuff.hex())
         res = core.split_flow(data=inbuff, n=-1)
+        print("Valid packets: "+str(len(res)-1))
         if len(res) < 2:
             continue  # didn't find a full packet yet
         inbuff = res.pop(-1)
