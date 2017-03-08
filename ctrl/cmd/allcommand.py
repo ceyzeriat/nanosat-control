@@ -25,6 +25,7 @@
 ###############################################################################
 
 
+from datetime import datetime
 from .command import Command
 from . import param_commands
 from ..utils import core
@@ -45,8 +46,25 @@ L0CMDSNAMES = []
 L1CMDSNAMES = []
 
 
+class setDatetime(Command):
+    def generate_data(self, *args, **kwargs):
+        stamp = kwargs.get('datetime')
+        if not isinstance(stamp, datetime):
+            raise TypeError
+        res = ((stamp.month // 10) << 4) + (stamp.month % 10)
+        res = (res << 6) + ((stamp.day // 10) << 4) + (stamp.day % 10)
+        res = (res << 6) + ((stamp.hour // 10) << 4) + (stamp.hour % 10)
+        res = (res << 7) + ((stamp.minute // 10) << 4) + (stamp.minute % 10)
+        res = (res << 7) + ((stamp.second // 10) << 4) + (stamp.second % 10)
+        kwargs['datetime'] = res
+        return super(Command, self).generate_data(*args, **kwargs)
+
+
 for item in allcmds:
-    c = Command(**item)
+    if item['name'] == 'set_datetime':
+        c = setDatetime(**item)
+    else:
+        c = Command(**item)
     ALLCMDS.append(c)
     ALLCMDSNAMES.append(c.name)
     if c.level == 0:

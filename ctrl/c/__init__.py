@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-from ..cmd import L1CMDS as _ALL
+from ..cmd import ALLCMDS as _ALL
 
 
 __all__ = []
