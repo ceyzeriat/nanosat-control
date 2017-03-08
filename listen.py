@@ -48,13 +48,13 @@ def get_data():
     if n < 0:
         return None
     # grab data
-    data = Byt(listening.ANTENNA.read(size=n))
+    data = listening.ANTENNA.read(size=n)
     # empty data
     if data is None:
         return None
     if len(data) == 0:
         return None
-    return data
+    return Byt(data)
 
 
 def proceed(data):
