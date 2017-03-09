@@ -81,7 +81,6 @@ CROSS = e(u'\u253C')
 
 
 def newlinebox(h, w, y, x, title=None):
-    print 2, w, y-1, x, 0, 0, HORLINE*(w-x)
     wb = curses.newwin(2, w, y-1, x)
     wb.addstr(0, 0, HORLINE*(w-x))
     if title is not None:
@@ -107,7 +106,6 @@ class Xdisp(object):
         self.stdscr = stdscr
         curses.curs_set(0)
         self.height, self.width = stdscr.getmaxyx()
-        print self.height, self.width
         curses.start_color()
         curses.use_default_colors()
         curses.echo()
