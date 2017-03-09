@@ -45,8 +45,7 @@ class ShowRec(hein.SocReceiver):
         """
         New connection or connection restablished
         """
-        broadcast('newRecConnection', who=param_all.SHOWINGNAME,
-                    port=self.portname)
+        pass
 
     def process(self, key, data):
         """
