@@ -82,7 +82,7 @@ CROSS = e(u'\u253C')
 
 def newlinebox(h, w, y, x, title=None):
     wb = curses.newwin(2, w, y-1, x)
-    wb.addstr(0, 0, HORLINE*80)
+    wb.addstr(0, 0, HORLINE*(w-x))
     if title is not None:
         wb.addstr(0, 2, title)
     wb.refresh()

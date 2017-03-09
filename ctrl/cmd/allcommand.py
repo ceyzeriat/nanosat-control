@@ -49,20 +49,24 @@ L1CMDSNAMES = []
 class setDatetime(Command):
     def generate_data(self, *args, **kwargs):
         stamp = kwargs.get('datetime')
-        if not isinstance(stamp, datetime):
+        if not isinstance(stamp, (datetime, list, tuple)):
             raise TypeError
+        if isinstance(stamp, (list, tuple)):
+            stamp = datetime(*stamp)
         res = ((stamp.month // 10) << 4) + (stamp.month % 10)
         res = (res << 6) + ((stamp.day // 10) << 4) + (stamp.day % 10)
         res = (res << 6) + ((stamp.hour // 10) << 4) + (stamp.hour % 10)
         res = (res << 7) + ((stamp.minute // 10) << 4) + (stamp.minute % 10)
         res = (res << 7) + ((stamp.second // 10) << 4) + (stamp.second % 10)
         kwargs['datetime'] = res
-        return super(Command, self).generate_data(*args, **kwargs)
+        return super(setDatetime, self).generate_data(*args, **kwargs)
 
 
 for item in allcmds:
     if item['name'] == 'set_datetime':
         c = setDatetime(**item)
+        c.generate_data.__func__.__doc__ =\
+            super(setDatetime, c).generate_data.__func__.__doc__
     else:
         c = Command(**item)
     ALLCMDS.append(c)

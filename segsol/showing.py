@@ -29,6 +29,7 @@ import hein
 import param
 from param import param_all
 from ctrl.xdisp.watchdog import XDISP
+from ctrl.utils.report import REPORTS
 
 
 __all__ = ['init', 'close']
@@ -52,7 +53,8 @@ class ShowRec(hein.SocReceiver):
         Sends the data to the antenna
         """
         if key == 'rpt':
-            process_report(data)
+            key = str(data.pop(param_all.REPORTKEY))
+            XDISP.report(REPORTS[key].disp(**data))
         elif key == 'dic':
             #print("Raw data from '{}'".format(data['who']))
             pass

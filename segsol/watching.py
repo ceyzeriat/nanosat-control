@@ -26,6 +26,7 @@
 
 
 import hein
+import sys
 from byt import Byt
 from ctrl.utils import core
 from ctrl.utils.report import REPORTS
@@ -79,6 +80,7 @@ class WatchRec(hein.SocReceiver):
 
 def process_report(inputs):
     global PIDS
+    WATCH_TRANS.tell_report(**inputs)
     key = str(inputs.pop(param_all.REPORTKEY))
     broadcast(key, **inputs)
     if key == 'myPID':
@@ -92,13 +94,13 @@ def process_report(inputs):
                                 who=who)
     elif key =='broadcastTC':
         pass
-    
     elif key =='GotBlob':
         try:
             hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']),\
                                             retdbvalues=True)
         except:
-            print('Tried to unpack.. but an error occurred')
+            print('Tried to unpack.. but an error occurred: {}'\
+                    .format(sys.exc_info()[0]))
             return
         print(param_ccsds.disp(**hd))
         cat_params = param_category.FILEDATACRUNCHING.get(\
@@ -125,9 +127,8 @@ def broadcast(*args, **kwargs):
     key = str(args[0])
     rp = REPORTS[key].pack(**kwargs)
     rpt_verb = REPORTS[key].disp(**rp)
-    print(rpt_verb)
     core.append_logfile(rpt_verb)
-    WATCH_TRANS.tell_report(**rp)
+    print(rpt_verb)
 
 
 def init():
