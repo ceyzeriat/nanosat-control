@@ -34,5 +34,8 @@ from segsol import saving
 core.prepare_terminal('Save')
 print("Initialization...")
 db.init_DB()
-saving.init_saving()
-print("Done")
+
+time.sleep(0.5)
+
+saving.init()
+print("Saving...")

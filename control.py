@@ -38,9 +38,8 @@ from segsol import controlling
 
 core.prepare_terminal('Control')
 print("Initialization...")
-controlling.init_control()
+controlling.init()
 db.init_DB()
-print("Done")
 
 time.sleep(0.5)
 

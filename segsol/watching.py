@@ -36,17 +36,16 @@ from ctrl.xdisp import watchdog
 import param
 from param import param_category
 from param import param_all
-from ctrl.xdisp.watchdog import XDISP
 
 
-__all__ = ['init_watch', 'close_watch']
+__all__ = ['init', 'close']
 
 
 WATCH_TRANS = None
 WATCH_REC_LISTEN = None
 WATCH_REC_CONTROL = None
 WATCH_REC_SAVE = None
-watch_running = False
+running = False
 PIDS = {}
 
 
@@ -93,9 +92,7 @@ def process_report(inputs):
                                 who=who)
     elif key =='broadcastTC':
         pass
-
-        #XDISP.add_TC(dbid=dbid, cmdname=self.name, hd=hd, hdx=hdx, inputs=inputs)
-        
+    
     elif key =='GotBlob':
         try:
             hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']),\
@@ -129,12 +126,11 @@ def broadcast(*args, **kwargs):
     rp = REPORTS[key].pack(**kwargs)
     rpt_verb = REPORTS[key].disp(**rp)
     print(rpt_verb)
-    ### XDISP.report(rpt_verb)
     core.append_logfile(rpt_verb)
     WATCH_TRANS.tell_report(**rp)
 
 
-def init_watch():
+def init():
     """
     Initializes the control
     """
@@ -142,9 +138,8 @@ def init_watch():
     global WATCH_REC_LISTEN
     global WATCH_REC_CONTROL
     global WATCH_REC_SAVE
-    global XDISP
-    global watch_running
-    if watch_running:
+    global running
+    if running:
         return
     WATCH_TRANS = WatchTrans(port=param_all.WATCHINGPORT[0],
                              nreceivermax=len(param_all.WATCHINGPORTLISTENERS),
@@ -164,13 +159,10 @@ def init_watch():
                                     connect=True,
                                     connectWait=0.5,
                                     portname=param_all.SAVINGPORT[1])
-    watch_running = True
-    ### XDISP.start()
-    ### close_watch()
+    running = True
 
 
-
-def close_watch():
+def close():
     """
     Closes the control
     """
@@ -178,11 +170,10 @@ def close_watch():
     global WATCH_REC_LISTEN
     global WATCH_REC_CONTROL
     global WATCH_REC_SAVE
-    global XDISP
-    global watch_running
-    if not watch_running:
+    global running
+    if not running:
         return
-    watch_running = False
+    running = False
     WATCH_TRANS.close()
     WATCH_REC_LISTEN.stop_connectLoop()
     WATCH_REC_LISTEN.close()
@@ -194,4 +185,3 @@ def close_watch():
     WATCH_REC_LISTEN = None
     WATCH_REC_CONTROL = None
     WATCH_REC_SAVE = None
-    ### XDISP = None

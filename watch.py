@@ -27,13 +27,9 @@
 
 from ctrl.utils import core
 from segsol import watching
-#from ctrl.xdisp.watchdog import Watchdog
 
 
 core.prepare_terminal('Watch')
 print("Initialization...")
-watching.init_watch()
-print("Done")
-
-# infinite loop to check processes
-#curses.wrapper(curses_main)
+watching.init()
+print("Watching...")

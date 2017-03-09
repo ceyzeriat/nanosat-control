@@ -33,11 +33,11 @@ from ctrl.utils.report import REPORTS
 from ctrl.kiss import Framer
 from param import param_all
 
-__all__ = ['init_control', 'close_control', 'broadcast_TC', 'report']
+__all__ = ['init', 'close', 'broadcast_TC', 'report']
 
 
 CONTROL_TRANS = None
-control_running = False
+running = False
 
 
 class ControlTrans(hein.SocTransmitter):
@@ -54,7 +54,7 @@ def broadcast_TC(cmdname, dbid, packet):
     """
     Sends the packet on the socket
     """
-    if not control_running:
+    if not running:
         raise ctrlexception.ControllingNotInitialized()
     report('broadcastTC', cmdname=cmdname, dbid=dbid)
     # add the AX25/KISS framing
@@ -75,28 +75,28 @@ def report(*args, **kwargs):
     CONTROL_TRANS.tell_report(**rp)
 
 
-def init_control():
+def init():
     """
     Initializes the control
     """
     global CONTROL_TRANS
-    global control_running
-    if control_running:
+    global running
+    if running:
         return
     CONTROL_TRANS = ControlTrans(port=param_all.CONTROLLINGPORT[0],
                         nreceivermax=len(param_all.CONTROLLINGPORTLISTENERS),
                         start=True, portname=param_all.CONTROLLINGPORT[1])
-    control_running = True
+    running = True
 
 
-def close_control():
+def close():
     """
     Closes the control
     """
     global CONTROL_TRANS
-    global control_running
-    if not control_running:
+    global running
+    if not running:
         return
-    control_running = False
+    running = False
     CONTROL_TRANS.close()
     CONTROL_TRANS = None

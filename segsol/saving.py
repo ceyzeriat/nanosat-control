@@ -39,12 +39,12 @@ from ctrl.kiss import Framer
 from param import param_all
 
 
-__all__ = ['init_saving', 'close_saving', 'report']
+__all__ = ['init', 'close', 'report']
 
 
 SAVE_TRANS = None
 SAVE_REC_LISTEN = None
-save_running = False
+running = False
 
 
 class SaveTrans(hein.SocTransmitter):
@@ -119,14 +119,14 @@ def report(*args, **kwargs):
     SAVE_TRANS.tell_report(**rp)
 
 
-def init_saving():
+def init():
     """
     Initializes the saving procedure
     """
     global SAVE_TRANS
     global SAVE_REC_LISTEN
-    global save_running
-    if save_running:
+    global running
+    if running:
         return
     SAVE_TRANS = SaveTrans(port=param_all.SAVINGPORT[0],
                             nreceivermax=len(param_all.SAVINGPORTLISTENERS),
@@ -135,19 +135,19 @@ def init_saving():
                                 name=param_all.SAVINGNAME, connect=True,
                                 connectWait=0.5,
                                 portname=param_all.LISTENINGPORT[1])
-    save_running = True
+    running = True
 
 
-def close_saving():
+def close():
     """
     Closes the saving procedure
     """
     global SAVE_TRANS
     global SAVE_REC_LISTEN
-    global save_running
-    if not save_running:
+    global running
+    if not running:
         return
-    save_running = False
+    running = False
     SAVE_TRANS.close()
     SAVE_REC_LISTEN.stop_connectLoop()
     SAVE_REC_LISTEN.close()

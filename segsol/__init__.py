@@ -33,3 +33,4 @@ from . import listening
 from . import saving
 from . import watching
 from . import controlling
+from . import showing

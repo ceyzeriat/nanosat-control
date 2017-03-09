@@ -68,28 +68,34 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     cp piccontrol piclisten
     cp piccontrol picwatch
     cp piccontrol picsave
+    cp piccontrol picshow
 
     BASICFONT="-bg black -fg lightgrey -fa 'Monospace' -fs 10"
 
-    echo "    xterm -T 'Control' $BASICFONT -geometry 80x24+30+400 -e '$IPY -i $WHERESEGSOL/control.py';" >> piccontrol
+    echo "    xterm -T 'Control' $BASICFONT -geometry 80x24+600+200 -e '$IPY -i $WHERESEGSOL/control.py';" >> piccontrol
     echo "else" >> piccontrol
     echo "    $IPY -i $WHERESEGSOL/control.py" >> piccontrol
     echo "fi" >> piccontrol
 
-    echo "    xterm -T 'Listen' $BASICFONT -geometry 80x10+30-50 -e '$IPY -i $WHERESEGSOL/listen.py';" >> piclisten
+    echo "    xterm -T 'Listen' $BASICFONT -geometry 80x10-0+0 -e '$IPY -i $WHERESEGSOL/listen.py';" >> piclisten
     echo "else" >> piclisten
     echo "    $IPY -i $WHERESEGSOL/listen.py" >> piclisten
     echo "fi" >> piclisten
 
-    echo "    xterm -T 'Watch' $BASICFONT -geometry 150x12+30+150 -e '$IPY -i $WHERESEGSOL/watch.py';" >> picwatch
+    echo "    xterm -T 'Watch' $BASICFONT -geometry 80x10-200+0 -e '$IPY -i $WHERESEGSOL/watch.py';" >> picwatch
     echo "else" >> picwatch
     echo "    $IPY -i $WHERESEGSOL/watch.py" >> picwatch
     echo "fi" >> picwatch
 
-    echo "    xterm -T 'Save' $BASICFONT -geometry 80x10-30+150 -e '$IPY -i $WHERESEGSOL/save.py';" >> picsave
+    echo "    xterm -T 'Save' $BASICFONT -geometry 80x10-100+0 -e '$IPY -i $WHERESEGSOL/save.py';" >> picsave
     echo "else" >> picsave
     echo "    $IPY -i $WHERESEGSOL/save.py" >> picsave
     echo "fi" >> picsave
+
+    echo "    xterm -T 'Show' $BASICFONT -geometry 80x30+0+0 -e '$IPY -i $WHERESEGSOL/show.py';" >> picshow
+    echo "else" >> picshow
+    echo "    $IPY -i $WHERESEGSOL/save.py" >> picshow
+    echo "fi" >> picshow
 fi
 
 
@@ -141,6 +147,14 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "desk" ]; then
     echo 'Path='"$HOME" >> PicWatch.desktop
     echo 'Terminal=false' >> PicWatch.desktop
     echo 'StartupNotify=false' >> PicWatch.desktop
+
+    echo 'Name=PicShow' >> PicShow.desktop
+    echo 'Comment=' >> PicShow.desktop
+    echo 'Exec='"$WHEREBINS"'/picshow gui' >> PicShow.desktop
+    echo 'Icon='"$WHERESEGSOL"'/img/show.png' >> PicShow.desktop
+    echo 'Path='"$HOME" >> PicShow.desktop
+    echo 'Terminal=false' >> PicShow.desktop
+    echo 'StartupNotify=false' >> PicShow.desktop
 fi
 
 # got back where we were

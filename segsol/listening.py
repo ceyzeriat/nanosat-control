@@ -29,6 +29,7 @@ import time
 import os
 import glob
 import hein
+from threading import Thread
 from ctrl.utils.report import REPORTS
 from ctrl.utils import core
 from param import param_all
@@ -37,13 +38,13 @@ from ctrl.rfcheckoutbox import RFCheckoutbox
 from ctrl.serialusb import SerialUSB
 
 
-__all__ = ['process_data', 'init_listening', 'close_listening', 'report']
+__all__ = ['process_data', 'init', 'close', 'report', 'theloop']
 
 
 LISTEN_TRANS = None
 LISTEN_REC_CONTROL = None
 ANTENNA = None
-listen_running = False
+running = False
 
 
 class ListenTrans(hein.SocTransmitter):
@@ -119,7 +120,53 @@ def report(*args, **kwargs):
     LISTEN_TRANS.tell_report(**rp)
 
 
-def init_listening(antenna):
+def get_data():
+    time.sleep(0.01)  # Don't kill the CPU
+    n = ANTENNA.in_waiting()
+    if n < 0:
+        return None
+    # grab data
+    data = ANTENNA.read(size=n)
+    # empty data
+    if data is None:
+        return None
+    if len(data) == 0:
+        return None
+    return Byt(data)
+
+
+def proceed(data):
+    report('GotBlob', ll=len(data), blob=data)
+    # deal with it in a separate thread
+    loopy = Thread(target=process_data, args=(data,))
+    loopy.daemon = True
+    loopy.start()
+
+
+if not param_all.FRAMESFLOW:
+    def theloop():
+        while running:
+            data = get_data()
+            if data is None:
+                continue
+            proceed(data)
+else:
+    def theloop():
+        inbuff = Byt()
+        while running:
+            data = get_data()
+            if data is None:
+                continue
+            inbuff += data
+            res = core.split_flow(data=inbuff, n=-1)
+            if len(res) < 2:
+                continue  # didn't find a full packet yet
+            inbuff = res.pop(-1)
+            for packet in res:
+                proceed(packet)
+
+
+def init(antenna):
     """
     Initializes the listening
 
@@ -130,8 +177,8 @@ def init_listening(antenna):
     global LISTEN_TRANS
     global LISTEN_REC_CONTROL
     global ANTENNA
-    global listen_running
-    if listen_running:
+    global running
+    if running:
         return
     LISTEN_TRANS = ListenTrans(port=param_all.LISTENINGPORT[0],
                             nreceivermax=len(param_all.LISTENINGPORTLISTENERS),
@@ -146,22 +193,22 @@ def init_listening(antenna):
     elif antenna == 'serial':
         init_serial()
     else:
-        close_listening()
+        close()
         raise ctrlexception.UnknownAntenna(antenna)
-    listen_running = True
+    running = True
 
 
-def close_listening():
+def close():
     """
     Closes the listening
     """
     global LISTEN_TRANS
     global LISTEN_REC_CONTROL
     global ANTENNA
-    global listen_running
-    if not listen_running:
+    global running
+    if not running:
         return
-    listen_running = False
+    running = False
     LISTEN_TRANS.close()
     LISTEN_REC_CONTROL.stop_connectLoop()
     LISTEN_REC_CONTROL.close()

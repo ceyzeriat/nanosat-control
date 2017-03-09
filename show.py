@@ -25,18 +25,12 @@
 ###############################################################################
 
 
-from threading import Thread
 from ctrl.utils import core
-from segsol import listening
-from param import param_all
+from segsol import showing
 
 
-core.prepare_terminal('Listen')
+core.prepare_terminal('Show')
 print("Initialization...")
-listening.init(antenna=param_all.ANTENNALISTENED)
-
-print("Listening...")
-
-listenLoop = Thread(target=listening.theloop)
-listenLoop.daemon = True
-listenLoop.start()
+showing.init()  # blocking
+print("Done")
+showing.close()
