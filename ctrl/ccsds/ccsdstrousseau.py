@@ -63,7 +63,7 @@ class CCSDSTrousseau(object):
         if not self.octets:
             # size is always in octets
 
-            self.size = math.ceil(self.size / 8.)
+            self.size = int(math.ceil(self.size / 8.))
 
     def get_keys(self):
         """
