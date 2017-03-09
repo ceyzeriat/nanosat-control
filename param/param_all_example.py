@@ -85,6 +85,7 @@ LISTENINGNAME = 'listen'  # telemetryport
 CONTROLLINGNAME = 'control'
 SAVINGNAME = 'save'
 WATCHINGNAME = 'watch'
+SHOWINGNAME = 'show'
 
 
 # the port for telemetry broadcasting/listening (alpha)
@@ -101,7 +102,7 @@ SAVINGPORTLISTENERS = [WATCHINGNAME]
 
 # the port for saving status broadcasting/listening (delta)
 WATCHINGPORT = (50004, WATCHINGNAME)
-WATCHINGPORTLISTENERS = [CONTROLLINGNAME]
+WATCHINGPORTLISTENERS = [SHOWINGNAME]  # CONTROLLINGNAME
 
 
 # process timeout for the watchdog to get angry
@@ -110,16 +111,16 @@ PROCESSTIMEOUT = 5  # sec
 # RFCHECKOUTBOX
 # port
 RFCHECKOUTBOXPORT = 3211
-RFCHECKOUTBOXTIMEOUT = 1  # sec
+RFCHECKOUTBOXTIMEOUT = 1.  # sec
 RFCHECKOUTBOXLENGTH = 1024  # octet
 
 
 # SERIAL
 # port 
 SERIALUSBPORT = '/dev/ttyUSB0'
-SERIALUSBTIMEOUT = 1  # sec
+SERIALUSBTIMEOUT = 1.  # sec
 SERIALUSBLENGTH = 1024  # octet
-SERIALUSBBAUDRATE = 349200  # bananas per pencil
+SERIALUSBBAUDRATE = 57600  # bananas per pencil
 
 # where the raw telemetry are dumped (locally), relative to HOME
 TELEMETRYDUMPFOLDER = ['tm_data']
