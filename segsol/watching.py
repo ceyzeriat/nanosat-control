@@ -74,15 +74,20 @@ class WatchRec(hein.SocReceiver):
         if key == 'rpt':
             process_report(data)
         elif key == 'dic':
-            #print("Raw data from '{}'".format(data['who']))
+            # comming from control
+            if self.portname == param_all.CONTROLLINGNAME:
+                # is a full TC broadcast
+                if data.get(param_all.REPORTKEY,'') == 'broadcastFullTC':
+                    XDISP.add_TC(dbid=data.pop('dbid'), cmdname=data.pop('cmdname'),
+                                    inputs=**data)
+        elif key == 'raw':
             pass
+
 
 
 def process_report(inputs):
     global PIDS
-    WATCH_TRANS.tell_report(**inputs)
-    key = str(inputs.pop(param_all.REPORTKEY))
-    broadcast(key, **inputs)
+    broadcast(str(inputs.get(param_all.REPORTKEY)), **inputs)
     if key == 'myPID':
         who = inputs['who']
         if who in PIDS.keys():
@@ -124,11 +129,12 @@ def broadcast(*args, **kwargs):
     """
     Broacasts info
     """
-    key = str(args[0])
-    rp = REPORTS[key].pack(**kwargs)
-    rpt_verb = REPORTS[key].disp(**rp)
-    core.append_logfile(rpt_verb)
-    print(rpt_verb)
+    WATCH_TRANS.tell_report(**kwargs)
+    key = str(kwargs.pop(param_all.REPORTKEY, args[0]))
+    rpt_verb = REPORTS[key].disp(**kwargs)
+    if key not in ['IamDead', 'IamAlive']:
+        core.append_logfile(rpt_verb)
+        print(rpt_verb)
 
 
 def init():

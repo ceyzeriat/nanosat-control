@@ -50,13 +50,20 @@ class ControlTrans(hein.SocTransmitter):
         report('myPID', pid=core.get_pid())
 
 
-def broadcast_TC(cmdname, dbid, packet):
+def broadcast_TC(cmdname, dbid, packet, hd, hdx, inputs):
     """
     Sends the packet on the socket
     """
     if not running:
         raise ctrlexception.ControllingNotInitialized()
     report('broadcastTC', cmdname=cmdname, dbid=dbid)
+    allinputs = {}
+    allinputs.update(hd)
+    allinputs.update(hdx)
+    allinputs.update(inputs)
+    allinputs.update({'cmdname': cmdname, 'dbid': dbid,
+                        param_all.REPORTKEY: 'broadcastFullTC'})
+    CONTROL_TRANS.tell_dict(**allinputs)
     # add the AX25/KISS framing
     if param_all.AX25ENCAPS:
         packet = Framer.encode_radio(packet)

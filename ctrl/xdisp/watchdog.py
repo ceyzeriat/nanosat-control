@@ -64,7 +64,7 @@ MAXDISPLAYTC = 8
 MAXSTORETM = 100
 MAXDISPLAYTM = 8
 MAXSTORERP = 100
-MAXDISPLAYRP = 8
+MAXDISPLAYRP = 10
 
 
 """
@@ -114,17 +114,18 @@ class Xdisp(object):
         self.bar = curses.newwin(1, self.width, 0, 0)
         self.TC = newlinebox(MAXDISPLAYTC, self.width,
                                 2, 0, "Telecommands")
+        self.TC.refresh()
         self.TM = newlinebox(MAXDISPLAYTM, self.width,
                                 MAXDISPLAYTC+3, 0, "Telemetries")
+        self.TM.refresh()
         self.RP = newlinebox(MAXDISPLAYRP, self.width,
                                 MAXDISPLAYTM+MAXDISPLAYTC+4, 0, "Reporting")
+        self.RP.refresh()
         self.running = True
         self.set_controlico(status=self.NOSTARTED)
         self.set_saveico(status=self.NOSTARTED)
         self.set_listenico(status=self.NOSTARTED)
-        self.TC.refresh()
-        self.TM.refresh()
-        self._start_set_time(3)
+        self._start_set_time(freq=3)
         self._loopit()
         return
 
@@ -135,6 +136,7 @@ class Xdisp(object):
         if not self.running:
             return
         self.bar.addstr(0, CONTROLICO[0], CONTROLICO[1], status)
+        self.bar.refresh()
 
     def set_saveico(self, status):
         """
@@ -143,6 +145,7 @@ class Xdisp(object):
         if not self.running:
             return
         self.bar.addstr(0, SAVEICO[0], SAVEICO[1], status)
+        self.bar.refresh()
 
     def set_listenico(self, status):
         """
@@ -151,6 +154,7 @@ class Xdisp(object):
         if not self.running:
             return
         self.bar.addstr(0, LISTENICO[0], LISTENICO[1], status)
+        self.bar.refresh()
 
     def _start_set_time(self, freq=3):
         loopy = Thread(target=loop_time, args=(self, float(freq)))
@@ -222,38 +226,39 @@ class Xdisp(object):
                 self.TC.addstr(line, EXEICO[0], EXEICO[1], status)
         self.TC.refresh()
 
-    def add_TC(self, dbid, cmdname, hd, hdx, inputs):
+    def add_TC(self, dbid, cmdname, inputs):
         if dbid in [item['dbid'] for item in self.TClist]:
             return
         if not self.running:
             return
-        hd['dbid'] = dbid
-        hd.update(hdx)
-        hd.update(inputs)
-        self.TClist = [hd] + self.TClist[:MAXSTORETC-1]
+        inputs['dbid'] = dbid
+        self.TClist = [inputs] + self.TClist[:MAXSTORETC-1]
         self.TC.move(0, 0)
         self.TC.insertln()
         self.TC.addstr(0, 0, TCFMT.format(
                             timestamp=e(core.now().strftime("%F %T")),
-                            pld=PAYLOADICO if int(hd['payload_flag']) == 1\
+                            pld=PAYLOADICO if int(inputs['payload_flag']) == 1\
                                 else OBCICO,
-                            lvl=L1ICO if int(hd['level_flag']) == 1\
+                            lvl=L1ICO if int(inputs['level_flag']) == 1\
                                 else L0ICO,
-                            pid=e(hd['pid']),
-                            pkid=e(str(hd['packet_id'])),
+                            pid=e(inputs['pid']),
+                            pkid=e(str(inputs['packet_id'])),
                             cmd_name=e(cmdname)),
                         self.WHITE)
         self.set_TC_sent(dbid, self.WAIT)
-        self.set_TC_rack(dbid, self.WAIT if int(hd['reqack_reception']) == 1\
-                                            else self.NONE)
-        self.set_TC_fack(dbid, self.WAIT if int(hd['reqack_format']) == 1\
-                                            else self.NONE)
-        self.set_TC_eack(dbid, self.WAIT if int(hd['reqack_execution']) == 1\
-                                            else self.NONE)
+        self.set_TC_rack(dbid, self.WAIT\
+                                if int(inputs['reqack_reception']) == 1\
+                                else self.NONE)
+        self.set_TC_fack(dbid, self.WAIT\
+                                if int(inputs['reqack_format']) == 1\
+                                else self.NONE)
+        self.set_TC_eack(dbid, self.WAIT\
+                                if int(inputs['reqack_execution']) == 1\
+                                else self.NONE)
 
     def _init_colors(self):
         for i in range(0, curses.COLORS):
-            curses.init_pair(i + 1, i, -1)
+            curses.init_pair(i + 1, i, 1)
         self.WHITE = curses.color_pair(0)
         self.BLACK = curses.color_pair(1)
         self.RED = curses.color_pair(2)
@@ -281,7 +286,6 @@ class Xdisp(object):
             #self.RP.insertln()
             #self.RP.addstr(1, 0, "[" + s + "]")
 
+
 if not param_all.JUSTALIB:
     XDISP = Xdisp()
-
-#XDISP.start()

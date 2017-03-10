@@ -91,7 +91,8 @@ class Command(Cm):
         dbid = 0
         print('The TC was not saved')
         # broadcast on socket to the antenna process and watchdog
-        broadcast_TC(cmdname=self.name, dbid=dbid, packet=packet)
+        broadcast_TC(cmdname=self.name, dbid=dbid, packet=packet, hd=hd,
+                        hdx=hdx, inputs=inputs)
         return Telecommand(dbid=dbid)
 
     def show(self, *args, **kwargs):

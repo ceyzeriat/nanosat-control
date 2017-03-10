@@ -53,7 +53,24 @@ class ShowRec(hein.SocReceiver):
         """
         if key == 'rpt':
             key = str(data.pop(param_all.REPORTKEY))
-            XDISP.report(REPORTS[key].disp(**data))
+            if key == 'IamDead':
+                if data['who'] == param_all.CONTROLLINGNAME:
+                    XDISP.set_set_controlico(XDISP.DEAD)
+                elif data['who'] == param.LISTENINGNAME:
+                    XDISP.set_listenico(XDISP.DEAD)
+                elif data['who'] == SAVINGNAME:
+                    XDISP.set_saveico(XDISP.DEAD)
+            elif key == 'IamAlive':
+                if data['who'] == param_all.CONTROLLINGNAME:
+                    XDISP.set_set_controlico(XDISP.ALIVE)
+                elif data['who'] == param.LISTENINGNAME:
+                    XDISP.set_listenico(XDISP.ALIVE)
+                elif data['who'] == SAVINGNAME:
+                    XDISP.set_saveico(XDISP.ALIVE)
+            elif key == '':
+                pass
+            else:
+                XDISP.report(REPORTS[key].disp(**data))
         elif key == 'dic':
             #print("Raw data from '{}'".format(data['who']))
             pass
