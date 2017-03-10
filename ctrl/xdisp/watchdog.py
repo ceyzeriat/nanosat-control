@@ -35,7 +35,7 @@ from param import param_all
 __all__ = ['XDISP']
 
 
-locale.setlocale(locale.LC_ALL, '')
+locale.setlocale(locale.LC_ALL, 'UTF-8')
 
 
 def e(txt):
