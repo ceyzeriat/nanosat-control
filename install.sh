@@ -72,22 +72,22 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
 
     BASICFONT="-bg black -fg lightgrey -fa 'Monospace' -fs 10"
 
-    echo "    xterm -T 'Control' $BASICFONT -geometry 80x24+600+200 -e '$IPY -i $WHERESEGSOL/control.py';" >> piccontrol
+    echo "    xterm -T 'Control' $BASICFONT -geometry 80x24+300+500 -e '$IPY -i $WHERESEGSOL/control.py';" >> piccontrol
     echo "else" >> piccontrol
     echo "    $IPY -i $WHERESEGSOL/control.py" >> piccontrol
     echo "fi" >> piccontrol
 
-    echo "    xterm -T 'Listen' $BASICFONT -geometry 80x10-0+0 -e '$IPY -i $WHERESEGSOL/listen.py';" >> piclisten
+    echo "    xterm -T 'Listen' $BASICFONT -geometry 80x10-40+0 -e '$IPY -i $WHERESEGSOL/listen.py';" >> piclisten
     echo "else" >> piclisten
     echo "    $IPY -i $WHERESEGSOL/listen.py" >> piclisten
     echo "fi" >> piclisten
 
-    echo "    xterm -T 'Watch' $BASICFONT -geometry 80x10-200+0 -e '$IPY -i $WHERESEGSOL/watch.py';" >> picwatch
+    echo "    xterm -T 'Watch' $BASICFONT -geometry 80x10-520+0 -e '$IPY -i $WHERESEGSOL/watch.py';" >> picwatch
     echo "else" >> picwatch
     echo "    $IPY -i $WHERESEGSOL/watch.py" >> picwatch
     echo "fi" >> picwatch
 
-    echo "    xterm -T 'Save' $BASICFONT -geometry 80x10-100+0 -e '$IPY -i $WHERESEGSOL/save.py';" >> picsave
+    echo "    xterm -T 'Save' $BASICFONT -geometry 80x10-280+0 -e '$IPY -i $WHERESEGSOL/save.py';" >> picsave
     echo "else" >> picsave
     echo "    $IPY -i $WHERESEGSOL/save.py" >> picsave
     echo "fi" >> picsave

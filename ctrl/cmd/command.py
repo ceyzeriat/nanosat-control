@@ -87,7 +87,8 @@ class Command(Cm):
         hd['time_sent'] = None
         hd['time_given'] = core.now()
         # save in database
-        dbid = db.save_TC_to_DB(hd=hd, hdx=hdx, inputs=inputs)
+        ### dbid = db.save_TC_to_DB(hd=hd, hdx=hdx, inputs=inputs)
+        print('The TC was not saved')
         # broadcast on socket to the antenna process and watchdog
         broadcast_TC(cmdname=self.name, dbid=dbid, packet=packet)
         return Telecommand(dbid=dbid)
