@@ -245,6 +245,7 @@ class Xdisp(object):
                             pkid=e(str(inputs['packet_id'])),
                             cmd_name=e(cmdname)),
                         self.WHITE)
+        self.TC.refresh()
         self.set_TC_sent(dbid, self.WAIT)
         self.set_TC_rack(dbid, self.WAIT\
                                 if int(inputs['reqack_reception']) == 1\
@@ -258,7 +259,7 @@ class Xdisp(object):
 
     def _init_colors(self):
         for i in range(0, curses.COLORS):
-            curses.init_pair(i + 1, i, 1)
+            curses.init_pair(i + 1, i, 0)
         self.WHITE = curses.color_pair(0)
         self.BLACK = curses.color_pair(1)
         self.RED = curses.color_pair(2)
