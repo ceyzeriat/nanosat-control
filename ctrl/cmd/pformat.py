@@ -25,7 +25,6 @@
 ###############################################################################
 
 
-from numpy import floating
 from byt import Byt
 from sys import version_info
 if version_info > (3,):
@@ -119,7 +118,7 @@ class PFormat(object):
             if not -self._halfmaxint <= value < self._halfmaxint:
                 return False
         elif self.typ == 'float':
-            if not isinstance(value, (float, floating)):
+            if not isinstance(value, float):
                 return False
         else:
             raise cmdexception.UnknownFormat(self.typ)

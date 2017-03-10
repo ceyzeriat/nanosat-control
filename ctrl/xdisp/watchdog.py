@@ -35,11 +35,12 @@ from param import param_all
 __all__ = ['XDISP']
 
 
-locale.setlocale(locale.LC_ALL, 'UTF-8')
+locale.setlocale(locale.LC_ALL, '')
+locale_code = locale.getpreferredencoding()
 
 
 def e(txt):
-    return txt.encode('utf-8')
+    return txt.encode(locale_code)
 
 
 LISTENICO = (9, e(u'\u260E '))
@@ -82,7 +83,7 @@ CROSS = e(u'\u253C')
 
 def newlinebox(h, w, y, x, title=None):
     wb = curses.newwin(2, w, y-1, x)
-    wb.addstr(0, 0, HORLINE*(w-x))
+    wb.addstr(0, 0, e(HORLINE*(w-x)))
     if title is not None:
         wb.addstr(0, 2, title)
     wb.refresh()

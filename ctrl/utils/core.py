@@ -32,7 +32,6 @@ PYTHON3 = version_info > (3,)
 import binascii
 import time
 import datetime
-import numpy as np
 import os
 import sys
 import glob
