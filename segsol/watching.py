@@ -76,6 +76,7 @@ class WatchRec(hein.SocReceiver):
         elif key == 'dic':
             # comming from control
             if self.portname == param_all.CONTROLLINGNAME:
+                raise Exception
                 # is a full TC broadcast
                 if data.get(param_all.REPORTKEY,'') == 'broadcastFullTC':
                     XDISP.add_TC(dbid=data.pop('dbid'), cmdname=data.pop('cmdname'),
