@@ -129,7 +129,7 @@ class CCSDSPacker(object):
             retprim = self.increment_data_length(
                                     datalen=len(data),
                                     primaryHDpacket=retprim[0],
-                                    primaryHDdict=(retprim[1:]+[None])[1])
+                                    primaryHDdict=(retprim[1:]+(None,))[1])
         else:
             data = TCdata
         if retvalues:
@@ -214,7 +214,6 @@ class CCSDSPacker(object):
         ll = lenkey.unpack(bits) + datalen
         bits = core.setstr(bits, lenkey.cut, lenkey.pack(ll))
         primaryHDpacket = bincore.bin2hex(bits, pad=len(primaryHDpacket))
-        values[param_ccsds.DATALENGTH.name] += datalen
         if primaryHDdict is not None:
             primaryHDdict[param_ccsds.DATALENGTH.name] += datalen
         return primaryHDpacket, primaryHDdict
