@@ -1,0 +1,52 @@
+-- postgres
+
+
+INSERT INTO packet_categories (number, name, payload_flag) VALUES
+	(0,'Reception acknowledge', 0),
+	(4,'HK Science', 1),
+	(5,'Science HF', 1),
+	(6,'Report', 1),
+	(31, 'Exec acknowledge', 1),
+	(30, 'Format acknowledge', 1),
+	(29, 'TC answer', 1),
+	(31, 'Exec acknowledge', 0),
+	(30, 'Format acknowledge', 0),
+	(29, 'TC answer', 0),
+	(1, 'Beacon', 0);
+
+
+INSERT INTO users (id, name, location_lat, location_lon, location_alt, equipment) VALUES
+	(1, 'Kirk', 48.8060112, 2.22958422, 162, 'antenne');
+
+
+INSERT INTO pids (name, level_flag, payload_flag, number) VALUES
+	('L0ComManager', 0, 0, 0),
+	('bootloader', 1, 1, 0),
+	('hkPayload', 1, 1, 2),
+	('sciencePayload', 1, 1, 3),
+	('debugPayload', 1, 1, 4),
+	('director', 1, 1, 1),
+	('ObcInterfaceManager', 1, 1, 5);
+
+
+INSERT INTO commands (VALUES, name) VALUES
+	(1,'echo'),
+	(251, 'flash_write'),
+	(250, 'flash_read'),
+	(252, 'flash_erase'),
+	(255, 'soft_reboot'),
+	(253, 'launch_application_A'),
+	(254, 'launch_application_B'),
+	(101, 'echo_pld'),
+	(102, 'move_piezo'),
+	(103, 'hv_switch'),
+	(104, 'diode_switch'),
+	(105, 'dac_switch'),
+	(106, 'tec_switch'),
+	(107, 'set_param'),
+	(108, 'get_param'),
+	(109, 'change_mode'),
+	(110, 'reset'),
+	(111, 'set_datetime'),
+	(112, 'start_hk'),
+	(113, 'stop_hk');

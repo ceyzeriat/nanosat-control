@@ -9,6 +9,7 @@ ALTER TABLE commands OWNER TO picsat_admin;
 GRANT ALL ON commands TO picsat_admin;
 GRANT select ON commands TO picsat_read;
 GRANT select, insert, update ON commands TO picsat_edit;
+GRANT ALL ON SEQUENCE commands_id_seq TO picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS pids
@@ -70,6 +71,7 @@ CREATE INDEX ON telecommands(ack_format_id);
 CREATE INDEX ON telecommands(ack_execution_id);
 ALTER TABLE telecommands ADD FOREIGN KEY (pid) REFERENCES pids (name);
 ALTER TABLE telecommands ADD FOREIGN KEY (telecommand_id) REFERENCES commands (id);
+GRANT ALL ON SEQUENCE telecommands_id_seq TO picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS telecommand_data
@@ -95,6 +97,7 @@ ALTER TABLE packet_categories OWNER TO picsat_admin;
 GRANT ALL ON packet_categories TO picsat_admin;
 GRANT select ON packet_categories TO picsat_read;
 GRANT select, insert, update ON packet_categories TO picsat_edit;
+GRANT ALL ON SEQUENCE packet_categories_id_seq TO picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS receivers
@@ -110,6 +113,7 @@ ALTER TABLE receivers OWNER TO picsat_admin;
 GRANT ALL ON receivers TO picsat_admin;
 GRANT select ON receivers TO picsat_read;
 GRANT select, insert, update ON receivers TO picsat_edit;
+GRANT ALL ON SEQUENCE receivers_id_seq TO picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS telemetries
@@ -151,6 +155,7 @@ CREATE INDEX ON telemetries(receiver_id);
 ALTER TABLE telemetries ADD FOREIGN KEY (pid) REFERENCES pids (name);
 ALTER TABLE telemetries ADD FOREIGN KEY (packet_category) REFERENCES packet_categories (id);
 ALTER TABLE telemetries ADD FOREIGN KEY (receiver_id) REFERENCES receivers (id);
+GRANT ALL ON SEQUENCE telemetries_id_seq TO picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS tmcat_fmt_acknowledgements
@@ -171,6 +176,7 @@ CREATE INDEX ON tmcat_fmt_acknowledgements(packet_id_mirror);
 CREATE INDEX ON tmcat_fmt_acknowledgements(error_code);
 ALTER TABLE tmcat_fmt_acknowledgements ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
 ALTER TABLE tmcat_fmt_acknowledgements ADD FOREIGN KEY (telecommand_id) REFERENCES commands (id);
+GRANT ALL ON SEQUENCE tmcat_fmt_acknowledgements_id_seq TO picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS tmcat_exe_acknowledgements
@@ -195,6 +201,7 @@ ALTER TABLE tmcat_exe_acknowledgements ADD FOREIGN KEY (telecommand_id) REFERENC
 ALTER TABLE telecommands ADD FOREIGN KEY (ack_reception_id) REFERENCES tmcat_rcp_acknowledgements (id);
 ALTER TABLE telecommands ADD FOREIGN KEY (ack_format_id) REFERENCES tmcat_fmt_acknowledgements (id);
 ALTER TABLE telecommands ADD FOREIGN KEY (ack_execution_id) REFERENCES tmcat_exe_acknowledgements (id);
+GRANT ALL ON SEQUENCE tmcat_exe_acknowledgements_id_seq TO picsat_edit;
 
 
 ALTER TABLE telecommands ADD COLUMN time_given timestamp with time zone DEFAULT now();
@@ -220,6 +227,7 @@ GRANT select ON tmcat_hf_sciences TO picsat_read;
 GRANT select, insert, update ON tmcat_hf_sciences TO picsat_edit;
 CREATE INDEX ON tmcat_hf_sciences(telemetry_packet);
 ALTER TABLE tmcat_hf_sciences ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+GRANT ALL ON SEQUENCE tmcat_hf_sciences_id_seq TO picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS tmcat_payload_hks
@@ -233,6 +241,7 @@ GRANT select ON tmcat_payload_hks TO picsat_read;
 GRANT select, insert, update ON tmcat_payload_hks TO picsat_edit;
 CREATE INDEX ON tmcat_payload_hks(telemetry_packet);
 ALTER TABLE tmcat_payload_hks ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+GRANT ALL ON SEQUENCE tmcat_payload_hks_id_seq TO picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS data_payload_hks
@@ -270,6 +279,7 @@ GRANT select ON data_payload_hks TO picsat_read;
 GRANT select, insert, update ON data_payload_hks TO picsat_edit;
 CREATE INDEX ON data_payload_hks(telemetry_packet);
 ALTER TABLE data_payload_hks ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+GRANT ALL ON SEQUENCE data_payload_hks_id_seq TO picsat_edit;
 
 
 CREATE TABLE IF NOT EXISTS data_hf_sciences
@@ -289,83 +299,19 @@ GRANT select ON data_hf_sciences TO picsat_read;
 GRANT select, insert, update ON data_hf_sciences TO picsat_edit;
 CREATE INDEX ON data_hf_sciences(telemetry_packet);
 ALTER TABLE data_hf_sciences ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+GRANT ALL ON SEQUENCE data_hf_sciences_id_seq TO picsat_edit;
 
-
--- ###########################################
 
 ALTER TABLE data_payload_hks RENAME voltage_peltier TO volt_peltier;
 ALTER TABLE data_payload_hks RENAME voltage_peltier_err TO volt_peltier_err;
 ALTER TABLE data_payload_hks RENAME f_voltage_peltier_err TO f_volt_peltier_err;
 ALTER TABLE data_payload_hks RENAME f_voltage_peltier TO f_volt_peltier;
 
-INSERT INTO emitters (id, name) VALUES (1,'Kirk');
 
-INSERT INTO packet_categories (id, name) VALUES
-	(0,'Reception acknowledge'),
-	(1, 'Format/exec acknowledge'),
-	(2, 'None'),
-	(3, 'Debug'),
-	(4, 'Science HK'),
-	(5, 'Science HF'),
-	(6, 'Event Reporting'),
-	(7, 'Beacon'),
-	(8, 'House Keeping'),
-	(9, 'House Keeping Full');
 
-INSERT INTO pids (name, level_flag, payload_flag, number) VALUES ('L0ComManager', 0, 0, 0);
-
-INSERT INTO receivers (id, name, location_lat, location_lon, location_alt, equipment) VALUES (1, 'Kirk', 48.8060112, 2.22958422, 162, 'antenne');
-
-INSERT INTO commands (VALUES, name) VALUES (1,'echo');
 
 -- ###########################################
 
-INSERT INTO pids (name, level_flag, payload_flag, number) VALUES ('bootloader', 1, 1, 0);
-INSERT INTO pids (name, level_flag, payload_flag, number) VALUES ('hkPayload', 1, 1, 2);
-INSERT INTO pids (name, level_flag, payload_flag, number) VALUES ('sciencePayload', 1, 1, 3);
-INSERT INTO pids (name, level_flag, payload_flag, number) VALUES ('debugPayload', 1, 1, 4);
-INSERT INTO pids (name, level_flag, payload_flag, number) VALUES ('director', 1, 1, 1);
-INSERT INTO pids (name, level_flag, payload_flag, number) VALUES ('ObcInterfaceManager', 1, 1, 5);
-
-
-GRANT ALL ON SEQUENCE commands_id_seq TO picsat_edit;
-GRANT ALL ON SEQUENCE data_hf_sciences_id_seq TO picsat_edit;
-GRANT ALL ON SEQUENCE data_payload_hks_id_seq TO picsat_edit;
-GRANT ALL ON SEQUENCE emitters_id_seq TO picsat_edit;
-GRANT ALL ON SEQUENCE packet_categories_id_seq TO picsat_edit;
-GRANT ALL ON SEQUENCE receivers_id_seq TO picsat_edit;
-GRANT ALL ON SEQUENCE telecommands_id_seq TO picsat_edit;
-GRANT ALL ON SEQUENCE telemetries_id_seq TO picsat_edit;
-GRANT ALL ON SEQUENCE tmcat_debugs_id_seq TO picsat_edit;
-GRANT ALL ON SEQUENCE tmcat_exe_acknowledgements_id_seq TO picsat_edit;
-GRANT ALL ON SEQUENCE tmcat_fmt_acknowledgements_id_seq TO picsat_edit;
-GRANT ALL ON SEQUENCE tmcat_hf_sciences_id_seq TO picsat_edit;
-GRANT ALL ON SEQUENCE tmcat_payload_hks_id_seq TO picsat_edit;
-GRANT ALL ON SEQUENCE tmcat_rcp_acknowledgements_id_seq TO picsat_edit;
-
-
-INSERT INTO commands VALUES (251, 'flash_write');
-INSERT INTO commands VALUES (250, 'flash_read');
-INSERT INTO commands VALUES (252, 'flash_erase');
-INSERT INTO commands VALUES (255, 'soft_reboot');
-INSERT INTO commands VALUES (253, 'launch_application_A');
-INSERT INTO commands VALUES (254, 'launch_application_B');
-INSERT INTO commands VALUES (101, 'echo_pld');
-INSERT INTO commands VALUES (102, 'move_piezo');
-INSERT INTO commands VALUES (103, 'hv_switch');
-INSERT INTO commands VALUES (104, 'diode_switch');
-INSERT INTO commands VALUES (105, 'dac_switch');
-INSERT INTO commands VALUES (106, 'tec_switch');
-INSERT INTO commands VALUES (107, 'set_param');
-INSERT INTO commands VALUES (108, 'get_param');
-INSERT INTO commands VALUES (109, 'change_mode');
-INSERT INTO commands VALUES (110, 'reset');
-INSERT INTO commands VALUES (111, 'set_datetime');
-INSERT INTO commands VALUES (112, 'start_hk');
-INSERT INTO commands VALUES (113, 'stop_hk');
-
-
--- ###########################################
 
 
 ALTER TABLE tmcat_fmt_acknowledgements RENAME telecommand_id TO telecommand_id_mirror;
@@ -376,6 +322,7 @@ DROP TABLE IF EXISTS emitters CASCADE;
 
 
 ALTER TABLE pids DROP CONSTRAINT pids_pkey CASCADE;
+CREATE INDEX ON pids(number);
 ALTER TABLE pids ADD CONSTRAINT pids_pkey PRIMARY KEY(number, level_flag, payload_flag);
 
 ALTER TABLE telecommands ALTER COLUMN data_length TYPE smallint;
@@ -438,25 +385,18 @@ GRANT select ON data_exe_acknowledgement TO picsat_read;
 GRANT select, insert, update ON data_exe_acknowledgement TO picsat_edit;
 CREATE INDEX ON data_exe_acknowledgement(telemetry_packet);
 ALTER TABLE data_exe_acknowledgement ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+GRANT ALL ON SEQUENCE data_exe_acknowledgement_id_seq TO picsat_edit;
 
 
 ALTER TABLE packet_categories DROP COLUMN id CASCADE;
 TRUNCATE TABLE packet_categories;
-ALTER TABLE packet_categories ADD COLUMN number smallint;
-ALTER TABLE packet_categories ADD COLUMN payload_flag smallint DEFAULT 1 NOT NULL;
-ALTER TABLE packet_categories ADD COLUMN level_flag smallint DEFAULT 1 NOT NULL;
-ALTER TABLE packet_categories ADD CONSTRAINT packet_categories_pkey PRIMARY KEY(number, level_flag, payload_flag);
+ALTER TABLE packet_categories ADD COLUMN number smallint NOT NULL;
+ALTER TABLE packet_categories ADD COLUMN payload_flag smallint NOT NULL;
 CREATE INDEX ON packet_categories(number);
-CREATE INDEX ON packet_categories(level_flag);
 CREATE INDEX ON packet_categories(payload_flag);
-
-UPDATE telemetries SET packet_category=31 where packet_category=2;
-
-
-UPDATE telemetries AS t SET packet_category=p.number FROM packet_categories AS p WHERE t.packet_category=p.name;
-
-ALTER TABLE telemetries ADD FOREIGN KEY (packet_category, level_flag, payload_flag)
-      REFERENCES packet_categories (number, level_flag, payload_flag) MATCH SIMPLE
+ALTER TABLE packet_categories ADD CONSTRAINT packet_categories_pkey PRIMARY KEY(number, payload_flag);
+ALTER TABLE telemetries ADD FOREIGN KEY (packet_category, payload_flag)
+      REFERENCES packet_categories (number, payload_flag) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION;
 
 
@@ -465,19 +405,13 @@ ALTER TABLE pids ALTER COLUMN level_flag SET NOT NULL;
 ALTER TABLE pids ALTER COLUMN payload_flag SET NOT NULL;
 
 
--- ###########################################
 
------- DROP TABLE commands CASCADE;
------- DROP TABLE emitters CASCADE;
------- DROP TABLE packet_categories CASCADE;
------- DROP TABLE pids CASCADE;
------- DROP TABLE users CASCADE;
------- DROP TABLE telecommand_data CASCADE;
------- DROP TABLE telecommands CASCADE;
------- DROP TABLE telemetries CASCADE;
------- DROP TABLE tmcat_debugs CASCADE;
------- DROP TABLE tmcat_exe_acknowledgements CASCADE;
------- DROP TABLE tmcat_fmt_acknowledgements CASCADE;
------- DROP TABLE tmcat_hf_sciences CASCADE;
------- DROP TABLE tmcat_rcp_acknowledgements CASCADE;
-
+ALTER TABLE data_payload_hks RENAME volt_5v TO volt5;
+ALTER TABLE data_payload_hks RENAME current_5v TO amp5;
+ALTER TABLE data_payload_hks RENAME current_3v TO amp3;
+ALTER TABLE data_payload_hks RENAME volt_piezo TO voltHV;
+ALTER TABLE data_payload_hks RENAME current_piezo TO ampHV;
+ALTER TABLE data_payload_hks RENAME volt_peltier TO vref;
+ALTER TABLE data_payload_hks RENAME current_peltier TO vitec;
+ALTER TABLE data_payload_hks RENAME temp_diode TO temp0;
+ALTER TABLE data_payload_hks RENAME volt_peltier_err TO errorTherm;

@@ -25,14 +25,29 @@
 ###############################################################################
 
 
-__all__ = ['param_apid', 'param_all', 'param_category', 'param_beacon',
-			'param_science_hf', 'param_hk_payload']
+from byt import Byt
+from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 
-from . import param_apid
-from . import param_all
-from . import param_beacon
-from . import param_hf_science
-from . import param_payload_hk
-from . import param_payload_report
-from . import param_exe_ack
-#from . import param_category  # circular import here
+
+__all__ = ['TROUSSEAU']
+
+
+def hex2txt(v, **kwargs):
+    """
+    verbose = "binary -> message"
+    """
+    return ''.join([chr(i) for i in v.ints() if i >= 32 and i <= 126])
+
+
+def txt2hex(txt, **kwargs):
+    """
+    verbose = "message -> binary"
+    """
+    return Byt([i for i in Byt(txt).ints() if i >= 32 and i <= 126])
+
+
+KEYS = [dict(name='param_exe_ack', start=0, l=125, fctunpack=hex2txt, fctpack=txt2hex
+				verbose="Optional: an error message (ascii string). The message is only put in the frame if errorCode is not 0")]
+
+
+TROUSSEAU = CCSDSTrousseau(KEYS, octets=True)

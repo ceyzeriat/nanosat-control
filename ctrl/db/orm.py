@@ -118,9 +118,9 @@ def save_TM_to_DB(hd, hdx, data):
     # save prim and sec headers
     # forced field
     hd['time_sent'] = core.stamps2time(hd['days_since_ref'],
-                                            hd['ms_since_today'])
+                                        hd['ms_since_today'])
     # force DB default
-    hd.pop('time_saved', '')
+    hd['time_saved'] = core.now()
     TM = TABLES['Telemetry'](**hd)
     DB.add(TM)
     DB.flush()

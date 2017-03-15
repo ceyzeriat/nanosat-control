@@ -46,59 +46,66 @@ LENGTHMODIFIER = 0
 # origin of start/end is start of packet
 # start/end units is bits
 
-def pid_pack(v, pad, **kwargs):
-    """
-    verbose = "pid string -> binary"
-    """
-    return bincore.int2bin(param_apid.PIDREGISTRATION[v], pad=pad)
+#def pid_pack(v, pad, **kwargs):
+#    """
+#    verbose = "pid string -> binary"
+#    """
+#    return bincore.int2bin(param_apid.PIDREGISTRATION[v], pad=pad)
 
 
-def pid_unpack(v, pld, lvl, **kwargs):
-    """
-    verbose = "binary, payload flag and level flag -> pid string"
-    """
-    dic = param_apid.PIDREGISTRATION_REV[bincore.bin2int(v)]
-    return dic[int(pld)][int(lvl) if int(pld) == 0 else 1]
+#def pid_unpack(v, pld, lvl, **kwargs):
+#    """
+#    verbose = "binary, payload flag and level flag -> pid string"
+#    """
+#    dic = param_apid.PIDREGISTRATION_REV[bincore.bin2int(v)]
+#    return dic[int(pld)][int(lvl) if int(pld) == 0 else 1]
 
 
 PACKETVERSION = CCSDSKey(   name='ccsds_version',
                             dic={0: '000'},
                             start=0,
                             l=3,
-                            dic_force=0)
+                            dic_force=0,
+                            verbose="The CCSDS format version. Shall be 0b000")
 
 PACKETTYPE = CCSDSKey(  name='packet_type',
                         dic={'telemetry': '0', 'telecommand': '1'},
                         start=3,
                         l=1,
-                        non_db_dic=True)
+                        non_db_dic=True,
+                        verbose="Whether telecommand packet or telemetry packet. Shall be 0b0 for telemetry or 0b1 for telecommand")
 
 SECONDARYHEADERFLAG = CCSDSKey( name='secondary_header_flag',
                                 dic={0: '0', 1: '1'},
                                 start=4,
                                 l=1,
-                                dic_force=1)
-
-PAYLOADFLAG = CCSDSKey( name='payload_flag',
-                        dic={0: '0', 1: '1'},
-                        start=5,
-                        l=1)
-
-LEVELFLAG = CCSDSKey(   name='level_flag',
-                        dic={0: '0', 1: '1'},
-                        start=6,
-                        l=1)
+                                dic_force=1,
+                                verbose="Is there a secondary header? Always true, shall be 0b1")
 
 PID = CCSDSKey( name='pid',
                 start=7,
                 l=5,
-                fctunpack=pid_unpack,
-                fctpack=pid_pack)
+                fctunpack=bincore.bin2int,
+                fctpack=bincore.int2bin,
+                verbose="The unique id of the sub-process or task that issued the packet. See external table 'apidDescription'")
+
+LEVELFLAG = CCSDSKey(   name='level_flag',
+                        dic={0: '0', 1: '1'},
+                        start=6,
+                        l=1,
+                        verbose="If the packet is not payload, what software is it? Shall be 0d0 if the payload flag is 0b1, else shall be 0b0 if the packet is L0-related or 0b1 for L1")
+
+PAYLOADFLAG = CCSDSKey( name='payload_flag',
+                        dic={0: '0', 1: '1'},
+                        start=5,
+                        l=1,
+                        verbose="Is that a packet routed from/to the payload? Shall be 0b1 if yes or 0b0 if no")
 
 PACKETCATEGORY = CCSDSKey(  name='packet_category',
                             dic=param_category.CATEGORYREGISTRATION,
                             start=12,
-                            l=4)
+                            l=4,
+                            verbose="Defines the auxiliary header structure for telemetry packets (see external table 'packetCategoryDescription'). Unused for telecommands (set at 0b0000)")
 
 SEQUENCEFLAG = CCSDSKey(name='sequence_flag',
                         dic={'segment': '00', 'start': '01',
@@ -106,13 +113,15 @@ SEQUENCEFLAG = CCSDSKey(name='sequence_flag',
                         start=16,
                         l=2,
                         dic_force='standalone',
-                        non_db_dic=True)
+                        non_db_dic=True,
+                        verbose="The stand-alone or continuation status of a packet. Always stand-alone, shall be 0b11")
 
 PACKETID = CCSDSKey(name='packet_id',
                     start=18,
                     l=14,
                     fctunpack=bincore.bin2int,
-                    fctpack=bincore.int2bin)
+                    fctpack=bincore.int2bin,
+                    verbose="The incremented id of the packet. Will be looped once the maximum encode-able value is reached")
 
 # this CCSDSKey must not be relative, i.e. there must be a "start" defined
 # cf ccsdspacker.increment_data_length()
@@ -120,7 +129,8 @@ DATALENGTH = CCSDSKey(  name='data_length',
                         start=32,
                         l=16,
                         fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin)
+                        fctpack=bincore.int2bin,
+                        verbose="The length, in octet, of the secondary header + auxiliary header + data field")
 
 
 # all keys in the right order
@@ -160,13 +170,15 @@ DAYSINCEREF_TELEMETRY = CCSDSKey(   name='days_since_ref',
                                     start=0,
                                     l=16,
                                     fctunpack=days_unpack,
-                                    fctpack=bincore.int2bin)
+                                    fctpack=bincore.int2bin,
+                                    verbose="The integer number of fully elapsed days since Unix timestamp (UTC)")
 
 MSECSINCEREF_TELEMETRY = CCSDSKey(  name='ms_since_today',
                                     start=16,
                                     l=32,
                                     fctunpack=msec_unpack,
-                                    fctpack=bincore.int2bin)
+                                    fctpack=bincore.int2bin,
+                                    verbose="The integer number of milli-seconds elapsed since previous midnight (UTC)")
 
 # all keys in the right order
 HEADER_S_KEYS_TELEMETRY = [DAYSINCEREF_TELEMETRY, MSECSINCEREF_TELEMETRY]
@@ -177,38 +189,45 @@ HEADER_S_KEYS_TELEMETRY = CCSDSTrousseau(HEADER_S_KEYS_TELEMETRY, octets=False)
 # origin of start/end is end of primary header
 # start/end units is bits
 
+
 REQACKRECEPTIONTELECOMMAND = CCSDSKey(  name='reqack_reception',
                                         start=0,
                                         l=1,
-                                        dic={0: '0', 1: '1'})
+                                        dic={0: '0', 1: '1'},
+                                        verbose="Should the satellite return an acknowledgement of receipt?")
 
 REQACKFORMATTELECOMMAND = CCSDSKey( name='reqack_format',
                                     start=1,
                                     l=1,
-                                    dic={0: '0', 1: '1'})
+                                    dic={0: '0', 1: '1'},
+                                    verbose="Should the satellite return an acknowledgement of formatting?")
 
 REQACKEXECUTIONTELECOMMAND = CCSDSKey(  name='reqack_execution',
                                         start=2,
                                         l=1,
-                                        dic={0: '0', 1: '1'})
+                                        dic={0: '0', 1: '1'},
+                                        verbose="Should the satellite return an acknowledgement of execution?")
 
 TELECOMMANDID = CCSDSKey(   name='telecommand_id',
                             start=3,
                             l=10,
                             fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin)
+                            fctpack=bincore.int2bin,
+                            verbose="The id of the telecommand sent")
 
 EMITTERID = CCSDSKey(   name='emitter_id',
                         start=13,
                         l=3,
                         fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin)
+                        fctpack=bincore.int2bin,
+                        verbose="The id of the antena/program/script responsible for the telecommand")
 
 SIGNATURE = CCSDSKey(   name='signature',
                         start=16,
-                        l=32,  # 128
+                        l=128,
                         fctunpack=bincore.bin2hex,
-                        fctpack=bincore.hex2bin)
+                        fctpack=bincore.hex2bin,
+                        verbose="The cryptographic hash using the public/private key system")
 
 HEADER_S_KEYS_TELECOMMAND = [REQACKRECEPTIONTELECOMMAND,
     REQACKFORMATTELECOMMAND, REQACKEXECUTIONTELECOMMAND, TELECOMMANDID,
