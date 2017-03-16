@@ -155,3 +155,6 @@ LOGFILETIMESTAMPFMT = '%F %T.%f'
 
 # the reserved input parameter key for declaring the report key
 REPORTKEY = 'report_key'
+
+# whether to save the TCs and initialize the DB with control
+SAVETC = True

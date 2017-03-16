@@ -87,9 +87,11 @@ class Command(Cm):
         hd['time_sent'] = None
         hd['time_given'] = core.now()
         # save in database
-        ### dbid = db.save_TC_to_DB(hd=hd, hdx=hdx, inputs=inputs)
-        dbid = 0
-        print('The TC was not saved')
+        if param_all.SAVETC:
+            dbid = db.save_TC_to_DB(hd=hd, hdx=hdx, inputs=inputs)
+        else:
+            dbid = 0
+            print('The TC was not saved')
         # broadcast on socket to the antenna process and watchdog
         broadcast_TC(cmdname=self.name, dbid=dbid, packet=packet, hd=hd,
                         hdx=hdx, inputs=inputs)

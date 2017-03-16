@@ -34,13 +34,16 @@ from ctrl import c0
 from ctrl import c1
 from ctrl import db
 from segsol import controlling
+from param import param_all
 
 
 core.prepare_terminal('Control')
 print("Initialization...")
 controlling.init()
-### db.init_DB()
-print('DB not initialized')
+if param_all.SAVETC:
+	db.init_DB()
+else:
+	print('DB not initialized')
 
 time.sleep(0.5)
 
