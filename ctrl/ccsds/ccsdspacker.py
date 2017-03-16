@@ -44,7 +44,7 @@ class CCSDSPacker(object):
         A CCSDS packer
 
         Args:
-        * mode (str): 'tm' or 'tc' for telemetry or telecommand
+          * mode (str): 'tm' or 'tc' for telemetry or telecommand
         """
         self.mode = 'telemetry' if str(mode).lower()[1] == 'm'\
                         else 'telecommand'
@@ -56,33 +56,32 @@ class CCSDSPacker(object):
         the dictionnaries of primary/secondary and auxiliary headers
 
         Args:
-        * pid (str): the process id related to the packet
-        * TCdata (byts): only for TC-mode, the data to include in the
-          packet
-        * TCid (int): only for TC-mode, the id of the telecommand
-        * pktCat (int): only for TM-mode, the packet category
-        * retvalues (bool): if ``True``, returns the encoded values
-        * retdbvalues (bool): if ``True``, returns the encoded values
-          in a format directly compatible with the database
-        * withPacketID (bool): set to ``False`` to deactivate the
-          packet id determination
+          * pid (int): the process id related to the packet
+          * TCdata (byts): only for TC-mode, the data to include in the
+            packet
+          * TCid (int): only for TC-mode, the id of the telecommand
+          * pktCat (int): only for TM-mode, the packet category
+          * retvalues (bool): if ``True``, returns the encoded values
+          * retdbvalues (bool): if ``True``, returns the encoded values
+            in a format directly compatible with the database
+          * withPacketID (bool): set to ``False`` to deactivate the
+            packet id determination
 
         Kwargs for TC-mode:
-        * rack (bool) [default: REQACKRECEPTION]: ``True`` to recieve the
-          acknowledgement of reception
-        * fack (bool) [default: REQACKFORMAT]: ``True`` to recieve the
-          acknowledgement of format
-        * eack (bool) [default: REQACKEXECUTION]: ``True`` to recieve the
-          acknowledgement of execution
-        * emitter (int) [default: EMITTERID]: the id of the emitter
+          * rack (bool) [default: REQACKRECEPTION]: ``True`` to recieve the
+            acknowledgement of reception
+          * fack (bool) [default: REQACKFORMAT]: ``True`` to recieve the
+            acknowledgement of format
+          * eack (bool) [default: REQACKEXECUTION]: ``True`` to recieve the
+            acknowledgement of execution
+          * emitter (int) [default: EMITTERID]: the id of the emitter
 
         Kwargs for TM-mode:
-        * auxiliary header and data keys-values
+          * auxiliary header and data keys-values
         """
-        tm = (self.mode == 'telemetry')
         hd = {}
         hd['pid'] = pid
-        if not tm:
+        if not self.mode == 'telemetry':
             hd['signature'] = Byt("\x00"*(param_ccsds.SIGNATURE.len//8))
             hd['telecommand_id'] = int(TCid)
             morevalues = ((param_ccsds.REQACKRECEPTIONTELECOMMAND.name, 'rack',
@@ -113,13 +112,14 @@ class CCSDSPacker(object):
         hdx = {}
         retd = {}
         # header aux
-        retaux = self.pack_auxHeader(values=kwargs, pktCat=pktCat,
-                                        retvalues=True,
-                                        retdbvalues=retdbvalues)
+        retaux = self.pack_auxHeader(values=kwargs,
+                            pldFlag=hds[param_ccsds.PAYLOADFLAG.name],
+                            pktCat=pktCat, retvalues=True,
+                            retdbvalues=retdbvalues)
         maybeAux = retaux[0]
         hdx.update(retaux[1])
         # only if telemetry
-        if tm:
+        if self.mode == 'telemetry':
             # data
             retdata = self.pack_data(values=kwargs, header=hds,
                                         retvalues=True,
@@ -144,15 +144,15 @@ class CCSDSPacker(object):
         string and encoded values
 
         Args:
-        * values (dict): the values to pack
-        * datalen (int): the length of the data. If not known yet, it
+          * values (dict): the values to pack
+          * datalen (int): the length of the data. If not known yet, it
             can be be 'manually' updated using ``increment_data_length``
             method
-        * retvalues (bool): if ``True``, returns the encoded values
-        * retdbvalues (bool): if ``True``, returns the encoded values
-          in a format directly compatible with the database
-        * withPacketID (bool): set to ``False`` to deactivate the
-          packet id determination
+          * retvalues (bool): if ``True``, returns the encoded values
+          * retdbvalues (bool): if ``True``, returns the encoded values
+            in a format directly compatible with the database
+          * withPacketID (bool): set to ``False`` to deactivate the
+            packet id determination
         """
         # Preparation of the content of values dictionary
         values[param_ccsds.PACKETTYPE.name] = self.mode
@@ -174,12 +174,6 @@ class CCSDSPacker(object):
                 param_ccsds.HEADER_S_KEYS_TELEMETRY.size
             # don't bother about packet id, not supported
             values[param_ccsds.PACKETID.name] = '0'
-        # add the header aux size into the packet length
-        values[param_ccsds.DATALENGTH.name] +=\
-            param_category.PACKETCATEGORYSIZES[\
-                int(values.get(param_ccsds.PACKETCATEGORY.name, 0))]
-        # update the length with data length
-        values[param_ccsds.DATALENGTH.name] += int(datalen)
         # check pid string
         if param_ccsds.PID.name not in values.keys():
             raise ccsdsexception.PacketValueMissing(param_ccsds.PID.name)
@@ -188,6 +182,13 @@ class CCSDSPacker(object):
             param_apid.PLDREGISTRATION[values[param_ccsds.PID.name]]
         values[param_ccsds.LEVELFLAG.name] =\
             param_apid.LVLREGISTRATION[values[param_ccsds.PID.name]]
+        # add the header aux size into the packet length
+        values[param_ccsds.DATALENGTH.name] +=\
+            param_category.PACKETCATEGORYSIZES[\
+                int(values[param_ccsds.PAYLOADFLAG.name])][\
+                int(values.get(param_ccsds.PACKETCATEGORY.name, 0))]
+        # update the length with data length
+        values[param_ccsds.DATALENGTH.name] += int(datalen)
         data, retvals = param_ccsds.HEADER_P_KEYS.pack(allvalues=values,
                                                     retdbvalues=retdbvalues)
         if retvalues:
@@ -203,9 +204,9 @@ class CCSDSPacker(object):
         of ``datalen``, meaning that it does know nor care
 
         Args:
-        * datalen (int): the length of the data
-        * primaryHDpacket (Byt): the primary header as octets
-        * primaryHDdict (dict): the primary packet as dictionary.
+          * datalen (int): the length of the data
+          * primaryHDpacket (Byt): the primary header as octets
+          * primaryHDdict (dict): the primary packet as dictionary.
             If not provided, (default is ``None``), ``None`` will
             be returned instead of the dictionary
         """
@@ -224,10 +225,10 @@ class CCSDSPacker(object):
         string and encoded values
 
         Args:
-        * values (dict): the values to pack
-        * retvalues (bool): if ``True``, returns the encoded values
-        * retdbvalues (bool): if ``True``, returns the encoded values
-          in a format directly compatible with the database
+          * values (dict): the values to pack
+          * retvalues (bool): if ``True``, returns the encoded values
+          * retdbvalues (bool): if ``True``, returns the encoded values
+            in a format directly compatible with the database
         """
         if self.mode == 'telecommand':
             hdk = param_ccsds.HEADER_S_KEYS_TELECOMMAND
@@ -241,24 +242,25 @@ class CCSDSPacker(object):
         else:
             return data
 
-    def pack_auxHeader(self, values, pktCat, retvalues=False, retdbvalues=True):
+    def pack_auxHeader(self, values, pldFlag, pktCat, retvalues=False, retdbvalues=True):
         """
         Encodes the values into a CCSDS auxiliary header, returns hex
         string and encoded values
 
         Args:
-        * values (dict): the values to pack
-        * pktCat (int): only for TM-mode, the packet category
-        * retvalues (bool): if ``True``, returns the encoded values
-        * retdbvalues (bool): if ``True``, returns the encoded values
-          in a format directly compatible with the database
+          * values (dict): the values to pack
+          * pldFlag (bool): the payload flag of the packet
+          * pktCat (int): only for TM-mode, the packet category
+          * retvalues (bool): if ``True``, returns the encoded values
+          * retdbvalues (bool): if ``True``, returns the encoded values
+            in a format directly compatible with the database
         """
         if self.mode != 'telemetry':
             return (Byt(), {}) if retvalues else Byt()
         pktCat = int(pktCat)
-        if pktCat not in param_category.PACKETCATEGORIES.keys():
-            raise ccsdsexception.CategoryMissing(pktCat)
-        hdx = param_category.PACKETCATEGORIES[pktCat]
+        if pktCat not in param_category.PACKETCATEGORIES[int(pldFlag)].keys():
+            raise ccsdsexception.CategoryMissing(pktCat, pldFlag)
+        hdx = param_category.PACKETCATEGORIES[int(pldFlag)][pktCat]
         if hdx.size == 0:
             return (Byt(), {}) if retvalues else Byt()
         data, retvals = hdx.pack(allvalues=values, retdbvalues=retdbvalues)
@@ -273,11 +275,11 @@ class CCSDSPacker(object):
         string and encoded values
 
         Args:
-        * values (dict): the values to pack
-        * header (dict): 
-        * retvalues (bool): if ``True``, returns the encoded values
-        * retdbvalues (bool): if ``True``, returns the encoded values
-          in a format directly compatible with the database
+          * values (dict): the values to pack
+          * header (dict): 
+          * retvalues (bool): if ``True``, returns the encoded values
+          * retdbvalues (bool): if ``True``, returns the encoded values
+            in a format directly compatible with the database
         """
         if self.mode != 'telemetry':
             return (Byt(), {}) if retvalues else Byt()

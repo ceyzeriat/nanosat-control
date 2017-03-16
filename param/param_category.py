@@ -32,6 +32,8 @@ from . import param_category_obc as obc
 from . import param_category_pld as pld
 
 
+# shape of all this stuff is DICTIONNARY[payload_flag(int)][packet_category(int)]
+
 CATEGORYREGISTRATION = [{}, {}]
 PACKETCATEGORIES = [{}, {}]
 PACKETCATEGORYSIZES = [{}, {}]
@@ -40,6 +42,7 @@ TABLEDATA = [{}, {}]
 FILEDATACRUNCHING = [{}, {}]
 
 
+# grab the OBC dictionnaries
 for k in obc.CATEGORYREGISTRATIONOBC.keys():
     CATEGORYREGISTRATION[0][k] = obc.CATEGORYREGISTRATIONOBC[k]
     PACKETCATEGORIES[0][k] = obc.PACKETCATEGORIESOBC[k]
@@ -49,6 +52,7 @@ for k in obc.CATEGORYREGISTRATIONOBC.keys():
     FILEDATACRUNCHING[0][k] = obc.FILEDATACRUNCHINGOBC[k]
 
 
+# grab the PLD dictionnaries
 for k in pld.CATEGORYREGISTRATIONPLD.keys():
     CATEGORYREGISTRATION[1][k] = pld.CATEGORYREGISTRATIONPLD[k]
     PACKETCATEGORIES[1][k] = pld.PACKETCATEGORIESPLD[k]
@@ -56,3 +60,6 @@ for k in pld.CATEGORYREGISTRATIONPLD.keys():
     TABLECATEGORY[1][k] = pld.TABLECATEGORYPLD[k]
     TABLEDATA[1][k] = pld.TABLEDATAPLD[k]
     FILEDATACRUNCHING[1][k] = pld.FILEDATACRUNCHINGPLD[k]
+
+
+ACKCATEGORIES = list(set(pld.ACKCATEGORIESPLD + obc.ACKCATEGORIESOBC))

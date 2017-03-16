@@ -153,6 +153,7 @@ class CategoryMissing(CCSDSException):
     """
     Packet category does not exist
     """
-    def __init__(self, idx, *args, **kwargs):
-        self._init(idx, *args, **kwargs)
-        self.message = "Packet category index '{}' does not exist".format(idx)
+    def __init__(self, cat, pld, *args, **kwargs):
+        self._init(cat, pld, *args, **kwargs)
+        self.message = "Packet category '{}' with payload flag '{}' does "\
+                       "not exist".format(cat, pld)

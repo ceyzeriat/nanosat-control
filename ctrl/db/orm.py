@@ -88,9 +88,9 @@ def save_TC_to_DB(hd, hdx, inputs):
     to the database
 
     Args:
-    * hd (dict): the keys-values of the CCSDS prim/sec headers
-    * hdx (dict): the keys-values of the CCSDS auxiliary header
-    * inputs (dict): the keys-values of the input parameters (CCSDS data)
+      * hd (dict): the keys-values of the CCSDS prim/sec headers
+      * hdx (dict): the keys-values of the CCSDS auxiliary header
+      * inputs (dict): the keys-values of the input parameters (CCSDS data)
     """
     if not running:
         raise ctrlexception.NoDBConnection()
@@ -109,9 +109,9 @@ def save_TM_to_DB(hd, hdx, data):
     Saves the TM headers and data to the database
 
     Args:
-    * hd (dict): the keys-values of the CCSDS headers (prim and sec)
-    * hdx (dict): the keys-values of the CCSDS auxiliary header
-    * data (dict): the keys-values of the input parameters (CCSDS data)
+      * hd (dict): the keys-values of the CCSDS headers (prim and sec)
+      * hdx (dict): the keys-values of the CCSDS auxiliary header
+      * data (dict): the keys-values of the input parameters (CCSDS data)
     """
     if not running:
         raise ctrlexception.NoDBConnection()
@@ -119,21 +119,22 @@ def save_TM_to_DB(hd, hdx, data):
     # forced field
     hd['time_sent'] = core.stamps2time(hd['days_since_ref'],
                                         hd['ms_since_today'])
-    # force DB default
+    # force default to now
     hd['time_saved'] = core.now()
     TM = TABLES['Telemetry'](**hd)
     DB.add(TM)
     DB.flush()
-    catnum = hd[param_ccsds.PACKETCATEGORY.name]
+    catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
+    pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
     # saving the aux header
-    tbl = param_category.TABLECATEGORY[catnum]
+    tbl = param_category.TABLECATEGORY[pldflag][catnum]
     if tbl is not None:
         hdx = dict(hdx)
         hdx['telemetry_packet'] = TM.id
         DB.add(TABLES[tbl](**hdx))
     # saving the data
-    if param_category.TABLEDATA[catnum] is not None:
-        tbl = param_category.TABLEDATA[catnum]
+    if param_category.TABLEDATA[pldflag][catnum] is not None:
+        tbl = param_category.TABLEDATA[pldflag][catnum]
         if hasattr(data['unpacked'], "__iter__"):
             for item in data['unpacked']:
                 item = dict(item)

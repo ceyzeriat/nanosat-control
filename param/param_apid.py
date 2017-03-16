@@ -32,7 +32,7 @@
 PACKETWRAPPERPID = 'L0ComManager'
 
 
-PIDREGISTRATION_OBC_L0 = {  'L0ComManager': 0,
+PIDREGISTRATION_OBC_L0 = {  PACKETWRAPPERPID: 0,
                             'L0MemoryManager': 1,
                             'L0HouseKeeper': 2,
                             'L0EventProcessor': 3,
@@ -61,19 +61,19 @@ PIDREGISTRATION = {}
 PLDREGISTRATION = {}
 LVLREGISTRATION = {}
 for k, v in PIDREGISTRATION_OBC_L0.items():
-    PIDREGISTRATION[k] = v
-    PLDREGISTRATION[k] = '0'
-    LVLREGISTRATION[k] = '0'
+    PIDREGISTRATION[k.lower()] = v
+    PLDREGISTRATION[k.lower()] = '0'
+    LVLREGISTRATION[k.lower()] = '0'
 
 for k, v in PIDREGISTRATION_OBC_L1.items():
-    PIDREGISTRATION[k] = v
-    PLDREGISTRATION[k] = '0'
-    LVLREGISTRATION[k] = '1'
+    PIDREGISTRATION[k.lower()] = v
+    PLDREGISTRATION[k.lower()] = '0'
+    LVLREGISTRATION[k.lower()] = '1'
 
 for k, v in PIDREGISTRATION_PLD.items():
-    PIDREGISTRATION[k] = v
-    PLDREGISTRATION[k] = '1'
-    LVLREGISTRATION[k] = '1'
+    PIDREGISTRATION[k.lower()] = v
+    PLDREGISTRATION[k.lower()] = '1'
+    LVLREGISTRATION[k.lower()] = '1'
 
 
 # PIDREGISTRATION_REV[v][pld][lvl]
@@ -83,14 +83,14 @@ PIDREGISTRATION_REV = {}
 for k, v in PIDREGISTRATION_OBC_L0.items():
     if not v in PIDREGISTRATION_REV.keys():
         PIDREGISTRATION_REV[v] = [['', ''], ['', '']]
-    PIDREGISTRATION_REV[v][0][0] = k
+    PIDREGISTRATION_REV[v][0][0] = k.lower()
 
 for k, v in PIDREGISTRATION_OBC_L1.items():
     if not v in PIDREGISTRATION_REV.keys():
         PIDREGISTRATION_REV[v] = [['', ''], ['', '']]
-    PIDREGISTRATION_REV[v][0][1] = k
+    PIDREGISTRATION_REV[v][0][1] = k.lower()
 
 for k, v in PIDREGISTRATION_PLD.items():
     if not v in PIDREGISTRATION_REV.keys():
         PIDREGISTRATION_REV[v] = [['', ''], ['', '']]
-    PIDREGISTRATION_REV[v][1][1] = k
+    PIDREGISTRATION_REV[v][1][1] = k.lower()

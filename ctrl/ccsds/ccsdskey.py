@@ -27,6 +27,7 @@
 
 from . import ccsdsexception
 from ..utils import bincore
+from ..utils import core
 
 
 __all__ = ['CCSDSKey']
@@ -34,30 +35,42 @@ __all__ = ['CCSDSKey']
 
 class CCSDSKey(object):
     def __init__(self, name, dic=None, start=None, l=1, fctunpack=None,
-                 fctpack=None, dic_force=None, non_db_dic=False):
+                 fctpack=None, dic_force=None, non_db_dic=False, verbose=""):
         """
         Dictionary of keys to perform easy extraction from a bits sequence.
         
         Args:
-        * name (str): the name of the dictionary, for referencing
-        * dic (dict): dictionary of possible values
-        * start (int): start-position in bit from the beginning of the
-          primary header, or whatever reference you decided
-        * l (int): length of the strip of bits
-        * fctunpack (callable) [optional]: function to apply to the bits to
-          get the value. Shall remain ``None`` if ``dic`` is provided
-        * fctpack (callable) [optional]: reverse function of ``fctunpack``
-          Shall remain ``None`` if ``dic`` is provided
+          * name (str): the name of the dictionary, for referencing
+          * dic (dict): dictionary of possible values
+          * start (int): start-position in bit from the beginning of the
+            primary header, or whatever reference you decided
+          * l (int): length of the strip of bits
+          * fctunpack (callable): function to apply to the bits to
+            get the value. Shall remain ``None`` if ``dic`` is provided
+          * fctpack (callable): reverse function of ``fctunpack``
+            Shall remain ``None`` if ``dic`` is provided
+          * dic_force (bool): whether to force a certain dictionary value
+            when (un)packing, no matter the user input
+          * non_db_dic (bool): ``True`` if the dictionary keys are non-
+            compliant with the corresponding database column. This will
+            make sure that the unpacked values are integers instead of
+            the non-compliant dictionary keys
+          * verbose (string): Human-readable meaning of this key
         """
         self.name = str(name)
         self._fctunpack = fctunpack if callable(fctunpack) else None
         self._fctpack = fctpack if callable(fctpack) else None
         self.isdic = (dic is not None)
-        self.dic = dict(dic) if self.isdic else None
         if self.isdic:
+            self.dic = {}
+            for k, v in dict(dic).items():
+                if core.isStr(k):
+                    k = str(k).lower()
+                self.dic[k] = v
             if self._fctunpack is not None or self._fctpack is not None:
                 raise ccsdsexception.BadDefinition(name=self.name)
         else:
+            self.dic = None
             if self._fctunpack is None and self._fctpack is None:
                 raise ccsdsexception.BadDefinition(name=self.name)
         self.can_unpack = (self._fctunpack is not None or self.isdic)
@@ -87,7 +100,7 @@ class CCSDSKey(object):
         Returns the slice with an offset in position
 
         Args:
-        * offset (int): the offset
+          * offset (int): the offset
         """
         offset = int(offset)
         if self.start + offset < 0:
@@ -102,8 +115,8 @@ class CCSDSKey(object):
             raise ccsdsexception.NoDic(name=self.name)
         if key in self.dic.keys():
             return self.dic[key]
-        elif str(key) in self.dic.keys():
-            return self.dic[str(key)]
+        elif str(key).lower() in self.dic.keys():
+            return self.dic[str(key).lower()]
         else:
             try:
                 return self.dic[int(key)]
@@ -116,16 +129,16 @@ class CCSDSKey(object):
         the corresponding key or applies the unpack function
 
         Args:
-        * packet (str): the packet, either chain of '0' and '1' or hex
-          depending how ``start`` and ``l`` were defined
-        * rel (bool): if ``False`` follows ``start``, if ``True``
-          grabs the bits from the position 0 (or ``offset``) of the
-          packet provided. Ignored if ``offset`` is not ``None``
-        * raw (bool): if ``True``, returns the raw bit sequence
-        * offset (int) [optional]: offset to apply to the slice
+          * packet (str): the packet, either chain of '0' and '1' or hex
+            depending how ``start`` and ``l`` were defined
+          * rel (bool): if ``False`` follows ``start``, if ``True``
+            grabs the bits from the position 0 (or ``offset``) of the
+            packet provided. Ignored if ``offset`` is not ``None``
+          * raw (bool): if ``True``, returns the raw bit sequence
+          * offset (int) [optional]: offset to apply to the slice
 
         Kwargs:
-        * Passed on to ``fctunpack`` if applicable
+          * Passed on to ``fctunpack`` if applicable
         """
         if not self.can_unpack and not raw:
             raise ccsdsexception.NoUnpack(name=self.name)
@@ -150,15 +163,15 @@ class CCSDSKey(object):
         generated by fctpack, and finally pads it if necessary
 
         Args:
-        * value: the value to convert to bits
-        * raw (bool): if ``True``, a simple int2bin transform is applied
-          to the input value, with a padding to the key length,
-          unless ``pad`` is provided
-        * pad (int or None) [optional]: the padding length to
-          apply, or default ``None`` pads to key length .
+          * value: the value to convert to bits
+          * raw (bool): if ``True``, a simple int2bin transform is applied
+            to the input value, with a padding to the key length,
+            unless ``pad`` is provided
+          * pad (int or None) [optional]: the padding length to
+            apply, or default ``None`` pads to key length .
 
         Kwargs:
-        * Passed on to and ``fctpack`` if applicable
+          * Passed on to and ``fctpack`` if applicable
         """
         if self.isdic and self.dic_force is not None:
             value = self.dic_force
@@ -179,7 +192,7 @@ class CCSDSKey(object):
         value, it will return the corresponding key
 
         Args:
-        * value: the value to search in ``dic``
+          * value: the value to search in ``dic``
         """
         found = False
         for k, v in self.dic.items():

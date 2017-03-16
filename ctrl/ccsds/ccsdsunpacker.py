@@ -60,7 +60,8 @@ class CCSDSUnPacker(object):
         headers.update(self.unpack_primHeader(packet, retdbvalues=retdbvalues))
         headers.update(self.unpack_secHeader(packet))
         headersx = self.unpack_auxHeader(packet,
-                    packetCategory=headers[param_ccsds.PACKETCATEGORY.name])
+                    pldFlag=headers[param_ccsds.PAYLOADFLAG.name],
+                    pktCat=headers[param_ccsds.PACKETCATEGORY.name])
         data = self.unpack_data(packet, hds=headers)
         return headers, headersx, data
 
@@ -104,20 +105,21 @@ class CCSDSUnPacker(object):
             hskey = param_ccsds.HEADER_S_KEYS_TELECOMMAND
         return hskey.unpack(packet[param_ccsds.HEADER_P_KEYS.size:])
 
-    def unpack_auxHeader(self, packet, packetCategory):
+    def unpack_auxHeader(self, packet, pldFlag, pktCat):
         """
         Unpacks the auxiliary header of the packet, returns a
         dictionary
 
         Args:
         * packet (byts): the string that contains the full packet
-        * packetCategory (int): the packet category
+        * pldFlag (bool): the payload flag of the packet
+        * pktCat (int): the packet category
         """
         if self.mode == 'telecommand':
             return {}
-        if packetCategory not in param_category.PACKETCATEGORIES.keys():
-            raise ccsdsexception.CategoryMissing(packetCategory)
-        hx = param_category.PACKETCATEGORIES[packetCategory]
+        if pktCat not in param_category.PACKETCATEGORIES[int(pldFlag)].keys():
+            raise ccsdsexception.CategoryMissing(pktCat, pldFlag)
+        hx = param_category.PACKETCATEGORIES[int(pldFlag)][pktCat]
         if hx.size == 0:
             return {}
         start = param_ccsds.HEADER_P_KEYS.size
@@ -141,10 +143,11 @@ class CCSDSUnPacker(object):
             start += param_ccsds.HEADER_S_KEYS_TELEMETRY.size
         else:
             start += param_ccsds.HEADER_S_KEYS_TELECOMMAND.size
-        cat = hds[param_ccsds.PACKETCATEGORY.name]
-        start += param_category.PACKETCATEGORYSIZES[cat]
+        cat = int(hds[param_ccsds.PACKETCATEGORY.name])
+        pld = int(hds[param_ccsds.PAYLOADFLAG.name])
+        start += param_category.PACKETCATEGORYSIZES[pld][cat]
         data['all'] = packet[start:]
-        cat_params = param_category.FILEDATACRUNCHING[cat]
+        cat_params = param_category.FILEDATACRUNCHING[pld][cat]
         if cat_params is None:
             return data  # no specifics for unpacking data
         else:

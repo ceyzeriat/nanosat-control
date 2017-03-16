@@ -54,7 +54,7 @@ class Telemetry(object):
         """
         cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet, retdbvalues=True)
         cls.hd['raw_file'] = core.RAWPACKETFOLDER
-        cls.hd['receiver_id'] = kwargs.get('receiver_id', core.RECEIVERID)
+        cls.hd['receiver_id'] = kwargs.get('user_id', core.RECEIVERID)
         cls.hd['time_received'] = time_received\
                 if isinstance(time_received, core.datetime.datetime)\
                 else core.now()
@@ -65,7 +65,8 @@ class Telemetry(object):
         """
         Searches for the TC of which the TM is the acknowledgement
         """
-        if int(self.hd[param_ccsds.PACKETCATEGORY.name])\
+        if (int(self.hd[param_ccsds.PAYLOADFLAG.name]),
+            int(self.hd[param_ccsds.PACKETCATEGORY.name]))\
                 not in param_category.ACKCATEGORIES:
             return None
         res = db.get_ack_TC(timestamp=self.hd['time_received'])

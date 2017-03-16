@@ -70,7 +70,11 @@ CATEGORY_29 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR],
                                 octets=False)  # tc answer
 
 
-ACKCATEGORIESCOMMON = [31, 30]
+# (pld, pid)
+ACKCATEGORIESCOMMON = [(0, 31),
+                       (0, 30),
+                       (1, 31),
+                       (1, 30)]
 
 
 # header aux
