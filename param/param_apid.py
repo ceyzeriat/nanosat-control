@@ -57,6 +57,8 @@ PIDREGISTRATION_PLD = {     'bootloader': 0,
 
 
 # pid string as key, int as value
+
+# REGISTRATION[pid(string)]
 PIDREGISTRATION = {}
 PLDREGISTRATION = {}
 LVLREGISTRATION = {}
@@ -76,7 +78,7 @@ for k, v in PIDREGISTRATION_PLD.items():
     LVLREGISTRATION[k.lower()] = '1'
 
 
-# PIDREGISTRATION_REV[v][pld][lvl]
+# PIDREGISTRATION_REV[pid(int)][payload(int)][level(int)]
 
 # pld, lvl and pid ints as keys, pid string as output
 PIDREGISTRATION_REV = {}

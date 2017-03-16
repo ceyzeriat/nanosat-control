@@ -43,28 +43,29 @@ class Cm(object):
         Creates a self-checking command
         
         Args:
-        * number (int): the unique id
-        * name (str): the name (code friendly)
-        * pid (str): the unique pid identity string
-        * desc (str): the description
-        * lparam (int): the total length of the parameters, in
+          * number (int): the unique id
+          * name (str): the name (code friendly)
+          * pid (str): the unique pid identity string
+          * desc (str): the description
+          * lparam (int): the total length of the parameters, in
             octets, or "*" for any
-        * subsystem (str): the subsystem key
-        * param (iterable of list): an iterable of parameter lists of
-          form and order: (name, desc, rng, typ, size, unit)
+          * subsystem (str): the subsystem key
+          * param (iterable of list): an iterable of parameter lists of
+            form and order: (name, desc, rng, typ, size, unit)
         """
         self._name = core.clean_name(name)
         self._number = int(number)
         pid = str(pid).lower()
         if pid not in param_apid.PIDREGISTRATION.keys():
             raise cmdexception.WrongPID(pid, self.name)
-        self._pid = pid
+        self._pidstr = pid
+        self._pid = int(param_apid.PIDREGISTRATION[pid])
+        self._payload = int(param_apid.PLDREGISTRATION[pid])
+        self._level = int(param_apid.LVLREGISTRATION[pid])
         self._desc = str(desc)
         self._lparam = int(lparam) if lparam != "*" else None
         self._subsystem = str(subsystem)
         self._param = [tuple(item) for item in param]
-        self._payload = bool(param_apid.PLDREGISTRATION[self.pid])
-        self._level = int(param_apid.LVLREGISTRATION[self.pid])
         self._params = []
         for idx, item in enumerate(self._param):
             if len(item) < param_commands.MINLENPARAMSTRUCTURE:
@@ -93,7 +94,7 @@ class Cm(object):
         """
         Returns a dictionnary for initialization or json dumping
         """
-        return {'number': self.number, 'name': self.name, 'pid': self.pid,
+        return {'number': self.number, 'name': self.name, 'pid': self._pidstr,
                 'desc': self.desc, 'subsystem': self.subsystem,
                 'lparam': self.lparam if self.lparam is not None else "*",
                 'param': self._param}

@@ -45,10 +45,10 @@ class Command(Cm):
         Args ar ignored
 
         Kwargs:
-        * the input parameters of the command
-        * rack (bool): ``True`` to get the acknowledgement of reception
-        * fack (bool): ``True`` to get the acknowledgement of format
-        * eack (bool): ``True`` to get the acknowledgement of execution
+          * the input parameters of the command
+          * rack (bool): ``True`` to get the acknowledgement of reception
+          * fack (bool): ``True`` to get the acknowledgement of format
+          * eack (bool): ``True`` to get the acknowledgement of execution
         """
         # sole purpose of this __init__ is overwrite the docstring
         super(Command, self).__init__(*args, **kwargs)
@@ -60,7 +60,7 @@ class Command(Cm):
         input parameters used to generate the data (dict).
         """
         data, inputs = self.generate_data(**kwargs)
-        packet, hd, hdx, dat = TCPacker.pack(pid=self.pid, TCdata=data,
+        packet, hd, hdx, dat = TCPacker.pack(pid=self._pidstr, TCdata=data,
                                              TCid=self.number, retvalues=True,
                                              retdbvalues=True, **kwargs)
         return packet, hd, hdx, inputs
@@ -75,10 +75,10 @@ class Command(Cm):
         Args ar ignored
 
         Kwargs:
-        * the input parameters of the command
-        * rack (bool): ``True`` to get the acknowledgement of reception
-        * fack (bool): ``True`` to get the acknowledgement of format
-        * eack (bool): ``True`` to get the acknowledgement of execution
+          * the input parameters of the command
+          * rack (bool): ``True`` to get the acknowledgement of reception
+          * fack (bool): ``True`` to get the acknowledgement of format
+          * eack (bool): ``True`` to get the acknowledgement of execution
         """
         # generates the packet
         packet, hd, hdx, inputs = self._generate_packet(**kwargs)

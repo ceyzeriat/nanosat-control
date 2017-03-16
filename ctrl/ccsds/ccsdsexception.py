@@ -157,3 +157,11 @@ class CategoryMissing(CCSDSException):
         self._init(cat, pld, *args, **kwargs)
         self.message = "Packet category '{}' with payload flag '{}' does "\
                        "not exist".format(cat, pld)
+
+class PIDMissing(CCSDSException):
+    """
+    PID does not exist
+    """
+    def __init__(self, pid, *args, **kwargs):
+        self._init(pid, *args, **kwargs)
+        self.message = "PID '{}' does not exist".format(pid)

@@ -56,7 +56,7 @@ class CCSDSPacker(object):
         the dictionnaries of primary/secondary and auxiliary headers
 
         Args:
-          * pid (int): the process id related to the packet
+          * pid (str): the process string-id related to the packet
           * TCdata (byts): only for TC-mode, the data to include in the
             packet
           * TCid (int): only for TC-mode, the id of the telecommand
@@ -80,7 +80,7 @@ class CCSDSPacker(object):
           * auxiliary header and data keys-values
         """
         hd = {}
-        hd['pid'] = pid
+        hd[param_ccsds.PID.name] = str(pid).lower()
         if not self.mode == 'telemetry':
             hd['signature'] = Byt("\x00"*(param_ccsds.SIGNATURE.len//8))
             hd['telecommand_id'] = int(TCid)
@@ -177,11 +177,16 @@ class CCSDSPacker(object):
         # check pid string
         if param_ccsds.PID.name not in values.keys():
             raise ccsdsexception.PacketValueMissing(param_ccsds.PID.name)
+        pidstr = values[param_ccsds.PID.name]
+        if pidstr not in param_apid.PIDREGISTRATION.keys():
+            raise ccsdsexception.PIDMissing(pidstr)
+        values[param_ccsds.PID.name] =\
+            param_apid.PIDREGISTRATION[pidstr]
         # fill in payload and level flags from pid string
         values[param_ccsds.PAYLOADFLAG.name] =\
-            param_apid.PLDREGISTRATION[values[param_ccsds.PID.name]]
+            param_apid.PLDREGISTRATION[pidstr]
         values[param_ccsds.LEVELFLAG.name] =\
-            param_apid.LVLREGISTRATION[values[param_ccsds.PID.name]]
+            param_apid.LVLREGISTRATION[pidstr]
         # add the header aux size into the packet length
         values[param_ccsds.DATALENGTH.name] +=\
             param_category.PACKETCATEGORYSIZES[\
