@@ -29,10 +29,10 @@
 
 # the PID that sends the packets eventually, useful to know for the
 # acknowledgement of receipt
-PACKETWRAPPERPID = 'L0ComManager'
+RECACKPACKETPID = 0
 
 
-PIDREGISTRATION_OBC_L0 = {  PACKETWRAPPERPID: 0,
+PIDREGISTRATION_OBC_L0 = {  'L0ComManager': RECACKPACKETPID,
                             'L0MemoryManager': 1,
                             'L0HouseKeeper': 2,
                             'L0EventProcessor': 3,

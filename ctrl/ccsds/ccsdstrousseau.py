@@ -41,8 +41,10 @@ class CCSDSTrousseau(object):
         A collection of CCSDS keys
 
         Args:
-        * keylist (list of dict): the list of input parameter to
+          * keylist (list of dict): the list of input parameter to
             generate the list of CCSDSKey
+          * octets (bool): whether the packet should be treated as binary
+            or hexadecimal
         """
         self.keys = []
         self.size = 0
@@ -77,12 +79,12 @@ class CCSDSTrousseau(object):
         Returns the bytes chain and the values encoded
 
         Args:
-        * allvalues (dict): the values to pack
-        * retdbvalues (bool): if ``True``, returns the encoded values
-          in a format directly compatible with the database
+          * allvalues (dict): the values to pack
+          * retdbvalues (bool): if ``True``, returns the encoded values
+            in a format directly compatible with the database
 
         Kwargs:
-        * passed on to the pack method of each key
+          * passed on to the pack method of each key
         """
         values = dict(allvalues)
         retvals = {}
@@ -125,7 +127,7 @@ class CCSDSTrousseau(object):
         Unpacks the data according to the list of keys
 
         Args:
-        * data (byts): the data to unpack, given as chain of bytes
+          * data (byts): the data to unpack, given as chain of bytes
         """
         res = {}
         if not self.octets:
@@ -137,4 +139,10 @@ class CCSDSTrousseau(object):
         return res
 
     def disp(self, **kwargs):
+        """
+        Display the trousseau values
+        """
         return ''
+        #for key in self.keys:
+            #
+        #return ''

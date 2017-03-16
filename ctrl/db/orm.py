@@ -158,7 +158,7 @@ def get_ack_TC(timestamp):
     ack_rec_id = getattr(
                     db.query(Telecommand)\
                         .filter_by(and_(
-                                Telecommand.pid==param_apid.PACKETWRAPPERPID,
+                                Telecommand.pid==param_apid.RECACKPACKETPID,
                                 Telecommand.ack_reception_id==None,
                                 #Telecommand.reqack_reception==1,
                                 Telecommand.time_sent<=timestamp))\
