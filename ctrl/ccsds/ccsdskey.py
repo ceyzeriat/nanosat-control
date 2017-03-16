@@ -35,7 +35,8 @@ __all__ = ['CCSDSKey']
 
 class CCSDSKey(object):
     def __init__(self, name, dic=None, start=None, l=1, fctunpack=None,
-                 fctpack=None, dic_force=None, non_db_dic=False, verbose=""):
+                 fctpack=None, dic_force=None, non_db_dic=False, verbose="",
+                 disp=None):
         """
         Dictionary of keys to perform easy extraction from a bits sequence.
         
@@ -58,6 +59,7 @@ class CCSDSKey(object):
           * verbose (string): Human-readable meaning of this key
         """
         self.name = str(name)
+        self.disp = self.name[:3] if disp is None else str(disp)
         self._fctunpack = fctunpack if callable(fctunpack) else None
         self._fctpack = fctpack if callable(fctpack) else None
         self.isdic = (dic is not None)

@@ -53,10 +53,9 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     # make the copy of param_all
     cp ./param/param_all_example.py ./param/param_all.py
 
+    # move binaries
     chmod a+x bins/*
-    ln -s $WHERESEGSOL/bins/log $WHEREBINS/log
-    ln -s $WHERESEGSOL/bins/logdisp $WHEREBINS/logdisp
-    ln -s $WHERESEGSOL/bins/logdo $WHEREBINS/logdo
+    mv bins/log* $WHEREBINS/
 
     # create parameter files
     echo 'PICSAT' > $WHEREPARAM/callsign_destination
@@ -105,7 +104,7 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     echo "    $IPY -i $WHERESEGSOL/save.py" >> picshow
     echo "fi" >> picshow
 
-    echo "xterm -T 'Chat' $BASICFONT -hold -geometry 80x15-0+0 -e /bin/bash -l -c '$WHERESEGSOL/bins/logdisp';" >> picchat
+    echo "xterm -T 'Chat' $BASICFONT -geometry 80x15-0+0 -e /bin/bash -l -c '$WHEREBINS/logdisp';" >> picchat
 fi
 
 
