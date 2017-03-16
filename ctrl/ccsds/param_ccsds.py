@@ -71,7 +71,7 @@ SECONDARYHEADERFLAG = CCSDSKey( name='secondary_header_flag',
                                 disp="shf")
 
 PID = CCSDSKey(                 name='pid',
-                                start=7,
+                                start=5,
                                 l=4,
                                 fctunpack=bincore.bin2int,
                                 fctpack=bincore.int2bin,
@@ -80,20 +80,20 @@ PID = CCSDSKey(                 name='pid',
 
 LEVELFLAG = CCSDSKey(           name='level_flag',
                                 dic={0: '0', 1: '1'},
-                                start=6,
+                                start=9,
                                 l=1,
                                 verbose="If the packet is not payload, what software is it? Shall be 0d0 if the payload flag is 0b1, else shall be 0b0 if the packet is L0-related or 0b1 for L1",
                                 disp="lvl")
 
 PAYLOADFLAG = CCSDSKey(         name='payload_flag',
                                 dic={0: '0', 1: '1'},
-                                start=5,
+                                start=10,
                                 l=1,
                                 verbose="Is that a packet routed from/to the payload? Shall be 0b1 if yes or 0b0 if no",
                                 disp="pld")
 
 PACKETCATEGORY = CCSDSKey(      name='packet_category',
-                                start=12,
+                                start=11,
                                 l=5,
                                 fctunpack=bincore.bin2int,
                                 fctpack=bincore.int2bin,
