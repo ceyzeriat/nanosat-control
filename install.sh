@@ -13,7 +13,6 @@ WHERESEGSOL="$HOME/Documents/lib/$REPONAME"
 WHEREBINS="$HOME/Documents/bin"
 WHEREPARAM="$HOME/.segsol"
 WHEREDATA="$HOME/tm_data"
-WHERELOG="$HOME/seglog"
 DESKTOP="$HOME/Desktop"
 IPY=$(which ipython)
 INITPWD=$(pwd)
@@ -28,7 +27,7 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     mkdir -p $WHEREPARAM
     mkdir -p $WHEREDATA
     mkdir -p $WHEREBINS
-    mkdir -p $WHERELOG
+    mkdir -p "$HOME/seglog"
 
     # update paths
     echo '' >> $HOME/.bashrc
@@ -36,7 +35,6 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     echo '# segsol append' >> $HOME/.bashrc
     echo "export PATH=$WHEREBINS:"'$PATH' >> $HOME/.bashrc
     echo "export WHERESEGSOL=$WHERESEGSOL" >> $HOME/.bashrc
-    echo "export WHERELOG=$WHERELOG" >> $HOME/.bashrc
     echo 'export PYTHONPATH=$WHERESEGSOL:$PYTHONPATH' >> $HOME/.bashrc
 
     cd $WHERESEGSOL
@@ -55,7 +53,10 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     # make the copy of param_all
     cp ./param/param_all_example.py ./param/param_all.py
 
-    mv ./bins/* $WHEREBINS
+    chmod a+x bins/*
+    ln -s $WHERESEGSOL/bins/log $WHEREBINS/log
+    ln -s $WHERESEGSOL/bins/logdisp $WHEREBINS/logdisp
+    ln -s $WHERESEGSOL/bins/logdo $WHEREBINS/logdo
 
     # create parameter files
     echo 'PICSAT' > $WHEREPARAM/callsign_destination
@@ -68,9 +69,10 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     cd $WHEREBINS
 
     echo '#!/bin/bash' > piccontrol
+    chmod a+x piccontrol
+    cp piccontrol picchat
     echo 'if [[ $1 == "gui" ]]' >> piccontrol
     echo 'then' >> piccontrol
-    chmod a+x piccontrol
     cp piccontrol piclisten
     cp piccontrol picwatch
     cp piccontrol picsave
@@ -102,6 +104,8 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     echo "else" >> picshow
     echo "    $IPY -i $WHERESEGSOL/save.py" >> picshow
     echo "fi" >> picshow
+
+    echo "xterm -T 'Chat' $BASICFONT -hold -geometry 80x15-0+0 -e /bin/bash -l -c '$WHERESEGSOL/bins/logdisp';" >> picchat
 fi
 
 
@@ -121,6 +125,7 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "desk" ]; then
     cp PicControl.desktop PicListen.desktop
     cp PicControl.desktop PicSave.desktop
     cp PicControl.desktop PicWatch.desktop
+    cp PicControl.desktop PicChat.desktop
 
     echo 'Name=PicControl' >> PicControl.desktop
     echo 'Comment=' >> PicControl.desktop
@@ -161,6 +166,14 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "desk" ]; then
     echo 'Path='"$HOME" >> PicShow.desktop
     echo 'Terminal=false' >> PicShow.desktop
     echo 'StartupNotify=false' >> PicShow.desktop
+
+    echo 'Name=PicChat' >> PicChat.desktop
+    echo 'Comment=' >> PicChat.desktop
+    echo 'Exec='"$WHEREBINS"'/picchat' >> PicChat.desktop
+    echo 'Icon='"$WHERESEGSOL"'/img/chat.png' >> PicChat.desktop
+    echo 'Path='"$HOME" >> PicChat.desktop
+    echo 'Terminal=false' >> PicChat.desktop
+    echo 'StartupNotify=false' >> PicChat.desktop
 fi
 
 # got back where we were

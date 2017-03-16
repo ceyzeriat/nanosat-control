@@ -1,5 +1,5 @@
 #!/bin/bash 
-logdir="$WHERELOG/$(date -u +'%Y%m%d')"
+logdir="$HOME/seglog/$(date -u +'%Y%m%d')"
 if [ $# -eq 0 ];
   then filedisp="$logdir/human.log"
   else filedisp="$logdir/$1.log"
