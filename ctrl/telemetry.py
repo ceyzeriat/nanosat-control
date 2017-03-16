@@ -54,7 +54,7 @@ class Telemetry(object):
         """
         cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet, retdbvalues=True)
         cls.hd['raw_file'] = core.RAWPACKETFOLDER
-        cls.hd['receiver_id'] = kwargs.get('user_id', core.RECEIVERID)
+        cls.hd['user_id'] = kwargs.get('user_id', core.RECEIVERID)
         cls.hd['time_received'] = time_received\
                 if isinstance(time_received, core.datetime.datetime)\
                 else core.now()
