@@ -55,10 +55,10 @@ class Cm(object):
         """
         self._name = core.clean_name(name)
         self._number = int(number)
-        pid = str(pid)
+        pid = str(pid).lower()
         if pid not in param_apid.PIDREGISTRATION.keys():
             raise cmdexception.WrongPID(pid, self.name)
-        self._pid = str(pid)
+        self._pid = pid
         self._desc = str(desc)
         self._lparam = int(lparam) if lparam != "*" else None
         self._subsystem = str(subsystem)
