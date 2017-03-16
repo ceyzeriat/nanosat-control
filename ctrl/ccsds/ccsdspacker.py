@@ -145,7 +145,7 @@ class CCSDSPacker(object):
         string and encoded values
 
         Args:
-          * values (dict): the values to pack
+          * values (dict): the values to pack, with pid as pid string-id
           * datalen (int): the length of the data. If not known yet, it
             can be be 'manually' updated using ``increment_data_length``
             method

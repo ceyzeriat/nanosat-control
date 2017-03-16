@@ -27,6 +27,7 @@
 
 from byt import Byt
 from param import param_apid
+from param import param_category_common as pcc
 from . import param_ccsds
 from ..utils import bincore
 from . import ccsdsexception as exc
@@ -49,7 +50,10 @@ class CCSDSBlob(object):
         """
         self.blob = blob
         pk = CCSDSPacker(mode=mode)
-        vals = {param_ccsds.PID.name: '', param_ccsds.PACKETCATEGORY.name: '0'}
+        vals = {param_ccsds.PID.name: '',
+                param_ccsds.PACKETCATEGORY.name:\
+                    pcc.CATEGORYREGISTRATIONCOMMON.keys()[0]}
+                    # just pick first common one
         # building of possible packet start flags
         self.auth_bits = []
         for item in param_apid.PIDREGISTRATION.keys():
