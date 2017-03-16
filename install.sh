@@ -13,6 +13,7 @@ WHERESEGSOL="$HOME/Documents/lib/$REPONAME"
 WHEREBINS="$HOME/Documents/bin"
 WHEREPARAM="$HOME/.segsol"
 WHEREDATA="$HOME/tm_data"
+WHERELOG="$HOME/seglog"
 DESKTOP="$HOME/Desktop"
 IPY=$(which ipython)
 INITPWD=$(pwd)
@@ -27,13 +28,16 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     mkdir -p $WHEREPARAM
     mkdir -p $WHEREDATA
     mkdir -p $WHEREBINS
+    mkdir -p $WHERELOG
 
     # update paths
     echo '' >> $HOME/.bashrc
     echo '' >> $HOME/.bashrc
     echo '# segsol append' >> $HOME/.bashrc
     echo "export PATH=$WHEREBINS:"'$PATH' >> $HOME/.bashrc
-    echo "export PYTHONPATH=$WHERESEGSOL:"'$PYTHONPATH' >> $HOME/.bashrc
+    echo "export WHERESEGSOL=$WHERESEGSOL" >> $HOME/.bashrc
+    echo "export WHERELOG=$WHERELOG" >> $HOME/.bashrc
+    echo 'export PYTHONPATH=$WHERESEGSOL:$PYTHONPATH' >> $HOME/.bashrc
 
     cd $WHERESEGSOL
 
@@ -50,6 +54,8 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
 
     # make the copy of param_all
     cp ./param/param_all_example.py ./param/param_all.py
+
+    mv ./bins/* $WHEREBINS
 
     # create parameter files
     echo 'PICSAT' > $WHEREPARAM/callsign_destination
