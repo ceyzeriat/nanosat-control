@@ -98,6 +98,6 @@ TABLEDATACOMMON = { 31: None,
                     29: None}
 
 
-FILEDATACRUNCHINGCOMMON = { 31: None,
-                            30: 'param_exe_ack',
+FILEDATACRUNCHINGCOMMON = { 31: 'param_exe_ack',
+                            30: None,
                             29: None}

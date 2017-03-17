@@ -108,12 +108,20 @@ def process_report(inputs):
             print('Tried to unpack.. but an error occurred: {}'\
                     .format(sys.exc_info()[0]))
             return
-        print(param_ccsds.disp(**hd))
-        cat_params = param_category.FILEDATACRUNCHING[\
-                            hd[param_ccsds.PAYLOADFLAG.name]].get(\
-                            hd[param_ccsds.PACKETCATEGORY.name], None)
-        if cat_params is not None:
-            print(getattr(param, cat_params).TROUSSEAU.disp(hdx=hdx, data=dd))
+        pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
+        catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
+        # print Header Prim
+        print(param_ccsds.HEADER_P_KEYS.disp(**hd))
+        # print Header Sec TM
+        print(param_ccsds.HEADER_S_KEYS_TELEMETRY.disp(**hd))
+        # print Header Aux if any
+        auxtrousseau = param.param_category.PACKETCATEGORIES[pldflag][catnum]
+        if auxtrousseau.size > 0:
+            auxtrousseau.disp(**hdx)
+        # print Header Aux if any
+        datafile = param_category.FILEDATACRUNCHING[pldflag][catnum]
+        if datafile is not None:
+            print(getattr(param, datafile).TROUSSEAU.disp(hdx=hdx, data=dd))
     else:
         pass
 

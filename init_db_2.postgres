@@ -1,0 +1,8 @@
+-- postgres
+
+ALTER TABLE telecommands DROP CONSTRAINT telecommands_pid_fkey;
+
+ALTER TABLE telemetries DROP CONSTRAINT telemetries_pid_fkey;
+
+ALTER TABLE packet_categories ALTER payload_flag DROP DEFAULT;
+

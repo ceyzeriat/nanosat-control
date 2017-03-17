@@ -145,6 +145,7 @@ class CCSDSUnPacker(object):
             start += param_ccsds.HEADER_S_KEYS_TELECOMMAND.size
         cat = int(hds[param_ccsds.PACKETCATEGORY.name])
         pld = int(hds[param_ccsds.PAYLOADFLAG.name])
+        # aux header size
         start += param_category.PACKETCATEGORYSIZES[pld][cat]
         data['all'] = packet[start:]
         cat_params = param_category.FILEDATACRUNCHING[pld][cat]

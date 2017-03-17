@@ -280,7 +280,7 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
                     lines[idx][v_key] = 0.
         return lines
 
-    def disp(self, hdx, data):
+    def disp(self, data):
         res = []
         for line in data['unpacked']:
             res += ["volt5:({f_volt5}){volt5}, amp5:({f_amp5}){amp5}, amp3:({f_amp3}){amp3}, voltHV:({f_voltHV}){voltHV}, "

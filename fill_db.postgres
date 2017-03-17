@@ -31,12 +31,6 @@ INSERT INTO pids (name, level_flag, payload_flag, number) VALUES
 
 INSERT INTO commands (VALUES, name) VALUES
 	(1,'echo'),
-	(251, 'flash_write'),
-	(250, 'flash_read'),
-	(252, 'flash_erase'),
-	(255, 'soft_reboot'),
-	(253, 'launch_application_A'),
-	(254, 'launch_application_B'),
 	(101, 'echo_pld'),
 	(102, 'move_piezo'),
 	(103, 'hv_switch'),
@@ -49,4 +43,10 @@ INSERT INTO commands (VALUES, name) VALUES
 	(110, 'reset'),
 	(111, 'set_datetime'),
 	(112, 'start_hk'),
-	(113, 'stop_hk');
+	(113, 'stop_hk'),
+	(250, 'flash_read'),
+	(251, 'flash_write'),
+	(252, 'flash_erase'),
+	(253, 'launch_application_A'),
+	(254, 'launch_application_B'),
+	(255, 'soft_reboot');

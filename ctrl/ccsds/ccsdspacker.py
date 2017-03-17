@@ -49,7 +49,7 @@ class CCSDSPacker(object):
         self.mode = 'telemetry' if str(mode).lower()[1] == 'm'\
                         else 'telecommand'
 
-    def pack(self, pid, TCdata='', TCid='', pktCat=0, retvalues=True,
+    def pack(self, pid, TCdata='', TCid='', pktCat=None, retvalues=True,
                 retdbvalues=True, withPacketID=True, **kwargs):
         """
         Creates a packet, returns the packet string and optionally
@@ -189,10 +189,11 @@ class CCSDSPacker(object):
         values[param_ccsds.LEVELFLAG.name] =\
             param_apid.LVLREGISTRATION[pidstr]
         # add the header aux size into the packet length
-        values[param_ccsds.DATALENGTH.name] +=\
-            param_category.PACKETCATEGORYSIZES[\
-                int(values[param_ccsds.PAYLOADFLAG.name])][\
-                int(values.get(param_ccsds.PACKETCATEGORY.name, 0))]
+        if not self.mode == 'telecommand':
+            values[param_ccsds.DATALENGTH.name] +=\
+                param_category.PACKETCATEGORYSIZES[\
+                    int(values[param_ccsds.PAYLOADFLAG.name])][\
+                    int(values.get(param_ccsds.PACKETCATEGORY.name, 0))]
         # update the length with data length
         values[param_ccsds.DATALENGTH.name] += int(datalen)
         data, retvals = param_ccsds.HEADER_P_KEYS.pack(allvalues=values,

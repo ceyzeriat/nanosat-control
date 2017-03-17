@@ -142,7 +142,5 @@ class CCSDSTrousseau(object):
         """
         Display the trousseau values
         """
-        return ''
-        #for key in self.keys:
-            #
-        #return ''
+        res = ["%s:{%s}" % (key.disp, key.name) for key in self.keys]
+        return ", ".join(res).format(**kwargs)

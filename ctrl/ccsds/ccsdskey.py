@@ -57,6 +57,7 @@ class CCSDSKey(object):
             make sure that the unpacked values are integers instead of
             the non-compliant dictionary keys
           * verbose (string): Human-readable meaning of this key
+          * disp (string): short alias for human-reading display
         """
         self.name = str(name)
         self.disp = self.name[:3] if disp is None else str(disp)

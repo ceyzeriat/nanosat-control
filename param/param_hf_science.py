@@ -62,13 +62,9 @@ class HFScienceCCSDSTrousseau(CCSDSTrousseau):
                                         data[idx*self.size:(idx+1)*self.size])
         return lines
 
-    def disp(self, hdx, data):
-        res = []
-        res += ["ACQ: {acq_mode}, IT: {integration_time}, M: {modulation}, "\
-                "R: {radius}, NP: {n_points}".format(**hdx)]
-        for line in data['unpacked']:
-            res += ["S: {step}, C: {counts}, Xc{x_com}, Yc{y_com}, Xp{x_pos}, "\
-                  "Yp{y_pos}".format(**line)]
+    def disp(self, data):
+        res += [super(HFScienceCCSDSTrousseau, self).disp(**line)\
+                    for line in data['unpacked']]
         return "\n".join(res)
 
 

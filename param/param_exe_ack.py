@@ -32,6 +32,9 @@ from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 __all__ = ['TROUSSEAU']
 
 
+MAXLENGTHERRORMESSAGE = 100
+
+
 def hex2txt(v, **kwargs):
     """
     verbose = "binary -> message"
@@ -46,8 +49,19 @@ def txt2hex(txt, **kwargs):
     return Byt([i for i in Byt(txt).ints() if i >= 32 and i <= 126])
 
 
-KEYS = [dict(name='param_exe_ack', start=0, l=125, fctunpack=hex2txt, fctpack=txt2hex,
+KEYS = [dict(name='error_message', start=0, l=MAXLENGTHERRORMESSAGE, fctunpack=hex2txt, fctpack=txt2hex,
 				verbose="Optional: an error message (ascii string). The message is only put in the frame if errorCode is not 0")]
 
 
-TROUSSEAU = CCSDSTrousseau(KEYS, octets=True)
+class EACKCCSDSTrousseau(CCSDSTrousseau):
+    def unpack(self, data, **kwargs):
+        """
+        Unpacks the data contained in the execution acknowledgment
+
+        Args:
+        * data (byts): the chain of octets to unpack
+        """
+        return {self.keys[0].name: Byt(data[:MAXLENGTHERRORMESSAGE])}
+
+
+TROUSSEAU = EACKCCSDSTrousseau(KEYS, octets=True)
