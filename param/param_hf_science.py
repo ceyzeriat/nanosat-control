@@ -63,7 +63,7 @@ class HFScienceCCSDSTrousseau(CCSDSTrousseau):
         return lines
 
     def disp(self, data):
-        res += [super(HFScienceCCSDSTrousseau, self).disp(**line)\
+        res = [super(HFScienceCCSDSTrousseau, self).disp(**line)\
                     for line in data['unpacked']]
         return "\n".join(res)
 
