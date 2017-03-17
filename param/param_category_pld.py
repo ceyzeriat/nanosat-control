@@ -120,8 +120,8 @@ TABLEDATAPLD = {4: 'DataPayloadHk',  # HK
 
 FILEDATACRUNCHINGPLD = {4: 'param_payload_hk',  # HK
                         5: 'param_hf_science',  # science HF
-                        6: 'param_payload_report',  # report
-                        7: None}  # beacon
+                        6: 'param_pld_report',  # report
+                        7: 'param_pld_beacon'}  # beacon
 
 
 # extend all keys with common categories

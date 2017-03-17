@@ -33,17 +33,17 @@ __all__ = ['TROUSSEAU']
 
 
 KEYS = [dict(name='step', start=0, l=1, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
-                verbose="step"),
+                verbose="step", disp="step"),
         dict(name='counts', start=1, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
-                verbose="counts"),
+                verbose="counts", disp="cts"),
         dict(name='x_com', start=3, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
-                verbose="x_com"),
+                verbose="x_com", disp="xc"),
         dict(name='y_com', start=5, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
-                verbose="y_com"),
+                verbose="y_com", disp="yc"),
         dict(name='x_pos', start=7, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
-                verbose="x_pos"),
+                verbose="x_pos", disp="xp"),
         dict(name='y_pos', start=9, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
-                verbose="y_pos")
+                verbose="y_pos", disp="yp")
         ]
 
 

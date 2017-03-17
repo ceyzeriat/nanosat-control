@@ -167,80 +167,80 @@ def temp0_pack(v, Vref, pad, **kwargs):
 
 VOLTPELTIER = 'vref'
 
-V_KEYS = [  dict(name='volt5', start=16, l=16,
+V_KEYS = [  dict(name='volt5', start=16, l=16, disp="volt5",
                     verbose="Voltage line 5V,",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volt_line_unpack, fctpack=volt_line_pack),
-            dict(name='amp5', start=32, l=16,
+            dict(name='amp5', start=32, l=16, disp="amp5",
                     verbose="amp5",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='amp3', start=48, l=16,
+            dict(name='amp3', start=48, l=16, disp="amp3",
                     verbose="amp3",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='voltHV', start=64, l=16,
+            dict(name='voltHV', start=64, l=16, disp="voltHV",
                     verbose="voltHV",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=voltHV_unpack, fctpack=voltHV_pack),
-            dict(name='ampHV', start=80, l=16,
+            dict(name='ampHV', start=80, l=16, disp="ampHV",
                     verbose="ampHV",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name=VOLTPELTIER, start=144, l=16,
+            dict(name=VOLTPELTIER, start=144, l=16, disp=VOLTPELTIER,
                     verbose="vref",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volt_peltier_unpack, fctpack=volt_peltier_pack),
-            dict(name='vitec', start=96, l=16,
+            dict(name='vitec', start=96, l=16, disp="vitec",
                     verbose="vitec",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=vitec_unpack, fctpack=vitec_pack),
-            dict(name='temp0', start=112, l=16,
+            dict(name='temp0', start=112, l=16, disp="temp0",
                     verbose="temp0",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp0_unpack, fctpack=temp0_pack),
-            dict(name='errorTherm', start=128, l=16,
+            dict(name='errorTherm', start=128, l=16, disp="errorTherm",
                     verbose="errorTherm",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=errorTherm_unpack, fctpack=errorTherm_pack),
-            dict(name='temp1', start=160, l=16,
+            dict(name='temp1', start=160, l=16, disp="temp1",
                     verbose="temp1",
                     fctunpack=bincore.bin2intSign, fctpack=bincore.intSign2bin),#fctunpack=temp_unpack, fctpack=temp_pack),
-            dict(name='temp2', start=176, l=16,
+            dict(name='temp2', start=176, l=16, disp="temp2",
                     verbose="temp2",
                     fctunpack=bincore.bin2intSign, fctpack=bincore.intSign2bin),#fctunpack=temp_unpack, fctpack=temp_pack),
-            dict(name='temp3', start=192, l=16,
+            dict(name='temp3', start=192, l=16, disp="temp3",
                     verbose="temp3",
                     fctunpack=bincore.bin2intSign, fctpack=bincore.intSign2bin)#fctunpack=temp_unpack, fctpack=temp_pack)
             ]
 
 
 # names will be filled in automatically afterwards
-F_KEYS = [  dict(name='-', start=4, l=1,
+F_KEYS = [  dict(name='-', start=4, l=1, disp="",
                     verbose="Voltage line 5V, measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
-            dict(name='-', start=5, l=1,
+            dict(name='-', start=5, l=1, disp="",
                     verbose="amp5 measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
-            dict(name='-', start=6, l=1,
+            dict(name='-', start=6, l=1, disp="",
                     verbose="amp3 measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
-            dict(name='-', start=7, l=1,
+            dict(name='-', start=7, l=1, disp="",
                     verbose="voltHV measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
-            dict(name='-', start=8, l=1,
+            dict(name='-', start=8, l=1, disp="",
                     verbose="ampHV measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
-            dict(name='-', start=9, l=1,
+            dict(name='-', start=9, l=1, disp="",
                     verbose="vref measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
-            dict(name='-', start=10, l=1,
+            dict(name='-', start=10, l=1, disp="",
                     verbose="vitec measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
-            dict(name='-', start=11, l=1,
+            dict(name='-', start=11, l=1, disp="",
                     verbose="temp0 measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
-            dict(name='-', start=12, l=1,
+            dict(name='-', start=12, l=1, disp="",
                     verbose="errorTherm measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
-            dict(name='-', start=13, l=1,
+            dict(name='-', start=13, l=1, disp="",
                     verbose="temp1 measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
-            dict(name='-', start=14, l=1,
+            dict(name='-', start=14, l=1, disp="",
                     verbose="temp2 measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
-            dict(name='-', start=15, l=1,
+            dict(name='-', start=15, l=1, disp="",
                     verbose="temp3 measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin)
             ]
@@ -249,6 +249,8 @@ F_KEYS = [  dict(name='-', start=4, l=1,
 # fill in names for flags
 def value_to_flag_name(txt):
     return 'f_'+txt
+
+
 for idx, item in enumerate(V_KEYS):
     F_KEYS[idx]['name'] = value_to_flag_name(item['name'])
 
@@ -281,12 +283,10 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         return lines
 
     def disp(self, data):
-        res = []
-        for line in data['unpacked']:
-            res += ["volt5:({f_volt5}){volt5}, amp5:({f_amp5}){amp5}, amp3:({f_amp3}){amp3}, voltHV:({f_voltHV}){voltHV}, "
-               "ampHV:({f_ampHV}){ampHV}, vref:({f_volt_peltier}){vref}, vitec:({f_vitec}){vitec}, "
-               "temp0:({f_temp0}){temp0}, errorTherm:({f_errorTherm}){errorTherm}, temp1:({f_temp1}){temp1}, temp2:({f_temp2}){temp2}, "
-               "temp3:({f_temp3}){temp3}".format(**line)]
+        fmt = ["%s:({%s}){%s}" % (key.disp, value_to_flag_name(key.name),
+                                    key.name)\
+                    for key in self.keys]
+        res = [fmt.format(**line) for line in data['unpacked']]
         return "\n".join(res)
 
     def pack(self, allvalues, **kwargs):

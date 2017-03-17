@@ -32,7 +32,7 @@ from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 __all__ = ['TROUSSEAU']
 
 
-MAXLENGTHERRORMESSAGE = 100
+MAXLENGTHBEACON = 5
 
 
 def hex2txt(v, **kwargs):
@@ -49,20 +49,20 @@ def txt2hex(txt, **kwargs):
     return Byt([i for i in Byt(txt).ints() if i >= 32 and i <= 126])
 
 
-KEYS = [dict(name='error_message', start=0, l=MAXLENGTHERRORMESSAGE, fctunpack=hex2txt, fctpack=txt2hex,
-				verbose="Optional: an error message (ascii string). The message is only put in the frame if errorCode is not 0",
-                disp='err')]
+KEYS = [dict(name='beacon', start=0, l=MAXLENGTHBEACON, fctunpack=hex2txt, fctpack=txt2hex,
+                verbose="A beacon message",
+                disp='text')]
 
 
-class EACKCCSDSTrousseau(CCSDSTrousseau):
+class PLDBeaconCCSDSTrousseau(CCSDSTrousseau):
     def unpack(self, data, **kwargs):
         """
-        Unpacks the data contained in the execution acknowledgment
+        Unpacks the data contained in the payload beacon
 
         Args:
         * data (byts): the chain of octets to unpack
         """
-        return {self.keys[0].name: Byt(data[:MAXLENGTHERRORMESSAGE])}
+        return {self.keys[0].name: Byt(data[:MAXLENGTHBEACON])}
 
 
-TROUSSEAU = EACKCCSDSTrousseau(KEYS, octets=True)
+TROUSSEAU = PLDBeaconCCSDSTrousseau(KEYS, octets=True)
