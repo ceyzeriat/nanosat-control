@@ -114,9 +114,9 @@ def process_report(inputs):
         # print Header Sec TM
         print(param_ccsds.HEADER_S_KEYS_TELEMETRY.disp(hd))
         # print Header Aux if any
-        auxtrousseau = param.param_category.PACKETCATEGORIES[pldflag][catnum]
+        auxtrousseau = param_category.PACKETCATEGORIES[pldflag][catnum]
         if auxtrousseau.size > 0:
-            auxtrousseau.disp(hdx)
+            print(auxtrousseau.disp(hdx))
         # print data if any
         datafile = param_category.FILEDATACRUNCHING[pldflag][catnum]
         if datafile is not None:
