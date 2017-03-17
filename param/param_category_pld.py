@@ -55,22 +55,29 @@ INTEGRATIONTIME = dict( name='integration_time',
                         fctpack=bincore.int2bin,
                         verbose="Integration time (valid for the entire packet). In ms.")
 
-MODULATION = dict(      name='modulation',
+DELAY = dict(           name='delay',
                         start=24,
+                        l=16,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin,
+                        verbose="Delay between two integrations (in ms/10)")
+
+MODULATION = dict(      name='modulation',
+                        start=40,
                         l=8,
                         fctunpack=bincore.bin2int,
                         fctpack=bincore.int2bin,
                         verbose="Modulation pattern (0=Point, 1=Circle, 2=Flower, 3=Calibration pattern). Valid for the entire packet.")
 
 RADIUS = dict(          name='radius',
-                        start=32,
+                        start=48,
                         l=16,
                         fctunpack=bincore.bin2int,
                         fctpack=bincore.int2bin,
                         verbose="Radius of the modulation pattern. Valid for the entire packet.")
 
 NPOINTS = dict(         name='n_points',
-                        start=48,
+                        start=64,
                         l=8,
                         fctunpack=bincore.bin2int,
                         fctpack=bincore.int2bin,
@@ -78,7 +85,7 @@ NPOINTS = dict(         name='n_points',
 
 
 CATEGORY_4 = CCSDSTrousseau([], octets=False)  # HK payload, NO HEADER
-CATEGORY_5 = CCSDSTrousseau([ACQMODE, INTEGRATIONTIME, MODULATION, RADIUS, NPOINTS], octets=False)  # science HF
+CATEGORY_5 = CCSDSTrousseau([ACQMODE, INTEGRATIONTIME, DELAY, MODULATION, RADIUS, NPOINTS], octets=False)  # science HF
 CATEGORY_6 = CCSDSTrousseau([], octets=False)  # report
 
 

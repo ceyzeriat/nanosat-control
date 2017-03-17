@@ -34,26 +34,24 @@ RECACKPACKETPID = 0
 
 PIDREGISTRATION_OBC_L0 = {  'L0ComManager': RECACKPACKETPID,
                             'L0MemoryManager': 1,
-                            'L0HouseKeeper': 2,
-                            'L0EventProcessor': 3,
-                            'L0EpsManager': 4,
-                            'L0AdcsManager': 5}
+                            'L0Housekeeper': 2,
+                            'L0EpsManager': 3,
+                            'L0AdcsManager': 4,
+                            'L0SdCardManager': 5}
 
 PIDREGISTRATION_OBC_L1 = {  'L1ComManager': 0,
                             'L1EventManager': 1,
                             'L1AdcsManager': 2,
-                            'L1ModeManager': 3,
-                            'L1EventManager': 4,
-                            'payloadManager1': 6,
-                            'payloadManager2': 7,
-                            'payloadManager3': 8}
+                            'ModeManager': 3,
+                            'EventManager': 4}
 
-PIDREGISTRATION_PLD = {     'bootloader': 0,
-                            'director': 1,
-                            'hkPayload': 2,
-                            'sciencePayload': 3,
-                            'debugPayload': 4,
-                            'ObcInterfaceManager': 5}
+PIDREGISTRATION_PLD = {     'Bootloader': 0,
+                            'BoardDirector': 1,
+                            'HkManager': 2,
+                            'AcquisitionManager': 3,
+                            'PacketsManager': 4,
+                            'ObcInterfaceManager': 5,
+                            'BeaconManager': 6}
 
 
 # pid string as key, int as value
