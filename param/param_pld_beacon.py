@@ -62,7 +62,7 @@ class PLDBeaconCCSDSTrousseau(CCSDSTrousseau):
         Args:
         * data (byts): the chain of octets to unpack
         """
-        return {self.keys[0].name: Byt(data[:MAXLENGTHBEACON])}
+        return {self.keys[0].name: str(data[:MAXLENGTHBEACON])}
 
 
 TROUSSEAU = PLDBeaconCCSDSTrousseau(KEYS, octets=True)

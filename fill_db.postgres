@@ -50,3 +50,36 @@ INSERT INTO commands (VALUES, name) VALUES
 	(253, 'launch_application_A'),
 	(254, 'launch_application_B'),
 	(255, 'soft_reboot');
+
+
+INSERT INTO commands VALUES (3, 'getL0Hk');
+INSERT INTO commands VALUES (4, 'enableBeacon');
+INSERT INTO commands VALUES (5, 'disableBeacon');
+INSERT INTO commands VALUES (6, 'setBeaconPeriod');
+INSERT INTO commands VALUES (12, 'softRebootObc');
+INSERT INTO commands VALUES (13, 'hardRebootObc');
+INSERT INTO commands VALUES (14, 'softRebootEps');
+INSERT INTO commands VALUES (15, 'hardRebootEps');
+INSERT INTO commands VALUES (21, 'paramDataValueCheck');
+INSERT INTO commands VALUES (251, 'flash_write');
+INSERT INTO commands VALUES (250, 'flash_read');
+INSERT INTO commands VALUES (252, 'flash_erase');
+INSERT INTO commands VALUES (255, 'soft_reboot');
+INSERT INTO commands VALUES (253, 'launch_application_A');
+INSERT INTO commands VALUES (254, 'launch_application_B');
+INSERT INTO commands VALUES (101, 'echo_pld');
+INSERT INTO commands VALUES (102, 'move_piezo');
+INSERT INTO commands VALUES (103, 'hv_switch');
+INSERT INTO commands VALUES (104, 'diode_switch');
+INSERT INTO commands VALUES (105, 'dac_switch');
+INSERT INTO commands VALUES (106, 'tec_switch');
+INSERT INTO commands VALUES (107, 'set_param');
+INSERT INTO commands VALUES (108, 'get_param');
+INSERT INTO commands VALUES (109, 'change_mode');
+INSERT INTO commands VALUES (110, 'reset');
+INSERT INTO commands VALUES (111, 'set_datetime');
+INSERT INTO commands VALUES (112, 'start_hk');
+INSERT INTO commands VALUES (113, 'stop_hk');
+INSERT INTO commands VALUES (114, 'set_temperature');
+INSERT INTO commands VALUES (115, 'set_integrationTime');
+INSERT INTO commands VALUES (116, 'set_delay');

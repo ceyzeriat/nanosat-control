@@ -62,7 +62,7 @@ class PLDRepCCSDSTrousseau(CCSDSTrousseau):
         Args:
         * data (byts): the chain of octets to unpack
         """
-        return {self.keys[0].name: Byt(data[:MAXLENGTHMESSAGE])}
+        return {self.keys[0].name: str(data[:MAXLENGTHMESSAGE])}
 
 
 TROUSSEAU = PLDRepCCSDSTrousseau(KEYS, octets=True)

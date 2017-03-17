@@ -78,11 +78,10 @@ class WatchRec(hein.SocReceiver):
             if self.portname == param_all.CONTROLLINGNAME:
                 # is a full TC broadcast
                 if str(data.get(param_all.REPORTKEY,'')) == 'broadcastFullTC':
-                    XDISP.add_TC(dbid=data.pop('dbid'), cmdname=data.pop('cmdname'),
-                                    inputs=data)
+                    watchdog.XDISP.add_TC(dbid=data.pop('dbid'),
+                                    cmdname=data.pop('cmdname'), inputs=data)
         elif key == 'raw':
             pass
-
 
 
 def process_report(inputs):

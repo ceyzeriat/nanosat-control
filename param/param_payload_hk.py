@@ -286,7 +286,7 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         fmt = ["%s:({%s}){%s}" % (key.disp, value_to_flag_name(key.name),
                                     key.name)\
                     for key in self.keys]
-        res = [fmt.format(**line) for line in data['unpacked']]
+        res = [fmt.format(**line) for line in data]
         return "\n".join(res)
 
     def pack(self, allvalues, **kwargs):
