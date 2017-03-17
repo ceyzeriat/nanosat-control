@@ -118,10 +118,10 @@ def process_report(inputs):
         auxtrousseau = param.param_category.PACKETCATEGORIES[pldflag][catnum]
         if auxtrousseau.size > 0:
             auxtrousseau.disp(**hdx)
-        # print Header Aux if any
+        # print data if any
         datafile = param_category.FILEDATACRUNCHING[pldflag][catnum]
         if datafile is not None:
-            print(getattr(param, datafile).TROUSSEAU.disp(hdx=hdx, data=dd))
+            print(getattr(param, datafile).TROUSSEAU.disp(data=dd))
     else:
         pass
 

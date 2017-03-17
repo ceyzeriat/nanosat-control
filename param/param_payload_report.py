@@ -46,7 +46,7 @@ class Rep_TC_PLD(CCSDSTrousseau):
         """
         return {}
 
-    def disp(self, hdx, data):
+    def disp(self, data):
         return Byt(data['all']).hex()
 
 
