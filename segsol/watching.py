@@ -110,13 +110,13 @@ def process_report(inputs):
         pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
         catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
         # print Header Prim
-        print(param_ccsds.HEADER_P_KEYS.disp(**hd))
+        print(param_ccsds.HEADER_P_KEYS.disp(hd))
         # print Header Sec TM
-        print(param_ccsds.HEADER_S_KEYS_TELEMETRY.disp(**hd))
+        print(param_ccsds.HEADER_S_KEYS_TELEMETRY.disp(hd))
         # print Header Aux if any
         auxtrousseau = param.param_category.PACKETCATEGORIES[pldflag][catnum]
         if auxtrousseau.size > 0:
-            auxtrousseau.disp(**hdx)
+            auxtrousseau.disp(hdx)
         # print data if any
         datafile = param_category.FILEDATACRUNCHING[pldflag][catnum]
         if datafile is not None:
