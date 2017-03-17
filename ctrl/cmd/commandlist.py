@@ -121,7 +121,8 @@ class CommandList(object):
                 cm = {'number': int(line[param_commands.CSVNUMBER]),
                         'name': core.rchop(str(line[param_commands.CSVNAME])\
                                         .strip().replace(' ', '_'), '_TM'),
-                        'pid': str(line[param_commands.CSVPID]).strip(),
+                        'pid': str(line[param_commands.CSVPID])\
+                                .strip().lower(),
                         'desc': str(line[param_commands.CSVDESC]).strip(),
                         'lparam':\
                         int(0 if line[param_commands.CSVLPARAM].strip() == ""
