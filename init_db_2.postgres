@@ -6,3 +6,7 @@ ALTER TABLE telemetries DROP CONSTRAINT telemetries_pid_fkey;
 
 ALTER TABLE packet_categories ALTER payload_flag DROP DEFAULT;
 
+ALTER TABLE tmcat_hf_sciences ADD COLUMN delay integer;
+
+ALTER TABLE tmcat_hf_sciences ALTER COLUMN integration_time TYPE integer;
+ALTER TABLE tmcat_hf_sciences ALTER COLUMN radius TYPE integer;
