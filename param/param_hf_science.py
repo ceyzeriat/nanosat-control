@@ -63,6 +63,13 @@ class HFScienceCCSDSTrousseau(CCSDSTrousseau):
         return lines
 
     def disp(self, data):
+        """
+        Display the data values of the hf science
+
+        Args:
+          * data (list of dict): a list of dictionaries containing the
+            values to display
+        """
         res = [super(HFScienceCCSDSTrousseau, self).disp(**line)\
                     for line in data]
         return "\n".join(res)

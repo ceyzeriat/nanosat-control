@@ -283,6 +283,13 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         return lines
 
     def disp(self, data):
+        """
+        Display the data values of the payload hk
+
+        Args:
+          * data (list of dict): a list of dictionaries containing the
+            values to display
+        """
         fmt = ["%s:({%s}){%s}" % (key.disp, value_to_flag_name(key.name),
                                     key.name)\
                     for key in self.keys]

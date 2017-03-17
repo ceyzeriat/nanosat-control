@@ -32,7 +32,7 @@ from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 __all__ = ['TROUSSEAU']
 
 
-MAXLENGTHBEACON = 5
+MAXLENGTHBEACON = 10  # octets
 
 
 def hex2txt(v, **kwargs):

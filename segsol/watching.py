@@ -120,7 +120,7 @@ def process_report(inputs):
         # print data if any
         datafile = param_category.FILEDATACRUNCHING[pldflag][catnum]
         if datafile is not None:
-            print(getattr(param, datafile).TROUSSEAU.disp(data=dd['unpacked']))
+            print(getattr(param, datafile).TROUSSEAU.disp(dd['unpacked']))
     else:
         pass
 

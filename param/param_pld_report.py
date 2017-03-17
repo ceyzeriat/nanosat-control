@@ -32,7 +32,7 @@ from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 __all__ = ['TROUSSEAU']
 
 
-MAXLENGTHMESSAGE = 235
+MAXLENGTHMESSAGE = 235  # octets
 
 
 def hex2txt(v, **kwargs):

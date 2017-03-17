@@ -138,9 +138,12 @@ class CCSDSTrousseau(object):
             res[item.name] = item.unpack(data)
         return res
 
-    def disp(self, **kwargs):
+    def disp(self, vals):
         """
         Display the trousseau values
+
+        Args:
+          * vals (dict): a dictionary containing the values to display
         """
         res = ["%s:{%s}" % (key.disp, key.name) for key in self.keys]
-        return ", ".join(res).format(**kwargs)
+        return ", ".join(res).format(**vals)
