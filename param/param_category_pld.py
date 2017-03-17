@@ -36,9 +36,10 @@ __all__ = ['CATEGORYREGISTRATIONPLD', 'ACKCATEGORIESPLD',
             'TABLECATEGORYPLD', 'TABLEDATAPLD', 'FILEDATACRUNCHINGPLD']
 
 
-CATEGORYREGISTRATIONPLD = { 4:  '00100',  # HK
-                            5:  '00101',  # science HF
-                            6:  '00110'}  # report
+CATEGORYREGISTRATIONPLD = { 4: '00100',  # HK
+                            5: '00101',  # science HF
+                            6: '00110',  # report
+                            7: '00111'}  # beacon
 
 
 ACQMODE = dict(         name='acq_mode',
@@ -87,15 +88,17 @@ NPOINTS = dict(         name='n_points',
 CATEGORY_4 = CCSDSTrousseau([], octets=False)  # HK payload, NO HEADER
 CATEGORY_5 = CCSDSTrousseau([ACQMODE, INTEGRATIONTIME, DELAY, MODULATION, RADIUS, NPOINTS], octets=False)  # science HF
 CATEGORY_6 = CCSDSTrousseau([], octets=False)  # report
+CATEGORY_7 = CCSDSTrousseau([], octets=False)  # report
 
 
 ACKCATEGORIESPLD = []
 
 
 # header aux
-PACKETCATEGORIESPLD = { 4: CATEGORY_4,
-                        5: CATEGORY_5,
-                        6: CATEGORY_6}
+PACKETCATEGORIESPLD = { 4: CATEGORY_4,  # HK
+                        5: CATEGORY_5,  # science HF
+                        6: CATEGORY_6,  # report
+                        7: CATEGORY_7}  # beacon
 
 
 PACKETCATEGORYSIZESPLD = {}
@@ -103,19 +106,22 @@ for k, cat in PACKETCATEGORIESPLD.items():
     PACKETCATEGORYSIZESPLD[k] = cat.size
 
 
-TABLECATEGORYPLD = {4: None,
-                    5: 'TmcatHfScience',
-                    6: None}
+TABLECATEGORYPLD = {4: None,  # HK
+                    5: 'TmcatHfScience',  # science HF
+                    6: None,  # report
+                    7: None}  # beacon
 
 
-TABLEDATAPLD = {4: 'DataPayloadHk',
-                5: 'DataHfScience',
-                6: None}
+TABLEDATAPLD = {4: 'DataPayloadHk',  # HK
+                5: 'DataHfScience',  # science HF
+                6: None,  # report
+                7: None}  # beacon
 
 
-FILEDATACRUNCHINGPLD = {4: 'param_payload_hk',
-                        5: 'param_hf_science',
-                        6: 'param_payload_report'}
+FILEDATACRUNCHINGPLD = {4: 'param_payload_hk',  # HK
+                        5: 'param_hf_science',  # science HF
+                        6: 'param_payload_report',  # report
+                        7: None}  # beacon
 
 
 # extend all keys with common categories
