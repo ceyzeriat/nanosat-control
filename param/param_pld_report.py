@@ -42,16 +42,17 @@ def hex2txt(v, **kwargs):
     return ''.join([chr(i) for i in v.ints() if i >= 32 and i <= 126])
 
 
-def txt2hex(txt, **kwargs):
+def txt2hex(txt, pad, **kwargs):
     """
     verbose = "message -> binary"
     """
     return Byt([i for i in Byt(txt).ints() if i >= 32 and i <= 126])
 
 
-KEYS = [dict(name='message', start=0, l=MAXLENGTHMESSAGE, fctunpack=hex2txt, fctpack=txt2hex,
+KEYS = [dict(name='message', start=0, l=MAXLENGTHMESSAGE, fctunpack=hex2txt,
+                fctpack=txt2hex,
                 verbose="A report message (ascii string)",
-                disp='text')]
+                disp='text', pad=False)]
 
 
 class PLDRepCCSDSTrousseau(CCSDSTrousseau):
@@ -63,6 +64,10 @@ class PLDRepCCSDSTrousseau(CCSDSTrousseau):
         * data (byts): the chain of octets to unpack
         """
         return {self.keys[0].name: str(data[:MAXLENGTHMESSAGE])}
+
+    def pack(self, **kwargs):
+        pass
+
 
 
 TROUSSEAU = PLDRepCCSDSTrousseau(KEYS, octets=True)

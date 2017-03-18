@@ -256,9 +256,19 @@ for idx, item in enumerate(V_KEYS):
 
 
 class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
+    def make_fmt(self):
+        """
+        Generates the single-line formatting for later display
+        Overriding mother's method
+        """
+        self.fmt = ", ".join(["%s:({%s}){%s}" % (key.disp,
+                                value_to_flag_name(key.name), key.name)\
+                                    for key in self.keys])
+
     def unpack(self, data, **kwargs):
         """
         Unpacks the data contained in the HK Payload packets
+        Overriding mother's method
 
         Args:
         * data (byts): the chain of octets to unpack
@@ -269,7 +279,7 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
             lines[idx][VOLTPELTIER] = 0
             dt = data[idx*self.size:(idx+1)*self.size]
             # octets is False
-            dt = bincore.hex2bin(dt[:self.size], pad=self.size*8)
+            dt = bincore.hex2bin(dt[:self.size], pad=self.size)
             # if octets were True: dt = dt[:self.size]
             for item in self.keys:
                 lines[idx][item.name] = item.unpack(
@@ -285,20 +295,19 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
     def disp(self, data):
         """
         Display the data values of the payload hk
+        Overriding mother's method
 
         Args:
           * data (list of dict): a list of dictionaries containing the
             values to display
         """
-        fmt = ["%s:({%s}){%s}" % (key.disp, value_to_flag_name(key.name),
-                                    key.name)\
-                    for key in self.keys]
-        res = [fmt.format(**line) for line in data]
+        res = [self.fmt.format(**line) for line in data]
         return "\n".join(res)
 
     def pack(self, allvalues, **kwargs):
         """
         Packs the values into a HK Payload packet
+        Overriding mother's method
 
         Args:
         * allvalues (dict): the values to pack

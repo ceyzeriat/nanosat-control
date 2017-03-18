@@ -64,8 +64,15 @@ class CCSDSTrousseau(object):
             self.keys.append(new_key)
         if not self.octets:
             # size is always in octets
-
             self.size = int(math.ceil(self.size / 8.))
+        self.make_fmt()
+
+    def make_fmt(self):
+        """
+        Generates the single-line formatting for later display
+        """
+        self.fmt = ", ".join(["%s:{%s}" % (key.disp, key.name)\
+                                for key in self.keys])
 
     def get_keys(self):
         """
@@ -131,7 +138,7 @@ class CCSDSTrousseau(object):
         """
         res = {}
         if not self.octets:
-            data = bincore.hex2bin(data[:self.size], pad=self.size*8)
+            data = bincore.hex2bin(data[:self.size], pad=self.size)
         else:
             data = data[:self.size]
         for item in self.keys:
@@ -145,5 +152,4 @@ class CCSDSTrousseau(object):
         Args:
           * vals (dict): a dictionary containing the values to display
         """
-        res = ["%s:{%s}" % (key.disp, key.name) for key in self.keys]
-        return ", ".join(res).format(**vals)
+        return self.fmt.format(**vals)

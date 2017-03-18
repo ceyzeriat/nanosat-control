@@ -218,7 +218,7 @@ class CCSDSPacker(object):
             be returned instead of the dictionary
         """
         lenkey = param_ccsds.DATALENGTH
-        bits = bincore.hex2bin(primaryHDpacket)
+        bits = bincore.hex2bin(primaryHDpacket, pad=len(primaryHDpacket))
         ll = lenkey.unpack(bits) + datalen
         bits = core.setstr(bits, lenkey.cut, lenkey.pack(ll))
         primaryHDpacket = bincore.bin2hex(bits, pad=len(primaryHDpacket))

@@ -36,17 +36,18 @@ __all__ = ['CCSDSKey']
 class CCSDSKey(object):
     def __init__(self, name, dic=None, start=None, l=1, fctunpack=None,
                  fctpack=None, dic_force=None, non_db_dic=False, verbose="",
-                 disp=None):
+                 disp=None, octets=False, pad=True):
         """
-        Dictionary of keys to perform easy extraction from a bits sequence.
+        CCSDS keys to perform easy extraction from a sequence of bits
+        (or octets).
         
         Args:
           * name (str): the name of the dictionary, for referencing
           * dic (dict): dictionary of possible values
           * start (int): start-position in bit from the beginning of the
             primary header, or whatever reference you decided
-          * l (int): length of the strip of bits
-          * fctunpack (callable): function to apply to the bits to
+          * l (int): length of the strip of bits (or octets)
+          * fctunpack (callable): function to apply to the raw data to
             get the value. Shall remain ``None`` if ``dic`` is provided
           * fctpack (callable): reverse function of ``fctunpack``
             Shall remain ``None`` if ``dic`` is provided
@@ -58,9 +59,16 @@ class CCSDSKey(object):
             the non-compliant dictionary keys
           * verbose (string): Human-readable meaning of this key
           * disp (string): short alias for human-reading display
+          * octets (bool): if the values are (un)packed as octets or binary
+          * pad (bool): whether to pad the raw data up to the length ``l``
+          * padchar (str or Byt): the character to be used for padding.
+            It shall be a '0' or '1' if ``octets`` is ``True``, or a
+            Byt if it is ``False``
         """
         self.name = str(name)
         self.disp = self.name[:3] if disp is None else str(disp)
+        self.octets = bool(octets)
+        self.pad = bool(pad)
         self._fctunpack = fctunpack if callable(fctunpack) else None
         self._fctpack = fctpack if callable(fctpack) else None
         self.isdic = (dic is not None)
@@ -107,7 +115,7 @@ class CCSDSKey(object):
         """
         offset = int(offset)
         if self.start + offset < 0:
-            raise ccsdsexception.CantApplyOffset(   name=self.name,
+            raise ccsdsexception.CantApplyOffset(name=self.name,
                                                     start=self.start,
                                                     offset=offset)
         else:
@@ -148,17 +156,17 @@ class CCSDSKey(object):
         if not rel and self.relative_only and offset is None:
             raise ccsdsexception.NoAbsGrab(name=self.name)
         if offset is not None:
-            bits = packet[self.cut_offset(offset=int(offset))]
+            chunk = packet[self.cut_offset(offset=int(offset))]
         else:
-            bits = packet[self.cut_rel if rel else self.cut]
-        if len(bits) != self.len:
+            chunk = packet[self.cut_rel if rel else self.cut]
+        if len(chunk) != self.len and self.pad:
             raise ccsdsexception.GrabFail(name=self.name, l=self.len)
         if raw:
-            return bits
+            return chunk
         elif self._fctunpack is None:
-            return self._dic_rev(bincore.reverse_if_little_endian(bits))
+            return self._dic_rev(bincore.reverse_if_little_endian(chunk))
         else:
-            return self._fctunpack(bits, **kwargs)
+            return self._fctunpack(chunk, **kwargs)
 
     def pack(self, value, raw=False, pad=None, **kwargs):
         """
@@ -180,14 +188,20 @@ class CCSDSKey(object):
             value = self.dic_force
         if not self.can_pack and not raw:
             raise ccsdsexception.NoPack(name=self.name)
-        pad = self.len if pad is None else int(pad)
+        if pad is not None:
+            # pad integer amount
+            pad = int(pad)
+        else:
+            pad = self.len if self.pad else None
         if raw:
-            return bincore.int2bin(value, pad=pad)
+            if not self.octets:
+                return bincore.int2bin(value, pad=pad)
+            else:
+                return bincore.int2hex(value, pad=pad)
         elif self._fctpack is None:
             return bincore.reverse_if_little_endian(self[value])
         else:
-            return bincore.padit(self._fctpack(value, pad=pad, **kwargs),
-                              l=pad, ch='0')
+            return self._fctpack(value, pad=pad, **kwargs)
 
     def _dic_rev(self, value):
         """

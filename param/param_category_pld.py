@@ -47,42 +47,48 @@ ACQMODE = dict(         name='acq_mode',
                         l=8,
                         fctunpack=bincore.bin2int,
                         fctpack=bincore.int2bin,
-                        verbose="Activates science mode (0=Searching, 1=Tracking, 2=Test). Valid for the entire packet.")
+                        verbose="Activates science mode (0=Searching, 1=Tracking, 2=Test). Valid for the entire packet.",
+                        disp="mode")
 
 INTEGRATIONTIME = dict( name='integration_time',
                         start=8,
                         l=16,
                         fctunpack=bincore.bin2int,
                         fctpack=bincore.int2bin,
-                        verbose="Integration time (valid for the entire packet). In ms.")
+                        verbose="Integration time (valid for the entire packet). In ms.",
+                        disp="itime")
 
 DELAY = dict(           name='delay',
                         start=24,
                         l=16,
                         fctunpack=bincore.bin2int,
                         fctpack=bincore.int2bin,
-                        verbose="Delay between two integrations (in ms/10)")
+                        verbose="Delay between two integrations (in ms/10)",
+                        disp="delay")
 
 MODULATION = dict(      name='modulation',
                         start=40,
                         l=8,
                         fctunpack=bincore.bin2int,
                         fctpack=bincore.int2bin,
-                        verbose="Modulation pattern (0=Point, 1=Circle, 2=Flower, 3=Calibration pattern). Valid for the entire packet.")
+                        verbose="Modulation pattern (0=Point, 1=Circle, 2=Flower, 3=Calibration pattern). Valid for the entire packet.",
+                        disp="mod")
 
 RADIUS = dict(          name='radius',
                         start=48,
                         l=16,
                         fctunpack=bincore.bin2int,
                         fctpack=bincore.int2bin,
-                        verbose="Radius of the modulation pattern. Valid for the entire packet.")
+                        verbose="Radius of the modulation pattern. Valid for the entire packet.",
+                        disp="rad")
 
 NPOINTS = dict(         name='n_points',
                         start=64,
                         l=8,
                         fctunpack=bincore.bin2int,
                         fctpack=bincore.int2bin,
-                        verbose="Number of points in the pattern")
+                        verbose="Number of points in the pattern",
+                        disp="npts")
 
 
 CATEGORY_4 = CCSDSTrousseau([], octets=False)  # HK payload, NO HEADER

@@ -51,8 +51,8 @@ def bin2bool(i, **kwargs):
 def int2bin(i, pad=True, **kwargs):
     """
     Give an int ``i`` as int or str, returns bits
-    Set ``pad`` to ``True`` for a 8n padding.
-    If ``pad`` is int, pads to ``pad`` characters.
+    Set ``pad`` to ``True`` for a 8n padding according to value.
+    If ``pad`` is int, pads to ``pad`` bits.
     Set `pad`` to ``None`` or ``False`` for no padding.
     verbose = "unsigned integer -> binary"
     """
@@ -78,10 +78,7 @@ def int2bin(i, pad=True, **kwargs):
 def intSign2bin(i, sz, **kwargs):
     """
     Give a signed int ``i`` as int or str with its size ``sz`` in
-    octet, returns bits
-    Set ``pad`` to ``True`` for a 8n padding.
-    If ``pad`` is int, pads to ``pad`` characters.
-    Set `pad`` to ``None`` or ``False`` for no padding.
+    octet, returns bits with the left-most bit being the sign-information
     verbose = "signed integer -> binary"
     """
     litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
@@ -126,18 +123,19 @@ def bin2intSign(b, **kwargs):
 def bin2hex(b, pad=0, **kwargs):
     """
     Give bits ``b`` as str or '0b001', returns chars
+    pad in hex chars
     verbose = "binary -> hexadecimal"
     """
     return int2hex(bin2int(b), pad=pad)
 
-def hex2bin(h, pad=True, **kwargs):
+def hex2bin(h, pad=None, **kwargs):
     """
     Give hex ``h`` as chars '\xf0' returns bits
-    Set ``pad`` to ``True`` for a 8n padding.
-    If ``pad`` is int, pads to ``pad`` characters.
+    If ``pad`` is int, pads to ``pad`` hex characters.
     Set `pad`` to ``None`` or ``False`` for no padding.
     verbose = "hexadecimal -> binary"
     """
+    pad = pad*8 if isinstance(pad, int) else None
     return int2bin(hex2int(h), pad=pad)
 
 def hex2int(h, **kwargs):
@@ -167,6 +165,7 @@ def hex2intSign(h, **kwargs):
 def int2hex(i, pad=0, **kwargs):
     """
     Give an int, returns chars
+    pad in hex chars
     verbose = "unsigned integer -> hexadecimal"
     """
     litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)

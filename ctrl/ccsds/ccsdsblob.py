@@ -56,14 +56,14 @@ class CCSDSBlob(object):
                     # just pick first common one
         # building of possible packet start flags
         self.auth_bits = []
+        octcut = (param_ccsds.AUTHPACKETLENGTH // 8 + 1) * 8
         for item in param_apid.PIDREGISTRATION.keys():
             vals[param_ccsds.PID.name] = item
             possible_head = bincore.hex2bin(
                                 pk.pack_primHeader(values=vals, datalen=0,
                                         retvalues=False, retdbvalues=False,
                                         withPacketID=False)[:2],
-                                pad=16
-                                        )[:param_ccsds.AUTHPACKETLENGTH]
+                                pad=octcut)[:param_ccsds.AUTHPACKETLENGTH]
             self.auth_bits.append(possible_head)
 
     def find(self, start=0):
