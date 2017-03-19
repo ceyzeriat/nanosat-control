@@ -261,8 +261,8 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         Generates the single-line formatting for later display
         Overriding mother's method
         """
-        self.fmt = ", ".join(["%s:({%s}){%s}" % (key.disp,
-                                value_to_flag_name(key.name), key.name)\
+        self.fmt = ", ".join(["%s:({%s}){%s}" % (key.['disp'],
+                                value_to_flag_name(key.['name']), key.['name'])\
                                     for key in V_KEYS])
 
     def unpack(self, data, **kwargs):
