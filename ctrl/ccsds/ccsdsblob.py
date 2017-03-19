@@ -26,6 +26,7 @@
 
 
 from byt import Byt
+import math
 from param import param_apid
 from param import param_category_common as pcc
 from . import param_ccsds
@@ -56,7 +57,7 @@ class CCSDSBlob(object):
                     # just pick first common one
         # building of possible packet start flags
         self.auth_bits = []
-        octcut = (param_ccsds.AUTHPACKETLENGTH // 8 + 1)
+        octcut = int(math.ceil(param_ccsds.AUTHPACKETLENGTH / 8.))
         for item in param_apid.PIDREGISTRATION.keys():
             vals[param_ccsds.PID.name] = item
             possible_head = bincore.hex2bin(
@@ -77,7 +78,7 @@ class CCSDSBlob(object):
         if len(self.blob[start:start+2]) == 0:
             return 0
         for i in range(len(self.blob[start:])):
-            if bincore.hex2bin(self.blob[start+i:start+i+2])\
+            if bincore.hex2bin(self.blob[start+i:start+i+2], pad=2)\
                     [:param_ccsds.AUTHPACKETLENGTH]\
                                     in self.auth_bits:
                 return i
@@ -93,7 +94,8 @@ class CCSDSBlob(object):
         * start (int): the first bit of the packet in the blob
         """
         dum = bincore.hex2bin(self.blob[start:
-                                        start+param_ccsds.HEADER_P_KEYS.size])
+                                        start+param_ccsds.HEADER_P_KEYS.size],
+                              pad=param_ccsds.HEADER_P_KEYS.size)
         return param_ccsds.DATALENGTH.unpack(dum) - param_ccsds.LENGTHMODIFIER
 
     def find_first_packet(self, start=0):
