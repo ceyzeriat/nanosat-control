@@ -120,8 +120,8 @@ TABLECATEGORYPLD = {4: None,  # HK
 
 TABLEDATAPLD = {4: 'DataPayloadHk',  # HK
                 5: 'DataHfScience',  # science HF
-                6: None,  # report
-                7: None}  # beacon
+                6: None,  # report ¤¤¤
+                7: None}  # beacon ¤¤¤
 
 
 FILEDATACRUNCHINGPLD = {4: 'param_payload_hk',  # HK

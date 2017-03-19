@@ -56,7 +56,7 @@ class CCSDSBlob(object):
                     # just pick first common one
         # building of possible packet start flags
         self.auth_bits = []
-        octcut = (param_ccsds.AUTHPACKETLENGTH // 8 + 1) * 8
+        octcut = (param_ccsds.AUTHPACKETLENGTH // 8 + 1)
         for item in param_apid.PIDREGISTRATION.keys():
             vals[param_ccsds.PID.name] = item
             possible_head = bincore.hex2bin(
