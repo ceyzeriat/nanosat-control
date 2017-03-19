@@ -263,7 +263,7 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         """
         self.fmt = ", ".join(["%s:({%s}){%s}" % (key.disp,
                                 value_to_flag_name(key.name), key.name)\
-                                    for key in self.keys])
+                                    for key in V_KEYS])
 
     def unpack(self, data, **kwargs):
         """
