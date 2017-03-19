@@ -135,7 +135,7 @@ def save_TM_to_DB(hd, hdx, data):
     # saving the data
     if param_category.TABLEDATA[pldflag][catnum] is not None:
         tbl = param_category.TABLEDATA[pldflag][catnum]
-        if hasattr(data['unpacked'], "__iter__"):
+        if isinstance(data['unpacked'], (list, tuple)):
             for item in data['unpacked']:
                 item = dict(item)
                 item['telemetry_packet'] = TM.id
