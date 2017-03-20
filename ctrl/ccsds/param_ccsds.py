@@ -142,7 +142,7 @@ HEADER_P_KEYS = CCSDSTrousseau(HEADER_P_KEYS, octets=False)
 
 # length of the bit sequence useful to unambiguously determine the
 # beginning of a packet
-AUTHPACKETLENGTH = 11
+AUTHPACKETLENGTH = 12
 
 
 def days_unpack(v):
