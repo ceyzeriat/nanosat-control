@@ -122,7 +122,7 @@ def vitec_pack(v, Vref, pad, **kwargs):
     return bincore.int2bin(round((v * 0.00016 + Vref) * 4096 / 3.3), pad=pad)
 
 
-def errorTherm_unpack(v, Vref, **kwargs):
+def errortherm_unpack(v, Vref, **kwargs):
     """
     verbose = "((binary -> unsigned integer) * 3.3 / 4096.0 - Voltage Peltier) / 25"
     """
@@ -131,7 +131,7 @@ def errorTherm_unpack(v, Vref, **kwargs):
     return (bincore.bin2int(v) * 3.3 / 4096.0 - Vref) / 25
 
 
-def errorTherm_pack(v, Vref, pad, **kwargs):
+def errortherm_pack(v, Vref, pad, **kwargs):
     """
     verbose = "UnsignedInt((float * 25 + Vref) * 4096 / 3.3) -> binary"
     """
@@ -191,9 +191,9 @@ V_KEYS = [  dict(name='volt5', start=16, l=16, disp="volt5",
             dict(name='temp0', start=112, l=16, disp="temp0",
                     verbose="temp0",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp0_unpack, fctpack=temp0_pack),
-            dict(name='errorTherm', start=128, l=16, disp="errorTherm",
-                    verbose="errorTherm",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=errorTherm_unpack, fctpack=errorTherm_pack),
+            dict(name='errortherm', start=128, l=16, disp="errortherm",
+                    verbose="errortherm",
+                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=errortherm_unpack, fctpack=errortherm_pack),
             dict(name='temp1', start=160, l=16, disp="temp1",
                     verbose="temp1",
                     fctunpack=bincore.bin2intSign, fctpack=bincore.intSign2bin),#fctunpack=temp_unpack, fctpack=temp_pack),
@@ -232,7 +232,7 @@ F_KEYS = [  dict(name='-', start=4, l=1, disp="",
                     verbose="temp0 measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
             dict(name='-', start=12, l=1, disp="",
-                    verbose="errorTherm measurement flag",
+                    verbose="errortherm measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
             dict(name='-', start=13, l=1, disp="",
                     verbose="temp1 measurement flag",

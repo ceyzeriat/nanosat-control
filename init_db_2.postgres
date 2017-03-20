@@ -19,4 +19,4 @@ ALTER TABLE data_payload_hks RENAME f_current_piezo TO f_amphv;
 ALTER TABLE data_payload_hks RENAME f_volt_peltier TO f_vref;
 ALTER TABLE data_payload_hks RENAME f_current_peltier TO f_vitec;
 ALTER TABLE data_payload_hks RENAME f_temp_diode TO f_temp0;
-ALTER TABLE data_payload_hks RENAME f_volt_peltier_err TO f_errorTherm;
+ALTER TABLE data_payload_hks RENAME f_volt_peltier_err TO f_errortherm;
