@@ -10,3 +10,13 @@ ALTER TABLE tmcat_hf_sciences ADD COLUMN delay integer;
 
 ALTER TABLE tmcat_hf_sciences ALTER COLUMN integration_time TYPE integer;
 ALTER TABLE tmcat_hf_sciences ALTER COLUMN radius TYPE integer;
+
+ALTER TABLE data_payload_hks RENAME f_volt_5v TO f_volt5;
+ALTER TABLE data_payload_hks RENAME f_current_5v TO f_amp5;
+ALTER TABLE data_payload_hks RENAME f_current_3v TO f_amp3;
+ALTER TABLE data_payload_hks RENAME f_volt_piezo TO f_volthv;
+ALTER TABLE data_payload_hks RENAME f_current_piezo TO f_amphv;
+ALTER TABLE data_payload_hks RENAME f_volt_peltier TO f_vref;
+ALTER TABLE data_payload_hks RENAME f_current_peltier TO f_vitec;
+ALTER TABLE data_payload_hks RENAME f_temp_diode TO f_temp0;
+ALTER TABLE data_payload_hks RENAME f_volt_peltier_err TO f_errorTherm;

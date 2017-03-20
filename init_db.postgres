@@ -415,4 +415,3 @@ ALTER TABLE data_payload_hks RENAME volt_peltier TO vref;
 ALTER TABLE data_payload_hks RENAME current_peltier TO vitec;
 ALTER TABLE data_payload_hks RENAME temp_diode TO temp0;
 ALTER TABLE data_payload_hks RENAME volt_peltier_err TO errorTherm;
-
