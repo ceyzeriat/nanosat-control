@@ -84,11 +84,16 @@ class CCSDSBlob(object):
             # read the ccsds head one octet more for further checks
             head = bincore.hex2bin(self.blob[start+i:start+i+self.octcut+1],
                                    pad=self.octcut)
+            # check if first bits are in authorized header
             if head[:param_ccsds.AUTHPACKETLENGTH] in self.auth_bits:
-                pld = int(param_ccsds.PAYLOADFLAG.unpack(head))
-                cat = int(param_ccsds.PACKETCATEGORY.unpack(head))
-                if cat in param_category.CATEGORYREGISTRATION[pld].keys():
-                    return i
+                # check sequence flag
+                seq = param_ccsds.SEQUENCEFLAG.unpack(head, raw=True)
+                if seq == param_ccsds.SEQUENCEFLAG.pack(''):
+                    # check packet category
+                    pld = int(param_ccsds.PAYLOADFLAG.unpack(head))
+                    cat = int(param_ccsds.PACKETCATEGORY.unpack(head))
+                    if cat in param_category.CATEGORYREGISTRATION[pld].keys():
+                        return i
         else:
             return None
 
