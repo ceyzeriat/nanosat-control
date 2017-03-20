@@ -62,14 +62,14 @@ def current_line_pack(v, pad, **kwargs):
     return bincore.int2bin(round(v / 0.00161), pad=pad)
 
 
-def voltHV_unpack(v, **kwargs):
+def volthv_unpack(v, **kwargs):
     """
     verbose = "(binary -> unsigned integer) * 3.3 / 4096 * 213.77"
     """
     return bincore.bin2int(v) * 3.3 / 4096.0 * 213.77
 
 
-def voltHV_pack(v, pad, **kwargs):
+def volthv_pack(v, pad, **kwargs):
     """
     verbose = "UnsignedInt(float / 3.3 * 4096 / 213.77) -> binary"
     """
@@ -176,11 +176,11 @@ V_KEYS = [  dict(name='volt5', start=16, l=16, disp="volt5",
             dict(name='amp3', start=48, l=16, disp="amp3",
                     verbose="amp3",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='voltHV', start=64, l=16, disp="voltHV",
-                    verbose="voltHV",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=voltHV_unpack, fctpack=voltHV_pack),
-            dict(name='ampHV', start=80, l=16, disp="ampHV",
-                    verbose="ampHV",
+            dict(name='volthv', start=64, l=16, disp="volthv",
+                    verbose="volthv",
+                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volthv_unpack, fctpack=volthv_pack),
+            dict(name='amphv', start=80, l=16, disp="amphv",
+                    verbose="amphv",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_line_unpack, fctpack=current_line_pack),
             dict(name=VOLTPELTIER, start=144, l=16, disp=VOLTPELTIER,
                     verbose="vref",
@@ -217,10 +217,10 @@ F_KEYS = [  dict(name='-', start=4, l=1, disp="",
                     verbose="amp3 measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
             dict(name='-', start=7, l=1, disp="",
-                    verbose="voltHV measurement flag",
+                    verbose="volthv measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
             dict(name='-', start=8, l=1, disp="",
-                    verbose="ampHV measurement flag",
+                    verbose="amphv measurement flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
             dict(name='-', start=9, l=1, disp="",
                     verbose="vref measurement flag",
