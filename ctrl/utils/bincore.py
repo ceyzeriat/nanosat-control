@@ -138,7 +138,7 @@ def hex2bin(h, pad=True, **kwargs):
     """
     if pad is True:
         pad = len(h)
-    elif isinstance(pad, int):
+    if isinstance(pad, int):
         pad = pad*8
     else:
         pad = None
