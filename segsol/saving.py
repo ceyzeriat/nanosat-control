@@ -83,7 +83,7 @@ class SaveRec(hein.SocReceiver):
         start = 0
         pk = blobparser.grab_first_packet(start=start)
         while pk is not None:
-            data['data'] = pk
+            data['data'] = Byt(pk)
             process_incoming(**data)
             start += len(pk)
             pk = blobparser.grab_first_packet(start=start)
@@ -101,11 +101,11 @@ def process_incoming(t, path, data, **kwargs):
     f = open(path, mode='rb')
     dd = Byt(f.read())
     f.close()
-    #if not dd == data:
-        #raise ctrlexception.PacketMismatch(path)
+    if not dd == data:
+        raise ctrlexception.PacketMismatch(path)
     t = core.strISOstamp2datetime(t)
-    #if not t == core.packetfilename2datetime(path):
-    #    raise ctrlexception.PacketDateMismatch(path)
+    if not t == core.packetfilename2datetime(path):
+        raise ctrlexception.PacketDateMismatch(path)
     tm = Telemetry._fromPacket(data, time_received=t)
     report('savedTM', dbid=tm.dbid)
 

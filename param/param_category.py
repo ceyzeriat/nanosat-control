@@ -32,7 +32,8 @@ from . import param_category_obc as obc
 from . import param_category_pld as pld
 
 
-# shape of all this stuff is DICTIONNARY[payload_flag(int)][packet_category(int)]
+# shape of all this stuff is
+# DICTIONNARY[payload_flag(int)][packet_category(int)]
 
 CATEGORYREGISTRATION = [{}, {}]
 PACKETCATEGORIES = [{}, {}]

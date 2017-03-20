@@ -373,19 +373,19 @@ ALTER TABLE telemetries ALTER COLUMN time_received DROP DEFAULT;
 DROP TABLE IF EXISTS tmcat_debugs CASCADE;
 
 
-CREATE TABLE IF NOT EXISTS data_exe_acknowledgement
+CREATE TABLE IF NOT EXISTS data_exe_acknowledgements
 (
 	id 					serial PRIMARY KEY,
 	telemetry_packet	integer,
 	error_message		varchar(125) DEFAULT ''
 );
-ALTER TABLE data_exe_acknowledgement OWNER TO picsat_admin;
-GRANT ALL ON data_exe_acknowledgement TO picsat_admin;
-GRANT select ON data_exe_acknowledgement TO picsat_read;
-GRANT select, insert, update ON data_exe_acknowledgement TO picsat_edit;
-CREATE INDEX ON data_exe_acknowledgement(telemetry_packet);
-ALTER TABLE data_exe_acknowledgement ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
-GRANT ALL ON SEQUENCE data_exe_acknowledgement_id_seq TO picsat_edit;
+ALTER TABLE data_exe_acknowledgements OWNER TO picsat_admin;
+GRANT ALL ON data_exe_acknowledgements TO picsat_admin;
+GRANT select ON data_exe_acknowledgements TO picsat_read;
+GRANT select, insert, update ON data_exe_acknowledgements TO picsat_edit;
+CREATE INDEX ON data_exe_acknowledgements(telemetry_packet);
+ALTER TABLE data_exe_acknowledgements ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+GRANT ALL ON SEQUENCE data_exe_acknowledgements_id_seq TO picsat_edit;
 
 
 ALTER TABLE packet_categories DROP COLUMN id CASCADE;
