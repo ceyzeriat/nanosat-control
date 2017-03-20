@@ -29,6 +29,7 @@ from byt import Byt
 import math
 from param import param_apid
 from param import param_category_common as pcc
+from param import param_category
 from . import param_ccsds
 from ..utils import bincore
 from . import ccsdsexception as exc
