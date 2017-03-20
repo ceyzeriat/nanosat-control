@@ -138,7 +138,7 @@ class CCSDSTrousseau(object):
         """
         res = {}
         if not self.octets:
-            data = bincore.hex2bin(data[:self.size], pad=self.size)
+            data = bincore.hex2bin(data[:self.size])
         else:
             data = data[:self.size]
         for item in self.keys:

@@ -76,8 +76,7 @@ class CCSDSUnPacker(object):
           in a format directly compatible with the database
         """
         header_p = {}
-        bits = bincore.hex2bin(packet[:param_ccsds.HEADER_P_KEYS.size],
-                                pad=param_ccsds.HEADER_P_KEYS.size)
+        bits = bincore.hex2bin(packet[:param_ccsds.HEADER_P_KEYS.size])
         # prepare optionnal inputs
         header_p[param_ccsds.PAYLOADFLAG.name] = ''
         header_p[param_ccsds.LEVELFLAG.name] = ''

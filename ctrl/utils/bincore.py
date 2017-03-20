@@ -128,14 +128,20 @@ def bin2hex(b, pad=0, **kwargs):
     """
     return int2hex(bin2int(b), pad=pad)
 
-def hex2bin(h, pad=None, **kwargs):
+def hex2bin(h, pad=True, **kwargs):
     """
     Give hex ``h`` as chars '\xf0' returns bits
+    If ``pad`` is ``True``, pads to 8*len(h)
     If ``pad`` is int, pads to ``pad`` hex characters.
     Set `pad`` to ``None`` or ``False`` for no padding.
     verbose = "hexadecimal -> binary"
     """
-    pad = pad*8 if isinstance(pad, int) else None
+    if pad is True:
+        pad = len(h)
+    elif isinstance(pad, int):
+        pad = pad*8
+    else:
+        pad = None
     return int2bin(hex2int(h), pad=pad)
 
 def hex2int(h, **kwargs):

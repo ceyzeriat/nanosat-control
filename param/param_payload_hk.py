@@ -279,7 +279,7 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
             lines[idx][VOLTPELTIER] = 0
             dt = data[idx*self.size:(idx+1)*self.size]
             # octets is False
-            dt = bincore.hex2bin(dt[:self.size], pad=self.size)
+            dt = bincore.hex2bin(dt[:self.size])
             # if octets were True: dt = dt[:self.size]
             for item in self.keys:
                 lines[idx][item.name] = item.unpack(

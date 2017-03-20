@@ -65,8 +65,8 @@ class CCSDSBlob(object):
             possible_head = bincore.hex2bin(
                                 pk.pack_primHeader(values=vals, datalen=0,
                                         retvalues=False, retdbvalues=False,
-                                        withPacketID=False)[:self.octcut],
-                                pad=self.octcut)[:param_ccsds.AUTHPACKETLENGTH]
+                                        withPacketID=False)[:self.octcut])[\
+                                    :param_ccsds.AUTHPACKETLENGTH]
             self.auth_bits.append(possible_head)
 
     def find(self, start=0):
@@ -82,8 +82,7 @@ class CCSDSBlob(object):
             return 0
         for i in range(len(self.blob[start:])):
             # read the ccsds head one octet more for further checks
-            head = bincore.hex2bin(self.blob[start+i:start+i+self.octcut+1],
-                                   pad=self.octcut)
+            head = bincore.hex2bin(self.blob[start+i:start+i+self.octcut+1])
             # check if first bits are in authorized header
             if head[:param_ccsds.AUTHPACKETLENGTH] in self.auth_bits:
                 # check sequence flag
@@ -106,8 +105,7 @@ class CCSDSBlob(object):
         * start (int): the first bit of the packet in the blob
         """
         dum = bincore.hex2bin(self.blob[start:
-                                        start+param_ccsds.HEADER_P_KEYS.size],
-                              pad=param_ccsds.HEADER_P_KEYS.size)
+                                        start+param_ccsds.HEADER_P_KEYS.size])
         return param_ccsds.DATALENGTH.unpack(dum) - param_ccsds.LENGTHMODIFIER
 
     def find_first_packet(self, start=0):
