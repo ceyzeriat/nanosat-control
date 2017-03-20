@@ -54,17 +54,18 @@ class CCSDSBlob(object):
         vals = {param_ccsds.PID.name: '',
                 param_ccsds.PACKETCATEGORY.name:\
                     pcc.CATEGORYREGISTRATIONCOMMON.keys()[0]}
-                    # just pick first common one
+                    # just pick first common one cause it is not
+                    # taken into account in auth_start anyways
         # building of possible packet start flags
         self.auth_bits = []
-        octcut = int(math.ceil(param_ccsds.AUTHPACKETLENGTH / 8.))
+        self.octcut = int(math.ceil(param_ccsds.AUTHPACKETLENGTH / 8.))
         for item in param_apid.PIDREGISTRATION.keys():
             vals[param_ccsds.PID.name] = item
             possible_head = bincore.hex2bin(
                                 pk.pack_primHeader(values=vals, datalen=0,
                                         retvalues=False, retdbvalues=False,
-                                        withPacketID=False)[:2],
-                                pad=octcut)[:param_ccsds.AUTHPACKETLENGTH]
+                                        withPacketID=False)[:self.octcut],
+                                pad=self.octcut)[:param_ccsds.AUTHPACKETLENGTH]
             self.auth_bits.append(possible_head)
 
     def find(self, start=0):
@@ -75,13 +76,18 @@ class CCSDSBlob(object):
         Args:
         * start (int): from where the search should start
         """
-        if len(self.blob[start:start+2]) == 0:
+        if len(self.blob[start:start+self.octcut]) == 0:
+            # empty blob
             return 0
         for i in range(len(self.blob[start:])):
-            if bincore.hex2bin(self.blob[start+i:start+i+2], pad=2)\
-                    [:param_ccsds.AUTHPACKETLENGTH]\
-                                    in self.auth_bits:
-                return i
+            # read the ccsds head one octet more for further checks
+            head = bincore.hex2bin(self.blob[start+i:start+i+self.octcut+1],
+                                   pad=self.octcut)
+            if head[:param_ccsds.AUTHPACKETLENGTH] in self.auth_bits:
+                pld = int(param_ccsds.PAYLOADFLAG.unpack(head))
+                cat = int(param_ccsds.PACKETCATEGORY.unpack(head))
+                if cat in param_category.CATEGORYREGISTRATION[pld].keys():
+                    return i
         else:
             return None
 
