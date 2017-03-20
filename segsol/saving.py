@@ -102,6 +102,7 @@ def process_incoming(t, path, data, **kwargs):
     dd = Byt(f.read())
     f.close()
     if not dd == data:
+        print(dd.hex(), data.hex())
         raise ctrlexception.PacketMismatch(path)
     t = core.strISOstamp2datetime(t)
     if not t == core.packetfilename2datetime(path):

@@ -52,11 +52,7 @@ class Telemetry(object):
         * packet (str): the raw packet to unpack
         * time_received (datetime+tz): the reception time of the packet
         """
-        try:
-            cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet, retdbvalues=True)
-        except:
-            print len(packet), packet.hex(), time_received
-            return
+        cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet, retdbvalues=True)
         cls.hd['raw_file'] = core.RAWPACKETFOLDER
         cls.hd['user_id'] = kwargs.get('user_id', core.RECEIVERID)
         cls.hd['time_received'] = time_received\

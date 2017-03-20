@@ -135,7 +135,7 @@ class PacketMismatch(CTRLException):
     """
     def __init__(self, f, *args, **kwargs):
         self._init(f, *args, **kwargs)
-        self.message = "Mismatch between the data in file '{}' and the data"\
+        self.message = "Mismatch between the data in file '{}' and the data "\
                        "obtained through socket".format(f)
 
 
