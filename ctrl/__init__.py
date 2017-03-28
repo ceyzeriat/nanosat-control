@@ -28,13 +28,14 @@
 import param
 from . import utils
 from . import ccsds
-from . import cmd
-from . import db
-from . import c
-from . import c0
-from . import c1
+if not param.param_all.JUSTALIB:
+    from . import cmd
+    from . import db
+    from . import c
+    from . import c0
+    from . import c1
+    from . import xdisp
 #from . import clib
-from . import xdisp
 from . import kiss
 from ._version import __version__, __major__, __minor__, __micro__
 from .telecommand import *

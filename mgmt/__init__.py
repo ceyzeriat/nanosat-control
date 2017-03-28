@@ -25,11 +25,7 @@
 ###############################################################################
 
 
-from . import ctrlexception
-from .pidwatchdog import *
-from .bindiff import *
-from . import core
-from .day import *
-from .ms import *
-from .report import *
-from .hmac import *
+from . import mgmtexception
+
+
+fcts = ['commandlist']

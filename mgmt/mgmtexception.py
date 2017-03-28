@@ -25,27 +25,25 @@
 ###############################################################################
 
 
-MINLENPARAMSTRUCTURE = 3
 
-COMMANDSFILE = ["cmd", "cmds.json"]
+class MGMTException(Exception):
+    """
+    Root for CCSDS Exceptions
+    """
+    def _init(self, *args, **kwargs):
+        self.args = [a for a in args] + [a for a in kwargs.values()]
 
-RANGESEPARATOR = ';'
+    def __repr__(self):
+        return repr(self.message)
 
-LISTSEPARATOR = ','
+    __str__ = __repr__
 
-LENPARAMNAME = 25
 
-CSVSUBSYSTEM = 0
-CSVNUMBER = 1
-CSVNAME = 2
-CSVPID = 6
-CSVDESC = 7
-CSVLPARAM = 14
-CSVNPARAM = 15
-
-CSVPARAMDESC = 16
-CSVPARAMNAME = 17
-CSVPARAMTYP = 18
-CSVPARAMSIZE = 19
-CSVPARAMUNIT = 20
-CSVPARAMRNG = 21
+class RedundantCm(MGMTException):
+    """
+    If the Cm number or name is already in the json file
+    """
+    def __init__(self, i, n, *args, **kwargs):
+        self._init(i, n, *args, **kwargs)
+        self.message = "Number '{}' or name '{}' of the Cm is already found "\
+                       "in the json file".format(i, n)

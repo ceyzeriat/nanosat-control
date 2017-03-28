@@ -26,11 +26,12 @@
 
 
 import csv
+from param import param_all
 from param import param_apid
-from . import cmdexception
-from . import param_commands
-from .command import Command
-from ..utils import core
+from param import param_commands
+
+from . import core
+from . import mgmtexception
 
 
 __all__ = ['CommandList']
@@ -53,12 +54,12 @@ class CommandList(object):
     def __str__(self):
         txt = ["{:d} commands".format(len(self.allcmds))]
         for item in self.allcmds:
-            txt.append(" #{:<3} L{} {:<25}  Np {}  Lp {}".format(
-                            item.number,
-                            int(item.level),
-                            item.name,
-                            item.nparam,
-                            item.lparam if item.lparam is not None else "*"))
+            txt.append(" #{:<3} PID {:<20} {:<30}  Np {:>2}  Lp {:>2}".format(
+                        item['number'],
+                        item['pid'],
+                        item['name'],
+                        len(item['param']),
+                        item['lparam'] if item['lparam'] is not None else "*"))
         return "\n".join(txt)
 
     __repr__ = __str__
@@ -74,7 +75,7 @@ class CommandList(object):
         Loads all the commands from the JSON file. Changes not applied
         will be lost
         """
-        self.allcmds = [Command(**item)\
+        self.allcmds = [dict(item)\
                 for item in core.load_json_cmds(param_commands.COMMANDSFILE)]
         print("Loaded {:d} commands".format(len(self.allcmds)))
 
@@ -84,7 +85,7 @@ class CommandList(object):
         saved using ``apply``.
         """
         for idx, item in enumerate(self.allcmds):
-            if item.number == number:
+            if item['number'] == number:
                 dum = self.allcmds.pop(idx)
                 print("Removed:\n{}".format(dum))
                 break
@@ -97,16 +98,21 @@ class CommandList(object):
         """
         self.allcmds = []
 
-    def loadCSV(self, filename, titles_row=0, delimiter='#'):
+    def loadCSV(self, filename, titles_row, delimiter='#'):
         """
         Loads the csv import-file
+
+        Args:
+          * filename (str): the path+file of the CSV
+          * titles_row (int): the number of lines to skip at the top of
+            CSV file
+          * delimiter (char): the CSV delimiter, no kidding
         """
         csvcontent = csv.reader(open(str(filename)),
                                 delimiter=str(delimiter)[0])
         # skip the shit
         for l in range(int(titles_row)):
-            self.csvcontent.next()
-        self.titles = csvcontent.next()
+            csvcontent.next()
         self.csvcontent = self._grabCSV(csvcontent)
         print("Loaded {:d} commands".format(len(self.csvcontent)))
 
@@ -118,39 +124,41 @@ class CommandList(object):
             if line[param_commands.CSVSUBSYSTEM] != "":
                 if cm is not None:
                     ll.append(cm)
-                cm = {'number': int(line[param_commands.CSVNUMBER]),
-                        'name': core.rchop(str(line[param_commands.CSVNAME])\
-                                        .strip().replace(' ', '_'), '_TM'),
-                        'pid': str(line[param_commands.CSVPID])\
-                                .strip().lower(),
-                        'desc': str(line[param_commands.CSVDESC]).strip(),
-                        'lparam':\
-                        int(0 if line[param_commands.CSVLPARAM].strip() == ""
-                                else line[param_commands.CSVLPARAM])\
-                        if line[param_commands.CSVLPARAM].strip() != "*"
-                            else "*",
-                        'subsystem': str(line[param_commands.CSVSUBSYSTEM])\
+                cm = {
+                    'number': int(line[param_commands.CSVNUMBER]),
+                    'name':\
+                        core.rchop(core.ustr(line[param_commands.CSVNAME])\
+                                        .replace(' ', '_'), '_TM'),
+                    'pid': core.ustr(line[param_commands.CSVPID]).lower(),
+                    'desc': core.ustr(line[param_commands.CSVDESC]),
+                    'lparam':\
+                        int(0\
+                            if line[param_commands.CSVLPARAM].strip() == ""\
+                            else line[param_commands.CSVLPARAM])\
+                        if line[param_commands.CSVLPARAM].strip() != "*"\
+                        else "*",
+                    'subsystem':\
+                        core.ustr(line[param_commands.CSVSUBSYSTEM])\
                                                 .lower().replace(' ', '_'),
-                        'param': [],
-                        'n_nparam': int(line[param_commands.CSVNPARAM]\
-                            if line[param_commands.CSVNPARAM].strip() != ""\
+                    'param': [],
+                    'n_nparam':\
+                        int(line[param_commands.CSVNPARAM]\
+                        if line[param_commands.CSVNPARAM].strip() != ""\
                                 else 0)}
             # no parameter command
             if cm['n_nparam'] == 0:
                 cm['lparam'] = 0
             else:  # adding parameters to the last command added
-                cm['param'].append([str(line[param_commands.CSVPARAMNAME])\
-                                                .strip().replace(' ', '_'),
-                                    str(line[param_commands.CSVPARAMDESC])\
-                                                .strip(),
-                                    str(line[param_commands.CSVPARAMRNG])\
-                                                .strip(),
-                                    str(line[param_commands.CSVPARAMTYP])\
-                                        .strip().replace('_t', ''),
-                                    str(line[param_commands.CSVPARAMSIZE])\
-                                        .strip(),
-                                    str(line[param_commands.CSVPARAMUNIT])\
-                                        .strip().replace(' ', '_')])
+                cm['param'].append([
+                        core.ustr(line[param_commands.CSVPARAMNAME])\
+                                            .replace(' ', '_'),
+                        core.ustr(line[param_commands.CSVPARAMDESC]),
+                        core.ustr(line[param_commands.CSVPARAMRNG]),
+                        core.ustr(line[param_commands.CSVPARAMTYP])\
+                                            .replace('_t', ''),
+                        core.ustr(line[param_commands.CSVPARAMSIZE]),
+                        core.ustr(line[param_commands.CSVPARAMUNIT])\
+                                            .replace(' ', '_')])
         ll.append(cm)
         return ll
 
@@ -163,7 +171,7 @@ class CommandList(object):
             return
         print("{:d} commands in the CSV".format(len(self.csvcontent)))
         for item in self.csvcontent:
-            print(" #{:<3} PID {:<20} {:<25}  Np {}  Lp {}".format(
+            print(" #{:<3} PID {:<20} {:<30}  Np {:>2}  Lp {:>2}".format(
                     item['number'],
                     item['pid'],
                     item['name'],
@@ -189,19 +197,19 @@ class CommandList(object):
         if not hasattr(self, 'csvcontent'):
             print("Please load the CSV first")
             return
-        allids = [item.number for item in self.allcmds]
-        allnames = [item.name.lower() for item in self.allcmds]
+        allids = [item['number'] for item in self.allcmds]
+        allnames = [item['name'].lower() for item in self.allcmds]
         to_add = []
         cnt = 0
         for item in self.csvcontent:
             if item['number'] in ids_to_add:
                 if item['number'] in allids\
                             or item['name'].lower() in allnames:
-                    raise cmdexception.RedundantCm(i=item['number'],
+                    raise mgmtexception.RedundantCm(i=item['number'],
                                                    n=item['name'])
                 copyitem = dict(item)
                 copyitem.pop('n_nparam')
-                to_add.append(Command(**copyitem))
+                to_add.append(copyitem)
                 cnt += 1
                 allids.append(item['number'])
                 allnames.append(item['name'])
@@ -214,5 +222,5 @@ class CommandList(object):
         Applies the add/remove changes to the JSON file
         """
         core.save_json_cmds(param_commands.COMMANDSFILE,
-                            cmds=[item.to_dict() for item in self.allcmds])
+                            cmds=self.allcmds)
         print("Saved {:d} commands".format(len(self.allcmds)))

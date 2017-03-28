@@ -25,11 +25,30 @@
 ###############################################################################
 
 
-from . import ctrlexception
-from .pidwatchdog import *
-from .bindiff import *
-from . import core
-from .day import *
-from .ms import *
-from .report import *
-from .hmac import *
+from ctypes import cdll, c_char_p, c_uint, create_string_buffer
+from byt import Byt
+
+from .. import core
+
+
+__all__ = ['hmac']
+
+
+_hmacfct = cdll.LoadLibrary(core.rel_dir('ctrl', 'utils', 'hmac', '_hmac.so'))\
+                .hmacSha256
+_hmacfct.argtypes = [c_char_p, c_char_p, c_uint, c_char_p]
+
+
+def hmac(txt):
+    """
+    Calculates the HMAC-SHA256 of the ``txt`` given as output
+    """
+    txt = Byt(txt)
+    digest = create_string_buffer(core.KEYLENGTH)
+    if core.VITELACLE is not None:
+        _hmacfct(str(core.VITELACLE), str(txt), len(txt), digest)
+    else:
+        print('No key found, using NULL')
+        _hmacfct("\x00"*core.KEYLENGTH, str(txt), len(txt), digest)
+    return Byt(digest.raw)
+

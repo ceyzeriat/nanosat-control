@@ -30,7 +30,7 @@ from nose.tools import raises
 from ctrl.cmd.cm import Cm
 from ctrl.cmd import cmdexception
 import copy
-from ctrl.cmd.param_commands import RANGESEPARATOR
+from param.param_commands import RANGESEPARATOR
 
 
 def ftup(x, y):

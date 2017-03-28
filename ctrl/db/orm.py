@@ -99,7 +99,9 @@ def save_TC_to_DB(hd, hdx, inputs):
     DB.add(TC)
     DB.flush()
     for k, v in inputs.items():
-        DB.add(TABLES['TelecommandDatum'](id=TC.id, param_key=k, value=v))
+        DB.add(TABLES['TelecommandDatum'](telecommand_id=TC.id,
+                                            param_key=k, 
+                                            value=v))
     DB.commit()
     return TC.id
 
@@ -135,11 +137,19 @@ def save_TM_to_DB(hd, hdx, data):
     # saving the data
     if param_category.TABLEDATA[pldflag][catnum] is not None:
         tbl = param_category.TABLEDATA[pldflag][catnum]
-        if isinstance(data['unpacked'], (list, tuple)):
+        # if saving the data from TC answer
+        if catnum == param_category.TELECOMMANDANSWERCAT:
+            for k, v in data['unpacked'].items():
+                DB.add(TABLES[tbl](telemetry_packet=TM.id,
+                                    param_key=k,
+                                    value=v))
+        # if dealing with list of dict, i.e. science or payload hk
+        elif isinstance(data['unpacked'], (list, tuple)):
             for item in data['unpacked']:
                 item = dict(item)
                 item['telemetry_packet'] = TM.id
                 DB.add(TABLES[tbl](**item))
+        # standard case
         else:
             dt = dict(data['unpacked'])
             dt['telemetry_packet'] = TM.id

@@ -133,10 +133,33 @@ class CCSDSPacker(object):
                                     primaryHDdict=(retprim[1:]+(None,))[1])
         else:
             data = TCdata
+        theFullPacket = retprim[0] + retsec[0] + maybeAux + data
+        if param_all.USESIGGY and self.mode != 'telemetry':
+            theFullPacket = self.add_siggy(theFullPacket)
         if retvalues:
-            return retprim[0] + retsec[0] + maybeAux + data, hds, hdx, retd
+            return theFullPacket, hds, hdx, retd
         else:
-            return retprim[0] + retsec[0] + maybeAux + data
+            return theFullPacket
+
+    def add_siggy(self, fullPacket):
+        # calculates the signature from full packet
+        siggy = core.hmac(theFullPacket)
+        # grab the CCSDS key for signature
+        siggykey = param_ccsds.SIGNATURE
+        # grab the headers of the packet, to chunk the signature
+        headerSecBnds = (param_ccsds.HEADER_P_KEYS.size,
+                         param_ccsds.HEADER_P_KEYS.size +\
+                            param_ccsds.HEADER_S_KEYS_TELECOMMAND.size)
+        # grab the sec header
+        secBits = bincore.hex2bin(theFullPacket[headerSecBnds[0]:
+                                                headerSecBnds[1]])
+        # replace the signature
+        secBits = core.setstr(secBits, siggykey.cut, siggykey.pack(siggy))
+        # 
+        secHD = bincore.bin2hex(secBits,
+                                pad=param_ccsds.HEADER_S_KEYS_TELECOMMAND.size)
+        return fullPacket[:headerSecBnds[0]] + secHD +\
+                fullPacket[headerSecBnds[1]:]
 
     def pack_primHeader(self, values, datalen=0, retvalues=False,
                         retdbvalues=True, withPacketID=True):

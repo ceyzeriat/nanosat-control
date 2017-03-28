@@ -301,7 +301,8 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
           * data (list of dict): a list of dictionaries containing the
             values to display
         """
-        res = [self.fmt.format(**line) for line in data]
+        res = [super(HKPayloadCCSDSTrousseau, self).disp(line)\
+                    for line in data]
         return "\n".join(res)
 
     def pack(self, allvalues, **kwargs):

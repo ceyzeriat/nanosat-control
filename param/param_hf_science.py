@@ -70,7 +70,7 @@ class HFScienceCCSDSTrousseau(CCSDSTrousseau):
           * data (list of dict): a list of dictionaries containing the
             values to display
         """
-        res = [super(HFScienceCCSDSTrousseau, self).disp(**line)\
+        res = [super(HFScienceCCSDSTrousseau, self).disp(line)\
                     for line in data]
         return "\n".join(res)
 

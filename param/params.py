@@ -25,11 +25,34 @@
 ###############################################################################
 
 
-from . import ctrlexception
-from .pidwatchdog import *
-from .bindiff import *
-from . import core
-from .day import *
-from .ms import *
-from .report import *
-from .hmac import *
+import os
+from .param_all import *
+
+
+# can't have KISS without AX25
+AX25ENCAPS = AX25ENCAPS or KISSENCAPS
+
+MAXPACKETID = 2**14
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+HOME = os.path.expanduser("~")
+
+def concat_dir(*args):
+    """
+    Concatenates the path in ``args`` into a string-path
+    """
+    return os.path.join(*args)
+
+def home_dir(*args):
+    """
+    Concatenates the path in ``args`` into a string-path
+    """
+    return os.path.join(HOME, *args)
+
+def rel_dir(*args):
+    """
+    Concatenates the path in ``args`` into a relative
+    string-path from the package directory
+    """
+    return concat_dir(ROOT, *args)

@@ -48,21 +48,21 @@ TELECOMMANDIDMIRROR = dict( name='telecommand_id_mirror',
                             verbose="telecommand id of the corresponding tc command being ackowledged or answered",
                             disp="tcid")
 
-PACKETIDMIRROR = dict(  name='packet_id_mirror',
-                        start=16,
-                        l=16,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="corresponding packet id count of the command being ackowledged or answered",
-                        disp="pkid")
+PACKETIDMIRROR = dict(      name='packet_id_mirror',
+                            start=16,
+                            l=16,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="corresponding packet id count of the command being ackowledged or answered",
+                            disp="pkid")
 
-ERRORCODE = dict(       name='error_code',
-                        start=32,
-                        l=16,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="error code: 0 if successful, else error codes",
-                        disp="errcode")
+ERRORCODE = dict(           name='error_code',
+                            start=32,
+                            l=16,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="error code: 0 if successful, else error codes",
+                            disp="errcode")
 
 
 CATEGORY_31 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
@@ -91,16 +91,20 @@ for k, cat in PACKETCATEGORIESCOMMON.items():
     PACKETCATEGORYSIZESCOMMON[k] = cat.size
 
 
+# id number for telecommand answer
+TELECOMMANDANSWERCAT = 29
+
+
 TABLECATEGORYCOMMON = { 31: 'TmcatExeAcknowledgement',  # exec ack
                         30: 'TmcatFmtAcknowledgement',  # fmt ack
-                        29: None}  # tc answer ¤¤¤
+                        29: 'TmcatTelecommandAnswer'}  # tc answer
 
 
 TABLEDATACOMMON = { 31: 'DataExeAcknowledgement',  # exec ack
                     30: None,  # fmt ack
-                    29: None}  # tc answer
+                    29: 'DataTelecommandAnswer'}  # tc answer
 
 
 FILEDATACRUNCHINGCOMMON = { 31: 'param_exe_ack',  # exec ack
                             30: None,  # fmt ack
-                            29: None}  # tc answer ¤¤¤
+                            29: 'param_tc_answer'}  # tc answer

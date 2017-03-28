@@ -25,11 +25,49 @@
 ###############################################################################
 
 
-from . import ctrlexception
-from .pidwatchdog import *
-from .bindiff import *
-from . import core
-from .day import *
-from .ms import *
-from .report import *
-from .hmac import *
+from byt import Byt
+from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+
+
+__all__ = []
+
+
+MAXLENGTHMESSAGE = 235  # octets
+
+
+def hex2txt(v, **kwargs):
+    """
+    verbose = "binary -> message"
+    """
+    return ''.join([chr(i) for i in v.ints() if i >= 32 and i <= 126])
+
+
+def txt2hex(txt, pad, **kwargs):
+    """
+    verbose = "message -> binary"
+    """
+    return Byt([i for i in Byt(txt).ints() if i >= 32 and i <= 126])
+
+
+KEYS = [dict(name='message', start=0, l=MAXLENGTHMESSAGE, fctunpack=hex2txt,
+                fctpack=txt2hex,
+                verbose="A report message (ascii string)",
+                disp='text', pad=False)]
+
+
+class PLDRepCCSDSTrousseau(CCSDSTrousseau):
+    def unpack(self, data, **kwargs):
+        """
+        Unpacks the data contained in the payload report
+
+        Args:
+        * data (byts): the chain of octets to unpack
+        """
+        return {self.keys[0].name: str(data[:MAXLENGTHMESSAGE])}
+
+    def pack(self, **kwargs):
+        pass
+
+
+
+TROUSSEAU = PLDRepCCSDSTrousseau(KEYS, octets=True)

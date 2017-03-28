@@ -26,37 +26,9 @@
 
 
 import os
-from param.param_all import *
+from param.params import *
 from . import ctrlexception
 
-
-# can't have KISS without AX25
-AX25ENCAPS = AX25ENCAPS or KISSENCAPS
-
-MAXPACKETID = 2**14
-
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-HOME = os.path.expanduser("~")
-
-def concat_dir(*args):
-    """
-    Concatenates the path in ``args`` into a string-path
-    """
-    return os.path.join(*args)
-
-def home_dir(*args):
-    """
-    Concatenates the path in ``args`` into a string-path
-    """
-    return os.path.join(HOME, *args)
-
-def rel_dir(*args):
-    """
-    Concatenates the path in ``args`` into a relative
-    string-path from the package directory
-    """
-    return concat_dir(ROOT, *args)
 
 CRC32TABLE = []
 for _byte in range(256):
@@ -140,3 +112,17 @@ if not JUSTALIB:
             print(ctrlexception.MissingPacketIDFile(PACKETIDFULLFILE))
         else:
             raise ctrlexception.MissingPacketIDFile(PACKETIDFULLFILE)
+
+    # get the key
+    _f = home_dir(*KEYFILE)
+    try:
+        f = open(_f, mode='r')
+        VITELACLE = Byt().fromHex(f.readline().strip())
+        f.close()
+    except IOError:
+        VITELACLE = None
+    if VITELACLE is None or len(VITELACLE) != KEYLENGTH:
+        if NOERRORATIMPORT:
+            print(ctrlexception.NoControlKey())
+        else:
+            raise ctrlexception.NoControlKey()

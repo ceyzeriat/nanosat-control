@@ -27,47 +27,49 @@
 
 from byt import Byt
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from ctrl.utils import bincore
 
 
 __all__ = ['TROUSSEAU']
 
 
-MAXLENGTHMESSAGE = 235  # octets
+MAXLENGTHDATA = 235  # octets
+
+THEDATAKEY = dict(name='data', start=0, l=MAXLENGTHDATA, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex,
+                    verbose="Buffer of bytes containing the dumped data",
+                    disp='data', pad=False, octets=True)
+
+OTHERKEYS = []
+
+# the data key is first
+THEDATAKEY = 0
+KEYS = [THEDATAKEY] + OTHERKEYS
 
 
-def hex2txt(v, **kwargs):
-    """
-    verbose = "hexadecimal -> message"
-    """
-    return ''.join([chr(i) for i in v.ints() if i >= 32 and i <= 126])
-
-
-def txt2hex(txt, pad, **kwargs):
-    """
-    verbose = "message -> hexadecimal"
-    """
-    return Byt([i for i in Byt(txt).ints() if i >= 32 and i <= 126])
-
-
-KEYS = [dict(name='message', start=0, l=MAXLENGTHMESSAGE, fctunpack=hex2txt,
-                fctpack=txt2hex,
-                verbose="A report message (ascii string)",
-                disp='text', pad=False, octets=True)]
-
-
-class PLDRepCCSDSTrousseau(CCSDSTrousseau):
+class DumpAnswerDataCCSDSTrousseau(CCSDSTrousseau):
     def unpack(self, data, **kwargs):
         """
-        Unpacks the data contained in the payload report
+        Unpacks the data contained in the Dump answer data packets
 
         Args:
         * data (byts): the chain of octets to unpack
         """
-        return {self.keys[0].name: str(data[:MAXLENGTHMESSAGE])}
+        return {self.keys[THEDATAKEY].name: str(data[:MAXLENGTHDATA])}
+
+    def disp(self, vals):
+        """
+        Display the trousseau values
+
+        Args:
+          * vals (dict): a dictionary containing the values to display
+        """
+        copyvals = dict(vals)
+        copyvals[self.keys[THEDATAKEY].name] =\
+            copyvals[self.keys[THEDATAKEY].name].hex()
+        return super(DumpAnswerDataCCSDSTrousseau, self).disp(copyvals)
 
     def pack(self, allvalues, retdbvalues, **kwargs):
         pass
 
 
-
-TROUSSEAU = PLDRepCCSDSTrousseau(KEYS, octets=True)
+TROUSSEAU = DumpAnswerDataCCSDSTrousseau(KEYS, octets=True)

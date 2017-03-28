@@ -26,13 +26,14 @@
 
 
 from datetime import datetime
+from param import param_commands
+
 from .command import Command
-from . import param_commands
 from ..utils import core
 
 
 __all__ = ['ALLCMDS', 'L0CMDS', 'L1CMDS', 'ALLCMDSNAMES', 'L0CMDSNAMES',
-			'L1CMDSNAMES']
+            'L1CMDSNAMES']
 
 
 allcmds = core.load_json_cmds(param_commands.COMMANDSFILE)

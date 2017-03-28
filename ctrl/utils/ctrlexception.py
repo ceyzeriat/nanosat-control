@@ -220,6 +220,15 @@ class NotImplemented(CTRLException):
         self.message = "Not implemented: '{}'".format(m)
 
 
+class NoControlKey(CTRLException):
+    """
+    No key was found
+    """
+    def __init__(self, *args, **kwargs):
+        self._init(*args, **kwargs)
+        self.message = "No key was found".format()
+
+
 # not used
 class NoSuchKey(CTRLException):
     """

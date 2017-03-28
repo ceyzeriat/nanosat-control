@@ -25,11 +25,10 @@
 ###############################################################################
 
 
-from ..cmd import ALLCMDS as _ALL
-
-
 __all__ = []
 
+
+from ..cmd import ALLCMDS as _ALL
 
 for _cmd in _ALL:
     locals()[_cmd.name] = _cmd

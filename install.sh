@@ -63,6 +63,7 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     echo '0' > $WHEREPARAM/tc_packet_id
     echo 'postgresql://postgres:<pass>@localhost:5432/picsat' > $WHEREPARAM/db_server
     echo 'postgres' > $WHEREPARAM/artichaut
+    echo 'You wish!' > $WHEREPARAM/perefouras
 
     # create the binaries
     cd $WHEREBINS

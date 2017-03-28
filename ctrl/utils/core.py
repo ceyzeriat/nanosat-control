@@ -179,15 +179,6 @@ def merge_flow(datalist, trailingSplit=True):
     else:
         raise ctrlexception.CantRunAX25FramesFlow()
 
-def rchop(txt, ending):
-    """
-    Removes ``ending`` at the end of ``txt`` and returns the shortened string
-    """
-    if txt.lower().endswith(ending.lower()):
-        return txt[:-len(ending)]
-    else:
-        return txt
-
 def to_num(v):
     if not isStr(v):
         return v
@@ -221,17 +212,9 @@ def load_json_cmds(path):
     f.close()
     return allcmds
 
-def save_json_cmds(path, cmds):
-    """
-    Loads all the commands from the json file, given the path list
-    """
-    f = open(rel_dir(*path), mode='w')
-    json.dump(cmds, f)
-    f.close()
-
 def strISOstamp2datetime(txt):
     """
-    Tranforms a ISO date as string into a datetime
+    Tranforms a ISO date string into a datetime
     """
     return parser.parse(str(txt))
 
@@ -248,17 +231,29 @@ def packetfilename2datetime(txt):
     return datetime.datetime(*dt)
 
 def now():
+    """
+    Returns the now timestamp as datetime
+    """
     return datetime.datetime.now(pytz.utc)
 
 def now2daystamp():
+    """
+    Returns a day stamp from the now timestamp
+    """
     return int(time.mktime(time.localtime())/86400.-DATETIME_REF)
 
 def now2msstamp():
+    """
+    Returns a milli-sec stamp from the now timestamp
+    """
     g = now()
     return int(g.hour * 36e5 + g.minute * 6e4 + g.second * 1e3
                 + g.microsecond//1000)
 
 def stamps2time(daystamp, msstamp):
+    """
+    Give a day and a milli-sec stamp, return a datetime
+    """
     ts = (DATETIME_REF+daystamp)*86400. + msstamp*0.001
     return datetime.datetime.fromtimestamp(ts, tz=pytz.utc)
 

@@ -25,11 +25,29 @@
 ###############################################################################
 
 
-from . import ctrlexception
-from .pidwatchdog import *
-from .bindiff import *
-from . import core
-from .day import *
-from .ms import *
-from .report import *
-from .hmac import *
+MINLENPARAMSTRUCTURE = 3
+
+COMMANDSFILE = ["ctrl", "cmd", "cmds.json"]
+
+RANGESEPARATOR = ';'
+
+LISTSEPARATOR = ','
+
+LENPARAMNAME = 25
+
+
+CSVSUBSYSTEM = 0
+CSVNUMBER = 1
+CSVNAME = 2
+CSVPID = 6
+CSVDESC = 7
+CSVLPARAM = 14
+CSVNPARAM = 15
+
+CSVPARAMDESC = 16
+CSVPARAMNAME = 17
+CSVPARAMTYP = 18
+CSVPARAMSIZE = 19
+CSVPARAMUNIT = 20
+CSVPARAMRNG = 21
+

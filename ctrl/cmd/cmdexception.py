@@ -122,12 +122,3 @@ class WrongCommandLength(CMDException):
         self._init(cmd, l, ll, *args, **kwargs)
         self.message = "Total length '{}' of the input is not valid "\
                        "for command '{}', should be '{}'".format(l, cmd, ll)
-
-class RedundantCm(CMDException):
-    """
-    If the Cm number or name is already in the json file
-    """
-    def __init__(self, i, n, *args, **kwargs):
-        self._init(i, n, *args, **kwargs)
-        self.message = "Number '{}' or name '{}' of the Cm is already found "\
-                       "in the json file".format(i, n)

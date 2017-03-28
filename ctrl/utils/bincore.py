@@ -27,12 +27,21 @@
 
 import binascii
 from byt import Byt
+import math
 from . import ctrlexception
 
 
 # little or big endian
 TWINKLETWINKLELITTLEINDIA = False
 
+
+def hex2hex(v, pad=0, **kwargs):
+    """
+    Give some hex, get some hex
+    pad in hex chars
+    verbose = "Kept as hexadecimal"
+    """
+    return padit(txt=v, l=pad, ch=Byt(0))
 
 def bool2bin(i, **kwargs):
     """
@@ -211,7 +220,7 @@ def octify(b):
     Splits a long ``b`` bits sequence into 8-bit pieces
     after it has padded ``b`` to a 8n length
     """
-    b = padit(b, ((len(b)-1)//8+1)*8, '0')
+    b = padit(b, int(math.ceil(len(b)/8.)), '0')
     return [b[i:i+8] for i in range(0, len(b), 8)]
 
 def padit(txt, l, ch, **kwargs):

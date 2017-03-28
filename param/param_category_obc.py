@@ -58,8 +58,8 @@ PACKETIDMIRROR = dict(  name='packet_id_mirror',
 STARTADDRESS = dict(    name='start_address',
                         start=32,
                         l=32,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
+                        fctunpack=bincore.bin2hex,
+                        fctpack=bincore.hex2bin,
                         verbose="Start Adress of Dump")
 
 BYTESNUMBER = dict(     name='bytes_number',
@@ -69,15 +69,22 @@ BYTESNUMBER = dict(     name='bytes_number',
                         fctpack=bincore.int2bin,
                         verbose="Length of data in dump packet")
 
+NSEGS = dict(           name='n_segments',
+                        start=32,
+                        l=16,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin,
+                        verbose="Total Number of segments received")
 
 CATEGORY_0 = CCSDSTrousseau([], octets=False)  # rec ack
 CATEGORY_1 = CCSDSTrousseau([], octets=False)  # beacon
-CATEGORY_2 = CCSDSTrousseau([], octets=False)  # boot error report
-CATEGORY_3 = CCSDSTrousseau([], octets=False)  # event report
+CATEGORY_2 = CCSDSTrousseau([], octets=False)  # boot error report ?????
+CATEGORY_3 = CCSDSTrousseau([], octets=False)  # event report ?????
 CATEGORY_4 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, STARTADDRESS, BYTESNUMBER], octets=False)  # dump answer data
+CATEGORY_5 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, NSEGS], octets=False)  # dump answer data
 
 
-ACKCATEGORIESOBC = [(0, 0)]  # (pld, pid)
+ACKCATEGORIESOBC = [(0, 0)]  # (payload, pid)
 
 
 # header aux
@@ -85,7 +92,8 @@ PACKETCATEGORIESOBC = { 0: CATEGORY_0,  # rec ack
                         1: CATEGORY_1,  # beacon
                         2: CATEGORY_2,  # boot error report
                         3: CATEGORY_3,  # event report
-                        4: CATEGORY_4}  # dump answer data
+                        4: CATEGORY_4,  # dump answer data
+                        5: CATEGORY_5}  # patch list segs
 
 
 PACKETCATEGORYSIZESOBC = {}
@@ -94,28 +102,26 @@ for k, cat in PACKETCATEGORIESOBC.items():
 
 
 TABLECATEGORYOBC = {0: 'TmcatRcpAcknowledgement',  # rec ack
-                    1: 'TmcatFmtAcknowledgement',  # beacon
-                    2: 'TmcatExeAcknowledgement',  # boot error report
-                    3: 'TmcatDebug',  # event report
-                    4: 'TmcatPayloadHk',  # dump answer data
-                    5: 'TmcatHfScience',
-                    6: None,
-                    7: None,
-                    8: None,
-                    9: None}
+                    1: None,  # beacon
+                    2: None,  # boot error report
+                    3: None,  # event report
+                    4: None,  # dump answer data
+                    5: None}  # patch list segs
 
 TABLEDATAOBC = {    0: None,  # rec ack
                     1: None,  # beacon
                     2: None,  # boot error report
                     3: None,  # event report
-                    4: 'DataPayloadHk'}  # dump answer data
+                    4: None,  # dump answer data
+                    5: None}  # patch list segs
 
 
 FILEDATACRUNCHINGOBC = {0: None,  # rec ack
                         1: 'param_beacon',  # beacon
                         2: None,  # boot error report
                         3: None,  # event report
-                        4: 'param_hk_payload'}  # dump answer data
+                        4: 'param_dump_ans_data',  # dump answer data
+                        5: 'param_patch_list_segs'}  # patch list segs
 
 
 # extend all keys with common categories

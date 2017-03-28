@@ -183,7 +183,8 @@ def init(antenna):
         return
     LISTEN_TRANS = ListenTrans(port=param_all.LISTENINGPORT[0],
                             nreceivermax=len(param_all.LISTENINGPORTLISTENERS),
-                            start=True, portname=param_all.LISTENINGPORT[1])
+                            start=True, portname=param_all.LISTENINGPORT[1],
+                            timeoutACK=3)
     LISTEN_REC_CONTROL = ListenRec(port=param_all.CONTROLLINGPORT[0],
                                 name=param_all.LISTENINGNAME, connect=True,
                                 connectWait=0.5,

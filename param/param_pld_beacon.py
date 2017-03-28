@@ -51,7 +51,7 @@ def txt2hex(txt, **kwargs):
 
 KEYS = [dict(name='beacon', start=0, l=MAXLENGTHBEACON, fctunpack=hex2txt, fctpack=txt2hex,
                 verbose="A beacon message",
-                disp='text')]
+                disp='text', pad=False, octets=True)]
 
 
 class PLDBeaconCCSDSTrousseau(CCSDSTrousseau):

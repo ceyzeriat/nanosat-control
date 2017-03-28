@@ -26,8 +26,8 @@
 
 
 from byt import Byt
+from param import param_commands
 from . import cmdexception
-from . import param_commands
 from ..utils import core
 from .pformat import PFormat
 
@@ -102,7 +102,10 @@ class Parameter(object):
                 self._rngdisp = repr(self.rng)
             else:
                 raise cmdexception.WrongParameterDefinition(self.name, 'rng')
-        if core.isStr(size) and not str(size).isdigit():
+        if core.isStr(size) and str(size) == '*':
+            self._sizedisp = '[*]'
+            self._size = None
+        elif core.isStr(size) and not str(size).isdigit():
             self._size = size.split(param_commands.RANGESEPARATOR)[:2]
             self._size = tuple([core.to_num(item) for item in self._size])
             self._sizedisp = "[{}--{}]".format(*self.size)
@@ -149,6 +152,9 @@ class Parameter(object):
             elif isinstance(self.size, tuple) and \
                     (len(value) < self.size[0] or len(value) > self.size[1]):
                 return (False, value) if withvalue else False
+            # if None, no size to check
+            elif self.size is not None:
+                return (False, value) if withvalue else False
             for item in value:
                 if not item in self.rng.keys():
                     return (False, value) if withvalue else False
@@ -165,6 +171,9 @@ class Parameter(object):
             return (False, value) if withvalue else False
         elif isinstance(self.size, tuple) and \
                 (len(value) < self.size[0] or len(value) > self.size[1]):
+            return (False, value) if withvalue else False
+        # if None, no size to check
+        elif self.size is not None:
             return (False, value) if withvalue else False
         # checks ranges and types
         for item in value:
