@@ -39,6 +39,10 @@ _hmacfct = cdll.LoadLibrary(core.rel_dir('ctrl', 'utils', 'hmac', '_hmac.so'))\
 _hmacfct.argtypes = [c_char_p, c_char_p, c_uint, c_char_p]
 
 
+# compile it with:
+# gcc -o _hmac.so -shared -fPIC *.c
+
+
 def hmac(txt):
     """
     Calculates the HMAC-SHA256 of the ``txt`` given as output
