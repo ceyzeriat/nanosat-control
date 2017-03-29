@@ -25,6 +25,7 @@
 ###############################################################################
 
 
+from param import param_all
 from .ccsdstrousseau import CCSDSTrousseau
 from .ccsdskey import CCSDSKey
 from ..utils import bincore
@@ -227,7 +228,7 @@ EMITTERID = CCSDSKey(                   name='user_id',
 
 SIGNATURE = CCSDSKey(                   name='signature',
                                         start=16,
-                                        l=128,
+                                        l=param_all.KEYLENGTHCCSDS*8,
                                         fctunpack=bincore.bin2hex,
                                         fctpack=bincore.hex2bin,
                                         verbose="The cryptographic hash using the public/private key system",

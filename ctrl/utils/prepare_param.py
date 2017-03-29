@@ -114,15 +114,23 @@ if not JUSTALIB:
             raise ctrlexception.MissingPacketIDFile(PACKETIDFULLFILE)
 
     # get the key
-    _f = home_dir(*KEYFILE)
-    try:
-        f = open(_f, mode='r')
-        VITELACLE = Byt().fromHex(f.readline().strip())
-        f.close()
-    except IOError:
-        VITELACLE = None
-    if VITELACLE is None or len(VITELACLE) != KEYLENGTH:
-        if NOERRORATIMPORT:
-            print(ctrlexception.NoControlKey())
-        else:
-            raise ctrlexception.NoControlKey()
+    if USESIGGY:
+        _f = home_dir(*KEYFILE)
+        try:
+            f = open(_f, mode='r')
+            VITELACLE = Byt().fromHex(f.readline().strip())
+            f.close()
+        except:
+            VITELACLE = None
+        if VITELACLE is None or len(VITELACLE) != KEYLENGTH:
+            if NOERRORATIMPORT:
+                print(ctrlexception.NoControlKey())
+            else:
+                raise ctrlexception.NoControlKey()
+
+        if sum([int(i) for i in KEYMASK]) != KEYLENGTHCCSDS:
+            KEYMASK = '1'*KEYLENGTHCCSDS+'0'*KEYLENGTHCCSDS
+            if NOERRORATIMPORT:
+                print(ctrlexception.InvalidMask())
+            else:
+                raise ctrlexception.InvalidMask()

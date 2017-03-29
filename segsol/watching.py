@@ -34,6 +34,7 @@ from ctrl.utils import PIDWatchDog
 from ctrl.ccsds import TMUnPacker
 from ctrl.ccsds import param_ccsds
 from ctrl.xdisp import watchdog
+from ctrl.kiss import Framer
 import param
 from param import param_category
 from param import param_all
@@ -100,12 +101,16 @@ def process_report(inputs):
     elif key =='broadcastTC':
         pass
     elif key =='GotBlob':
+        blobish = Byt(inputs['blob'])
         try:
-            hd, hdx, dd = TMUnPacker.unpack(Byt(inputs['blob']),\
-                                            retdbvalues=True)
+            # strip AX25 if need be
+            if param_all.AX25ENCAPS:
+                source, destination, blobish = Framer.decode_radio(blobish)
+            hd, hdx, dd = TMUnPacker.unpack(blobish, retdbvalues=True)
         except:
             print('Tried to unpack.. but an error occurred: {}'\
                     .format(sys.exc_info()[0]))
+            print(source, destination, blobish.hex())
             return
         pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
         catnum = int(hd[param_ccsds.PACKETCATEGORY.name])

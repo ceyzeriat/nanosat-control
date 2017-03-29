@@ -30,6 +30,7 @@ from param import param_category
 from param import param_apid
 from param import param_all
 from ..utils import core
+from ..utils import hmac
 from ..utils import bincore
 from . import ccsdsexception
 from . import param_ccsds
@@ -75,6 +76,7 @@ class CCSDSPacker(object):
           * eack (bool) [default: REQACKEXECUTION]: ``True`` to recieve the
             acknowledgement of execution
           * emitter (int) [default: EMITTERID]: the id of the emitter
+          * signit (bool) [default: USESIGGY]: sign the packet or not
 
         Kwargs for TM-mode:
           * auxiliary header and data keys-values
@@ -134,7 +136,8 @@ class CCSDSPacker(object):
         else:
             data = TCdata
         theFullPacket = retprim[0] + retsec[0] + maybeAux + data
-        if param_all.USESIGGY and self.mode != 'telemetry':
+        if kwargs.pop('signit', param_all.USESIGGY)\
+                                and self.mode != 'telemetry':
             theFullPacket = self.add_siggy(theFullPacket)
         if retvalues:
             return theFullPacket, hds, hdx, retd
@@ -143,23 +146,19 @@ class CCSDSPacker(object):
 
     def add_siggy(self, fullPacket):
         # calculates the signature from full packet
-        siggy = core.hmac(theFullPacket)
-        # grab the CCSDS key for signature
-        siggykey = param_ccsds.SIGNATURE
-        # grab the headers of the packet, to chunk the signature
-        headerSecBnds = (param_ccsds.HEADER_P_KEYS.size,
-                         param_ccsds.HEADER_P_KEYS.size +\
-                            param_ccsds.HEADER_S_KEYS_TELECOMMAND.size)
-        # grab the sec header
-        secBits = bincore.hex2bin(theFullPacket[headerSecBnds[0]:
-                                                headerSecBnds[1]])
-        # replace the signature
-        secBits = core.setstr(secBits, siggykey.cut, siggykey.pack(siggy))
-        # 
-        secHD = bincore.bin2hex(secBits,
-                                pad=param_ccsds.HEADER_S_KEYS_TELECOMMAND.size)
-        return fullPacket[:headerSecBnds[0]] + secHD +\
-                fullPacket[headerSecBnds[1]:]
+        siggy = hmac(fullPacket)
+        # apply mask
+        siggy = Byt([s for idx, s in enumerate(siggy.ints())\
+                        if core.KEYMASK[idx] == '1'])
+        # fuck indians
+        if bincore.TWINKLETWINKLELITTLEINDIA:
+            siggy = siggy[::-1]
+        # grab the bounds of the siggy location, to chunk it into the packet
+        startSiggy = param_ccsds.HEADER_P_KEYS.size +\
+                                param_ccsds.SIGNATURE.start//8
+        # return concatenated turd
+        return fullPacket[:startSiggy] + siggy +\
+                fullPacket[startSiggy + param_ccsds.SIGNATURE.len//8:]
 
     def pack_primHeader(self, values, datalen=0, retvalues=False,
                         retdbvalues=True, withPacketID=True):

@@ -202,15 +202,6 @@ class NotInFramesFlow(CTRLException):
         self.message = "Not in Frames-Flow mode"
 
 
-class CantRunAX25FramesFlow(CTRLException):
-    """
-    When one tries to do framesflow without KISS
-    """
-    def __init__(self, *args, **kwargs):
-        self._init(*args, **kwargs)
-        self.message = "Can't use Frames-FLow mode in non-KISS mode"
-
-
 class NotImplemented(CTRLException):
     """
     When a feature is not implemented
@@ -229,6 +220,15 @@ class NoControlKey(CTRLException):
         self.message = "No key was found".format()
 
 
+class InvalidMask(CTRLException):
+    """
+    Invalid mask
+    """
+    def __init__(self, *args, **kwargs):
+        self._init(*args, **kwargs)
+        self.message = "Invalid mask".format()
+
+
 # not used
 class NoSuchKey(CTRLException):
     """
@@ -237,3 +237,4 @@ class NoSuchKey(CTRLException):
     def __init__(self, param, key, *args, **kwargs):
         self._init(param, key, *args, **kwargs)
         self.message = "No key '{}' in param '{}'".format(key, param)
+

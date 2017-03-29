@@ -132,10 +132,10 @@ def recover_special_codes(frame):
     for idx in iteration:
         if frame[idx:idx+2] == FESC_TFEND:
             res += FEND
-            iteration.next()
+            next(iteration)
         elif frame[idx:idx+2] == FESC_TFESC:
             res += FESC
-            iteration.next()
+            next(iteration)
         else:
             res += frame[idx]
     return res

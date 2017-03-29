@@ -162,16 +162,17 @@ class Parameter(object):
         if not hasattr(value, "__iter__") or core.isStr(value):
             # split input string into ['a', 'b', ...]
             if self.typ.typ == 'str':
-                if not isinstance(value, str):
+                if not core.isStr(value):
                     return (False, value) if withvalue else False
                 value = [item for item in value]
             else:
                 value = [value]
-        if isinstance(self.size, int) and len(value) != self.size:
-            return (False, value) if withvalue else False
-        elif isinstance(self.size, tuple) and \
-                (len(value) < self.size[0] or len(value) > self.size[1]):
-            return (False, value) if withvalue else False
+        if isinstance(self.size, tuple):
+            if len(value) < self.size[0] or len(value) > self.size[1]:
+                return (False, value) if withvalue else False
+        elif isinstance(self.size, int):
+            if len(value) != self.size:
+                return (False, value) if withvalue else False
         # if None, no size to check
         elif self.size is not None:
             return (False, value) if withvalue else False

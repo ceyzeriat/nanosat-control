@@ -35,15 +35,12 @@ __all__ = ['TROUSSEAU']
 
 MAXLENGTHDATA = 235  # octets
 
-THEDATAKEY = dict(name='data', start=0, l=MAXLENGTHDATA, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex,
+KEYS = [dict(name='data', start=0, l=MAXLENGTHDATA, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex,
                     verbose="Buffer of bytes containing the dumped data",
-                    disp='data', pad=False, octets=True)
-
-OTHERKEYS = []
+                    disp='data', pad=False, octets=True)]
 
 # the data key is first
 THEDATAKEY = 0
-KEYS = [THEDATAKEY] + OTHERKEYS
 
 
 class DumpAnswerDataCCSDSTrousseau(CCSDSTrousseau):

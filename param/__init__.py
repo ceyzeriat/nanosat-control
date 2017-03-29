@@ -25,9 +25,11 @@
 ###############################################################################
 
 
-__all__ = ['param_apid', 'param_all', 'param_category', 'param_beacon',
-			'param_hf_science', 'param_payload_hk', 'param_pld_report',
-			'param_exe_ack', 'param_pld_beacon']
+__all__ = ['param_apid', 'param_all', 'params', 'param_category',
+            'param_beacon', 'param_hf_science', 'param_payload_hk',
+            'param_pld_report', 'param_exe_ack', 'param_pld_beacon',
+            'param_commands', 'param_dump_ans_data', 'param_patch_list_segs',
+            'param_tc_answer']
 
 from . import param_apid
 from . import param_all

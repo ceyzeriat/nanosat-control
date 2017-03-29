@@ -152,7 +152,7 @@ def split_flow(data, n=-1):
     elif KISSENCAPS:
         raise ctrlexception.NotImplemented("Frames-FLow with KISS")
     else:
-        raise ctrlexception.CantRunAX25FramesFlow()
+        raise ctrlexception.NotImplemented("Unknown mode")
 
 def merge_flow(datalist, trailingSplit=True):
     """
@@ -177,7 +177,7 @@ def merge_flow(datalist, trailingSplit=True):
     elif KISSENCAPS:
         raise ctrlexception.NotImplemented("Frames-FLow with KISS")
     else:
-        raise ctrlexception.CantRunAX25FramesFlow()
+        raise ctrlexception.NotImplemented("Unknown mode")
 
 def to_num(v):
     if not isStr(v):

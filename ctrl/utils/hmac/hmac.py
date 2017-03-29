@@ -50,9 +50,9 @@ def hmac(txt):
     txt = Byt(txt)
     digest = create_string_buffer(core.KEYLENGTH)
     if core.VITELACLE is not None:
-        _hmacfct(str(core.VITELACLE), str(txt), len(txt), digest)
+        _hmacfct(core.VITELACLE, txt, len(txt), digest)
     else:
         print('No key found, using NULL')
-        _hmacfct("\x00"*core.KEYLENGTH, str(txt), len(txt), digest)
+        _hmacfct(Byt("\x00"*core.KEYLENGTH), txt, len(txt), digest)
     return Byt(digest.raw)
 

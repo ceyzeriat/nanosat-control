@@ -125,6 +125,7 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "desk" ]; then
     cp PicControl.desktop PicListen.desktop
     cp PicControl.desktop PicSave.desktop
     cp PicControl.desktop PicWatch.desktop
+    cp PicControl.desktop PicShow.desktop
     cp PicControl.desktop PicChat.desktop
 
     echo 'Name=PicControl' >> PicControl.desktop
@@ -162,7 +163,7 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "desk" ]; then
     echo 'Name=PicShow' >> PicShow.desktop
     echo 'Comment=' >> PicShow.desktop
     echo 'Exec='"$WHEREBINS"'/picshow gui' >> PicShow.desktop
-    echo 'Icon='"$WHERESEGSOL"'/img/show.png' >> PicShow.desktop
+    echo 'Icon='"$WHERESEGSOL"'/img/show.gif' >> PicShow.desktop
     echo 'Path='"$HOME" >> PicShow.desktop
     echo 'Terminal=false' >> PicShow.desktop
     echo 'StartupNotify=false' >> PicShow.desktop
@@ -170,7 +171,7 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "desk" ]; then
     echo 'Name=PicChat' >> PicChat.desktop
     echo 'Comment=' >> PicChat.desktop
     echo 'Exec='"$WHEREBINS"'/picchat' >> PicChat.desktop
-    echo 'Icon='"$WHERESEGSOL"'/img/chat.png' >> PicChat.desktop
+    echo 'Icon='"$WHERESEGSOL"'/img/chat.gif' >> PicChat.desktop
     echo 'Path='"$HOME" >> PicChat.desktop
     echo 'Terminal=false' >> PicChat.desktop
     echo 'StartupNotify=false' >> PicChat.desktop
