@@ -106,11 +106,14 @@ def process_report(inputs):
             # strip AX25 if need be
             if param_all.AX25ENCAPS:
                 source, destination, blobish = Framer.decode_radio(blobish)
+            # case of the RFCheckoutBox returning garbage
+            if len(source) == 0 and len(destination) == 0\
+                                        and len(blobish) == 0:
+                return
             hd, hdx, dd = TMUnPacker.unpack(blobish, retdbvalues=True)
         except:
             print('Tried to unpack.. but an error occurred: {}'\
                     .format(sys.exc_info()[0]))
-            print(source, destination, blobish.hex())
             return
         pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
         catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
