@@ -34,7 +34,7 @@ from .. import core
 __all__ = ['hmac']
 
 
-_hmacfct = cdll.LoadLibrary(core.rel_dir('ctrl', 'utils', 'hmac', '_hmac.so'))\
+_hmacfct = cdll.LoadLibrary(core.rel_dir('ctrl', 'utils', 'hmac', 'hmaclib.so'))\
                 .hmacSha256
 _hmacfct.argtypes = [c_char_p, c_char_p, c_uint, c_char_p]
 
