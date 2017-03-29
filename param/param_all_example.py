@@ -47,7 +47,7 @@ NOERRORATIMPORT = True
 JUSTALIB = False
 
 # which antenna are you using
-ANTENNALISTENED = 'serial'  # or 'checkoutbox' or 'serial'
+ANTENNALISTENED = 'checkoutbox'  # or 'checkoutbox' or 'serial'
 
 # the path to the file containing the packet id counter
 PACKETIDFILE = ['.segsol', 'tc_packet_id']
@@ -129,12 +129,12 @@ TELEMETRYNAMEFORMAT = 'TM_%Y%m%dT%H%M%S_%f.packet'
 
 
 # whether the listened flow of data is encapsulated in AX25/KISS standard
-AX25ENCAPS = False
-KISSENCAPS = False
+AX25ENCAPS = True
+KISSENCAPS = True
 # note: there can't be a KISS encapsulation without AX25
 
 # whether to expect a continuous flow of CCSDS frames or a natural split
-FRAMESFLOW = True
+FRAMESFLOW = False
 
 # for when 
 # the split characters between CCSDS continuous frames
@@ -161,7 +161,9 @@ SAVETC = True
 
 
 # length of the key
-KEYLENGTH = 32
+KEYLENGTH = 32  # in octets
+KEYLENGTHCCSDS = 16  # in octets
 # file of the key
 KEYFILE = ['.segsol', 'perefouras']
 USESIGGY = True
+KEYMASK = '1'*16+'0'*16  # mask of 1 and 0, 1 == takeit
