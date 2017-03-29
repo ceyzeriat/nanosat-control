@@ -158,3 +158,10 @@ REPORTKEY = 'report_key'
 
 # whether to save the TCs and initialize the DB with control
 SAVETC = True
+
+
+# length of the key
+KEYLENGTH = 32
+# file of the key
+KEYFILE = ['.segsol', 'perefouras']
+USESIGGY = True
