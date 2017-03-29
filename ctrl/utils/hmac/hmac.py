@@ -40,7 +40,7 @@ _hmacfct.argtypes = [c_char_p, c_char_p, c_uint, c_char_p]
 
 
 # compile it with:
-# gcc -o _hmac.so -shared -fPIC *.c
+# gcc -shared -o hmac.so -fPIC L0AppHmac.c L0AppSha256.c
 
 
 def hmac(txt):

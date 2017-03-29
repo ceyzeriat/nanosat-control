@@ -31,6 +31,7 @@ __all__ = ['param_apid', 'param_all', 'param_category', 'param_beacon',
 
 from . import param_apid
 from . import param_all
+from . import params
 from . import param_beacon
 from . import param_hf_science
 from . import param_payload_hk
@@ -38,3 +39,7 @@ from . import param_pld_report
 from . import param_pld_beacon
 from . import param_exe_ack
 from . import param_category
+from . import param_commands
+from . import param_dump_ans_data
+from . import param_patch_list_segs
+from . import param_tc_answer
