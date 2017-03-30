@@ -25,7 +25,10 @@
 ###############################################################################
 
 
-#from .utils import core
+import time
+import Queue
+from segsol import controlling
+from .utils import core
 
 
 __all__ = ['Telecommand']
@@ -36,7 +39,10 @@ class Telecommand(object):
         """
         Reads a telecommand from the database
         """
-        pass
+        cls.dbid = dbid
+        # TC not saved
+        if dbid is None:
+            return
         # read database and take a telecommand
 
     def show(self, *args, **kwargs):
@@ -44,3 +50,42 @@ class Telecommand(object):
         Show pretty packet
         """
         return
+
+    def _fromCommand(cls, name, packet, dbid, hd, hdx, inputs, **kwargs):
+        # broadcast on socket to the antenna process and watchdog
+        controlling.broadcast_TC(cmdname=name, dbid=dbid, packet=packet,
+                        hd=hd, hdx=hdx, inputs=inputs)
+        cls.hd = hd
+        cls.hdx = hdx
+        cls.inputs = inputs
+        # no wait
+        if not kwargs.pop('wait', core.DEFAULTWAITCMD):
+            return cls(dbid=dbid)
+        rack = bool(int(hd['reqack_reception']))
+        cls.RACK = False if rack else None
+        fack = bool(int(hd['reqack_format']))
+        cls.FACK = False if fack else None
+        eack = bool(int(hd['reqack_execution']))
+        cls.EACK = False if eack else None
+        # don't expect any ack
+        if not (rack or fack or eack):
+            return cls(dbid=dbid)
+        pkid = int(hd[param_ccsds.PACKETID.name])
+        doneat = time.time() + kwargs.pop('timeout', core.DEFAULTTIMEOUTCMD)
+        # check format first since it may prevent eack from being sent
+        while time.time() < doneat:
+            try:
+                res = controlling.ACKQUEUE.get(
+                                block=True,
+                                timeout=max(0, doneat - time.time()))
+            except Queue.Empty:
+                break
+            if res[0] != pkid:
+                continue
+            if res[1] == 0:
+                cls.RACK = True
+            elif res[1] == 1:
+                cls.FACK = (res[2] == 0)
+            elif res[1] == 2:
+                cls.EACK = (res[2] == 0)
+        return cls(dbid=dbid)

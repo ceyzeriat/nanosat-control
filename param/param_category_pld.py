@@ -97,6 +97,7 @@ CATEGORY_6 = CCSDSTrousseau([], octets=False)  # report
 CATEGORY_7 = CCSDSTrousseau([], octets=False)  # report
 
 
+# (payloadd, category)
 ACKCATEGORIESPLD = []
 
 

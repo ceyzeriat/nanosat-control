@@ -31,7 +31,7 @@ from ..ccsds import TCPacker
 from ..utils import core
 from ..telecommand import Telecommand
 from .. import db
-from segsol.controlling import broadcast_TC
+from segsol import controlling
 
 
 __all__ = ['Command']
@@ -49,6 +49,10 @@ class Command(Cm):
           * rack (bool): ``True`` to get the acknowledgement of reception
           * fack (bool): ``True`` to get the acknowledgement of format
           * eack (bool): ``True`` to get the acknowledgement of execution
+          * signit (bool): ``True`` to sign the telecommand
+          * wait (bool): ``True`` to make a blocking telecommand, until
+            the acknowledgement is received, or ``timetout`` is elapsed
+          * timeout (int): the time in second to wait for acknowledgements
         """
         # sole purpose of this __init__ is overwrite the docstring
         super(Command, self).__init__(*args, **kwargs)
@@ -79,6 +83,10 @@ class Command(Cm):
           * rack (bool): ``True`` to get the acknowledgement of reception
           * fack (bool): ``True`` to get the acknowledgement of format
           * eack (bool): ``True`` to get the acknowledgement of execution
+          * signit (bool): ``True`` to sign the telecommand
+          * wait (bool): ``True`` to make a blocking telecommand, until
+            the acknowledgement is received, or ``timetout`` is elapsed
+          * timeout (int): the time in second to wait for acknowledgements
         """
         # generates the packet
         packet, hd, hdx, inputs = self._generate_packet(**kwargs)
@@ -90,18 +98,17 @@ class Command(Cm):
         if param_all.SAVETC:
             dbid = db.save_TC_to_DB(hd=hd, hdx=hdx, inputs=inputs)
         else:
-            dbid = 0
+            dbid = None
             print('The TC was not saved')
-        # broadcast on socket to the antenna process and watchdog
-        broadcast_TC(cmdname=self.name, dbid=dbid, packet=packet, hd=hd,
-                        hdx=hdx, inputs=inputs)
-        return Telecommand(dbid=dbid)
+        return Telecommand._fromCommand(name=self.name, packet=packet,
+                                dbid=dbid, hd=hd, hdx=hdx, inputs=inputs,
+                                **kwargs)
 
     def show(self, *args, **kwargs):
         """
         Show pretty packet
         """
-        return self._generate_packet(**kwargs)
+        return self._generate_packet(withPacketID=False, **kwargs)
 
     @classmethod
     def _initfromCm(cls, cmd):

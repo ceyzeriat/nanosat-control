@@ -55,7 +55,7 @@ KEYS = [dict(name='message', start=0, l=MAXLENGTHMESSAGE, fctunpack=hex2txt,
                 disp='text', pad=False)]
 
 
-class PLDRepCCSDSTrousseau(CCSDSTrousseau):
+class TCAnswerCCSDSTrousseau(CCSDSTrousseau):
     def unpack(self, data, **kwargs):
         """
         Unpacks the data contained in the payload report
@@ -70,4 +70,4 @@ class PLDRepCCSDSTrousseau(CCSDSTrousseau):
 
 
 
-TROUSSEAU = PLDRepCCSDSTrousseau(KEYS, octets=True)
+TROUSSEAU = TCAnswerCCSDSTrousseau(KEYS, octets=True)

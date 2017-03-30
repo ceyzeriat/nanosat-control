@@ -34,7 +34,9 @@ from . import param_category_common as cmn
 __all__ = []
 
 
-CATEGORYREGISTRATIONOBC = { 0:  '00000',  # rec ack
+RACKCAT = 0
+
+CATEGORYREGISTRATIONOBC = { RACKCAT:  '00000',  # rec ack
                             1:  '00001',  # beacon
                             2:  '00010',  # boot error report
                             3:  '00011',  # event report
@@ -76,7 +78,7 @@ NSEGS = dict(           name='n_segments',
                         fctpack=bincore.int2bin,
                         verbose="Total Number of segments received")
 
-CATEGORY_0 = CCSDSTrousseau([], octets=False)  # rec ack
+CATEGORY_RACKCAT = CCSDSTrousseau([], octets=False)  # rec ack
 CATEGORY_1 = CCSDSTrousseau([], octets=False)  # beacon
 CATEGORY_2 = CCSDSTrousseau([], octets=False)  # boot error report ?????
 CATEGORY_3 = CCSDSTrousseau([], octets=False)  # event report ?????
@@ -84,11 +86,12 @@ CATEGORY_4 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, STARTADDRESS, 
 CATEGORY_5 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, NSEGS], octets=False)  # dump answer data
 
 
-ACKCATEGORIESOBC = [(0, 0)]  # (payload, pid)
+# (payloadd, category)
+ACKCATEGORIESOBC = [(0, RACKCAT)]
 
 
 # header aux
-PACKETCATEGORIESOBC = { 0: CATEGORY_0,  # rec ack
+PACKETCATEGORIESOBC = { RACKCAT: CATEGORY_RACKCAT,  # rec ack
                         1: CATEGORY_1,  # beacon
                         2: CATEGORY_2,  # boot error report
                         3: CATEGORY_3,  # event report
@@ -101,14 +104,14 @@ for k, cat in PACKETCATEGORIESOBC.items():
     PACKETCATEGORYSIZESOBC[k] = cat.size
 
 
-TABLECATEGORYOBC = {0: 'TmcatRcpAcknowledgement',  # rec ack
+TABLECATEGORYOBC = {RACKCAT: 'TmcatRcpAcknowledgement',  # rec ack
                     1: None,  # beacon
                     2: None,  # boot error report
                     3: None,  # event report
                     4: None,  # dump answer data
                     5: None}  # patch list segs
 
-TABLEDATAOBC = {    0: None,  # rec ack
+TABLEDATAOBC = {    RACKCAT: None,  # rec ack
                     1: None,  # beacon
                     2: None,  # boot error report
                     3: None,  # event report
@@ -116,7 +119,7 @@ TABLEDATAOBC = {    0: None,  # rec ack
                     5: None}  # patch list segs
 
 
-FILEDATACRUNCHINGOBC = {0: None,  # rec ack
+FILEDATACRUNCHINGOBC = {RACKCAT: None,  # rec ack
                         1: 'param_beacon',  # beacon
                         2: None,  # boot error report
                         3: None,  # event report

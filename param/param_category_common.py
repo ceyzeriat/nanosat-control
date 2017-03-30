@@ -35,9 +35,14 @@ __all__ = ['CATEGORYREGISTRATIONCOMMON', 'ACKCATEGORIESCOMMON',
             'FILEDATACRUNCHINGCOMMON']
 
 
-CATEGORYREGISTRATIONCOMMON = {  31: '11111',  # exec ack
-                                30: '11110',  # fmt ack
-                                29: '11101'}  # tc answer
+EACKCAT = 31
+FACKCAT = 30
+TELECOMMANDANSWERCAT = 29
+
+
+CATEGORYREGISTRATIONCOMMON = {  EACKCAT: '11111',  # exec ack
+                                FACKCAT: '11110',  # fmt ack
+                                TELECOMMANDANSWERCAT: '11101'}  # tc answer
 
 
 TELECOMMANDIDMIRROR = dict( name='telecommand_id_mirror',
@@ -65,25 +70,25 @@ ERRORCODE = dict(           name='error_code',
                             disp="errcode")
 
 
-CATEGORY_31 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
+CATEGORY_EACKCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
                                 octets=False)  # exec ack
-CATEGORY_30 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
+CATEGORY_FACKCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
                                 octets=False)  # fmt ack
-CATEGORY_29 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR],
+CATEGORY_TELECOMMANDANSWERCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR],
                                 octets=False)  # tc answer
 
 
-# (pld, pid)
-ACKCATEGORIESCOMMON = [(0, 31),
-                       (0, 30),
-                       (1, 31),
-                       (1, 30)]
+# (payloadd, category)
+ACKCATEGORIESCOMMON = [(0, EACKCAT),
+                       (0, FACKCAT),
+                       (1, EACKCAT),
+                       (1, FACKCAT)]
 
 
 # header aux
-PACKETCATEGORIESCOMMON = {  31: CATEGORY_31,  # exec ack
-                            30: CATEGORY_30,  # fmt ack
-                            29: CATEGORY_29}  # tc answer
+PACKETCATEGORIESCOMMON = {  EACKCAT: CATEGORY_EACKCAT,  # exec ack
+                            FACKCAT: CATEGORY_FACKCAT,  # fmt ack
+                            TELECOMMANDANSWERCAT: CATEGORY_TELECOMMANDANSWERCAT}  # tc answer
 
 
 PACKETCATEGORYSIZESCOMMON = {}
@@ -91,20 +96,17 @@ for k, cat in PACKETCATEGORIESCOMMON.items():
     PACKETCATEGORYSIZESCOMMON[k] = cat.size
 
 
-# id number for telecommand answer
-TELECOMMANDANSWERCAT = 29
+
+TABLECATEGORYCOMMON = { EACKCAT: 'TmcatExeAcknowledgement',  # exec ack
+                        FACKCAT: 'TmcatFmtAcknowledgement',  # fmt ack
+                        TELECOMMANDANSWERCAT: 'TmcatTelecommandAnswer'}  # tc answer
 
 
-TABLECATEGORYCOMMON = { 31: 'TmcatExeAcknowledgement',  # exec ack
-                        30: 'TmcatFmtAcknowledgement',  # fmt ack
-                        29: 'TmcatTelecommandAnswer'}  # tc answer
+TABLEDATACOMMON = { EACKCAT: 'DataExeAcknowledgement',  # exec ack
+                    FACKCAT: None,  # fmt ack
+                    TELECOMMANDANSWERCAT: 'DataTelecommandAnswer'}  # tc answer
 
 
-TABLEDATACOMMON = { 31: 'DataExeAcknowledgement',  # exec ack
-                    30: None,  # fmt ack
-                    29: 'DataTelecommandAnswer'}  # tc answer
-
-
-FILEDATACRUNCHINGCOMMON = { 31: 'param_exe_ack',  # exec ack
-                            30: None,  # fmt ack
-                            29: 'param_tc_answer'}  # tc answer
+FILEDATACRUNCHINGCOMMON = { EACKCAT: 'param_exe_ack',  # exec ack
+                            FACKCAT: None,  # fmt ack
+                            TELECOMMANDANSWERCAT: 'param_tc_answer'}  # tc answer
