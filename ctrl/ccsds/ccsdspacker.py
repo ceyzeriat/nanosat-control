@@ -107,7 +107,7 @@ class CCSDSPacker(object):
         # header sec
         retsec = self.pack_secHeader(values=hd, retvalues=True,
                                         retdbvalues=retdbvalues)
-        # make header
+        # make header return values
         hds = {}
         hds.update(retprim[1])
         hds.update(retsec[1])

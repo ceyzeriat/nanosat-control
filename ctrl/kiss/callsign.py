@@ -96,7 +96,8 @@ class Callsign(object):
         Args:
         * callsign (str): ASCII-Encoded APRS Callsign
         """
-        callsign, ssid = Byt(callsign).split(Byt('-'), 1) + [Byt()]
+        res = Byt(callsign).split(Byt('-'), 1) + [Byt()]
+        callsign, ssid = res[:2]
         if len(ssid) == 0:
             ssid = Byt('0')
 

@@ -85,5 +85,5 @@ def ustr(txt):
     """
     Returns an ASCII cleaned version of the text
     """
-    return ''.join([ch for ch in txt.encode('utf-8')\
-                    if 32 <= ord(ch) <= 127]).strip()
+    return str(Byt('').join([ch for ch in Byt(txt)\
+                    if 32 <= ord(ch) <= 127])).strip()

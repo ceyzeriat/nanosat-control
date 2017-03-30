@@ -112,7 +112,7 @@ class CommandList(object):
                                 delimiter=str(delimiter)[0])
         # skip the shit
         for l in range(int(titles_row)):
-            csvcontent.next()
+            next(csvcontent)
         self.csvcontent = self._grabCSV(csvcontent)
         print("Loaded {:d} commands".format(len(self.csvcontent)))
 
