@@ -64,5 +64,15 @@ class EACKCCSDSTrousseau(CCSDSTrousseau):
         """
         return {self.keys[0].name: Byt(data[:MAXLENGTHERRORMESSAGE])}
 
+    def disp(self, vals):
+        """
+        Display the trousseau values
+
+        Args:
+          * vals (dict): a dictionary containing the values to display
+        """
+        return "{}\nhex: {}".format(super(EACKCCSDSTrousseau, self).disp(vals),
+                                    vals[self.keys[0].name].hex())
+
 
 TROUSSEAU = EACKCCSDSTrousseau(KEYS, octets=True)

@@ -107,8 +107,8 @@ def process_report(inputs):
             if param_all.AX25ENCAPS:
                 source, destination, blobish = Framer.decode_radio(blobish)
             # case of the RFCheckoutBox returning garbage
-            if len(source) == 0 and len(destination) == 0\
-                                        and len(blobish) == 0:
+            if len(blobish) == 0:
+                print('That was junk from RFCheckoutBox')
                 return
             hd, hdx, dd = TMUnPacker.unpack(blobish, retdbvalues=True)
         except:

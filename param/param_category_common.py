@@ -59,8 +59,8 @@ PACKETIDMIRROR = dict(      name='packet_id_mirror',
 ERRORCODE = dict(           name='error_code',
                             start=32,
                             l=16,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            fctunpack=bincore.bin2intSign,
+                            fctpack=bincore.intSign2bin,
                             verbose="error code: 0 if successful, else error codes",
                             disp="errcode")
 

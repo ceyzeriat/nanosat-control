@@ -76,10 +76,11 @@ class Cm(object):
         self._nparam = len(self._params)
 
     def __str__(self):
-        return "#{} {} (L{})\n {}\n{} params: ({} octet)\n{}".format(
+        return "#{} {} (L{}, pid: {})\n {}\n{} params: ({} octet)\n{}".format(
                             self.number,
                             self.name,
                             int(self.level),
+                            self._pidstr,
                             self.desc,
                             self.nparam,
                             self.lparam if self.lparam is not None else "*",
