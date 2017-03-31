@@ -25,12 +25,33 @@
 ###############################################################################
 
 
-from ..cmd.allcommand import ALLCMDS as _ALL
+from .cm import Cm
+from .cmadcs import CmADCS
+from .command import Command
 
 
-__all__ = []
+__all__ = ['CommandADCS']
 
 
-for _cmd in _ALL:
-    locals()[_cmd.name] = _cmd
-    __all__.append(_cmd.name)
+class CommandADCS(CmADCS, Command):
+    def __init__(self, *args, **kwargs):
+        """
+        Sends the command and stores it in the database
+
+        Args ar ignored
+
+        Kwargs:
+          * the input parameters of the command
+          * rack (bool): ``True`` to get the acknowledgement of reception
+          * fack (bool): ``True`` to get the acknowledgement of format
+          * eack (bool): ``True`` to get the acknowledgement of execution
+          * signit (bool): ``True`` to sign the telecommand
+          * wait (bool): ``True`` to make a blocking telecommand, until
+            the acknowledgement is received, or ``timetout`` is elapsed
+          * timeout (int): the time in second to wait for acknowledgements
+        """
+        # sole purpose of this __init__ is overwrite the docstring
+        super(CommandADCS, self).__init__(*args, **kwargs)
+
+    def __call__(self, *args, **kwargs):
+        return self.send(**kwargs)

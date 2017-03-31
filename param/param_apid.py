@@ -37,7 +37,8 @@ PIDREGISTRATION_OBC_L0 = {  'L0ComManager': RECACKPACKETPID,
                             'L0Housekeeper': 2,
                             'L0EpsManager': 3,
                             'L0AdcsManager': 4,
-                            'L0SdCardManager': 5}
+                            'L0SdCardManager': 5,
+                            'AdcsManager': 9}
 
 PIDREGISTRATION_OBC_L1 = {  'L1ComManager': 0,
                             'L1EventManager': 1,

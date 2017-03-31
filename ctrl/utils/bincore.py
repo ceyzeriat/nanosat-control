@@ -28,12 +28,35 @@
 import binascii
 from byt import Byt
 import math
+import struct
 from . import ctrlexception
 
 
 # little or big endian
 TWINKLETWINKLELITTLEINDIA = False
 
+
+def float2hex(v, bits=32, pad=0, **kwargs):
+    """
+    Give a float32, returns chars
+    pad in hex chars
+    verbose = "float32 -> hexadecimal"
+    """
+    litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
+    bits = 'd' if bits == 64 else 'f'
+    end = '<' if litFucInd else '>'
+    v = Byt(struct.pack(end+bits, v))
+    return padit(txt=v, l=pad, ch=Byt(0))
+
+def hex2float(h, bits=32, **kwargs):
+    """
+    Give hex ``h`` as chars '\xf0', returns float32 or 64
+    verbose = "hexadecimal -> float32"
+    """
+    litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
+    bits = 'd' if bits == 64 else 'f'
+    end = '<' if litFucInd else '>'
+    return Byt(struct.unpack(end+bits, v))
 
 def hex2hex(v, pad=0, **kwargs):
     """

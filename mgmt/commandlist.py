@@ -29,6 +29,7 @@ import csv
 from param import param_all
 from param import param_apid
 from param import param_commands
+from byt import Byt
 
 from . import core
 from . import mgmtexception
@@ -38,21 +39,19 @@ __all__ = ['CommandList']
 
 
 class CommandList(object):
-    def __init__(self, ):
+    def __init__(self, adcs):
         """
         Manages the list of commands.
 
         Args:
-        * filename (str): the absolute or relative path to the .csv
-            import file.
-        * titles_row (int): the row index (starting 0) of the titles in
-            the csv. The first data row is expected to be on the following
-            row.
+        * adcs (bool): if you manage adcs commands or obs/pld
         """
+        self._adcs = bool(adcs)
         self.loadCMDS()
 
     def __str__(self):
-        txt = ["{:d} commands".format(len(self.allcmds))]
+        txt = ["Commands of {}".format("ADCS" if self._adcs else "OBS/PLD")]
+        txt.append("{:d} commands".format(len(self.allcmds)))
         for item in self.allcmds:
             txt.append(" #{:<3} PID {:<20} {:<30}  Np {:>2}  Lp {:>2}".format(
                         item['number'],
@@ -75,8 +74,14 @@ class CommandList(object):
         Loads all the commands from the JSON file. Changes not applied
         will be lost
         """
-        self.allcmds = [dict(item)\
-                for item in core.load_json_cmds(param_commands.COMMANDSFILE)]
+        if self._adcs:
+            self.allcmds = [dict(item)\
+                    for item in\
+                    core.load_json_cmds(param_commands.COMMANDSADCSFILE)]
+        else:
+            self.allcmds = [dict(item)\
+                    for item in\
+                    core.load_json_cmds(param_commands.COMMANDSFILE)]
         print("Loaded {:d} commands".format(len(self.allcmds)))
 
     def remove(self, number):
@@ -113,13 +118,76 @@ class CommandList(object):
         # skip the shit
         for l in range(int(titles_row)):
             next(csvcontent)
-        self.csvcontent = self._grabCSV(csvcontent)
+        if self._adcs:
+            self.csvcontent = self._grabCSVADCS(csvcontent)
+        else:
+            self.csvcontent = self._grabCSV(csvcontent)
         print("Loaded {:d} commands".format(len(self.csvcontent)))
+
+    def _grabCSVADCS(self, itera):
+        ll = []
+        cm = None
+        for line in itera:
+            # is empty line ?
+            if line[param_commands.CSVNAME] == "" and\
+                        line[param_commands.CSVPARAMNAME] == "":
+                continue
+            # that's a new command, not an additional parameter
+            if line[param_commands.CSVSUBSYSTEM] != "":
+                if cm is not None:
+                    ll.append(cm)
+                cm = {
+                    'number': int(line[param_commands.CSVNUMBER]),
+                    'name':\
+                        core.rchop(core.ustr(line[param_commands.CSVNAME])\
+                                        .replace(' ', '_'), '_TM'),
+                    'pid': core.ustr(line[param_commands.CSVPID]).lower(),
+                    'desc': core.ustr(line[param_commands.CSVDESC]),
+                    'lparam':\
+                        int(0\
+                            if line[param_commands.CSVLPARAM].strip() == ""\
+                            else line[param_commands.CSVLPARAM])\
+                        if line[param_commands.CSVLPARAM].strip() != "*"\
+                        else "*",
+                    'subsystem':\
+                        core.ustr(line[param_commands.CSVSUBSYSTEM])\
+                                                .lower().replace(' ', '_'),
+                    'param': [],
+                    'n_nparam':\
+                        int(line[param_commands.CSVNPARAM]\
+                        if line[param_commands.CSVNPARAM].strip() != ""\
+                                else 0),
+                    'subSystemKey': Byt(int(line[\
+                        param_commands.CSVSUBSYSTEMKEYADCS]\
+                        .strip(), 16))[0].hex(),
+                    'adcsCommandId': Byt(int(line[\
+                        param_commands.CSVCOMMANDIDADCS]\
+                        .strip(), 16))[0].hex()}
+            # no parameter command
+            if cm['n_nparam'] == 0:
+                cm['lparam'] = 0
+            else:  # adding parameters to the last command added
+                cm['param'].append([
+                        core.ustr(line[param_commands.CSVPARAMNAME])\
+                                            .replace(' ', '_'),
+                        core.ustr(line[param_commands.CSVPARAMDESC]),
+                        core.ustr(line[param_commands.CSVPARAMRNG]),
+                        core.ustr(line[param_commands.CSVPARAMTYP])\
+                                            .replace('_t', ''),
+                        core.ustr(line[param_commands.CSVPARAMSIZE]),
+                        core.ustr(line[param_commands.CSVPARAMUNIT])\
+                                            .replace(' ', '_')])
+        ll.append(cm)
+        return ll
 
     def _grabCSV(self, itera):
         ll = []
         cm = None
         for line in itera:
+            # is empty line ?
+            if line[param_commands.CSVNAME] == "" and\
+                        line[param_commands.CSVPARAMNAME] == "":
+                continue
             # that's a new command, not an additional parameter
             if line[param_commands.CSVSUBSYSTEM] != "":
                 if cm is not None:
@@ -221,6 +289,10 @@ class CommandList(object):
         """
         Applies the add/remove changes to the JSON file
         """
-        core.save_json_cmds(param_commands.COMMANDSFILE,
-                            cmds=self.allcmds)
+        if self._adcs:
+            core.save_json_cmds(param_commands.COMMANDSADCSFILE,
+                                cmds=self.allcmds)
+        else:
+            core.save_json_cmds(param_commands.COMMANDSFILE,
+                                cmds=self.allcmds)
         print("Saved {:d} commands".format(len(self.allcmds)))

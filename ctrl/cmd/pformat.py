@@ -63,6 +63,8 @@ class PFormat(object):
                 raise cmdexception.MissingFormatInput('bits', self.typ)
             elif not isinstance(bits, int) or bits not in [8, 16, 32, 64]:
                 raise cmdexception.WrongFormatBitLength(self.typ, bits)
+            if self.typ == 'float' and bits not in [32, 64]:
+                raise cmdexception.WrongFormatBitLength(self.typ, bits)
             self._bits = int(bits)
             self._halfmaxint = 2**(self.bits-1)
             self._maxint = self._halfmaxint * 2
@@ -132,7 +134,7 @@ class PFormat(object):
         elif self.typ == 'int':
             return bincore.intSign2hex(value, sz=self.bits // 8)
         elif self.typ == 'float':
-            raise cmdexception.NotImplemented()
+            return bincore.float2hex(value, bits=self.bits)
         else:
             raise cmdexception.UnknownFormat(self.typ)
 
@@ -161,7 +163,10 @@ class PFormat(object):
         elif self.typ == 'int':
             return (-self._halfmaxint, self._halfmaxint-1)
         elif self.typ == 'float':
-            raise cmdexception.NotImplemented()
+            if self.bits == 64:
+                return (-1.79e308, 1.79e308)
+            else: 
+                return (-3.4e38, 3.4e38)
         else:
             raise cmdexception.UnknownFormat(self.typ)
 

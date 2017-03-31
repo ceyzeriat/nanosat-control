@@ -25,4 +25,5 @@
 ###############################################################################
 
 
-from .allcommand import *
+#from .allcommand import *
+#from .allcommandadcs import *

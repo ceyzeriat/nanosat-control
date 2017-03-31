@@ -34,6 +34,7 @@ if not param.param_all.JUSTALIB:
     from . import c
     from . import c0
     from . import c1
+    from . import cadcs
     from . import xdisp
 #from . import clib
 from . import kiss

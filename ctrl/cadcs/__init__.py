@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-from ..cmd.allcommand import ALLCMDS as _ALL
+from ..cmd.allcommandadcs import ALLCMDS as _ALL
 
 
 __all__ = []

@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-from ..cmd import L0CMDS as _ALL
+from ..cmd.allcommand import L0CMDS as _ALL
 
 
 __all__ = []

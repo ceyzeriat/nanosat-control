@@ -25,12 +25,23 @@
 ###############################################################################
 
 
-from ..cmd.allcommand import ALLCMDS as _ALL
+from param import param_commands
+
+from .commandadcs import CommandADCS
+from ..utils import core
 
 
-__all__ = []
+__all__ = ['ALLCMDS', 'ALLCMDSNAMES']
 
 
-for _cmd in _ALL:
-    locals()[_cmd.name] = _cmd
-    __all__.append(_cmd.name)
+allcmds = core.load_json_cmds(param_commands.COMMANDSADCSFILE)
+
+
+ALLCMDS = []
+ALLCMDSNAMES = []
+
+
+for item in allcmds:
+    c = CommandADCS(**item)
+    ALLCMDS.append(c)
+    ALLCMDSNAMES.append(c.name)
