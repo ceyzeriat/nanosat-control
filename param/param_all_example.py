@@ -90,7 +90,7 @@ SHOWINGNAME = 'show'
 
 # the port for telemetry broadcasting/listening (alpha)
 LISTENINGPORT = (50007, LISTENINGNAME)
-LISTENINGPORTLISTENERS = [SAVINGNAME, WATCHINGNAME]
+LISTENINGPORTLISTENERS = [SAVINGNAME, WATCHINGNAME, CONTROLLINGNAME]
 
 # the port for telecommand broadcasting/listening (beta)
 CONTROLLINGPORT = (50006, CONTROLLINGNAME)
@@ -167,3 +167,9 @@ KEYLENGTHCCSDS = 16  # in octets
 KEYFILE = ['.segsol', 'perefouras']
 USESIGGY = True
 KEYMASK = '1'*16+'0'*16  # mask of 1 and 0, 1 == takeit
+
+
+# default behavior of commands
+DEFAULTWAITCMD = True
+DEFAULTTIMEOUTCMD = 5  # sec
+FREQCHECKACKCMD = 3  # Hz
