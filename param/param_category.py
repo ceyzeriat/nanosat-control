@@ -30,6 +30,7 @@ from ctrl.utils import bincore
 
 from . import param_category_obc as obc
 from . import param_category_pld as pld
+from .param_category_common import TELECOMMANDANSWERCAT
 
 
 # shape of all this stuff is
