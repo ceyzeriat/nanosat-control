@@ -39,15 +39,17 @@ __all__ = ['CommandList']
 
 
 class CommandList(object):
-    def __init__(self, adcs):
+    def __init__(self, adcs, autoLoad=True):
         """
         Manages the list of commands.
 
         Args:
-        * adcs (bool): if you manage adcs commands or obs/pld
+          * adcs (bool): if you manage adcs commands or obs/pld
+          * autoLoad (bool): loads all the commands automatically
         """
         self._adcs = bool(adcs)
-        self.loadCMDS()
+        if autoLoad:
+            self.loadCMDS()
 
     def __str__(self):
         txt = ["Commands of {}".format("ADCS" if self._adcs else "OBS/PLD")]
@@ -118,67 +120,8 @@ class CommandList(object):
         # skip the shit
         for l in range(int(titles_row)):
             next(csvcontent)
-        if self._adcs:
-            self.csvcontent = self._grabCSVADCS(csvcontent)
-        else:
-            self.csvcontent = self._grabCSV(csvcontent)
+        self.csvcontent = self._grabCSV(csvcontent)
         print("Loaded {:d} commands".format(len(self.csvcontent)))
-
-    def _grabCSVADCS(self, itera):
-        ll = []
-        cm = None
-        for line in itera:
-            # is empty line ?
-            if line[param_commands.CSVNAME] == "" and\
-                        line[param_commands.CSVPARAMNAME] == "":
-                continue
-            # that's a new command, not an additional parameter
-            if line[param_commands.CSVSUBSYSTEM] != "":
-                if cm is not None:
-                    ll.append(cm)
-                cm = {
-                    'number': int(line[param_commands.CSVNUMBER]),
-                    'name':\
-                        core.rchop(core.ustr(line[param_commands.CSVNAME])\
-                                        .replace(' ', '_'), '_TM'),
-                    'pid': core.ustr(line[param_commands.CSVPID]).lower(),
-                    'desc': core.ustr(line[param_commands.CSVDESC]),
-                    'lparam':\
-                        int(0\
-                            if line[param_commands.CSVLPARAM].strip() == ""\
-                            else line[param_commands.CSVLPARAM])\
-                        if line[param_commands.CSVLPARAM].strip() != "*"\
-                        else "*",
-                    'subsystem':\
-                        core.ustr(line[param_commands.CSVSUBSYSTEM])\
-                                                .lower().replace(' ', '_'),
-                    'param': [],
-                    'n_nparam':\
-                        int(line[param_commands.CSVNPARAM]\
-                        if line[param_commands.CSVNPARAM].strip() != ""\
-                                else 0),
-                    'subSystemKey': Byt(int(line[\
-                        param_commands.CSVSUBSYSTEMKEYADCS]\
-                        .strip(), 16))[0].hex(),
-                    'adcsCommandId': Byt(int(line[\
-                        param_commands.CSVCOMMANDIDADCS]\
-                        .strip(), 16))[0].hex()}
-            # no parameter command
-            if cm['n_nparam'] == 0:
-                cm['lparam'] = 0
-            else:  # adding parameters to the last command added
-                cm['param'].append([
-                        core.ustr(line[param_commands.CSVPARAMNAME])\
-                                            .replace(' ', '_'),
-                        core.ustr(line[param_commands.CSVPARAMDESC]),
-                        core.ustr(line[param_commands.CSVPARAMRNG]),
-                        core.ustr(line[param_commands.CSVPARAMTYP])\
-                                            .replace('_t', ''),
-                        core.ustr(line[param_commands.CSVPARAMSIZE]),
-                        core.ustr(line[param_commands.CSVPARAMUNIT])\
-                                            .replace(' ', '_')])
-        ll.append(cm)
-        return ll
 
     def _grabCSV(self, itera):
         ll = []
@@ -213,6 +156,14 @@ class CommandList(object):
                         int(line[param_commands.CSVNPARAM]\
                         if line[param_commands.CSVNPARAM].strip() != ""\
                                 else 0)}
+                if self._adcs:
+                    cm.update({
+                        'subSystemKey': Byt(int(line[\
+                            param_commands.CSVSUBSYSTEMKEYADCS]\
+                            .strip(), 16))[0].hex(),
+                        'adcsCommandId': Byt(int(line[\
+                            param_commands.CSVCOMMANDIDADCS]\
+                            .strip(), 16))[0].hex()})
             # no parameter command
             if cm['n_nparam'] == 0:
                 cm['lparam'] = 0

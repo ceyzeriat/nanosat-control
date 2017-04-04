@@ -26,6 +26,4 @@
 
 
 from . import mgmtexception
-
-
-fcts = ['commandlist']
+from . import commandlist

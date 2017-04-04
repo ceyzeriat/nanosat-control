@@ -25,10 +25,10 @@
 ###############################################################################
 
 from param import param_all
-from .param_report import REPORTSDATA
+from .param_report import REPORTSDATA, EXTRADISPKEY
 
 
-__all__ = ['REPORTS', 'REPORTSDATA']
+__all__ = ['REPORTS', 'REPORTSDATA', 'EXTRADISPKEY']
 
 
 # init
@@ -36,19 +36,21 @@ REPORTS = {}
 
 
 class Report(object):
-    def __init__(self, key, message, params):
+    def __init__(self, key, message, params, prt=True):
         """
         Base for reporting to watchdog
 
         Args:
-        * key (str[15]): the str key-id of the report
-        * message (str): the reporting message
-        * params (iterable of str): the required parameters in the
-          message
+          * key (str[15]): the str key-id of the report
+          * message (str): the reporting message
+          * params (iterable of str): the required parameters in the
+            message
+          * prt (bool): to print or not this reporting
         """
         self.key = str(key)[:25]
         self.message = str(message)
         self.params = tuple(params)
+        self.prt = bool(prt)
 
     def pack(self, **kwargs):
         """
@@ -60,6 +62,8 @@ class Report(object):
         dic = {}
         for k in self.params:
             dic[k] = kwargs.get(k, '')
+        # add the print key
+        dic[EXTRADISPKEY] = kwargs.get(EXTRADISPKEY, self.prt)
         dic[param_all.REPORTKEY] = self.key
         return dic
 
@@ -71,9 +75,17 @@ class Report(object):
         * The parameters required for the reporting message, see
           ``params`` attribute
         """
-        return self.message.format(**kwargs)
+        if self.prt:
+            return self.message.format(**kwargs)
+        else:
+            return ''
 
 
 if not param_all.JUSTALIB:
-    for key, message, params in REPORTSDATA:
-        REPORTS[key] = Report(key=key, message=message, params=params)
+    for pp in REPORTSDATA:
+        key, message, params = pp[:3]
+        if len(pp) == 3:
+            REPORTS[key] = Report(key=key, message=message, params=params)
+        elif len(pp) == 4:
+            REPORTS[key] = Report(key=key, message=message,
+                                  params=params, prt=pp[3])

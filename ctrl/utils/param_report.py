@@ -28,6 +28,11 @@
 __all__ = ['REPORTSDATA']
 
 
+EXTRADISPKEY = "prt"
+
+
+# report_key, disp phrase fmt, params [, print flag]
+
 REPORTSDATA = [
     ('newRecConnection', "Receiver '{who}' connected to port '{port}'",
         ['who', 'port']),
@@ -49,14 +54,16 @@ REPORTSDATA = [
     ('myPID', "'{who}' has PID '{pid}'",
         ['who', 'pid']),
     ('IamDead', "Process '{who}' is dead",
-        ['who']),
+        ['who'], False),
     ('IamAlive', "Process '{who}' is alive",
-        ['who']),
+        ['who'], False),
     ('receivedRawTM', "'{who}' received CCSDS-flow data of length '{ll}' "\
         "for saving",
         ['who', 'll']),
     ('GotBlob', "'{who}' got blob of data of len '{ll}'",
         ['who', 'll', 'blob']),
     ('SettingUpAntenna', "Setting up antenna '{antenna}'",
-        ['who', 'antenna'])
+        ['who', 'antenna']),
+    ('gotACK', "Got acknowledment",
+        ['who', 'pkid', 'thecat', 'error'], False)
     ]

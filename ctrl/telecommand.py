@@ -26,8 +26,12 @@
 
 
 import time
-import Queue
+try:
+    import Queue as queue
+except:
+    import queue
 from segsol import controlling
+from .ccsds import param_ccsds
 from .utils import core
 
 
@@ -39,7 +43,7 @@ class Telecommand(object):
         """
         Reads a telecommand from the database
         """
-        cls.dbid = dbid
+        self.dbid = dbid
         # TC not saved
         if dbid is None:
             return
@@ -51,6 +55,7 @@ class Telecommand(object):
         """
         return
 
+    @classmethod
     def _fromCommand(cls, name, packet, dbid, hd, hdx, inputs, **kwargs):
         # broadcast on socket to the antenna process and watchdog
         controlling.broadcast_TC(cmdname=name, dbid=dbid, packet=packet,
@@ -70,7 +75,7 @@ class Telecommand(object):
         # don't expect any ack
         if not (rack or fack or eack):
             return cls(dbid=dbid)
-        pkid = int(hd[param_ccsds.PACKETID.name])
+        pkid = str(hd[param_ccsds.PACKETID.name])
         doneat = time.time() + kwargs.pop('timeout', core.DEFAULTTIMEOUTCMD)
         # check format first since it may prevent eack from being sent
         while time.time() < doneat:
@@ -78,14 +83,15 @@ class Telecommand(object):
                 res = controlling.ACKQUEUE.get(
                                 block=True,
                                 timeout=max(0, doneat - time.time()))
-            except Queue.Empty:
+                controlling.ACKQUEUE.task_done()
+            except queue.Empty:
                 break
-            if res[0] != pkid:
+            if str(res[0]) != pkid:
                 continue
-            if res[1] == 0:
+            if str(res[1]) == 0:
                 cls.RACK = True
-            elif res[1] == 1:
+            elif str(res[1]) == 1:
                 cls.FACK = (res[2] == 0)
-            elif res[1] == 2:
+            elif str(res[1]) == 2:
                 cls.EACK = (res[2] == 0)
         return cls(dbid=dbid)

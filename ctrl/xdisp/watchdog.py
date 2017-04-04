@@ -44,8 +44,8 @@ def e(txt):
 
 
 LISTENICO = (9, e(u'\u260E '))
-CONTROLICO = (11, e(u'\u262D '))
-SAVEICO = (13, e(u'\u26C3 '))
+CONTROLICO = (12, e(u'\u262D '))
+SAVEICO = (15, e(u'\u26C3 '))
 
 SENTICO = (50, e(u'\u2191'))
 RACKICO = (53, e(u'\u21AF'))
@@ -58,7 +58,7 @@ L0ICO = e(u'\u24DE')
 L1ICO = e(u'\u2461')
 HORLINE = e(u'\u2500')
 
-TCFMT = e('{timestamp} {pld}  {lvl}  {pid:15<} {pkid:5>} {cmd_name:18>}')
+TCFMT = e('{timestamp} {pld}  {lvl}  {pid:<15} {pkid:>5} {cmd_name:>18}')
 MAXSTORETC = 100
 MAXDISPLAYTC = 8
 MAXSTORETM = 100
@@ -182,56 +182,65 @@ class Xdisp(object):
                                             message), self.WHITE)
         self.RP.refresh()
 
-    def set_TC_sent(self, dbid, statut):
+    def set_TC_sent(self, packet_id, status):
         """
         Status can be OK, WAIT
         """
+        packet_id = str(packet_id)
         if not self.running:
             return
-        for item in self.TClist[:MAXDISPLAYTC]:
-            if dbid == item['dbid']:
-                self.TC.addstr(line, SENTICO[0], SENTICO[1], status)
+        for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
+            if packet_id == str(item['packet_id']):
+                self.TC.addstr(idx, SENTICO[0], SENTICO[1], status)
+                break
         self.TC.refresh()
 
-    def set_TC_rack(self, dbid, statut):
+    def set_TC_rack(self, packet_id, status):
+        """
+        Status can be NONE, OK or WAIT
+        """
+        packet_id = str(packet_id)
+        if not self.running:
+            return
+        for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
+            if packet_id == str(item['packet_id']):
+                self.TC.addstr(idx, RACKICO[0], RACKICO[1], status)
+                break
+        self.TC.refresh()
+
+    def set_TC_fack(self, packet_id, status):
         """
         Status can be NONE, OK, WAIT or FAIL
         """
+        packet_id = str(packet_id)
         if not self.running:
             return
-        for item in self.TClist[:MAXDISPLAYTC]:
-            if dbid == item['dbid']:
-                self.TC.addstr(line, RECICO[0], RECICO[1], status)
+        for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
+            if packet_id == str(item['packet_id']):
+                self.TC.addstr(idx, FACKICO[0], FACKICO[1], status)
+                break
         self.TC.refresh()
 
-    def set_TC_fack(self, dbid, statut):
+    def set_TC_eack(self, packet_id, status):
         """
         Status can be NONE, OK, WAIT or FAIL
         """
+        packet_id = str(packet_id)
         if not self.running:
             return
-        for item in self.TClist[:MAXDISPLAYTC]:
-            if dbid == item['dbid']:
-                self.TC.addstr(line, FORMATICO[0], FORMATICO[1], status)
-        self.TC.refresh()
-
-    def set_TC_eack(self, dbid, statut):
-        """
-        Status can be NONE, OK, WAIT or FAIL
-        """
-        if not self.running:
-            return
-        for item in self.TClist[:MAXDISPLAYTC]:
-            if dbid == item['dbid']:
-                self.TC.addstr(line, EXEICO[0], EXEICO[1], status)
+        for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
+            if packet_id == str(item['packet_id']):
+                self.TC.addstr(idx, EACKICO[0], EACKICO[1], status)
+                break
         self.TC.refresh()
 
     def add_TC(self, dbid, cmdname, inputs):
+        dbid = int(dbid)
+        packet_id = str(inputs['packet_id'])
         if dbid in [item['dbid'] for item in self.TClist]:
             return
         if not self.running:
             return
-        inputs['dbid'] = dbid
         self.TClist = [inputs] + self.TClist[:MAXSTORETC-1]
         self.TC.move(0, 0)
         self.TC.insertln()
@@ -242,24 +251,24 @@ class Xdisp(object):
                             lvl=L1ICO if int(inputs['level_flag']) == 1\
                                 else L0ICO,
                             pid=e(inputs['pid']),
-                            pkid=e(str(inputs['packet_id'])),
+                            pkid=e(packet_id),
                             cmd_name=e(cmdname)),
                         self.WHITE)
         self.TC.refresh()
-        self.set_TC_sent(dbid, self.WAIT)
-        self.set_TC_rack(dbid, self.WAIT\
-                                if int(inputs['reqack_reception']) == 1\
-                                else self.NONE)
-        self.set_TC_fack(dbid, self.WAIT\
-                                if int(inputs['reqack_format']) == 1\
-                                else self.NONE)
-        self.set_TC_eack(dbid, self.WAIT\
-                                if int(inputs['reqack_execution']) == 1\
-                                else self.NONE)
+        self.set_TC_sent(packet_id, self.WAIT)
+        self.set_TC_rack(packet_id,
+                         self.WAIT if int(inputs['reqack_reception']) == 1\
+                            else self.NONE)
+        self.set_TC_fack(packet_id,
+                         self.WAIT if int(inputs['reqack_format']) == 1\
+                            else self.NONE)
+        self.set_TC_eack(packet_id,
+                         self.WAIT if int(inputs['reqack_execution']) == 1\
+                            else self.NONE)
 
     def _init_colors(self):
         for i in range(0, curses.COLORS):
-            curses.init_pair(i + 1, i, 0)
+            curses.init_pair(i + 1, i, -1)
         self.WHITE = curses.color_pair(0)
         self.BLACK = curses.color_pair(1)
         self.RED = curses.color_pair(2)

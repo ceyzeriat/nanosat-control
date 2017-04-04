@@ -28,7 +28,7 @@
 import hein
 import param
 from param import param_all
-from ctrl.xdisp.watchdog import XDISP
+from ctrl.xdisp import watchdog as wt
 from ctrl.utils.report import REPORTS
 
 
@@ -38,6 +38,7 @@ __all__ = ['init', 'close']
 SHOW_REC_WATCH = None
 running = False
 PIDS = {}
+XDISP = wt.XDISP
 
 
 class ShowRec(hein.SocReceiver):
@@ -53,27 +54,40 @@ class ShowRec(hein.SocReceiver):
         """
         if key == 'rpt':
             rpt_key = str(data.pop(param_all.REPORTKEY, ''))
+            who = str(data['who'])
             if rpt_key == 'IamDead':
-                if data['who'] == param_all.CONTROLLINGNAME:
+                if who == param_all.CONTROLLINGNAME:
                     XDISP.set_controlico(XDISP.DEAD)
-                elif data['who'] == param.LISTENINGNAME:
+                elif who == param_all.LISTENINGNAME:
                     XDISP.set_listenico(XDISP.DEAD)
-                elif data['who'] == SAVINGNAME:
+                elif who == param_all.SAVINGNAME:
                     XDISP.set_saveico(XDISP.DEAD)
             elif rpt_key == 'IamAlive':
-                if data['who'] == param_all.CONTROLLINGNAME:
+                if who == param_all.CONTROLLINGNAME:
                     XDISP.set_controlico(XDISP.ALIVE)
-                elif data['who'] == param.LISTENINGNAME:
+                elif who == param_all.LISTENINGNAME:
                     XDISP.set_listenico(XDISP.ALIVE)
-                elif data['who'] == SAVINGNAME:
+                elif who == param_all.SAVINGNAME:
                     XDISP.set_saveico(XDISP.ALIVE)
+            elif rpt_key == 'gotACK':
+                thecat = str(data['thecat'])
+                error = str(data['error'])
+                if thecat == '0':  # RACK
+                    XDISP.set_TC_rack(str(data['pkid']),
+                                      XDISP.OK)
+                elif thecat == '1':  # FACK
+                    XDISP.set_TC_fack(str(data['pkid']),
+                                      XDISP.FAIL if error != '0' else XDISP.OK)
+                elif thecat == '2':  # EACK
+                    XDISP.set_TC_eack(str(data['pkid']),
+                                      XDISP.FAIL if error != '0' else XDISP.OK)
             elif rpt_key == '':
                 pass
             else:
                 XDISP.report(REPORTS[rpt_key].disp(**data))
-        elif key == 'dic':
-            #print("Raw data from '{}'".format(data['who']))
-            pass
+        elif key == 'tcf':
+            XDISP.add_TC(dbid=data.get('dbid'),
+                            cmdname=data.get('cmdname'), inputs=data)
 
 
 def init():

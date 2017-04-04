@@ -31,7 +31,7 @@ from byt import Byt
 from multiprocessing import Manager
 from ctrl.utils import core
 from ctrl.utils import ctrlexception
-from ctrl.utils.report import REPORTS
+from ctrl.utils.report import REPORTS, EXTRADISPKEY
 from ctrl.ccsds import CCSDSBlob
 from ctrl.kiss import Framer
 from ctrl.ccsds import TMUnPacker
@@ -111,6 +111,8 @@ def process_ack(data, **kwargs):
         thecat = 0
         error = 0
     # add to queue
+    report('gotACK', pkid=pkid, thecat=thecat, error=error,
+            **{EXTRADISPKEY: False})
     ACKQUEUE.put((pkid, thecat, error))  # RACKCAT, error
 
 
@@ -125,9 +127,8 @@ def broadcast_TC(cmdname, dbid, packet, hd, hdx, inputs):
     allinputs.update(hd)
     allinputs.update(hdx)
     allinputs.update(inputs)
-    allinputs.update({'cmdname': cmdname, 'dbid': dbid,
-                        param_all.REPORTKEY: 'broadcastFullTC'})
-    CONTROL_TRANS.tell_dict(**allinputs)
+    allinputs.update({'cmdname': cmdname, 'dbid': dbid})
+    CONTROL_TRANS.tell_key('tcf', **allinputs)
     # add the AX25/KISS framing
     if param_all.AX25ENCAPS:
         packet = Framer.encode_radio(packet)

@@ -29,7 +29,7 @@ import hein
 import sys
 from byt import Byt
 from ctrl.utils import core
-from ctrl.utils.report import REPORTS
+from ctrl.utils.report import REPORTS, EXTRADISPKEY
 from ctrl.utils import PIDWatchDog
 from ctrl.ccsds import TMUnPacker
 from ctrl.ccsds import param_ccsds
@@ -74,13 +74,9 @@ class WatchRec(hein.SocReceiver):
         """
         if key == 'rpt':
             process_report(data)
-        elif key == 'dic':
-            # comming from control
-            if self.portname == param_all.CONTROLLINGNAME:
-                # is a full TC broadcast
-                if str(data.get(param_all.REPORTKEY,'')) == 'broadcastFullTC':
-                    watchdog.XDISP.add_TC(dbid=data.pop('dbid'),
-                                    cmdname=data.pop('cmdname'), inputs=data)
+        elif key == 'tcf':  # full TC from control
+            # just pass it over
+            WATCH_TRANS.tell_key('tcf', **data)
         elif key == 'raw':
             pass
 
@@ -94,6 +90,7 @@ def process_report(inputs):
         if who in PIDS.keys():
             killit = PIDS.pop(who)
             killit.stop()
+        # restart watchdog PID with new PID number
         PIDS[who] = PIDWatchDog(name=who, pid=inputs['pid'],
                                 timeout=param_all.PROCESSTIMEOUT,
                                 whenDead=revive_process, whenAlive=say_hi,
@@ -149,8 +146,8 @@ def broadcast(*args, **kwargs):
     WATCH_TRANS.tell_report(**kwargs)
     key = str(kwargs.pop(param_all.REPORTKEY, args[0]))
     rpt_verb = REPORTS[key].disp(**kwargs)
-    if key not in ['IamDead', 'IamAlive']:
-        core.append_logfile(rpt_verb)
+    core.append_logfile(rpt_verb)
+    if kwargs.get(EXTRADISPKEY, REPORTS[key].prt):
         print(rpt_verb)
 
 
