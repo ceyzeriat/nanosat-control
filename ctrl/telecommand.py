@@ -66,6 +66,7 @@ class Telecommand(object):
         # no wait
         if not kwargs.pop('wait', core.DEFAULTWAITCMD):
             return cls(dbid=dbid)
+        # False if waiting for ACK, else None
         rack = bool(int(hd['reqack_reception']))
         cls.RACK = False if rack else None
         fack = bool(int(hd['reqack_format']))
@@ -79,6 +80,10 @@ class Telecommand(object):
         doneat = time.time() + kwargs.pop('timeout', core.DEFAULTTIMEOUTCMD)
         # check format first since it may prevent eack from being sent
         while time.time() < doneat:
+            # if no ACK is False (waiting for ACK), then break
+            if cls.RACK is not False and cls.FACK is not False and\
+                    cls.EACK is not False:
+                break
             try:
                 res = controlling.ACKQUEUE.get(
                                 block=True,
@@ -86,12 +91,14 @@ class Telecommand(object):
                 controlling.ACKQUEUE.task_done()
             except queue.Empty:
                 break
+            print("unqueuing",res)
+            print(res[0], pkid)
             if str(res[0]) != pkid:
                 continue
-            if str(res[1]) == 0:
+            if str(res[1]) == '0':
                 cls.RACK = True
-            elif str(res[1]) == 1:
+            elif str(res[1]) == '1':
                 cls.FACK = (res[2] == 0)
-            elif str(res[1]) == 2:
+            elif str(res[1]) == '2':
                 cls.EACK = (res[2] == 0)
         return cls(dbid=dbid)

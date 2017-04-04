@@ -98,18 +98,19 @@ def process_ack(data, **kwargs):
     hd = TMUnPacker.unpack_primHeader(data)
     cat = int(hd[param_ccsds.PACKETCATEGORY.name])
     pld = int(hd[param_ccsds.PAYLOADFLAG.name])
-    pkid = int(hd[param_ccsds.PACKETID.name])
     # not an acknoledgement
     if (pld, cat) not in param_category.ACKCATEGORIES:
         return
     # if FACK or EACK -> grab error
     if cat != int(param_category.RACKCAT):
         hd = TMUnPacker.unpack_auxHeader(data, pldFlag=pld, pktCat=cat)
+        pkid = int(hd[param_category_common.PACKETIDMIRROR.name])
         error = hd[param_category_common.ERRORCODE.name]
         thecat = 1 if cat == int(param_category.FACKCAT) else 2
     else:
         thecat = 0
         error = 0
+    print(pkid, thecat, error)
     # add to queue
     report('gotACK', pkid=pkid, thecat=thecat, error=error,
             **{EXTRADISPKEY: False})
