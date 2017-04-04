@@ -103,6 +103,7 @@ def process_ack(data, **kwargs):
     if (pld, cat) not in param_category.ACKCATEGORIES:
         return
     # if FACK or EACK -> grab error
+    print(cat)
     if cat != int(param_category.RACKCAT):
         hd = TMUnPacker.unpack_auxHeader(data, pldFlag=pld, pktCat=cat)
         error = hd[param_category_common.ERRORCODE.name]
