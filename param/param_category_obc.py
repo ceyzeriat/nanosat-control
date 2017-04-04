@@ -43,35 +43,35 @@ CATEGORYREGISTRATIONOBC = { RACKCAT:  '00000',  # rec ack
                             4:  '00100'}  # dump answer data
 
 
-TELECOMMANDIDMIRROR = dict( name='telecommand_id_mirror',
-                            start=0,
+TELECOMMANDIDMIRROR = CCSDSKey( name='telecommand_id_mirror',
+                                start=0,
+                                l=16,
+                                fctunpack=bincore.bin2int,
+                                fctpack=bincore.int2bin,
+                                verbose="telecommand id of the corresponding tc command being ackowledged or answered")
+
+PACKETIDMIRROR = CCSDSKey(  name='packet_id_mirror',
+                            start=16,
                             l=16,
                             fctunpack=bincore.bin2int,
                             fctpack=bincore.int2bin,
-                            verbose="telecommand id of the corresponding tc command being ackowledged or answered")
+                            verbose="corresponding packet id count of the command being ackowledged or answered")
 
-PACKETIDMIRROR = dict(  name='packet_id_mirror',
-                        start=16,
-                        l=16,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="corresponding packet id count of the command being ackowledged or answered")
-
-STARTADDRESS = dict(    name='start_address',
+STARTADDRESS = CCSDSKey(name='start_address',
                         start=32,
                         l=32,
                         fctunpack=bincore.bin2hex,
                         fctpack=bincore.hex2bin,
                         verbose="Start Adress of Dump")
 
-BYTESNUMBER = dict(     name='bytes_number',
+BYTESNUMBER = CCSDSKey( name='bytes_number',
                         start=64,
                         l=8,
                         fctunpack=bincore.bin2int,
                         fctpack=bincore.int2bin,
                         verbose="Length of data in dump packet")
 
-NSEGS = dict(           name='n_segments',
+NSEGS = CCSDSKey(       name='n_segments',
                         start=32,
                         l=16,
                         fctunpack=bincore.bin2int,

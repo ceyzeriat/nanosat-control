@@ -30,7 +30,6 @@ from ctrl.utils import bincore
 
 from . import param_category_obc as obc
 from . import param_category_pld as pld
-from .param_category_common import TELECOMMANDANSWERCAT
 
 
 # shape of all this stuff is
@@ -69,3 +68,4 @@ ACKCATEGORIES = list(set(pld.ACKCATEGORIESPLD + obc.ACKCATEGORIESOBC))
 RACKCAT = obc.RACKCAT
 FACKCAT = obc.cmn.FACKCAT
 EACKCAT = obc.cmn.EACKCAT
+TELECOMMANDANSWERCAT = obc.cmn.TELECOMMANDANSWERCAT

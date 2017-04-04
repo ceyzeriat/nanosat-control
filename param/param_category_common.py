@@ -26,6 +26,7 @@
 
 
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from ctrl.ccsds.ccsdskey import CCSDSKey
 from ctrl.utils import bincore
 
 
@@ -45,15 +46,15 @@ CATEGORYREGISTRATIONCOMMON = {  EACKCAT: '11111',  # exec ack
                                 TELECOMMANDANSWERCAT: '11101'}  # tc answer
 
 
-TELECOMMANDIDMIRROR = dict( name='telecommand_id_mirror',
-                            start=0,
-                            l=16,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
-                            verbose="telecommand id of the corresponding tc command being ackowledged or answered",
-                            disp="tcid")
+TELECOMMANDIDMIRROR = CCSDSKey( name='telecommand_id_mirror',
+                                start=0,
+                                l=16,
+                                fctunpack=bincore.bin2int,
+                                fctpack=bincore.int2bin,
+                                verbose="telecommand id of the corresponding tc command being ackowledged or answered",
+                                disp="tcid")
 
-PACKETIDMIRROR = dict(      name='packet_id_mirror',
+PACKETIDMIRROR = CCSDSKey(  name='packet_id_mirror',
                             start=16,
                             l=16,
                             fctunpack=bincore.bin2int,
@@ -61,7 +62,7 @@ PACKETIDMIRROR = dict(      name='packet_id_mirror',
                             verbose="corresponding packet id count of the command being ackowledged or answered",
                             disp="pkid")
 
-ERRORCODE = dict(           name='error_code',
+ERRORCODE = CCSDSKey(       name='error_code',
                             start=32,
                             l=16,
                             fctunpack=bincore.bin2intSign,

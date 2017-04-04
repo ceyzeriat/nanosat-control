@@ -42,7 +42,7 @@ CATEGORYREGISTRATIONPLD = { 4: '00100',  # HK
                             7: '00111'}  # beacon
 
 
-ACQMODE = dict(         name='acq_mode',
+ACQMODE = CCSDSKey(     name='acq_mode',
                         start=0,
                         l=8,
                         fctunpack=bincore.bin2int,
@@ -50,15 +50,15 @@ ACQMODE = dict(         name='acq_mode',
                         verbose="Activates science mode (0=Searching, 1=Tracking, 2=Test). Valid for the entire packet.",
                         disp="mode")
 
-INTEGRATIONTIME = dict( name='integration_time',
-                        start=8,
-                        l=16,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="Integration time (valid for the entire packet). In ms.",
-                        disp="itime")
+INTEGRATIONTIME = CCSDSKey( name='integration_time',
+                            start=8,
+                            l=16,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="Integration time (valid for the entire packet). In ms.",
+                            disp="itime")
 
-DELAY = dict(           name='delay',
+DELAY = CCSDSKey(       name='delay',
                         start=24,
                         l=16,
                         fctunpack=bincore.bin2int,
@@ -66,7 +66,7 @@ DELAY = dict(           name='delay',
                         verbose="Delay between two integrations (in ms/10)",
                         disp="delay")
 
-MODULATION = dict(      name='modulation',
+MODULATION = CCSDSKey(  name='modulation',
                         start=40,
                         l=8,
                         fctunpack=bincore.bin2int,
@@ -74,7 +74,7 @@ MODULATION = dict(      name='modulation',
                         verbose="Modulation pattern (0=Point, 1=Circle, 2=Flower, 3=Calibration pattern). Valid for the entire packet.",
                         disp="mod")
 
-RADIUS = dict(          name='radius',
+RADIUS = CCSDSKey(      name='radius',
                         start=48,
                         l=16,
                         fctunpack=bincore.bin2int,
@@ -82,7 +82,7 @@ RADIUS = dict(          name='radius',
                         verbose="Radius of the modulation pattern. Valid for the entire packet.",
                         disp="rad")
 
-NPOINTS = dict(         name='n_points',
+NPOINTS = CCSDSKey(     name='n_points',
                         start=64,
                         l=8,
                         fctunpack=bincore.bin2int,
