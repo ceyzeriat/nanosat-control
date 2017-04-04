@@ -66,6 +66,7 @@ class Telecommand(object):
         # no wait
         if not kwargs.pop('wait', core.DEFAULTWAITCMD):
             return cls(dbid=dbid)
+        # False if waiting for ACK, else None
         rack = bool(int(hd['reqack_reception']))
         cls.RACK = False if rack else None
         fack = bool(int(hd['reqack_format']))
@@ -75,10 +76,14 @@ class Telecommand(object):
         # don't expect any ack
         if not (rack or fack or eack):
             return cls(dbid=dbid)
-        pkid = str(hd[param_ccsds.PACKETID.name])
+        pkid = int(hd[param_ccsds.PACKETID.name])
         doneat = time.time() + kwargs.pop('timeout', core.DEFAULTTIMEOUTCMD)
         # check format first since it may prevent eack from being sent
         while time.time() < doneat:
+            # if no ACK is False (waiting for ACK), then break
+            if cls.RACK is not False and cls.FACK is not False and\
+                    cls.EACK is not False:
+                break
             try:
                 res = controlling.ACKQUEUE.get(
                                 block=True,
@@ -86,12 +91,13 @@ class Telecommand(object):
                 controlling.ACKQUEUE.task_done()
             except queue.Empty:
                 break
-            if str(res[0]) != pkid:
-                continue
-            if str(res[1]) == 0:
-                cls.RACK = True
-            elif str(res[1]) == 1:
-                cls.FACK = (res[2] == 0)
-            elif str(res[1]) == 2:
-                cls.EACK = (res[2] == 0)
+            # pkid mathcing except for when it is None, meaning it is RACK
+            # because TM packets being RACK don't copy the PACKETID of the TC
+            if res[0] == pkid or res[0] is None:
+                if res[1] == 0 and res[0] is None:
+                    cls.RACK = True
+                elif res[1] == 1 and res[0] is not None:
+                    cls.FACK = (res[2] == 0)
+                elif res[1])== 2 and res[0] is not None:
+                    cls.EACK = (res[2] == 0)
         return cls(dbid=dbid)
