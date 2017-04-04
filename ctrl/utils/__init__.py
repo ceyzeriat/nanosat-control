@@ -32,4 +32,7 @@ from . import core
 from .day import *
 from .ms import *
 from .report import *
-from .hmac import *
+
+from param import param_all
+if param_all.USESIGGY:
+	from .hmac import *

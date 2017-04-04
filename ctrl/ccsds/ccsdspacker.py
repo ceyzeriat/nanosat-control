@@ -30,7 +30,8 @@ from param import param_category
 from param import param_apid
 from param import param_all
 from ..utils import core
-from ..utils import hmac
+if param_all.USESIGGY:
+    from ..utils import hmac
 from ..utils import bincore
 from . import ccsdsexception
 from . import param_ccsds
