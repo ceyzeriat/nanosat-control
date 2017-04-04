@@ -26,6 +26,7 @@
 
 
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from ctrl.ccsds.ccsdskey import CCSDSKey
 from ctrl.utils import bincore
 
 from . import param_category_common as cmn
