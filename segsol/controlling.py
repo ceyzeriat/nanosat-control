@@ -106,6 +106,7 @@ def process_ack(data, **kwargs):
     print(cat)
     if cat != int(param_category.RACKCAT):
         hd = TMUnPacker.unpack_auxHeader(data, pldFlag=pld, pktCat=cat)
+        print(hd)
         error = hd[param_category_common.ERRORCODE.name]
         thecat = 1 if cat == int(param_category.FACKCAT) else 2
     else:

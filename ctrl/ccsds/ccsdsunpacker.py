@@ -111,14 +111,16 @@ class CCSDSUnPacker(object):
 
         Args:
         * packet (byts): the string that contains the full packet
-        * pldFlag (bool): the payload flag of the packet
+        * pldFlag (int): the payload flag of the packet
         * pktCat (int): the packet category
         """
         if self.mode == 'telecommand':
             return {}
-        if pktCat not in param_category.PACKETCATEGORIES[int(pldFlag)].keys():
+        pldFlag = int(pldFlag)
+        pktCat = int(pktCat)
+        if pktCat not in param_category.PACKETCATEGORIES[pldFlag].keys():
             raise ccsdsexception.CategoryMissing(pktCat, pldFlag)
-        hx = param_category.PACKETCATEGORIES[int(pldFlag)][pktCat]
+        hx = param_category.PACKETCATEGORIES[pldFlag][pktCat]
         if hx.size == 0:
             return {}
         start = param_ccsds.HEADER_P_KEYS.size
