@@ -98,6 +98,6 @@ class Telecommand(object):
                     cls.RACK = True
                 elif res[1] == 1 and res[0] is not None:
                     cls.FACK = (res[2] == 0)
-                elif res[1])== 2 and res[0] is not None:
+                elif res[1] == 2 and res[0] is not None:
                     cls.EACK = (res[2] == 0)
         return cls(dbid=dbid)
