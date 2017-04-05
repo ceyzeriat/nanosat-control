@@ -73,7 +73,7 @@ class ShowRec(hein.SocReceiver):
                     XDISP.set_saveico(XDISP.ALIVE)
             elif rpt_key == 'sentTC':
                 XDISP.report(str(data.keys()))
-                res = TCUnPacker.unpack_primHeader(data['data'])[0]
+                res = TCUnPacker.unpack_primHeader(data['data'])
                 XDISP.set_TC_sent(res[param_ccsds.PACKETID.name], XDISP.OK)
             elif rpt_key == 'gotACK':
                 thecat = str(data['thecat'])

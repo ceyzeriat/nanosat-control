@@ -82,7 +82,7 @@ class ControlRec(hein.SocReceiver):
             if str(data[param_all.REPORTKEY]) == 'sentTC':
                 res = TCUnPacker.unpack_primHeader(data['data'])
                 pkid = int(res[param_ccsds.PACKETID.name])
-                db.update_sent_TC_time(pkid, kwargs['t'])
+                db.update_sent_TC_time(pkid, data['t'])
             else:
                 return
         blobish = data['data']
