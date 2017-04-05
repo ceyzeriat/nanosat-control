@@ -43,7 +43,7 @@ REPORTSDATA = [
     ('sendingTC', "'{who}' is sending TC",
         ['who']),
     ('sentTC', "'{who}' sent TC at '{t}'",
-        ['who', 't', 'pkid', 'data']),
+        ['who', 't', 'data']),
     ('receivedTM', "'{who}' received data for saving",
         ['who']),
     ('receivedCallsignTM', "'{who}' (callsign '{source}') received data of "\
