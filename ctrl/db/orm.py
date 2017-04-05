@@ -120,6 +120,7 @@ def update_sent_TC_time(pkid, t):
     idx = DB.query(TC.id).filter_by(packet_id=pkid)\
             .order_by(TC.id.desc()).limit(1).with_for_update()
     update(TC).values({'time_sent': t}).where(TC.id == idx.as_scalar())
+    print idx.first()[0]
     return idx.first()[0]
 
 
