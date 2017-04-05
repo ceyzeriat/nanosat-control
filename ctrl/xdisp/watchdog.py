@@ -43,13 +43,13 @@ def e(txt):
     return txt.encode(locale_code)
 
 
-LISTENICO = (9, e(u'\u260E '))
-CONTROLICO = (12, e(u'\u262D '))
-SAVEICO = (15, e(u'\u26C3 '))
+LISTENICO = (9, e(u'\u260E'))
+CONTROLICO = (12, e(u'\u262D'))
+SAVEICO = (15, e(u'\u26C3'))
 
 SENTICO = (50, e(u'\u2191'))
 RACKICO = (53, e(u'\u21AF'))
-FACKICO = (56, e(u'\U0001D122'))
+FACKICO = (56, e(u'\u2131'))
 EACKICO = (59, e(u'\u2020'))
 
 PAYLOADICO = e(u'\u03C0')

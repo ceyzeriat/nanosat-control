@@ -79,8 +79,7 @@ class CmADCS(Cm):
         if len(rep) != self.lparam and self.lparam is not None:
             raise cmdexception.WrongCommandLength(self.name, len(rep),
                                                     self.lparam)
-        rep = Byt('[\x14') + self.subSystemKey + self.adcsCommandId\
-                + rep + Byt('][\x15]')
+        rep = Byt('\x14') + self.subSystemKey + self.adcsCommandId + rep
         return rep, inputs
 
     def to_dict(self):

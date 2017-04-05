@@ -32,7 +32,10 @@ from ..utils import core
 from .callsign import Callsign
 
 
-__all__ = ['Framer']
+if param_all.JUSTALIB:
+    __all__ = ['Frame']
+else:
+    __all__ = ['Framer']
 
 
 class Frame(object):

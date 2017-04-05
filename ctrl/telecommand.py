@@ -94,11 +94,12 @@ class Telecommand(object):
                 break
             # pkid mathcing except for when it is None, meaning it is RACK
             # because TM packets being RACK don't copy the PACKETID of the TC
-            if res[0] == pkid or res[0] is None:
-                if res[1] == 0 and res[0] is None:
+            if res[0] is None:
+                if res[1] == 0:
                     cls.RACK = True
-                elif res[1] == 1 and res[0] is not None:
+            elif res[0] == pkid:
+                if res[1] == 1:
                     cls.FACK = (res[2] == 0)
-                elif res[1] == 2 and res[0] is not None:
+                elif res[1] == 2:
                     cls.EACK = (res[2] == 0)
         return cls(dbid=dbid)
