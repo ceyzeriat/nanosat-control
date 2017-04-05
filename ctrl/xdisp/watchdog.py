@@ -59,7 +59,7 @@ L0ICO = e(u'\u2218')
 L1ICO = e(u'\u25CE')
 HORLINE = e(u'\u2500')
 
-TCFMT = e('{timestamp} {pld} {lvl} {pid:<15} {pkid:>5} {cmd_name:>30}')
+TCFMT = e('{timestamp} {pld} {lvl} {pid:<15} {pkid:>5} {cmd_name:^28}')
 MAXSTORETC = 100
 MAXDISPLAYTC = 8
 MAXSTORETM = 100
