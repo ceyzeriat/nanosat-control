@@ -31,6 +31,7 @@ import time
 from threading import Thread
 from ..utils import core
 from param import param_all
+from param.param_apid import PIDREGISTRATION_REV
 
 __all__ = ['XDISP']
 
@@ -47,10 +48,10 @@ LISTENICO = (9, e(u'\u260E'))
 CONTROLICO = (12, e(u'\u262D'))
 SAVEICO = (15, e(u'\u2744'))
 
-SENTICO = (50, e(u'\u2191'))
-RACKICO = (53, e(u'\u21AF'))
-FACKICO = (56, e(u'\u03A6'))
-EACKICO = (59, e(u'\u2020'))
+SENTICO = (75, e(u'\u2191'))
+RACKICO = (76, e(u'\u21AF'))
+FACKICO = (77, e(u'\u03A6'))
+EACKICO = (78, e(u'\u2020'))
 
 PAYLOADICO = e(u'\u03C0')
 OBCICO = e(u'\u03A9')
@@ -58,7 +59,7 @@ L0ICO = e(u'\u2218')
 L1ICO = e(u'\u25CE')
 HORLINE = e(u'\u2500')
 
-TCFMT = e('{timestamp} {pld}  {lvl}  {pid:<15} {pkid:>5} {cmd_name:>18}')
+TCFMT = e('{timestamp} {pld} {lvl} {pid:<15} {pkid:>5} {cmd_name:>30}')
 MAXSTORETC = 100
 MAXDISPLAYTC = 8
 MAXSTORETM = 100
@@ -244,13 +245,14 @@ class Xdisp(object):
         self.TClist = [inputs] + self.TClist[:MAXSTORETC-1]
         self.TC.move(0, 0)
         self.TC.insertln()
+        pld = int(inputs['payload_flag'])
+        lvl = int(inputs['level_flag'])
+        pid = int(inputs['pid'])
         self.TC.addstr(0, 0, TCFMT.format(
                             timestamp=e(core.now().strftime("%F %T")),
-                            pld=PAYLOADICO if int(inputs['payload_flag']) == 1\
-                                else OBCICO,
-                            lvl=L1ICO if int(inputs['level_flag']) == 1\
-                                else L0ICO,
-                            pid=e(inputs['pid']),
+                            pld=PAYLOADICO if pld == 1 else OBCICO,
+                            lvl=L1ICO if lvl == 1 else L0ICO,
+                            pid=e(PIDREGISTRATION_REV[pid][pld][lvl]),
                             pkid=e(packet_id),
                             cmd_name=e(cmdname)),
                         self.WHITE)
