@@ -45,17 +45,17 @@ def e(txt):
 
 LISTENICO = (9, e(u'\u260E'))
 CONTROLICO = (12, e(u'\u262D'))
-SAVEICO = (15, e(u'\u26C3'))
+SAVEICO = (15, e(u'\u2744'))
 
 SENTICO = (50, e(u'\u2191'))
 RACKICO = (53, e(u'\u21AF'))
-FACKICO = (56, e(u'\u2131'))
+FACKICO = (56, e(u'\u03A6'))
 EACKICO = (59, e(u'\u2020'))
 
 PAYLOADICO = e(u'\u03C0')
 OBCICO = e(u'\u03A9')
-L0ICO = e(u'\u24DE')
-L1ICO = e(u'\u2461')
+L0ICO = e(u'\u2218')
+L1ICO = e(u'\u25CE')
 HORLINE = e(u'\u2500')
 
 TCFMT = e('{timestamp} {pld}  {lvl}  {pid:<15} {pkid:>5} {cmd_name:>18}')
