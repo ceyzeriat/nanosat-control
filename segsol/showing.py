@@ -55,6 +55,7 @@ class ShowRec(hein.SocReceiver):
         if key == 'rpt':
             rpt_key = str(data.pop(param_all.REPORTKEY, ''))
             who = str(data['who'])
+            XDISP.report(who+rpt_key)
             if rpt_key == 'IamDead':
                 if who == param_all.CONTROLLINGNAME:
                     XDISP.set_controlico(XDISP.DEAD)
@@ -63,6 +64,7 @@ class ShowRec(hein.SocReceiver):
                 elif who == param_all.SAVINGNAME:
                     XDISP.set_saveico(XDISP.DEAD)
             elif rpt_key == 'IamAlive':
+                XDISP.report('alive')
                 if who == param_all.CONTROLLINGNAME:
                     XDISP.set_controlico(XDISP.ALIVE)
                 elif who == param_all.LISTENINGNAME:
