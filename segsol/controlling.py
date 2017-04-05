@@ -79,7 +79,7 @@ class ControlRec(hein.SocReceiver):
             return
         if key == 'rpt':
             # case of getting the TC back, update time_sent in DB
-            if data.get(param_all.REPORTKEY, '') == 'sentTC':
+            if str(data[param_all.REPORTKEY]) == 'sentTC':
                 res = TCUnPacker.unpack_primHeader(data['data'])
                 pkid = int(res[0][param_ccsds.PACKETID.name])
                 db.update_sent_TC_time(pkid, kwargs['t'])
