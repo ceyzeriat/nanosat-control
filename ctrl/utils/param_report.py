@@ -54,9 +54,9 @@ REPORTSDATA = [
     ('myPID', "'{who}' has PID '{pid}'",
         ['who', 'pid']),
     ('IamDead', "Process '{who}' is dead",
-        ['who'], False),
+        ['who'], True),
     ('IamAlive', "Process '{who}' is alive",
-        ['who'], False),
+        ['who'], True),
     ('receivedRawTM', "'{who}' received CCSDS-flow data of length '{ll}' "\
         "for saving",
         ['who', 'll']),
@@ -65,5 +65,5 @@ REPORTSDATA = [
     ('SettingUpAntenna', "Setting up antenna '{antenna}'",
         ['who', 'antenna']),
     ('gotACK', "Got acknowledment",
-        ['who', 'pkid', 'thecat', 'error'], False)
+        ['who', 'pkid', 'thecat', 'error'], True)
     ]
