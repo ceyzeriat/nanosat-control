@@ -52,7 +52,7 @@ class ShowRec(hein.SocReceiver):
 
     def process(self, key, data):
         """
-        Sends the data to the antenna
+        Updates the XDISP window
         """
         if key == 'rpt':
             rpt_key = str(data.pop(param_all.REPORTKEY, ''))
@@ -72,6 +72,7 @@ class ShowRec(hein.SocReceiver):
                 elif who == param_all.SAVINGNAME:
                     XDISP.set_saveico(XDISP.ALIVE)
             elif rpt_key == 'sentTC':
+                XDISP.report(str(data.keys()))
                 res = TCUnPacker.unpack_primHeader(data['data'])[0]
                 XDISP.set_TC_sent(res[param_ccsds.PACKETID.name], XDISP.OK)
             elif rpt_key == 'gotACK':
