@@ -28,6 +28,8 @@
 import hein
 import param
 from param import param_all
+from ctrl.ccsds import TCUnPacker
+from ctrl.ccsds import param_ccsds
 from ctrl.xdisp import watchdog as wt
 from ctrl.utils.report import REPORTS
 
@@ -69,6 +71,9 @@ class ShowRec(hein.SocReceiver):
                     XDISP.set_listenico(XDISP.ALIVE)
                 elif who == param_all.SAVINGNAME:
                     XDISP.set_saveico(XDISP.ALIVE)
+            elif rpt_key == 'sentTC':
+                res = TCUnPacker.unpack_primHeader(data['data'])[0]
+                XDISP.set_TC_sent(res[param_ccsds.PACKETID.name], XDISP.OK)
             elif rpt_key == 'gotACK':
                 thecat = str(data['thecat'])
                 error = str(data['error'])

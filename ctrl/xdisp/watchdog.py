@@ -279,13 +279,13 @@ class Xdisp(object):
         self.BLUE = curses.color_pair(5)
         self.PURPLE = curses.color_pair(6)
         self.CYAN = curses.color_pair(7)
-        self.NOSTARTED = self.YELLOW
+        self.NOSTARTED = self.BLUE
         self.ALIVE = self.GREEN
         self.DEAD = self.RED
-        self.NONE = self.YELLOW
+        self.NONE = self.BLUE
         self.OK = self.GREEN
         self.ERROR = self.RED
-        self.WAIT = self.BLUE
+        self.WAIT = self.YELLOW
         
     def _loopit(self):
         while self.running:

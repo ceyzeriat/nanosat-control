@@ -77,8 +77,9 @@ class ListenRec(hein.SocReceiver):
             report('sendingTC')
             ANTENNA.write(data)
             now = core.now()
-            ### if success, update hd['time_sent'] in database
-            report('sentTC', t=now)
+            # this report is caught by control, which updates the
+            # time_sent in the DB
+            report('sentTC', t=now, data=data)
 
 
 def process_data(data):

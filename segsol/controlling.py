@@ -35,7 +35,9 @@ from ctrl.utils.report import REPORTS, EXTRADISPKEY
 from ctrl.ccsds import CCSDSBlob
 from ctrl.kiss import Framer
 from ctrl.ccsds import TMUnPacker
+from ctrl.ccsds import TCUnPacker
 from ctrl.ccsds import param_ccsds
+from ctrl import db
 from param import param_all
 from param import param_category
 from param import param_category_common
@@ -70,11 +72,19 @@ class ControlRec(hein.SocReceiver):
 
     def process(self, key, data):
         """
-        Checks for 
+        Checks for feedback from listen
         """
-        # ignores the reporting
-        if key == 'rpt':
+        # ignores anything but dic and rpt if key is sentTC
+        if key != 'dic' and key != 'rpt':
             return
+        if key == 'rpt':
+            # case of getting the TC back, update time_sent in DB
+            if data.get(param_all.REPORTKEY, '') == 'sentTC':
+                res = TCUnPacker.unpack_primHeader(data['data'])
+                pkid = int(res[0][param_ccsds.PACKETID.name])
+                db.update_sent_TC_time(pkid, kwargs['t'])
+            else:
+                return
         blobish = data['data']
         # skin the AX25 and KISS
         if param_all.AX25ENCAPS:
@@ -84,17 +94,18 @@ class ControlRec(hein.SocReceiver):
         pk = blobparser.grab_first_packet(start=start)
         while pk is not None:
             data['data'] = Byt(pk)
-            process_ack(**data)
+            process_incoming(**data)
             start += len(pk)
             pk = blobparser.grab_first_packet(start=start)
         return
 
 
-def process_ack(data, **kwargs):
+def process_incoming(**kwargs):
     """
     A callback function that gives ackowledgement notice
     """
     global ACKQUEUE
+    data = kwargs['data']
     hd = TMUnPacker.unpack_primHeader(data)
     cat = int(hd[param_ccsds.PACKETCATEGORY.name])
     pld = int(hd[param_ccsds.PAYLOADFLAG.name])
@@ -107,14 +118,15 @@ def process_ack(data, **kwargs):
         pkid = int(hd[param_category_common.PACKETIDMIRROR.name])
         error = int(hd[param_category_common.ERRORCODE.name])
         thecat = 1 if cat == int(param_category.FACKCAT) else 2
-    else:
-        pkid = None
+    else:  # just a RACK
+        pkid = None  # no pkid mirror for RACK
         error = 0
         thecat = 0
     # add to queue
     report('gotACK', pkid=pkid, thecat=thecat, error=error,
             **{EXTRADISPKEY: False})
-    ACKQUEUE.put((pkid, thecat, error))  # RACKCAT, error
+    # send it to the queue for telecommand
+    ACKQUEUE.put((pkid, thecat, error))
 
 
 def broadcast_TC(cmdname, dbid, packet, hd, hdx, inputs):

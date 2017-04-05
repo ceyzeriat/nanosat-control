@@ -29,6 +29,7 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from sqlalchemy import desc
+from sqlalchemy import update
 from param import param_category
 from param import param_apid
 from ..utils import core
@@ -37,7 +38,7 @@ from ..ccsds import param_ccsds
 
 
 __all__ = ['init_DB', 'get_column_keys', 'save_TC_to_DB', 'close_DB',
-            'save_TM_to_DB']
+            'save_TM_to_DB', 'update_sent_TC_time']
 
 
 running = False
@@ -104,6 +105,22 @@ def save_TC_to_DB(hd, hdx, inputs):
                                             value=v))
     DB.commit()
     return TC.id
+
+
+def update_sent_TC_time(pkid, t):
+    """
+    Updates the time_sent column in telecommands are the
+    TC has been sent
+
+    Args:
+      * pkid (int): the packet_id
+      * t (datetime): the sent time
+    """
+    TC = TABLES['Telecommand']
+    idx = DB.query(TC.id).filter_by(TC.packet_id=pkid)\
+            .order_by(TC.id.desc()).limit(1).with_for_update()
+    update(TC).values({'time_sent': t}).where(TC.id == idx.as_scalar())
+    return idx.first()[0]
 
 
 def save_TM_to_DB(hd, hdx, data):
