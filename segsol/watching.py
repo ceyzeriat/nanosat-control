@@ -143,7 +143,6 @@ def broadcast(*args, **kwargs):
     """
     Broacasts info
     """
-    print(kwargs)
     kwargs[param_all.REPORTKEY] = str(args[0])
     WATCH_TRANS.tell_report(**kwargs)
     key = kwargs.pop(param_all.REPORTKEY)
