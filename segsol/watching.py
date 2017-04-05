@@ -84,7 +84,7 @@ class WatchRec(hein.SocReceiver):
 def process_report(inputs):
     global PIDS
     key = str(inputs.get(param_all.REPORTKEY))
-    broadcast(key, **inputs)
+    broadcast(**inputs)
     if key == 'myPID':
         who = inputs['who']
         if who in PIDS.keys():
@@ -131,12 +131,12 @@ def process_report(inputs):
 
 
 def revive_process(who):
-    broadcast('IamDead', who=who)
+    broadcast(who=who, **{param_all.REPORTKEY: 'IamDead'})
     #PIDS[who].reset()
 
 
 def say_hi(who):
-    broadcast('IamAlive', who=who)
+    broadcast(who=who, **{param_all.REPORTKEY: 'IamAlive'})
 
 
 def broadcast(*args, **kwargs):
