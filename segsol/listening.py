@@ -119,7 +119,6 @@ def report(*args, **kwargs):
     """
     key = str(args[0])
     rp = REPORTS[key].pack(who=param_all.LISTENINGNAME, **kwargs)
-    print(rp)
     LISTEN_TRANS.tell_report(**rp)
 
 
