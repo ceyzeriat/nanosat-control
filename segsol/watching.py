@@ -144,7 +144,7 @@ def broadcast(*args, **kwargs):
     Broacasts info
     """
     WATCH_TRANS.tell_report(**kwargs)
-    key = str(kwargs.pop(param_all.REPORTKEY, args[0]))
+    key = str(kwargs.pop(param_all.REPORTKEY, ''))
     rpt_verb = REPORTS[key].disp(**kwargs)
     core.append_logfile(rpt_verb)
     if kwargs.get(EXTRADISPKEY, REPORTS[key].prt):
