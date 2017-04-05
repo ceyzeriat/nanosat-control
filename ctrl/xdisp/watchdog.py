@@ -45,8 +45,8 @@ def e(txt):
 
 
 LISTENICO = (9, e(u'\u260E'))
-CONTROLICO = (12, e(u'\u262D'))
-SAVEICO = (15, e(u'\u2744'))
+CONTROLICO = (11, e(u'\u262D'))
+SAVEICO = (13, e(u'\u2744'))
 
 SENTICO = (75, e(u'\u2191'))
 RACKICO = (76, e(u'\u21AF'))
