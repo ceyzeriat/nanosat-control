@@ -314,9 +314,9 @@ def update_it(self):
 
 def newlinebox(h, w, y, x, title=None):
     wb = curses.newwin(2, w, y-1, x)
-    wb.addstr(0, 0, HORLINE*(w-x))
+    wb.addstr(0, 0, e(HORLINE)*(w-x))
     if title is not None:
-        wb.addstr(0, 2, title)
+        wb.addstr(0, 2, e(title))
     wb.refresh()
     return curses.newwin(h, w, y, x)
 
