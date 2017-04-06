@@ -248,37 +248,37 @@ F_KEYS = [  dict(name='-', start=4, l=1, disp="",
 
 O_KEYS = [  dict(name='proc_freq', start=248, l=8, disp="proc_freq",
                     verbose="proc_freq",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
+                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),
             dict(name='phot', start=208, l=16, disp="phot",
                     verbose="phot",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
+                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),
             dict(name='mode', start=224, l=8, disp="mode",
                     verbose="mode",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
+                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),
             dict(name='acqmode', start=232, l=8, disp="acqmode",
                     verbose="acqmode",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
+                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),
             dict(name='beacon_flag', start=241, l=1, disp="beacon_flag",
                     verbose="beacon_flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)                                    
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
             dict(name='tec_flag', start=242, l=1, disp="tec_flag",
                     verbose="tec_flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)                                    
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
             dict(name='sensors_flag', start=243, l=1, disp="sensors_flag",
                     verbose="sensors_flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
             dict(name='hv_flag', start=244, l=1, disp="hv_flag",
                     verbose="hv_flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)            
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
             dict(name='dac_flag', start=245, l=1, disp="dac_flag",
                     verbose="dac_flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
             dict(name='interrupt_flag', start=246, l=1, disp="interrupt_flag",
                     verbose="interrupt_flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
             dict(name='diode_flag', start=247, l=1, disp="diode_flag",
                     verbose="diode_flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin)#fctunpack=temp_unpack, fctpack=temp_pack)            
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin)
             ]
 
 
