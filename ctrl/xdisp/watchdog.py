@@ -67,6 +67,9 @@ MAXDISPLAYTM = 8
 MAXSTORERP = 100
 MAXDISPLAYRP = 10
 
+TIMEUPDFREQ = 3.
+PRINTFREQ = 5.
+
 
 """
 VERLINESPLITLEFT = e(u'\u2524')
@@ -81,25 +84,21 @@ HORLINESPLITDOWN = e(u'\u252C')
 CROSS = e(u'\u253C')
 """
 
+class PrintOut(object):
+    def __init__(self, text, loc, opts=None, newline=False):
+        self.text = e(text)
+        self.line = loc[0]
+        self.col = loc[1]
+        self.opts = opts
+        self.newline = bool(newline)
 
-def newlinebox(h, w, y, x, title=None):
-    wb = curses.newwin(2, w, y-1, x)
-    wb.addstr(0, 0, HORLINE*(w-x))
-    if title is not None:
-        wb.addstr(0, 2, title)
-    wb.refresh()
-    return curses.newwin(h, w, y, x)
-
-def loop_time(self, freq):
-    while self.running:
-        self.set_time()
-        time.sleep(1./freq)
 
 class Xdisp(object):
     def __init__(self):
         self.running = False
         self.TClist = []
         self.TMlist = []
+        self.printbuff = []
 
     def start(self):
         curses.wrapper(self.init)
@@ -126,9 +125,17 @@ class Xdisp(object):
         self.set_controlico(status=self.NOSTARTED)
         self.set_saveico(status=self.NOSTARTED)
         self.set_listenico(status=self.NOSTARTED)
-        self._start_set_time(freq=3)
-        self._loopit()
+        loopy = Thread(target=loop_time, args=(self,))
+        loopy.daemon = True
+        loopy.start()
+        loopy = Thread(target=update_it, args=(self,))
+        loopy.daemon = True
+        loopy.start()
+        self._key_catch()
         return
+
+    def _disp(self, win, txt):
+        self.printbuff.append((win, txt))
 
     def set_controlico(self, status):
         """
@@ -136,8 +143,8 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        self.bar.addstr(0, CONTROLICO[0], CONTROLICO[1], status)
-        self.bar.refresh()
+        self._disp(self.bar,
+                   PrintOut(CONTROLICO[1], (0, CONTROLICO[0]), opts=status))
 
     def set_saveico(self, status):
         """
@@ -145,8 +152,8 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        self.bar.addstr(0, SAVEICO[0], SAVEICO[1], status)
-        self.bar.refresh()
+        self._disp(self.bar,
+                   PrintOut(SAVEICO[1], (0, SAVEICO[0]), opts=status))
 
     def set_listenico(self, status):
         """
@@ -154,13 +161,8 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        self.bar.addstr(0, LISTENICO[0], LISTENICO[1], status)
-        self.bar.refresh()
-
-    def _start_set_time(self, freq=3):
-        loopy = Thread(target=loop_time, args=(self, float(freq)))
-        loopy.daemon = True
-        loopy.start()
+        self._disp(self.bar,
+                   PrintOut(LISTENICO[1], (0, LISTENICO[0]), opts=status))
 
     def set_time(self):
         """
@@ -168,8 +170,8 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        self.bar.addstr(0, 0, core.now().strftime('%T'), self.BLUE)
-        self.bar.refresh()
+        self._disp(self.bar,
+                   PrintOut(core.now().strftime('%T'), (0, 0), opts=self.BLUE))
 
     def report(self, message):
         """
@@ -177,63 +179,61 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        self.RP.move(0, 0)
-        self.RP.insertln()
-        self.RP.addstr(0, 0, '{} {}'.format(core.now().strftime('%T'),\
-                                            message), self.WHITE)
-        self.RP.refresh()
+        self._disp(self.RP,
+                   PrintOut('{} {}'.format(core.now().strftime('%T'), message),
+                            (0, 0), opts=self.WHITE, newline=True))
 
     def set_TC_sent(self, packet_id, status):
         """
         Status can be OK, WAIT
         """
-        packet_id = str(packet_id)
         if not self.running:
             return
         for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
-            if packet_id == str(item['packet_id']):
-                self.TC.addstr(idx, SENTICO[0], SENTICO[1], status)
+            if int(packet_id) == int(item['packet_id']):
+                self._disp(self.TC,
+                           PrintOut(SENTICO[1], (idx, SENTICO[0]),
+                                    opts=status))
                 break
-        self.TC.refresh()
 
     def set_TC_rack(self, packet_id, status):
         """
         Status can be NONE, OK or WAIT
         """
-        packet_id = str(packet_id)
         if not self.running:
             return
         for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
-            if packet_id == str(item['packet_id']):
-                self.TC.addstr(idx, RACKICO[0], RACKICO[1], status)
+            if int(packet_id) == int(item['packet_id']):
+                self._disp(self.TC,
+                           PrintOut(RACKICO[1], (idx, RACKICO[0]),
+                                    opts=status))
                 break
-        self.TC.refresh()
 
     def set_TC_fack(self, packet_id, status):
         """
         Status can be NONE, OK, WAIT or FAIL
         """
-        packet_id = str(packet_id)
         if not self.running:
             return
         for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
-            if packet_id == str(item['packet_id']):
-                self.TC.addstr(idx, FACKICO[0], FACKICO[1], status)
+            if int(packet_id) == int(item['packet_id']):
+                self._disp(self.TC,
+                           PrintOut(FACKICO[1], (idx, FACKICO[0]),
+                                    opts=status))
                 break
-        self.TC.refresh()
 
     def set_TC_eack(self, packet_id, status):
         """
         Status can be NONE, OK, WAIT or FAIL
         """
-        packet_id = str(packet_id)
         if not self.running:
             return
         for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
-            if packet_id == str(item['packet_id']):
-                self.TC.addstr(idx, EACKICO[0], EACKICO[1], status)
+            if int(packet_id) == int(item['packet_id']):
+                self._disp(self.TC,
+                           PrintOut(EACKICO[1], (idx, EACKICO[0]),
+                                    opts=status))
                 break
-        self.TC.refresh()
 
     def add_TC(self, dbid, cmdname, inputs):
         dbid = int(dbid)
@@ -243,20 +243,18 @@ class Xdisp(object):
         if not self.running:
             return
         self.TClist = [inputs] + self.TClist[:MAXSTORETC-1]
-        self.TC.move(0, 0)
-        self.TC.insertln()
         pld = int(inputs['payload_flag'])
         lvl = int(inputs['level_flag'])
         pid = int(inputs['pid'])
-        self.TC.addstr(0, 0, TCFMT.format(
-                            timestamp=e(core.now().strftime("%F %T")),
-                            pld=PAYLOADICO if pld == 1 else OBCICO,
-                            lvl=L1ICO if lvl == 1 else L0ICO,
-                            pid=e(PIDREGISTRATION_REV[pid][pld][lvl]),
-                            pkid=e(packet_id),
-                            cmd_name=e(cmdname)),
-                        self.WHITE)
-        self.TC.refresh()
+        self._disp(self.TC,
+                   PrintOut(TCFMT.format(
+                                timestamp=e(core.now().strftime("%F %T")),
+                                pld=PAYLOADICO if pld == 1 else OBCICO,
+                                lvl=L1ICO if lvl == 1 else L0ICO,
+                                pid=e(PIDREGISTRATION_REV[pid][pld][lvl]),
+                                pkid=e(packet_id),
+                                cmd_name=e(cmdname)),
+                            (0, 0), opts=self.WHITE, newline=True))
         self.set_TC_sent(packet_id, self.WAIT)
         self.set_TC_rack(packet_id,
                          self.WAIT if int(inputs['reqack_reception']) == 1\
@@ -287,7 +285,7 @@ class Xdisp(object):
         self.ERROR = self.RED
         self.WAIT = self.YELLOW
         
-    def _loopit(self):
+    def _key_catch(self):
         while self.running:
             self.RP.move(0, 0)
             #self.RP.addstr(0, 0, ">")
@@ -297,6 +295,36 @@ class Xdisp(object):
                 self.running = False
             #self.RP.insertln()
             #self.RP.addstr(1, 0, "[" + s + "]")
+
+
+def update_it(self):
+    while self.running:
+        # make local copy of list
+        for win, item in list(self.printbuff):
+            if item.newline:
+                win.move(win.line, 0)
+                win.insertln()
+            if win.opts is None:
+                win.addstr(win.line, win.col, win.text)
+            else:
+                win.addstr(win.line, win.col, win.text, win.opts)
+            win.refresh()
+        time.sleep(1./PRINTFREQ)
+
+
+def newlinebox(h, w, y, x, title=None):
+    wb = curses.newwin(2, w, y-1, x)
+    wb.addstr(0, 0, HORLINE*(w-x))
+    if title is not None:
+        wb.addstr(0, 2, title)
+    wb.refresh()
+    return curses.newwin(h, w, y, x)
+
+
+def loop_time(self):
+    while self.running:
+        self.set_time()
+        time.sleep(1./TIMEUPDFREQ)
 
 
 if not param_all.JUSTALIB:
