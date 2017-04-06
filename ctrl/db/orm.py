@@ -121,6 +121,7 @@ def update_sent_TC_time(pkid, t):
             .order_by(TC.id.desc()).limit(1).with_for_update()
     q = update(TC).values({'time_sent': t}).where(TC.id == idx.as_scalar())
     DB.execute(q)
+    DB.commit()
     DB.flush()
     return idx.first()[0]
 
