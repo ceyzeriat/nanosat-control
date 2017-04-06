@@ -122,7 +122,7 @@ class Xdisp(object):
                                 MAXDISPLAYTM+MAXDISPLAYTC+4, 0, "Reporting")
         self.RP.refresh()
         self.running = True
-        self._disp(self.bar, PrintOut(' '*self.width, (0, 0))
+        self._disp(self.bar, PrintOut(' '*self.width, (0, 0)))
         self.set_listenico(status=self.NOSTARTED)
         self.set_controlico(status=self.NOSTARTED)
         self.set_saveico(status=self.NOSTARTED)
