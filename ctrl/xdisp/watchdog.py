@@ -44,22 +44,22 @@ def e(txt):
     return txt.encode(locale_code)
 
 
-LISTENICO = (9, e(u'\u260E'))
-CONTROLICO = (11, e(u'\u262D'))
-SAVEICO = (13, e(u'\u2744'))
+LISTENICO = (9, u'\u260E')
+CONTROLICO = (11, u'\u262D')
+SAVEICO = (13, u'\u2744')
 
-SENTICO = (75, e(u'\u2191'))
-RACKICO = (76, e(u'\u21AF'))
-FACKICO = (77, e(u'\u03A6'))
-EACKICO = (78, e(u'\u2020'))
+SENTICO = (75, u'\u2191')
+RACKICO = (76, u'\u21AF')
+FACKICO = (77, u'\u03A6')
+EACKICO = (78, u'\u2020')
 
-PAYLOADICO = e(u'\u03C0')
-OBCICO = e(u'\u03A9')
-L0ICO = e(u'\u2218')
-L1ICO = e(u'\u25CE')
-HORLINE = e(u'\u2500')
+PAYLOADICO = u'\u03C0'
+OBCICO = u'\u03A9'
+L0ICO = u'\u2218'
+L1ICO = u'\u25CE'
+HORLINE = u'\u2500'
 
-TCFMT = e('{timestamp} {pld} {lvl} {pid:<15} {pkid:>5} {cmd_name:^28}')
+TCFMT = u'{timestamp} {pld} {lvl} {pid:<15} {pkid:>5} {cmd_name:^28}'
 MAXSTORETC = 100
 MAXDISPLAYTC = 8
 MAXSTORETM = 100
@@ -72,16 +72,16 @@ PRINTFREQ = 5.
 
 
 """
-VERLINESPLITLEFT = e(u'\u2524')
-VERLINESPLITRIGHT = e(u'\u251C')
-UPLEFTCORNER = e(u'\u256D')
-UPRIGHTCORNER = e(u'\u256E')
-BOTTOMRIGHTCORNER = e(u'\u256F')
-BOTTOMLEFTCORNER = e(u'\u2570')
-VERLINE = e(u'\u2502')
-HORLINESPLITUP = e(u'\u2534')
-HORLINESPLITDOWN = e(u'\u252C')
-CROSS = e(u'\u253C')
+VERLINESPLITLEFT = u'\u2524'
+VERLINESPLITRIGHT = u'\u251C'
+UPLEFTCORNER = u'\u256D'
+UPRIGHTCORNER = u'\u256E'
+BOTTOMRIGHTCORNER = u'\u256F'
+BOTTOMLEFTCORNER = u'\u2570'
+VERLINE = u'\u2502'
+HORLINESPLITUP = u'\u2534'
+HORLINESPLITDOWN = u'\u252C'
+CROSS = u'\u253C'
 """
 
 class PrintOut(object):
@@ -248,12 +248,12 @@ class Xdisp(object):
         pid = int(inputs['pid'])
         self._disp(self.TC,
                    PrintOut(TCFMT.format(
-                                timestamp=e(core.now().strftime("%F %T")),
+                                timestamp=core.now().strftime("%F %T"),
                                 pld=PAYLOADICO if pld == 1 else OBCICO,
                                 lvl=L1ICO if lvl == 1 else L0ICO,
-                                pid=e(PIDREGISTRATION_REV[pid][pld][lvl]),
-                                pkid=e(packet_id),
-                                cmd_name=e(cmdname)),
+                                pid=PIDREGISTRATION_REV[pid][pld][lvl],
+                                pkid=packet_id,
+                                cmd_name=cmdname),
                             (0, 0), opts=self.WHITE, newline=True))
         self.set_TC_sent(packet_id, self.WAIT)
         self.set_TC_rack(packet_id,
