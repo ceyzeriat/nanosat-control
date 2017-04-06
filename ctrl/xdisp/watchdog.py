@@ -309,6 +309,7 @@ def update_it(self):
             else:
                 win.addstr(item.line, item.col, item.text, item.opts)
             win.refresh()
+            self.printbuff.pop(0)
         time.sleep(1./PRINTFREQ)
 
 
