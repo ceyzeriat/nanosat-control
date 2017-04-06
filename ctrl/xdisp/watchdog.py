@@ -44,9 +44,9 @@ def e(txt):
     return txt.encode(locale_code)
 
 
-LISTENICO = (8, u' \u260E ')
-CONTROLICO = (11, u'\u262D ')
-SAVEICO = (13, u'\u2744 ')
+LISTENICO = (9, u'\u260E')
+CONTROLICO = (11, u'\u262D')
+SAVEICO = (13, u'\u2744')
 
 SENTICO = (75, u'\u2191')
 RACKICO = (76, u'\u21AF')
@@ -122,9 +122,10 @@ class Xdisp(object):
                                 MAXDISPLAYTM+MAXDISPLAYTC+4, 0, "Reporting")
         self.RP.refresh()
         self.running = True
+        self.bar.addstr(0, 0, e(' '*self.width))
+        self.set_listenico(status=self.NOSTARTED)
         self.set_controlico(status=self.NOSTARTED)
         self.set_saveico(status=self.NOSTARTED)
-        self.set_listenico(status=self.NOSTARTED)
         loopy = Thread(target=loop_time, args=(self,))
         loopy.daemon = True
         loopy.start()
