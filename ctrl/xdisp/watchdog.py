@@ -302,12 +302,12 @@ def update_it(self):
         # make local copy of list
         for win, item in list(self.printbuff):
             if item.newline:
-                win.move(win.line, 0)
+                win.move(item.line, 0)
                 win.insertln()
-            if win.opts is None:
-                win.addstr(win.line, win.col, win.text)
+            if item.opts is None:
+                win.addstr(item.line, item.col, item.text)
             else:
-                win.addstr(win.line, win.col, win.text, win.opts)
+                win.addstr(item.line, item.col, item.text, item.opts)
             win.refresh()
         time.sleep(1./PRINTFREQ)
 
