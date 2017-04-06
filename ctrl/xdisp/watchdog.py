@@ -44,9 +44,9 @@ def e(txt):
     return txt.encode(locale_code)
 
 
-LISTENICO = (9, u'\u260E')
-CONTROLICO = (11, u'\u262D')
-SAVEICO = (13, u'\u2744')
+LISTENICO = (8, u' \u260E ')
+CONTROLICO = (11, u'\u262D ')
+SAVEICO = (13, u'\u2744 ')
 
 SENTICO = (75, u'\u2191')
 RACKICO = (76, u'\u21AF')
