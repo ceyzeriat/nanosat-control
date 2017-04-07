@@ -81,9 +81,10 @@ class Telecommand(object):
         # check format first since it may prevent eack from being sent
         while time.time() < doneat:
             # if no ACK is False (waiting for ACK), then break
-            if cls.EACK is True or\
-                (cls.EACK is None and cls.FACK is True) or\
-                (cls.EACK is None and cls.FACK is None and cls.RACK is True):
+            if cls.EACK is not None or\
+                (cls.EACK is None and cls.FACK is not None) or\
+                (cls.EACK is None and cls.FACK is None\
+                                        and cls.RACK is not None):
                 break
             try:
                 res = controlling.ACKQUEUE.get(

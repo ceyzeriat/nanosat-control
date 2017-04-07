@@ -276,7 +276,7 @@ class Xdisp(object):
 
     def add_TM(self, pkid, infos):
         pkid = int(pkid)
-        if pkid in [item['pkid'] for item in self.TMlist]:
+        if pkid in [item[param_ccsds.PACKETID.name] for item in self.TMlist]:
             return
         if not self.running:
             return
