@@ -61,7 +61,7 @@ L1ICO = u'\u25CE'
 HORLINE = u'\u2500'
 
 TCFMT = u'{timestamp} {pld} {lvl} {pid:<15} {pkid:>5} {cmd_name:^28}'
-TMFMT = u'{timestamp} {pld} {lvl} {pid:<15} {pkid:>5} {cat:>2}'
+TMFMT = u'{timestamp} {pld} {lvl} {pid:<15} {pkid:>5} cat: {cat:>2} len: {sz:>3}'
 MAXSTORETC = 100
 MAXDISPLAYTC = 8
 MAXSTORETM = 100
@@ -292,7 +292,7 @@ class Xdisp(object):
                                 lvl=L1ICO if lvl == 1 else L0ICO,
                                 pid=PIDREGISTRATION_REV[pid][pld][lvl],
                                 pkid=pkid,
-                                cat=cat
+                                cat=cat,
                                 sz=infos['sz']),
                             (0, 0), opts=self.WHITE, newline=True))
 
