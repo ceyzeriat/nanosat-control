@@ -122,6 +122,7 @@ class Xdisp(object):
         self.RP = newlinebox(MAXDISPLAYRP, self.width,
                                 MAXDISPLAYTM+MAXDISPLAYTC+4, 0, "Reporting")
         self.RP.refresh()
+        time.sleep(0.1)  # give it a bit of air
         self.running = True
         self._disp(self.bar, PrintOut(' '*(self.width-1), (0, 0)))
         self.set_listenico(status=self.NOSTARTED)

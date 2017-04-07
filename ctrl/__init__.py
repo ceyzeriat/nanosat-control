@@ -39,5 +39,6 @@ if not param.param_all.JUSTALIB:
 #from . import clib
 from . import kiss
 from ._version import __version__, __major__, __minor__, __micro__
-from .telecommand import *
-from .telemetry import *
+if not param.param_all.JUSTALIB:
+	from .telecommand import *
+	from .telemetry import *
