@@ -33,6 +33,8 @@ from ..utils import core
 from ..ccsds import param_ccsds
 from param import param_all
 from param.param_apid import PIDREGISTRATION_REV
+from param import param_category
+
 
 __all__ = ['XDISP']
 
@@ -60,8 +62,8 @@ L0ICO = u'\u2218'
 L1ICO = u'\u25CE'
 HORLINE = u'\u2500'
 
-TCFMT = u'{timestamp} {pld} {lvl} {pid:<15} #{pkid:>5} {cmd_name:<27}'
-TMFMT = u'{timestamp} {pld} {lvl} {pid:<15} #{pkid:>5} cat: {cat:>2} len: {sz:>3}'
+TCFMT = u'{timestamp} {pld} {lvl} {pid:<15} #{pkid:<5} {cmd_name:<27}'
+TMFMT = u'{timestamp} {pld} {lvl} {pid:<15} #{pkid:<5} cat: {cat:>15} ({catnum:>2}) len: {sz:>3}'
 MAXSTORETC = 100
 MAXDISPLAYTC = 8
 MAXSTORETM = 100
@@ -284,7 +286,8 @@ class Xdisp(object):
         pld = int(infos[param_ccsds.PAYLOADFLAG.name])
         lvl = int(infos[param_ccsds.LEVELFLAG.name])
         pid = int(infos[param_ccsds.PID.name])
-        cat = int(infos[param_ccsds.PACKETCATEGORY.name])
+        catnum = int(infos[param_ccsds.PACKETCATEGORY.name])
+        cat = param_category.CATEGORYREGISTRATION[pld][catnum].name
         self._disp(self.TM,
                    PrintOut(TMFMT.format(
                                 timestamp=core.now().strftime("%F %T"),
@@ -293,6 +296,7 @@ class Xdisp(object):
                                 pid=PIDREGISTRATION_REV[pid][pld][lvl],
                                 pkid=pkid,
                                 cat=cat,
+                                catnum=catnum,
                                 sz=infos['sz']),
                             (0, 0), opts=self.WHITE, newline=True))
 
