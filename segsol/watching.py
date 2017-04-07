@@ -107,7 +107,7 @@ def process_report(inputs):
                     print('That was junk from RFCheckoutBox')
                     return
             if len(blobish) == 0:
-                print("Can't unpack emty packet')
+                print("Can't unpack emty packet")
                 return
             hd, hdx, dd = TMUnPacker.unpack(blobish, retdbvalues=True)
         except:
