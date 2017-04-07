@@ -95,7 +95,7 @@ class ShowRec(hein.SocReceiver):
         elif key == 'tcf':
             XDISP.add_TC(dbid=data.get('dbid'), infos=data)
         elif key == 'tmf':
-            XDISP.add_TM(pkid=data['param_ccsds.PACKETID.name'], infos=data)
+            XDISP.add_TM(pkid=data[param_ccsds.PACKETID.name], infos=data)
 
 
 def init():
