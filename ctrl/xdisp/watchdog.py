@@ -30,6 +30,7 @@ import locale
 import time
 from threading import Thread
 from ..utils import core
+from ..ccsds import param_ccsds
 from param import param_all
 from param.param_apid import PIDREGISTRATION_REV
 
@@ -193,7 +194,7 @@ class Xdisp(object):
         if not self.running:
             return
         for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
-            if int(packet_id) == int(item['packet_id']):
+            if int(packet_id) == int(item[param_ccsds.PACKETID.name]):
                 self._disp(self.TC,
                            PrintOut(SENTICO[1], (idx, SENTICO[0]),
                                     opts=status))
@@ -206,7 +207,7 @@ class Xdisp(object):
         if not self.running:
             return
         for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
-            if int(packet_id) == int(item['packet_id']):
+            if int(packet_id) == int(item[param_ccsds.PACKETID.name]):
                 self._disp(self.TC,
                            PrintOut(RACKICO[1], (idx, RACKICO[0]),
                                     opts=status))
@@ -219,7 +220,7 @@ class Xdisp(object):
         if not self.running:
             return
         for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
-            if int(packet_id) == int(item['packet_id']):
+            if int(packet_id) == int(item[param_ccsds.PACKETID.name]):
                 self._disp(self.TC,
                            PrintOut(FACKICO[1], (idx, FACKICO[0]),
                                     opts=status))
@@ -232,23 +233,24 @@ class Xdisp(object):
         if not self.running:
             return
         for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
-            if int(packet_id) == int(item['packet_id']):
+            if int(packet_id) == int(item[param_ccsds.PACKETID.name]):
                 self._disp(self.TC,
                            PrintOut(EACKICO[1], (idx, EACKICO[0]),
                                     opts=status))
                 break
 
-    def add_TC(self, dbid, cmdname, infos):
+    def add_TC(self, dbid, infos):
         dbid = int(dbid)
         if dbid in [item['dbid'] for item in self.TClist]:
             return
         if not self.running:
             return
         self.TClist = [infos] + self.TClist[:MAXSTORETC-1]
-        pld = int(infos['payload_flag'])
-        lvl = int(infos['level_flag'])
-        pid = int(infos['pid'])
-        packet_id = str(infos['packet_id'])
+        cmdname = str(infos.get('cmdname'))
+        pld = int(infos[param_ccsds.PAYLOADFLAG.name])
+        lvl = int(infos[param_ccsds.LEVELFLAG.name])
+        pid = int(infos[param_ccsds.PID.name])
+        packet_id = str(infos[param_ccsds.PACKETID.name])
         self._disp(self.TC,
                    PrintOut(TCFMT.format(
                                 timestamp=core.now().strftime("%F %T"),
@@ -260,35 +262,38 @@ class Xdisp(object):
                             (0, 0), opts=self.WHITE, newline=True))
         self.set_TC_sent(packet_id, self.WAIT)
         self.set_TC_rack(packet_id,
-                         self.WAIT if int(infos['reqack_reception']) == 1\
+                     self.WAIT if int(infos[\
+                        param_ccsds.REQACKRECEPTIONTELECOMMAND.name]) == 1\
                             else self.NONE)
         self.set_TC_fack(packet_id,
-                         self.WAIT if int(infos['reqack_format']) == 1\
+                     self.WAIT if int(infos[\
+                        param_ccsds.REQACKFORMATTELECOMMAND.name]) == 1\
                             else self.NONE)
         self.set_TC_eack(packet_id,
-                         self.WAIT if int(infos['reqack_execution']) == 1\
+                     self.WAIT if int(infos[\
+                        param_ccsds.REQACKEXECUTIONTELECOMMAND.name]) == 1\
                             else self.NONE)
 
-    def add_TM(self, dbid, infos):
-        dbid = int(dbid)
-        if dbid in [item['dbid'] for item in self.TMlist]:
+    def add_TM(self, pkid, infos):
+        pkid = int(pkid)
+        if pkid in [item['pkid'] for item in self.TMlist]:
             return
         if not self.running:
             return
         self.TMlist = [infos] + self.TMlist[:MAXSTORETM-1]
-        packet_id = str(infos['packet_id'])
-        pld = int(infos['payload_flag'])
-        lvl = int(infos['level_flag'])
-        pid = int(infos['pid'])
-        cat = int(infos['packet_category'])
+        pld = int(infos[param_ccsds.PAYLOADFLAG.name])
+        lvl = int(infos[param_ccsds.LEVELFLAG.name])
+        pid = int(infos[param_ccsds.PID.name])
+        cat = int(infos[param_ccsds.PACKETCATEGORY.name])
         self._disp(self.TM,
                    PrintOut(TMFMT.format(
                                 timestamp=core.now().strftime("%F %T"),
                                 pld=PAYLOADICO if pld == 1 else OBCICO,
                                 lvl=L1ICO if lvl == 1 else L0ICO,
                                 pid=PIDREGISTRATION_REV[pid][pld][lvl],
-                                pkid=packet_id,
-                                cat=cat),
+                                pkid=pkid,
+                                cat=cat
+                                sz=infos['sz']),
                             (0, 0), opts=self.WHITE, newline=True))
 
     def _init_colors(self):

@@ -33,7 +33,6 @@ from ctrl.utils.report import REPORTS, EXTRADISPKEY
 from ctrl.utils import PIDWatchDog
 from ctrl.ccsds import TMUnPacker
 from ctrl.ccsds import param_ccsds
-from ctrl.xdisp import watchdog
 from ctrl.kiss import Framer
 import param
 from param import param_category
@@ -103,15 +102,23 @@ def process_report(inputs):
             # strip AX25 if need be
             if param_all.AX25ENCAPS:
                 source, destination, blobish = Framer.decode_radio(blobish)
-            # case of the RFCheckoutBox returning garbage
+                # case of the RFCheckoutBox returning garbage
+                if len(blobish) == 0:
+                    print('That was junk from RFCheckoutBox')
+                    return
             if len(blobish) == 0:
-                print('That was junk from RFCheckoutBox')
+                print("Can't unpack emty packet')
                 return
             hd, hdx, dd = TMUnPacker.unpack(blobish, retdbvalues=True)
         except:
             print('Tried to unpack.. but an error occurred: {}'\
                     .format(sys.exc_info()[0]))
             return
+        inpacket = dict(hd)
+        inpacket.update(hdx)
+        inpacket.update(dd)
+        inpacket['sz'] = len(blobish)
+        WATCH_TRANS.tell_key('tmf', **inpacket)
         pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
         catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
         # print Header Prim
