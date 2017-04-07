@@ -82,10 +82,12 @@ class ShowRec(hein.SocReceiver):
                                       XDISP.OK)
                 elif thecat == '1':  # FACK
                     XDISP.set_TC_fack(str(data['pkid']),
-                                      XDISP.FAIL if error != '0' else XDISP.OK)
+                                      XDISP.ERROR if error != '0'\
+                                                    else XDISP.OK)
                 elif thecat == '2':  # EACK
                     XDISP.set_TC_eack(str(data['pkid']),
-                                      XDISP.FAIL if error != '0' else XDISP.OK)
+                                      XDISP.ERROR if error != '0'\
+                                                    else XDISP.OK)
             elif rpt_key == '':
                 pass
             else:

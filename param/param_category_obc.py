@@ -37,11 +37,13 @@ __all__ = []
 
 RACKCAT = 0
 
-CATEGORYREGISTRATIONOBC = { RACKCAT:  '00000',  # rec ack
-                            1:  '00001',  # beacon
-                            2:  '00010',  # boot error report
-                            3:  '00011',  # event report
-                            4:  '00100'}  # dump answer data
+CATEGORYREGISTRATIONOBC = { RACKCAT: '00000',  # rec ack
+                            1: '00001',  # beacon
+                            2: '00010',  # boot error report
+                            3: '00011',  # event report
+                            4: '00100',  # house keeping
+                            5: '00101',  # dump answer data
+                            6: '00110'}  # patch list segments
 
 
 TELECOMMANDIDMIRROR = CCSDSKey( name='telecommand_id_mirror',
@@ -79,11 +81,11 @@ NSEGS = CCSDSKey(       name='n_segments',
                         fctpack=bincore.int2bin,
                         verbose="Total Number of segments received")
 
-CATEGORY_RACKCAT = CCSDSTrousseau([], octets=False)  # rec ack
-CATEGORY_1 = CCSDSTrousseau([], octets=False)  # beacon
-CATEGORY_2 = CCSDSTrousseau([], octets=False)  # boot error report ?????
-CATEGORY_3 = CCSDSTrousseau([], octets=False)  # event report ?????
-CATEGORY_4 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, STARTADDRESS, BYTESNUMBER], octets=False)  # dump answer data
+CATEGORY_RACKCAT = CCSDSTrousseau([], octets=False, name='rec ack')  # rec ack
+CATEGORY_1 = CCSDSTrousseau([], octets=False, name='beacon')  # beacon
+CATEGORY_2 = CCSDSTrousseau([], octets=False, name='boot error report')  # boot error report ?????
+CATEGORY_3 = CCSDSTrousseau([], octets=False, name='event report')  # event report ?????
+CATEGORY_4 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, STARTADDRESS, BYTESNUMBER], octets=False, name='dump answer data')  # dump answer data
 CATEGORY_5 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, NSEGS], octets=False)  # dump answer data
 
 

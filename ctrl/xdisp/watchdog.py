@@ -60,6 +60,7 @@ L1ICO = u'\u25CE'
 HORLINE = u'\u2500'
 
 TCFMT = u'{timestamp} {pld} {lvl} {pid:<15} {pkid:>5} {cmd_name:^28}'
+TMFMT = u'{timestamp} {pld} {lvl} {pid:<15} {pkid:>5} {cat:>2}'
 MAXSTORETC = 100
 MAXDISPLAYTC = 8
 MAXSTORETM = 100
@@ -236,17 +237,17 @@ class Xdisp(object):
                                     opts=status))
                 break
 
-    def add_TC(self, dbid, cmdname, inputs):
+    def add_TC(self, dbid, cmdname, infos):
         dbid = int(dbid)
-        packet_id = str(inputs['packet_id'])
         if dbid in [item['dbid'] for item in self.TClist]:
             return
         if not self.running:
             return
-        self.TClist = [inputs] + self.TClist[:MAXSTORETC-1]
-        pld = int(inputs['payload_flag'])
-        lvl = int(inputs['level_flag'])
-        pid = int(inputs['pid'])
+        self.TClist = [infos] + self.TClist[:MAXSTORETC-1]
+        pld = int(infos['payload_flag'])
+        lvl = int(infos['level_flag'])
+        pid = int(infos['pid'])
+        packet_id = str(infos['packet_id'])
         self._disp(self.TC,
                    PrintOut(TCFMT.format(
                                 timestamp=core.now().strftime("%F %T"),
@@ -258,14 +259,36 @@ class Xdisp(object):
                             (0, 0), opts=self.WHITE, newline=True))
         self.set_TC_sent(packet_id, self.WAIT)
         self.set_TC_rack(packet_id,
-                         self.WAIT if int(inputs['reqack_reception']) == 1\
+                         self.WAIT if int(infos['reqack_reception']) == 1\
                             else self.NONE)
         self.set_TC_fack(packet_id,
-                         self.WAIT if int(inputs['reqack_format']) == 1\
+                         self.WAIT if int(infos['reqack_format']) == 1\
                             else self.NONE)
         self.set_TC_eack(packet_id,
-                         self.WAIT if int(inputs['reqack_execution']) == 1\
+                         self.WAIT if int(infos['reqack_execution']) == 1\
                             else self.NONE)
+
+    def add_TM(self, dbid, infos):
+        dbid = int(dbid)
+        if dbid in [item['dbid'] for item in self.TMlist]:
+            return
+        if not self.running:
+            return
+        self.TMlist = [infos] + self.TMlist[:MAXSTORETM-1]
+        packet_id = str(infos['packet_id'])
+        pld = int(infos['payload_flag'])
+        lvl = int(infos['level_flag'])
+        pid = int(infos['pid'])
+        cat = int(infos['packet_category'])
+        self._disp(self.TM,
+                   PrintOut(TMFMT.format(
+                                timestamp=core.now().strftime("%F %T"),
+                                pld=PAYLOADICO if pld == 1 else OBCICO,
+                                lvl=L1ICO if lvl == 1 else L0ICO,
+                                pid=PIDREGISTRATION_REV[pid][pld][lvl],
+                                pkid=packet_id,
+                                cat=cat),
+                            (0, 0), opts=self.WHITE, newline=True))
 
     def _init_colors(self):
         for i in range(0, curses.COLORS):

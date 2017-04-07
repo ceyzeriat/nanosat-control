@@ -36,7 +36,7 @@ __all__ = ['CCSDSTrousseau']
 
 
 class CCSDSTrousseau(object):
-    def __init__(self, keylist, octets):
+    def __init__(self, keylist, octets, name='noname'):
         """
         A collection of CCSDS keys
 
@@ -45,8 +45,10 @@ class CCSDSTrousseau(object):
             generate the list of CCSDSKey
           * octets (bool): whether the packet should be treated as binary
             or hexadecimal
+          * name (str): the name of the trousseau, for display purposes
         """
         self.keys = []
+        self.name = str(name)
         self.size = 0
         self.octets = bool(octets)
         pos = 0
