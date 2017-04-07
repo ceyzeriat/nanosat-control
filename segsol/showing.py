@@ -94,7 +94,7 @@ class ShowRec(hein.SocReceiver):
                 XDISP.report(REPORTS[rpt_key].disp(**data))
         elif key == 'tcf':
             XDISP.add_TC(dbid=data.get('dbid'),
-                            cmdname=data.get('cmdname'), inputs=data)
+                            cmdname=data.get('cmdname'), infos=data)
 
 
 def init():
