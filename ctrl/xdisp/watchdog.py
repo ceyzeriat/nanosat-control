@@ -287,7 +287,7 @@ class Xdisp(object):
         lvl = int(infos[param_ccsds.LEVELFLAG.name])
         pid = int(infos[param_ccsds.PID.name])
         catnum = int(infos[param_ccsds.PACKETCATEGORY.name])
-        cat = param_category.CATEGORYREGISTRATION[pld][catnum].name
+        cat = param_category.PACKETCATEGORIES[pld][catnum].name
         self._disp(self.TM,
                    PrintOut(TMFMT.format(
                                 timestamp=core.now().strftime("%F %T"),
