@@ -92,10 +92,10 @@ NPOINTS = CCSDSKey(     name='n_points',
                         disp="npts")
 
 
-CATEGORY_4 = CCSDSTrousseau([], octets=False)  # HK payload, NO HEADER
-CATEGORY_5 = CCSDSTrousseau([ACQMODE, INTEGRATIONTIME, DELAY, MODULATION, RADIUS, NPOINTS], octets=False)  # science HF
-CATEGORY_6 = CCSDSTrousseau([], octets=False)  # report
-CATEGORY_7 = CCSDSTrousseau([], octets=False)  # report
+CATEGORY_4 = CCSDSTrousseau([], octets=False, name='HK')  # HK payload, NO HEADER
+CATEGORY_5 = CCSDSTrousseau([ACQMODE, INTEGRATIONTIME, DELAY, MODULATION, RADIUS, NPOINTS], octets=False, name='science HF')  # science HF
+CATEGORY_6 = CCSDSTrousseau([], octets=False, name='report')  # report
+CATEGORY_7 = CCSDSTrousseau([], octets=False, name='beacon')  # beacon
 
 
 # (payloadd, category)

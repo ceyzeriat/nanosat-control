@@ -63,11 +63,20 @@ class TCAnswerCCSDSTrousseau(CCSDSTrousseau):
         Args:
         * data (byts): the chain of octets to unpack
         """
-        return {self.keys[0].name: str(data[:MAXLENGTHMESSAGE])}
+        return {self.keys[0].name: Byt(data[:MAXLENGTHMESSAGE])}
 
     def pack(self, **kwargs):
         pass
 
+    def disp(self, vals):
+        """
+        Display the trousseau values
+
+        Args:
+          * vals (dict): a dictionary containing the values to display
+        """
+        return "{}\nhex: {}".format(super(TCAnswerCCSDSTrousseau, self).disp(vals),
+                                    vals[self.keys[0].name].hex())
 
 
 TROUSSEAU = TCAnswerCCSDSTrousseau(KEYS, octets=True)

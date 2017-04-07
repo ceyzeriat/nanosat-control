@@ -81,12 +81,13 @@ NSEGS = CCSDSKey(       name='n_segments',
                         fctpack=bincore.int2bin,
                         verbose="Total Number of segments received")
 
-CATEGORY_RACKCAT = CCSDSTrousseau([], octets=False, name='rec ack')  # rec ack
+CATEGORY_RACKCAT = CCSDSTrousseau([], octets=False, name='reception ack')  # rec ack
 CATEGORY_1 = CCSDSTrousseau([], octets=False, name='beacon')  # beacon
 CATEGORY_2 = CCSDSTrousseau([], octets=False, name='boot error report')  # boot error report ?????
 CATEGORY_3 = CCSDSTrousseau([], octets=False, name='event report')  # event report ?????
-CATEGORY_4 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, STARTADDRESS, BYTESNUMBER], octets=False, name='dump answer data')  # dump answer data
-CATEGORY_5 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, NSEGS], octets=False)  # dump answer data
+CATEGORY_4 = CCSDSTrousseau([], octets=False, name='HK')  # HK
+CATEGORY_5 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, STARTADDRESS, BYTESNUMBER], octets=False, name='dump answer data')  # dump answer data
+CATEGORY_6 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, NSEGS], octets=False, name='patch list segments')  # patch list segments
 
 
 # (payloadd, category)
@@ -98,8 +99,9 @@ PACKETCATEGORIESOBC = { RACKCAT: CATEGORY_RACKCAT,  # rec ack
                         1: CATEGORY_1,  # beacon
                         2: CATEGORY_2,  # boot error report
                         3: CATEGORY_3,  # event report
-                        4: CATEGORY_4,  # dump answer data
-                        5: CATEGORY_5}  # patch list segs
+                        4: CATEGORY_4,  # HK
+                        5: CATEGORY_5,  # dump answer data
+                        6: CATEGORY_6}  # patch list segs
 
 
 PACKETCATEGORYSIZESOBC = {}
@@ -111,23 +113,26 @@ TABLECATEGORYOBC = {RACKCAT: 'TmcatRcpAcknowledgement',  # rec ack
                     1: None,  # beacon
                     2: None,  # boot error report
                     3: None,  # event report
-                    4: None,  # dump answer data
-                    5: None}  # patch list segs
+                    4: None,  # HK
+                    5: None,  # dump answer data
+                    6: None}  # patch list segs
 
 TABLEDATAOBC = {    RACKCAT: None,  # rec ack
                     1: None,  # beacon
                     2: None,  # boot error report
                     3: None,  # event report
-                    4: None,  # dump answer data
-                    5: None}  # patch list segs
+                    4: None,  # HK
+                    5: None,  # dump answer data
+                    6: None}  # patch list segs
 
 
 FILEDATACRUNCHINGOBC = {RACKCAT: None,  # rec ack
                         1: 'param_beacon',  # beacon
                         2: None,  # boot error report
                         3: None,  # event report
-                        4: 'param_dump_ans_data',  # dump answer data
-                        5: 'param_patch_list_segs'}  # patch list segs
+                        4: None, # HK
+                        5: 'param_dump_ans_data',  # dump answer data
+                        6: 'param_patch_list_segs'}  # patch list segs
 
 
 # extend all keys with common categories
