@@ -189,7 +189,8 @@ def init(antenna):
     LISTEN_REC_CONTROL = ListenRec(port=param_all.CONTROLLINGPORT[0],
                                 name=param_all.LISTENINGNAME, connect=True,
                                 connectWait=0.5,
-                                portname=param_all.CONTROLLINGPORT[1])
+                                portname=param_all.CONTROLLINGPORT[1],
+                                hostname = 'localhost')
     report('SettingUpAntenna', antenna=antenna)
     if antenna == 'checkoutbox':
         init_checkoutbox()
