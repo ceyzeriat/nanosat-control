@@ -177,7 +177,8 @@ def init():
     CONTROL_REC_LISTEN = ControlRec(port=param_all.LISTENINGPORT[0],
                                 name=param_all.CONTROLLINGNAME, connect=True,
                                 connectWait=0.5,
-                                portname=param_all.LISTENINGPORT[1])
+                                portname=param_all.LISTENINGPORT[1],
+                                hostname = 'localhost')
     running = True
 
 

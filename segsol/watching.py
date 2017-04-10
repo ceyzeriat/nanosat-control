@@ -177,17 +177,20 @@ def init():
                                     name=param_all.WATCHINGNAME,
                                     connect=True,
                                     connectWait=0.5,
-                                    portname=param_all.LISTENINGPORT[1])
+                                    portname=param_all.LISTENINGPORT[1],
+                                    hostname = 'localhost')
     WATCH_REC_CONTROL = WatchRec(port=param_all.CONTROLLINGPORT[0],
                                     name=param_all.WATCHINGNAME,
                                     connect=True,
                                     connectWait=0.5,
-                                    portname=param_all.CONTROLLINGPORT[1])
+                                    portname=param_all.CONTROLLINGPORT[1],
+                                    hostname = 'localhost')
     WATCH_REC_SAVE = WatchRec(port=param_all.SAVINGPORT[0],
                                     name=param_all.WATCHINGNAME,
                                     connect=True,
                                     connectWait=0.5,
-                                    portname=param_all.SAVINGPORT[1])
+                                    portname=param_all.SAVINGPORT[1],
+                                    hostname = 'localhost')
     running = True
 
 

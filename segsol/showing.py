@@ -111,7 +111,8 @@ def init():
                                 name=param_all.SHOWINGNAME,
                                 connect=True,
                                 connectWait=0.5,
-                                portname=param_all.WATCHINGPORT[1])
+                                portname=param_all.WATCHINGPORT[1],
+                                hostname = 'localhost')
     running = True
     XDISP.start()
 
