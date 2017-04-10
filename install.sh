@@ -77,6 +77,7 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     cp piccontrol picwatch
     cp piccontrol picsave
     cp piccontrol picshow
+    cp piccontrol picspy    
 
     BASICFONT="-bg black -fg lightgrey -fa 'Monospace' -fs 10"
 
@@ -102,8 +103,13 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
 
     echo "    xterm -T 'Show' $BASICFONT -geometry 80x30+0+0 -e '$IPY -i $WHERESEGSOL/show.py';" >> picshow
     echo "else" >> picshow
-    echo "    $IPY -i $WHERESEGSOL/save.py" >> picshow
+    echo "    $IPY -i $WHERESEGSOL/show.py" >> picshow
     echo "fi" >> picshow
+
+    echo "    xterm -T 'Spy' $BASICFONT -geometry 80x10+30-50 -e '$IPY -i $WHERESEGSOL/spy.py';" >> picshow
+    echo "else" >> picspy
+    echo "    $IPY -i $WHERESEGSOL/spy.py" >> picspy
+    echo "fi" >> picspy    
 
     echo "xterm -T 'Chat' $BASICFONT -geometry 80x15-0+0 -e /bin/bash -l -c '$WHEREBINS/logdisp';" >> picchat
 fi
@@ -167,6 +173,14 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "desk" ]; then
     echo 'Path='"$HOME" >> PicShow.desktop
     echo 'Terminal=false' >> PicShow.desktop
     echo 'StartupNotify=false' >> PicShow.desktop
+
+    echo 'Name=PicSpy' >> PicSpy.desktop
+    echo 'Comment=' >> PicSpy.desktop
+    echo 'Exec='"$WHEREBINS"'/picspy gui' >> PicSpy.desktop
+    echo 'Icon='"$WHERESEGSOL"'/img/spy.gif' >> PicSpy.desktop
+    echo 'Path='"$HOME" >> PicSpy.desktop
+    echo 'Terminal=false' >> PicSpy.desktop
+    echo 'StartupNotify=false' >> PicSpy.desktop    
 
     echo 'Name=PicChat' >> PicChat.desktop
     echo 'Comment=' >> PicChat.desktop
