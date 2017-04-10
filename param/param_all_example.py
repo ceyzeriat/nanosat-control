@@ -47,14 +47,14 @@ NOERRORATIMPORT = True
 JUSTALIB = False
 
 # which antenna are you using
-ANTENNALISTENED = 'checkoutbox'  # or 'checkoutbox' or 'serial'
+ANTENNALISTENED = 'serial'  # or 'checkoutbox' or 'serial'
 
 # the path to the file containing the packet id counter
 PACKETIDFILE = ['.segsol', 'tc_packet_id']
 
 # the path to the parameter file containing the DB connection settings
 DBFILE = ['.segsol', 'db_server']
-PASSTAGS = {'<pass>': ['.segsol', 'artichaut']}
+PASSTAGS = {'<pass>': ['.segsol', 'artichaut'], '<dbname>': ['.segsol', 'banane']}
 
 
 # the log file
@@ -85,12 +85,11 @@ LISTENINGNAME = 'listen'  # telemetryport
 CONTROLLINGNAME = 'control'
 SAVINGNAME = 'save'
 WATCHINGNAME = 'watch'
-SHOWINGNAME = 'show'
-
+SPYINGNAME = 'spy'
 
 # the port for telemetry broadcasting/listening (alpha)
 LISTENINGPORT = (50007, LISTENINGNAME)
-LISTENINGPORTLISTENERS = [SAVINGNAME, WATCHINGNAME, CONTROLLINGNAME]
+LISTENINGPORTLISTENERS = [SAVINGNAME, WATCHINGNAME, SPYINGNAME]
 
 # the port for telecommand broadcasting/listening (beta)
 CONTROLLINGPORT = (50006, CONTROLLINGNAME)
@@ -102,7 +101,10 @@ SAVINGPORTLISTENERS = [WATCHINGNAME]
 
 # the port for saving status broadcasting/listening (delta)
 WATCHINGPORT = (50004, WATCHINGNAME)
-WATCHINGPORTLISTENERS = [SHOWINGNAME]  # CONTROLLINGNAME
+WATCHINGPORTLISTENERS = [CONTROLLINGNAME]
+
+# the port for retrieving telemetries from a remote location
+SPYINGPORT = (50010, SPYINGNAME)
 
 
 # process timeout for the watchdog to get angry
@@ -111,14 +113,14 @@ PROCESSTIMEOUT = 5  # sec
 # RFCHECKOUTBOX
 # port
 RFCHECKOUTBOXPORT = 3211
-RFCHECKOUTBOXTIMEOUT = 1.  # sec
+RFCHECKOUTBOXTIMEOUT = 1  # sec
 RFCHECKOUTBOXLENGTH = 1024  # octet
 
 
 # SERIAL
 # port 
 SERIALUSBPORT = '/dev/ttyUSB0'
-SERIALUSBTIMEOUT = 1.  # sec
+SERIALUSBTIMEOUT = 1  # sec
 SERIALUSBLENGTH = 1024  # octet
 SERIALUSBBAUDRATE = 57600  # bananas per pencil
 
@@ -129,12 +131,12 @@ TELEMETRYNAMEFORMAT = 'TM_%Y%m%dT%H%M%S_%f.packet'
 
 
 # whether the listened flow of data is encapsulated in AX25/KISS standard
-AX25ENCAPS = True
-KISSENCAPS = True
+AX25ENCAPS = False
+KISSENCAPS = False
 # note: there can't be a KISS encapsulation without AX25
 
 # whether to expect a continuous flow of CCSDS frames or a natural split
-FRAMESFLOW = False
+FRAMESFLOW = True
 
 # for when 
 # the split characters between CCSDS continuous frames
@@ -156,8 +158,9 @@ LOGFILETIMESTAMPFMT = '%F %T.%f'
 # the reserved input parameter key for declaring the report key
 REPORTKEY = 'report_key'
 
+
 # whether to save the TCs and initialize the DB with control
-SAVETC = True
+SAVETC = False
 
 
 # length of the key
@@ -165,7 +168,7 @@ KEYLENGTH = 32  # in octets
 KEYLENGTHCCSDS = 16  # in octets
 # file of the key
 KEYFILE = ['.segsol', 'perefouras']
-USESIGGY = True
+USESIGGY = False
 KEYMASK = '1'*16+'0'*16  # mask of 1 and 0, 1 == takeit
 
 
