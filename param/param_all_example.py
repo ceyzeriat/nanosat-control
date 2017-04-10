@@ -86,6 +86,7 @@ CONTROLLINGNAME = 'control'
 SAVINGNAME = 'save'
 WATCHINGNAME = 'watch'
 SPYINGNAME = 'spy'
+SHOWINGNAME = 'show'
 
 # the port for telemetry broadcasting/listening (alpha)
 LISTENINGPORT = (50007, LISTENINGNAME)
