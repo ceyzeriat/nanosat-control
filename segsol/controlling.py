@@ -116,7 +116,6 @@ def process_incoming(**kwargs):
     hd = TMUnPacker.unpack_primHeader(data)
     cat = int(hd[param_ccsds.PACKETCATEGORY.name])
     pld = int(hd[param_ccsds.PAYLOADFLAG.name])
-    print(cat, pld)
     # not an acknoledgement
     if (pld, cat) not in param_category.ACKCATEGORIES:
         return
@@ -133,7 +132,6 @@ def process_incoming(**kwargs):
     # add to queue
     report('gotACK', pkid=pkid, thecat=thecat, error=error,
             **{EXTRADISPKEY: False})
-    print('gotACK')
     # send it to the queue for telecommand
     ACKQUEUE.put((pkid, thecat, error))
 
