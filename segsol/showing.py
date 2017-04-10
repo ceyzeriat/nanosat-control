@@ -28,6 +28,7 @@
 import hein
 import param
 from param import param_all
+from ctrl.kiss import Framer
 from ctrl.ccsds import TCUnPacker
 from ctrl.ccsds import param_ccsds
 from ctrl.xdisp import watchdog as wt
@@ -72,7 +73,16 @@ class ShowRec(hein.SocReceiver):
                 elif who == param_all.SAVINGNAME:
                     XDISP.set_saveico(XDISP.ALIVE)
             elif rpt_key == 'sentTC':
-                res = TCUnPacker.unpack_primHeader(data['data'])
+                data = data['data']
+                # strip AX25 if need be
+                if param_all.AX25ENCAPS:
+                    source, destination, data = Framer.decode_radio(data)
+                    # case of the RFCheckoutBox returning garbage
+                    if len(data) == 0:
+                        return
+                if len(data) == 0:
+                    return
+                res = TCUnPacker.unpack_primHeader(data)
                 XDISP.set_TC_sent(res[param_ccsds.PACKETID.name], XDISP.OK)
             elif rpt_key == 'gotACK':
                 thecat = str(data['thecat'])
@@ -93,9 +103,9 @@ class ShowRec(hein.SocReceiver):
             else:
                 XDISP.report(REPORTS[rpt_key].disp(**data))
         elif key == 'tcf':
-            XDISP.add_TC(dbid=data.get('dbid'), infos=data)
+            XDISP.add_TC(packet_id=data[param_ccsds.PACKETID.name], infos=data)
         elif key == 'tmf':
-            XDISP.add_TM(pkid=data[param_ccsds.PACKETID.name], infos=data)
+            XDISP.add_TM(packet_id=data[param_ccsds.PACKETID.name], infos=data)
 
 
 def init():

@@ -77,20 +77,25 @@ class ControlRec(hein.SocReceiver):
         # ignores anything but dic and rpt if key is sentTC
         if key != 'dic' and key != 'rpt':
             return
+        blobish = data.get('data', Byt(''))
+        # strip AX25 if need be
+        if param_all.AX25ENCAPS:
+            source, destination, blobish = Framer.decode_radio(blobish)
+            # case of the RFCheckoutBox returning garbage
+            if len(blobish) == 0:
+                return
+        if len(blobish) == 0:
+            return
         # if report type message, gotta check if report_key is sentTC
         if key == 'rpt':
             # case of getting the TC back, update time_sent in DB
             if str(data[param_all.REPORTKEY]) == 'sentTC'\
                                         and param_all.SAVETC:
-                res = TCUnPacker.unpack_primHeader(data['data'])
+                res = TCUnPacker.unpack_primHeader(blobish)
                 pkid = res[param_ccsds.PACKETID.name]
                 db.update_sent_TC_time(pkid, data['t'])
             else:
                 return
-        blobish = data['data']
-        # skin the AX25 and KISS
-        if param_all.AX25ENCAPS:
-            source, destination, blobish = Framer.decode_radio(blobish)
         blobparser = CCSDSBlob(blobish)
         start = 0
         pk = blobparser.grab_first_packet(start=start)
@@ -111,6 +116,7 @@ def process_incoming(**kwargs):
     hd = TMUnPacker.unpack_primHeader(data)
     cat = int(hd[param_ccsds.PACKETCATEGORY.name])
     pld = int(hd[param_ccsds.PAYLOADFLAG.name])
+    print(cat, pld)
     # not an acknoledgement
     if (pld, cat) not in param_category.ACKCATEGORIES:
         return
@@ -127,6 +133,7 @@ def process_incoming(**kwargs):
     # add to queue
     report('gotACK', pkid=pkid, thecat=thecat, error=error,
             **{EXTRADISPKEY: False})
+    print('gotACK')
     # send it to the queue for telecommand
     ACKQUEUE.put((pkid, thecat, error))
 

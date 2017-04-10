@@ -37,6 +37,7 @@ KEYS = [dict(name='hkErrorFlags', start=0, l=16, fctunpack=bincore.bin2int,
         dict(name='errorCodes3', start=16, l=16, fctunpack=bincore.bin2int,
                 verbose="errorCodes3"),
         dict(name='errorCodes2', start=32, l=16, fctunpack=bincore.bin2int,
+
                 verbose="errorCodes2"),
         dict(name='errorCodes1', start=48, l=16, fctunpack=bincore.bin2int,
                 verbose="errorCodes1"),

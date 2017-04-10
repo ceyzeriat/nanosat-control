@@ -67,18 +67,21 @@ class Telecommand(object):
         if not kwargs.pop('wait', core.DEFAULTWAITCMD):
             return cls(dbid=dbid)
         # False if waiting for ACK, else None
-        rack = bool(int(hd['reqack_reception']))
+        print(hd)
+        rack = bool(int(hd[param_ccsds.REQACKRECEPTIONTELECOMMAND.name]))
         cls.RACK = False if rack else None
-        fack = bool(int(hd['reqack_format']))
+        fack = bool(int(hd[param_ccsds.REQACKFORMATTELECOMMAND.name]))
         cls.FACK = False if fack else None
-        eack = bool(int(hd['reqack_execution']))
+        eack = bool(int(hd[param_ccsds.REQACKEXECUTIONTELECOMMAND.name]))
         cls.EACK = False if eack else None
+        print(cls.RACK, cls.FACK, cls.EACK, rack, fack, eack)
         # don't expect any ack
         if not (rack or fack or eack):
             return cls(dbid=dbid)
         pkid = int(hd[param_ccsds.PACKETID.name])
         doneat = time.time() + kwargs.pop('timeout', core.DEFAULTTIMEOUTCMD)
         # check format first since it may prevent eack from being sent
+        print(time.time(), doneat)
         while time.time() < doneat:
             # if no ACK is False (waiting for ACK), then break
             if cls.EACK is not None or\
@@ -86,6 +89,7 @@ class Telecommand(object):
                 (cls.EACK is None and cls.FACK is None\
                                         and cls.RACK is not None):
                 break
+            print('trying', doneat - time.time())
             try:
                 res = controlling.ACKQUEUE.get(
                                 block=True,

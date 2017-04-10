@@ -116,6 +116,7 @@ def update_sent_TC_time(pkid, t):
       * pkid (int): the packet_id
       * t (datetime): the sent time
     """
+    t = str(t)
     TC = TABLES['Telecommand']
     idx = DB.query(TC.id).filter_by(packet_id=pkid)\
             .order_by(TC.id.desc()).limit(1).with_for_update()

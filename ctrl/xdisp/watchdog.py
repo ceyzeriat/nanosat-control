@@ -241,9 +241,10 @@ class Xdisp(object):
                                     opts=status))
                 break
 
-    def add_TC(self, dbid, infos):
-        dbid = int(dbid)
-        if dbid in [item['dbid'] for item in self.TClist]:
+    def add_TC(self, packet_id, infos):
+        packet_id = int(packet_id)
+        if packet_id in [item[param_ccsds.PACKETID.name]\
+                                    for item in self.TClist]:
             return
         if not self.running:
             return
@@ -252,7 +253,6 @@ class Xdisp(object):
         pld = int(infos[param_ccsds.PAYLOADFLAG.name])
         lvl = int(infos[param_ccsds.LEVELFLAG.name])
         pid = int(infos[param_ccsds.PID.name])
-        packet_id = str(infos[param_ccsds.PACKETID.name])
         self._disp(self.TC,
                    PrintOut(TCFMT.format(
                                 timestamp=core.now().strftime("%F %T"),
@@ -276,9 +276,10 @@ class Xdisp(object):
                         param_ccsds.REQACKEXECUTIONTELECOMMAND.name]) == 1\
                             else self.NONE)
 
-    def add_TM(self, pkid, infos):
-        pkid = int(pkid)
-        if pkid in [item[param_ccsds.PACKETID.name] for item in self.TMlist]:
+    def add_TM(self, packet_id, infos):
+        packet_id = int(packet_id)
+        if packet_id in [item[param_ccsds.PACKETID.name]\
+                                    for item in self.TMlist]:
             return
         if not self.running:
             return
@@ -294,7 +295,7 @@ class Xdisp(object):
                                 pld=PAYLOADICO if pld == 1 else OBCICO,
                                 lvl=L1ICO if lvl == 1 else L0ICO,
                                 pid=PIDREGISTRATION_REV[pid][pld][lvl],
-                                pkid=pkid,
+                                pkid=packet_id,
                                 cat=cat,
                                 catnum=catnum,
                                 sz=infos['sz']),
