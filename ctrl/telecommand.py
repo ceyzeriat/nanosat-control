@@ -58,8 +58,8 @@ class Telecommand(object):
     @property
     def iserror(self):
         return self.RACK is False or self.FACK is False or self.EACK is False
-    @nall.setter
-    def nall(self, value):
+    @iserror.setter
+    def iserror(self, value):
         pass
 
     @property
