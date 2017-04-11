@@ -43,7 +43,7 @@ class Telemetry(object):
         self.dbid = int(dbid)
 
     @classmethod
-    def _fromPacket(cls, packet, time_received=None, **kwargs):
+    def _fromPacket(cls, packet, time_received=None, user_id=None, **kwargs):
         """
         Unpacks and stores the telemetry. Feeds ``hd``, ``hdx`` and
         ``data`` attributes
@@ -54,7 +54,8 @@ class Telemetry(object):
         """
         cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet, retdbvalues=True)
         cls.hd['raw_file'] = core.RAWPACKETFOLDER
-        cls.hd['user_id'] = kwargs.get('user_id', core.RECEIVERID)
+        cls.hd['user_id'] = core.RECEIVERID if user_id is None\
+                                    else int(user_id)
         cls.hd['time_received'] = time_received\
                 if isinstance(time_received, core.datetime.datetime)\
                 else core.now()
