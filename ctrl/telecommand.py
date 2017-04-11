@@ -56,10 +56,10 @@ class Telecommand(object):
         return
 
     @property
-    def any(self):
+    def nall(self):
         return self.RACK is False or self.FACK is False or self.EACK is False
-    @any.setter
-    def any(self, value):
+    @nall.setter
+    def nall(self, value):
         pass
 
     @property
