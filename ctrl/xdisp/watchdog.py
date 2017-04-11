@@ -266,8 +266,8 @@ class Xdisp(object):
                                 timestamp=core.now().strftime("%F %T"),
                                 pld=PAYLOADICO if pld == 1 else OBCICO,
                                 lvl=L1ICO if lvl == 1 else L0ICO,
-                                pid=PIDREGISTRATION_REV[pid][pld][lvl],
-                                pkid=packet_id,
+                                pid=str(PIDREGISTRATION_REV[pid][pld][lvl]),
+                                pkid=str(packet_id),
                                 cmd_name=cmdname),
                             (0, 0), opts=self.WHITE, newline=True))
         self.set_TC_sent(packet_id, self.WAIT)

@@ -77,7 +77,9 @@ class ControlRec(hein.SocReceiver):
         # ignores anything but dic and rpt if key is sentTC
         if key != 'dic' and key != 'rpt':
             return
-        blobish = data.get('data', Byt(''))
+        if 'data' not in data.keys():
+            return
+        blobish = data['data']
         # strip AX25 if need be
         if param_all.AX25ENCAPS:
             source, destination, blobish = Framer.decode_radio(blobish)
@@ -94,8 +96,7 @@ class ControlRec(hein.SocReceiver):
                 res = TCUnPacker.unpack_primHeader(blobish)
                 pkid = res[param_ccsds.PACKETID.name]
                 db.update_sent_TC_time(pkid, data['t'])
-            else:
-                return
+            return
         blobparser = CCSDSBlob(blobish)
         start = 0
         pk = blobparser.grab_first_packet(start=start)
