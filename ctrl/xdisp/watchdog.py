@@ -208,8 +208,14 @@ class Xdisp(object):
         """
         if not self.running:
             return
+        if packet_id is None:
+            # if no packet_id given.. just assume it is the RACK of the
+            # lastest TC
+            packet_id = self.TClist[0][param_ccsds.PACKETID.name]
+        else:
+            packet_id = int(packet_id)
         for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
-            if int(packet_id) == int(item[param_ccsds.PACKETID.name]):
+            if packet_id == int(item[param_ccsds.PACKETID.name]):
                 self._disp(self.TC,
                            PrintOut(RACKICO[1], (idx, RACKICO[0]),
                                     opts=status))
