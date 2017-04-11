@@ -32,6 +32,7 @@ from ctrl.utils import bincore
 from ctrl import c
 from ctrl import c0
 from ctrl import c1
+from ctrl import cadcs
 from ctrl import db
 from segsol import controlling
 from param import param_all
