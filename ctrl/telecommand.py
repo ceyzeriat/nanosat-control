@@ -55,6 +55,21 @@ class Telecommand(object):
         """
         return
 
+    @property
+    def any(self):
+        return self.RACK is False or self.FACK is False or self.EACK is False
+    @any.setter
+    def any(self, value):
+        pass
+
+    @property
+    def all(self):
+        return self.RACK is not False and self.FACK is not False\
+                and self.EACK is not False
+    @all.setter
+    def all(self, value):
+        pass
+
     @classmethod
     def _fromCommand(cls, name, packet, dbid, hd, hdx, inputs, **kwargs):
         # broadcast on socket to the antenna process and watchdog
