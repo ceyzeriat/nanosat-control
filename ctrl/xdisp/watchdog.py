@@ -302,11 +302,11 @@ class Xdisp(object):
                                 timestamp=core.now().strftime("%F %T"),
                                 pld=PAYLOADICO if pld == 1 else OBCICO,
                                 lvl=L1ICO if lvl == 1 else L0ICO,
-                                pid=PIDREGISTRATION_REV[pid][pld][lvl],
-                                pkid=packet_id,
-                                cat=cat,
-                                catnum=catnum,
-                                sz=infos['sz']),
+                                pid=str(PIDREGISTRATION_REV[pid][pld][lvl]),
+                                pkid=str(packet_id),
+                                cat=str(cat),
+                                catnum=str(catnum),
+                                sz=str(infos['sz'])),
                             (0, 0), opts=self.WHITE, newline=True))
 
     def _init_colors(self):
