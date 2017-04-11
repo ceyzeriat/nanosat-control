@@ -75,6 +75,7 @@ class Telecommand(object):
         # broadcast on socket to the antenna process and watchdog
         controlling.broadcast_TC(cmdname=name, dbid=dbid, packet=packet,
                         hd=hd, hdx=hdx, inputs=inputs)
+        cls.timedout = False
         cls.hd = hd
         cls.hdx = hdx
         cls.inputs = inputs
@@ -82,14 +83,14 @@ class Telecommand(object):
         if not kwargs.pop('wait', core.DEFAULTWAITCMD):
             return cls(dbid=dbid)
         # False if waiting for ACK, else None
-        rack = bool(int(hd[param_ccsds.REQACKRECEPTIONTELECOMMAND.name]))
+        cls.rack = bool(int(hd[param_ccsds.REQACKRECEPTIONTELECOMMAND.name]))
         cls.RACK = None
-        fack = bool(int(hd[param_ccsds.REQACKFORMATTELECOMMAND.name]))
+        cls.fack = bool(int(hd[param_ccsds.REQACKFORMATTELECOMMAND.name]))
         cls.FACK = None
-        eack = bool(int(hd[param_ccsds.REQACKEXECUTIONTELECOMMAND.name]))
+        cls.eack = bool(int(hd[param_ccsds.REQACKEXECUTIONTELECOMMAND.name]))
         cls.EACK = None
         # don't expect any ack
-        if not (rack or fack or eack):
+        if not (cls.rack or cls.fack or cls.eack):
             return cls(dbid=dbid)
         pkid = int(hd[param_ccsds.PACKETID.name])
         doneat = time.time() + kwargs.pop('timeout', core.DEFAULTTIMEOUTCMD)
@@ -97,8 +98,9 @@ class Telecommand(object):
         while time.time() < doneat:
             # if no ACK is False (waiting for ACK), then break
             if cls.EACK is not None or\
-                (eack is False and cls.FACK is not None) or\
-                (eack is False and fack is False and cls.RACK is not None):
+                (cls.eack is False and cls.FACK is not None) or\
+                (cls.eack is False and cls.fack is False\
+                                    and cls.RACK is not None):
                 break
             try:
                 res = controlling.ACKQUEUE.get(
@@ -106,6 +108,7 @@ class Telecommand(object):
                                 timeout=max(0, doneat - time.time()))
                 controlling.ACKQUEUE.task_done()
             except queue.Empty:
+                cls.timedout = True
                 break
             # pkid mathcing except for when it is None, meaning it is RACK
             # because TM packets being RACK don't copy the PACKETID of the TC
