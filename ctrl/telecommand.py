@@ -97,7 +97,9 @@ class Telecommand(object):
         # check format first since it may prevent eack from being sent
         while time.time() < doneat:
             # if no ACK is False (waiting for ACK), then break
-            if cls.EACK is not None or\
+            if cls.EACK is True or\  # exec worked
+                cls.EACK is False or\  # exec failed
+                cls.FACK is False or\  # fmt failed, won't get exec
                 (cls.eack is False and cls.FACK is not None) or\
                 (cls.eack is False and cls.fack is False\
                                     and cls.RACK is not None):
