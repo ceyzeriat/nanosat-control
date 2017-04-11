@@ -56,18 +56,18 @@ class Telecommand(object):
         return
 
     @property
-    def nall(self):
+    def iserror(self):
         return self.RACK is False or self.FACK is False or self.EACK is False
     @nall.setter
     def nall(self, value):
         pass
 
     @property
-    def all(self):
+    def isok(self):
         return self.RACK is not False and self.FACK is not False\
                 and self.EACK is not False
-    @all.setter
-    def all(self, value):
+    @isok.setter
+    def isok(self, value):
         pass
 
     @classmethod
