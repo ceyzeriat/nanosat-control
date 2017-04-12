@@ -83,9 +83,7 @@ class ControlRec(hein.SocReceiver):
         # strip AX25 if need be
         if param_all.AX25ENCAPS:
             source, destination, blobish = Framer.decode_radio(blobish)
-            # case of the RFCheckoutBox returning garbage
-            if len(blobish) == 0:
-                return
+        # case of the RFCheckoutBox returning garbage
         if len(blobish) == 0:
             return
         # if report type message, gotta check if report_key is sentTC
@@ -96,16 +94,15 @@ class ControlRec(hein.SocReceiver):
                 res = TCUnPacker.unpack_primHeader(blobish)
                 pkid = res[param_ccsds.PACKETID.name]
                 db.update_sent_TC_time(pkid, data['t'])
-            return
-        blobparser = CCSDSBlob(blobish)
-        start = 0
-        pk = blobparser.grab_first_packet(start=start)
-        while pk is not None:
-            data['data'] = Byt(pk)
-            process_incoming(**data)
-            start += len(pk)
+        elif key == 'dic':
+            blobparser = CCSDSBlob(blobish)
+            start = 0
             pk = blobparser.grab_first_packet(start=start)
-        return
+            while pk is not None:
+                data['data'] = Byt(pk)
+                process_incoming(**data)
+                start += len(pk)
+                pk = blobparser.grab_first_packet(start=start)
 
 
 def process_incoming(**kwargs):
