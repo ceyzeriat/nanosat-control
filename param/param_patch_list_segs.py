@@ -36,7 +36,7 @@ __all__ = ['TROUSSEAU']
 # there should be only one key here
 KEYS = [dict(name='packet_id', start=0, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
                 verbose="Segment ID currently received by the satellite",
-                disp='pkid', octets=True)]
+                disp='ids', octets=True)]
 
 
 class PatchListSegCCSDSTrousseau(CCSDSTrousseau):
