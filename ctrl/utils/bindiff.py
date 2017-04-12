@@ -50,6 +50,10 @@ class Bindiff(object):
         self.emptychar = Byt(emptychar)[0]
         self.new = Byt(new)
         self.old = Byt(old)
+        self.newlen = len(self.new)
+        self.oldlen = len(self.old)
+        self.minlen = min(self.oldlen, self.newlen)
+        self.maxlen = max(self.oldlen, self.newlen)
         cutit = len(self.new)
         # if new bin-data is shorter than old
         if cutit < len(self.old):
@@ -57,10 +61,7 @@ class Bindiff(object):
             self.new += self.emptychar * (self.oldlen - self.newlen)
             # shorten old bin-data
             self.old = self.old[:cutit]
-        self.newlen = len(self.new)
-        self.oldlen = len(self.old)
-        self.minlen = min(self.oldlen, self.newlen)
-        self.maxlen = max(self.oldlen, self.newlen)
+        
 
     def do_it(self):
         """
