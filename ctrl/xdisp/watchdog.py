@@ -208,7 +208,7 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        if packet_id is None:
+        if str(packet_id).lower() == 'none':
             # if no packet_id given.. just assume it is the RACK of the
             # lastest TC, index 0
             self._disp(self.TC,
