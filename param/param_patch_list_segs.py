@@ -65,7 +65,7 @@ class PatchListSegCCSDSTrousseau(CCSDSTrousseau):
         copyvals = dict(vals)
         # transform the list of the pk_id into a string
         copyvals[self.keys[0].name] = repr(vals[self.keys[0].name])
-        return super(DumpAnswerDataCCSDSTrousseau, self).disp(copyvals)
+        return super(PatchListSegCCSDSTrousseau, self).disp(copyvals)
 
     def pack(self, allvalues, retdbvalues, **kwargs):
         pass

@@ -47,8 +47,6 @@ class Bindiff(object):
         """
         self.overhead = int(overhead)
         self.maxbuff = int(maxbuff)
-        self.padding = (emptychar is None)        
-        self.emptychar = Byt(emptychar)[0]
         self.new = Byt(new)
         self.old = Byt(old)
         cutit = len(self.new)
@@ -57,8 +55,8 @@ class Bindiff(object):
         # if new bin-data is shorter than old
         if cutit < len(self.old):
             # if padding is requested, pad the new bin with eptychar
-            if self.padding:
-                self.new += self.emptychar * (self.oldlen - self.newlen)
+            if emptychar is None:
+                self.new += Byt(emptychar)[0] * (self.oldlen - self.newlen)
                 self.newlen = self.oldlen
             # else, shorten the old bin-data
             else:
