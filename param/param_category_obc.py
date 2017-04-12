@@ -51,14 +51,16 @@ TELECOMMANDIDMIRROR = CCSDSKey( name='telecommand_id_mirror',
                                 l=16,
                                 fctunpack=bincore.bin2int,
                                 fctpack=bincore.int2bin,
-                                verbose="telecommand id of the corresponding tc command being ackowledged or answered")
+                                verbose="telecommand id of the corresponding tc command being ackowledged or answered",
+                                disp="tcid")
 
 PACKETIDMIRROR = CCSDSKey(  name='packet_id_mirror',
                             start=16,
                             l=16,
                             fctunpack=bincore.bin2int,
                             fctpack=bincore.int2bin,
-                            verbose="corresponding packet id count of the command being ackowledged or answered")
+                            verbose="corresponding packet id count of the command being ackowledged or answered",
+                            disp="pkid")
 
 STARTADDRESS = CCSDSKey(name='start_address',
                         start=32,
@@ -79,7 +81,8 @@ NSEGS = CCSDSKey(       name='n_segments',
                         l=16,
                         fctunpack=bincore.bin2int,
                         fctpack=bincore.int2bin,
-                        verbose="Total Number of segments received")
+                        verbose="Total Number of segments received",
+                        disp="Nseg")
 
 CATEGORY_RACKCAT = CCSDSTrousseau([], octets=False, name='reception ack')  # rec ack
 CATEGORY_1 = CCSDSTrousseau([], octets=False, name='beacon')  # beacon

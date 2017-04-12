@@ -29,6 +29,7 @@ import curses
 import locale
 import time
 from threading import Thread
+from byt import Byt
 from ..utils import core
 from ..ccsds import param_ccsds
 from param import param_all
@@ -208,7 +209,7 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        if packet_id is None:
+        if str(packet_id).lower() == 'none':
             # if no packet_id given.. just assume it is the RACK of the
             # lastest TC, index 0
             self._disp(self.TC,
@@ -333,9 +334,15 @@ class Xdisp(object):
             self.RP.move(0, 0)
             #self.RP.addstr(0, 0, ">")
             self.RP.clrtoeol()
-            s = self.RP.getstr()
-            if s == "q":
-                self.running = False
+            s = Byt(self.RP.getstr())
+            self.report('got: {}'.format(s))
+            if str(s) == "q":
+                self.popup = curses.newwin(5, 60, 10, 3)
+                self.popup.bkgdset(' ', self.RED)
+                #self.popup = newlinebox(5, 60, 10, 3, "Preview")
+                self._disp(self.popup, PrintOut('hahaha', (0,0)))
+
+                #self.running = False
             #self.RP.insertln()
             #self.RP.addstr(1, 0, "[" + s + "]")
 
@@ -356,9 +363,12 @@ def update_it(self):
         time.sleep(1./PRINTFREQ)
 
 
-def newlinebox(h, w, y, x, title=None):
-    wb = curses.newwin(2, w, y-1, x)
-    wb.addstr(0, 0, e(HORLINE)*(w-x))
+def newlinebox(h, w, y, x, title=None, frame=False):
+    if not frame:
+        wb = curses.newwin(2, w, y-1, x)
+        wb.addstr(0, 0, e(HORLINE)*w)
+    else:
+        wb = curses.newwin(2, w, y-1, x)
     if title is not None:
         wb.addstr(0, 2, e(title))
     wb.refresh()

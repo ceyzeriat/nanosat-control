@@ -33,7 +33,7 @@ __all__ = ['Bindiff']
 
 
 class Bindiff(object):
-    def __init__(self, old, new, overhead, maxbuff, emptychar=0):
+    def __init__(self, old, new, overhead, maxbuff, emptychar=None):
         """
         Does the binary difference
 
@@ -43,24 +43,28 @@ class Bindiff(object):
         * overhead (int): the size of headers associated to the bin-data
         * maxbuff (int): the maximum size of bin-data
         * emptychar (byte): the padding character if the new bin-data is
-            shorter than the reference
+            shorter than the reference, or `None` for no padding
         """
         self.overhead = int(overhead)
         self.maxbuff = int(maxbuff)
-        self.emptychar = Byt(emptychar)[0]
         self.new = Byt(new)
         self.old = Byt(old)
         cutit = len(self.new)
+        self.newlen = len(self.new)
+        self.oldlen = len(self.old)        
         # if new bin-data is shorter than old
         if cutit < len(self.old):
-            # pad with eptychar
-            self.new += self.emptychar * (self.oldlen - self.newlen)
-            # shorten old bin-data
-            self.old = self.old[:cutit]
-        self.newlen = len(self.new)
-        self.oldlen = len(self.old)
+            # if padding is requested, pad the new bin with eptychar
+            if emptychar is None:
+                self.new += Byt(emptychar)[0] * (self.oldlen - self.newlen)
+                self.newlen = self.oldlen
+            # else, shorten the old bin-data
+            else:
+                self.old = self.old[:cutit]
+                self.oldlen = self.newlen                
         self.minlen = min(self.oldlen, self.newlen)
         self.maxlen = max(self.oldlen, self.newlen)
+            
 
     def do_it(self):
         """

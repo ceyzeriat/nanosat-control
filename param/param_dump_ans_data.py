@@ -51,7 +51,7 @@ class DumpAnswerDataCCSDSTrousseau(CCSDSTrousseau):
         Args:
         * data (byts): the chain of octets to unpack
         """
-        return {self.keys[THEDATAKEY].name: str(data[:MAXLENGTHDATA])}
+        return {self.keys[THEDATAKEY].name: Byt(data[:MAXLENGTHDATA])}
 
     def disp(self, vals):
         """
@@ -61,8 +61,10 @@ class DumpAnswerDataCCSDSTrousseau(CCSDSTrousseau):
           * vals (dict): a dictionary containing the values to display
         """
         copyvals = dict(vals)
-        copyvals[self.keys[THEDATAKEY].name] =\
-            copyvals[self.keys[THEDATAKEY].name].hex()
+        ll = copyvals[self.keys[THEDATAKEY].name].hex()
+        charperline = 60
+        ll = "\n".join([ll[i*charperline:(i+1)*charperline] for i in range(len(ll) // charperline +1)])
+        copyvals[self.keys[THEDATAKEY].name] = ll
         return super(DumpAnswerDataCCSDSTrousseau, self).disp(copyvals)
 
     def pack(self, allvalues, retdbvalues, **kwargs):

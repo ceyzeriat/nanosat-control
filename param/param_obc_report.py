@@ -29,31 +29,51 @@ from byt import Byt
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.utils import bincore
 
-
 __all__ = ['TROUSSEAU']
 
 
-# there should be only one key here
-KEYS = [dict(name='packet_id', start=0, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
-                verbose="Segment ID currently received by the satellite",
-                disp='ids', octets=True)]
+MAXLENGTHMESSAGE = 235  # octets
 
 
-class PatchListSegCCSDSTrousseau(CCSDSTrousseau):
+def hex2txt(v, **kwargs):
+    """
+    verbose = "binary -> message"
+    """
+    return ''.join([chr(i) for i in v.ints() if i >= 32 and i <= 126])
+
+
+def txt2hex(txt, pad, **kwargs):
+    """
+    verbose = "message -> binary"
+    """
+    return Byt([i for i in Byt(txt).ints() if i >= 32 and i <= 126])
+
+
+KEYS = [dict(name='error', start=72, l=16,
+                fctunpack=bincore.bin2intSign, fctpack=bincore.intSign2bin,
+                verbose="error code for the error",
+                disp='error', pad=False)]
+
+
+class EventReportCCSDSTrousseau(CCSDSTrousseau):
     def unpack(self, data, **kwargs):
         """
-        Unpacks the data contained in the patch lsit segs packets
+        Unpacks the data contained in the payload report
 
         Args:
         * data (byts): the chain of octets to unpack
         """
-        theOnlyKey = self.keys[0]
-        nums = []
-        for idx in range(len(data) // self.size):
-            chunk = data[idx*self.size:(idx+1)*self.size]
-            nums.append(theOnlyKey.unpack(chunk))
-        # returns a list of the pk_id
-        return {theOnlyKey.name: nums}
+        res = dict([])
+        dt = bincore.hex2bin(data[:self.size])
+        for item in self.keys:
+            if item.name == 'message':
+                res[item.name] = str(data[:MAXLENGTHMESSAGE])
+            else:
+                res[item.name] = item.unpack(dt)
+        return res
+
+    def pack(self, **kwargs):
+        pass
 
     def disp(self, vals):
         """
@@ -62,13 +82,8 @@ class PatchListSegCCSDSTrousseau(CCSDSTrousseau):
         Args:
           * vals (dict): a dictionary containing the values to display
         """
-        copyvals = dict(vals)
-        # transform the list of the pk_id into a string
-        copyvals[self.keys[0].name] = repr(vals[self.keys[0].name])
-        return super(PatchListSegCCSDSTrousseau, self).disp(copyvals)
-
-    def pack(self, allvalues, retdbvalues, **kwargs):
-        pass
+        return "{}\nhex: {}".format(super(EventReportCCSDSTrousseau, self).disp(vals),
+                                    vals[self.keys[0].name].hex())
 
 
-TROUSSEAU = PatchListSegCCSDSTrousseau(KEYS, octets=True)
+TROUSSEAU = EventReportCCSDSTrousseau(KEYS, octets=True)
