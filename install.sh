@@ -9,7 +9,9 @@ fi
 
 
 REPONAME="segsol"
+SCRIPTNAME="scripts"
 WHERESEGSOL="$HOME/Documents/lib/$REPONAME"
+WHERESCRIPTS="$HOME/Documents/lib/$SCRIPTNAME"
 WHEREBINS="$HOME/Documents/bin"
 WHEREPARAM="$HOME/.segsol"
 WHEREDATA="$HOME/tm_data"
@@ -27,6 +29,7 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     mkdir -p $WHEREPARAM
     mkdir -p $WHEREDATA
     mkdir -p $WHEREBINS
+    mkdir -p $WHERESCRIPTS
     mkdir -p "$HOME/seglog"
 
     # update paths
