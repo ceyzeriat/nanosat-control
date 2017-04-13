@@ -204,7 +204,7 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     echo "    $IPY -i $WHERESEGSOL/show.py" >> picshow
     echo "fi" >> picshow
 
-    echo "    xterm -T 'Spy' $BASICFONT -geometry 80x10+30-50 -e '$IPY -i $WHERESEGSOL/spy.py';" >> picshow
+    echo "    xterm -T 'Spy' $BASICFONT -geometry 80x10+30-50 -e '$IPY -i $WHERESEGSOL/spy.py';" >> picspy
     echo "else" >> picspy
     echo "    $IPY -i $WHERESEGSOL/spy.py" >> picspy
     echo "fi" >> picspy    
