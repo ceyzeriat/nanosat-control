@@ -10,7 +10,7 @@ WHERESCRIPTS="$HOME/Documents/$SCRIPTNAME"
 WHEREBINS="$HOME/Documents/bin"
 WHEREPARAM="$HOME/.segsol"
 WHEREDATA="$HOME/tm_data"
-DESKTOP="$HOME/Desktop"
+DESKTOP="$HOME/Bureau"
 WHEREPYENV="$HOME/pythonsegsol"
 
 
@@ -54,34 +54,38 @@ fi
 
 read -t 0.2 -n 10000 discard
 PUT 8 0
-echo -n "Do you wish to install a separate python environment? [y|N] "
-read -r -n 1 newpython
-if [ "$newpython" == "Y" ] || [ "$newpython" == "y" ]; then
-    sudo apt-get install python-dev python-pip
-    pip install virtualenv
-    mkdir -p $WHEREPYENV
-    cd $WHEREPYENV
-    virtualenv -p /usr/bin/python2.7 venv
-    source venv/bin/activate
-    pip install ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil
-    IPY="$WHEREPYENV/venv/bin/ipython"
-    sleep 0.5
-    clearterm
-    SHOWCURSOR
-    echo "Do you wish to use this new python environment as default? [y|N] "
-    read -r -n 1 -t 10 prepend
-else
-    # install and/or update python dependencies
-    pip install ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil
-    pip install --upgrade ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil
-    IPY=$(which ipython)
-fi
 
 
 ############################################
 
 
 if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
+
+    echo -n "Do you wish to install a separate python environment? [y|N] "
+    read -r -n 1 newpython
+    echo ""
+    if [ "$newpython" == "Y" ] || [ "$newpython" == "y" ]; then
+	sudo apt-get install python-dev python-pip
+	pip install virtualenv
+	mkdir -p $WHEREPYENV
+	cd $WHEREPYENV
+	virtualenv -p /usr/bin/python2.7 venv
+	source venv/bin/activate
+	pip install ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil
+	pip install --upgrade ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil
+	IPY="$WHEREPYENV/venv/bin/ipython"
+	sleep 0.5
+	clearterm
+	SHOWCURSOR
+	echo "Do you wish to use this new python environment as default? [y|N] "
+	read -r -n 1 prepend
+    else
+	# install and/or update python dependencies
+	pip install ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil
+	pip install --upgrade ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil
+	IPY=$(which ipython)
+    fi
+    
     # create directories
     mkdir -p $WHERESEGSOL
     mkdir -p $WHEREPARAM
@@ -110,16 +114,21 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
         echo "export PATH=$WHEREPYENV/venv/bin:"'$PATH' >> $HOME/.bashrc
     fi
     echo "export PATH=$WHEREBINS:"'$PATH' >> $HOME/.bashrc
-    echo "export WHERESEGSOL=$WHERESEGSOL" >> $HOME/.bashrc
-    echo 'export PYTHONPATH=$WHERESEGSOL:$WHERESCRIPTS:$PYTHONPATH' >> $HOME/.bashrc
+    echo "export PYTHONPATH=$WHERESEGSOL:$WHERESCRIPTS"':$PYTHONPATH' >> $HOME/.bashrc
 
     read -t 0.2 -n 10000 discard
+    echo ""
+    echo ""
     echo "Before continuing, you will need to copy your public key shown below to the authorized keys of the user 'picsatdata' on gitlab.obspm.fr"
     echo "***"
     cat $HOME/.ssh/id_rsa.pub
     echo "***"
     echo "Press ENTER when done or ctrl-C to abort"
     read -r discard
+
+    sleep 0.5
+    clearterm
+    SHOWCURSOR
 
     cd $WHERESEGSOL
 
