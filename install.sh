@@ -143,8 +143,13 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     cp ./param/param_all_example.py ./param/param_all.py
 
     # move binaries
-    chmod a+x bins/*
+    chmod a+x bins/log*
     mv bins/log* $WHEREBINS/
+
+    # compiling hmac library
+    cd $WHERESEGSOL/ctrl/utils/hmac/
+    gcc -shared -o hmaclib.so -fPIC L0AppHmac.c L0AppSha256.c
+    
 
     # create parameter files
     echo 'PICSAT' > $WHEREPARAM/callsign_destination
