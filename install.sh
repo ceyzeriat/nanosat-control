@@ -1,23 +1,81 @@
 #!/bin/bash
 
-# input can be "all", "server", "desk"
+# input can be "all", "server", "desk", "bdd"
+
+REPONAME="segsol"
+SCRIPTNAME="scripts"
+WHERESEGSOL="$HOME/Documents/lib/$REPONAME"
+WHEREBDD="$HOME/Documents/lib/bdd"
+WHERESCRIPTS="$HOME/Documents/$SCRIPTNAME"
+WHEREBINS="$HOME/Documents/bin"
+WHEREPARAM="$HOME/.segsol"
+WHEREDATA="$HOME/tm_data"
+DESKTOP="$HOME/Desktop"
+WHEREPYENV="$HOME/pythonsegsol"
+
+
+function clearterm {
+    echo -e "\\033c"
+    echo -e "\e[97m"
+    echo -e "\e[48;5;16m"
+    clear
+    }
+
+PUT(){ echo -en "\033[${1};${2}H";}
+HIDECURSOR(){ echo -en "\033[?25l";}
+SHOWCURSOR(){ echo -en "\033[?25h";}
+
+
+sleep 0.5
+clearterm
+SHOWCURSOR
 
 if [ $# -eq 0 ];
   then DOINSTALL="server"
   else DOINSTALL="$1"
 fi
 
-
-REPONAME="segsol"
-SCRIPTNAME="scripts"
-WHERESEGSOL="$HOME/Documents/lib/$REPONAME"
-WHERESCRIPTS="$HOME/Documents/lib/$SCRIPTNAME"
-WHEREBINS="$HOME/Documents/bin"
-WHEREPARAM="$HOME/.segsol"
-WHEREDATA="$HOME/tm_data"
-DESKTOP="$HOME/Desktop"
-IPY=$(which ipython)
 INITPWD=$(pwd)
+
+
+PUT 1 0
+echo "You're about to install the ground segment of PicSat."
+echo "You will install:"
+if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
+    echo "- the python repositories, libraries and scripts"
+fi
+if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "desk" ]; then
+    echo "- the desktop shortcuts"
+fi
+if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "bdd" ]; then
+    echo "- the local database"
+fi
+
+
+read -t 0.2 -n 10000 discard
+PUT 8 0
+echo -n "Do you wish to install a separate python environment? [y|N] "
+read -r -n 1 newpython
+if [ "$newpython" == "Y" ] || [ "$newpython" == "y" ]; then
+    sudo apt-get install python-dev python-pip
+    pip install virtualenv
+    mkdir -p $WHEREPYENV
+    cd $WHEREPYENV
+    virtualenv -p /usr/bin/python2.7 venv
+    source venv/bin/activate
+    pip install ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil
+    IPY="$WHEREPYENV/venv/bin/ipython"
+    sleep 0.5
+    clearterm
+    SHOWCURSOR
+    echo "Do you wish to use this new python environment as default? [y|N] "
+    read -r -n 1 -t 10 prepend
+else
+    # install and/or update python dependencies
+    pip install ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil
+    pip install --upgrade ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil
+    IPY=$(which ipython)
+fi
 
 
 ############################################
@@ -30,30 +88,49 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     mkdir -p $WHEREDATA
     mkdir -p $WHEREBINS
     mkdir -p $WHERESCRIPTS
+    mkdir -p $WHEREBDD
     mkdir -p "$HOME/seglog"
+
+    # generate private/public key if not existing
+    if [ ! -f $HOME/.ssh/id_rsa.pub ]; then
+        ssh-keygen -b 2048 -t rsa -f $HOME/.ssh/id_rsa -q -N ""
+    fi
+
+    # git user initialization
+    if [ ! -f $HOME/.gitconfig ]; then
+        git config --global user.name "segsol"
+        git config --global user.email "picsat.office@obspm.fr"
+    fi
 
     # update paths
     echo '' >> $HOME/.bashrc
     echo '' >> $HOME/.bashrc
     echo '# segsol append' >> $HOME/.bashrc
+    if [ "$prepend" == "Y" ] || [ "$prepend" == "y" ]; then
+        echo "export PATH=$WHEREPYENV/venv/bin:"'$PATH' >> $HOME/.bashrc
+    fi
     echo "export PATH=$WHEREBINS:"'$PATH' >> $HOME/.bashrc
     echo "export WHERESEGSOL=$WHERESEGSOL" >> $HOME/.bashrc
-    echo 'export PYTHONPATH=$WHERESEGSOL:$PYTHONPATH' >> $HOME/.bashrc
+    echo 'export PYTHONPATH=$WHERESEGSOL:$WHERESCRIPTS:$PYTHONPATH' >> $HOME/.bashrc
+
+    read -t 0.2 -n 10000 discard
+    echo "Before continuing, you will need to copy your public key shown below to the authorized keys of the user 'picsatdata' on gitlab.obspm.fr"
+    echo "***"
+    cat $HOME/.ssh/id_rsa.pub
+    echo "***"
+    echo "Press ENTER when done or ctrl-C to abort"
+    read -r discard
 
     cd $WHERESEGSOL
 
-    # init the git repo
+    # init the git repo for segsol
     git init
-    if [ ! -f $HOME/.gitconfig ]; then
-        git config --global user.name "segsol"
-        git config --global user.email "picsat.office@obspm.fr"
-    fi
-    git remote add origin https://git.obspm.fr/git/projets/Picsat/segsol
+    git remote add origin git@gitlab.obspm.fr:picsat/segsol.git
 
     # grab code
     git pull origin master
 
-    # make the copy of param_all
+    # make the copy of param_all to replicate parameters
     cp ./param/param_all_example.py ./param/param_all.py
 
     # move binaries
@@ -67,6 +144,15 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     echo 'postgresql://postgres:<pass>@localhost:5432/picsat' > $WHEREPARAM/db_server
     echo 'postgres' > $WHEREPARAM/artichaut
     echo 'You wish!' > $WHEREPARAM/perefouras
+
+    cd $WHERESCRIPTS
+    # init the git repo for scripts
+    git init
+    git remote add origin git@gitlab.obspm.fr:picsat/scripts.git
+
+    # grab code
+    git pull origin master
+
 
     # create the binaries
     cd $WHEREBINS
@@ -121,6 +207,33 @@ fi
 ############################################
 
 
+if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "bdd" ]; then
+
+    echo "Installing local BDD. Need first to install postgresql binaries"
+    sudo apt-get install postgresql postgresql-client postgresql-contrib libpq-dev pgadmin3
+
+    sudo -u postgres psql postgres -c "alter user postgres with password 'postgres';"
+
+    sudo service postgresql restart
+
+    cd $WHEREBDD
+    # init the git repo for bdd init
+    git init
+    git remote add origin git@gitlab.obspm.fr:picsat/bdd.git
+
+    # grab code
+    git pull origin master
+
+    # refresh db_server parameters to match the default local database
+    echo 'postgresql://postgres:<pass>@localhost:5432/picsat' > $WHEREPARAM/db_server
+
+    bash new_database.sh picsat
+fi
+
+
+############################################
+
+
 if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "desk" ]; then
     # create directory
     mkdir -p $DESKTOP
@@ -136,6 +249,7 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "desk" ]; then
     cp PicControl.desktop PicWatch.desktop
     cp PicControl.desktop PicShow.desktop
     cp PicControl.desktop PicChat.desktop
+    cp PicControl.desktop PicSpy.desktop
 
     echo 'Name=PicControl' >> PicControl.desktop
     echo 'Comment=' >> PicControl.desktop
