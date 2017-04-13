@@ -118,6 +118,7 @@ Thumbs.db
 *~lock*
 *fuse_hidden*
 .sub*.tmp
+\#*\#
 
 
 # package #
