@@ -229,6 +229,16 @@ class InvalidMask(CTRLException):
         self.message = "Invalid mask".format()
 
 
+class MissingServerUserPass(CTRLException):
+    """
+    Missing pass file for the server user, or empty file
+    """
+    def __init__(self, f, *args, **kwargs):
+        self._init(f, *args, **kwargs)
+        self.message = "Pass file '{}' empty or missing".format(f)
+
+
+
 # not used
 class NoSuchKey(CTRLException):
     """

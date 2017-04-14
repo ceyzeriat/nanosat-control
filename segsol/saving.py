@@ -28,6 +28,7 @@
 import time
 import os
 import hein
+import paramiko
 from byt import Byt
 from ctrl.utils import core
 from param import param_all
@@ -42,9 +43,11 @@ from param import param_all
 __all__ = ['init', 'close', 'report']
 
 
+
 SAVE_TRANS = None
 SAVE_REC_LISTEN = None
 running = False
+SERVER = [None, None]
 
 
 class SaveTrans(hein.SocTransmitter):
@@ -90,11 +93,34 @@ class SaveRec(hein.SocReceiver):
         return
 
 
+def moveto_save_folder(sftp, t=None):
+    """
+    Given the sftp object, cd to the save folder after
+    creating it if it didn't exist.
+    Args:
+      * t (datetime): if None, goes to the user_id save folder,
+        otherwise to the user_id/YYYYMMDD save folder
+    """
+    path = param_all.TELEMETRYSAVEFOLDER.rstrip('/')\
+                    .format(user_id=param_all.RECEIVERID)
+    if root:
+        path = path[:path.rfind('/')]  # server is linux
+    else:
+        path = t.strftime(path)
+    try:
+        sftp.chdir(path)  # Test if remote_path exists
+    except IOError:
+        sftp.mkdir(path)  # Create remote path
+        sftp.chdir(path)  # cd there
+    return sftp
+
+
 def process_incoming(t, path, data, **kwargs):
     """
     A callback function that saves the package in the database after
     parsing it
     """
+    global SERVER
     path = str(path)
     if not os.path.isfile(path):
         raise ctrlexception.PacketFileMissing(path)
@@ -106,7 +132,19 @@ def process_incoming(t, path, data, **kwargs):
     t = core.strISOstamp2datetime(t)
     if not t == core.packetfilename2datetime(path):
         raise ctrlexception.PacketDateMismatch(path)
+    # create tmp file to indicate on-going copy and saving
+    open(path+'.tmp', 'w').close()
+    # copy raw file to server
+    if param_all.SAVERAWFILE:
+        # determine folderw ith date, creates it if missing and goes into it
+        SERVER[1] = moveto_save_folder(sftp=SERVER[1], t=t)
+        SERVER[1].put(path, '.')
+    # save TM to DB
     tm = Telemetry._fromPacket(data, time_received=t)
+    # remove temp file after copy and DB saving successful
+    os.remove(path+'.tmp')
+    if param_all.REMOVERAWFILEAFTERSAVE:
+        os.remove(path)
     report('savedTM', dbid=tm.dbid)
 
 
@@ -126,6 +164,7 @@ def init():
     global SAVE_TRANS
     global SAVE_REC_LISTEN
     global running
+    global SERVER
     if running:
         return
     SAVE_TRANS = SaveTrans(port=param_all.SAVINGPORT[0],
@@ -135,6 +174,18 @@ def init():
                                 name=param_all.SAVINGNAME, connect=True,
                                 connectWait=0.5,
                                 portname=param_all.LISTENINGPORT[1])
+    if param_all.SAVERAWFILE:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.load_host_keys(os.path.expanduser( os.path.join("~", ".ssh",
+                                                            "known_hosts")))
+        ssh.connect(param_all.TELEMETRYSAVESERVER,
+                    username=param_all.TELEMETRYSAVEUSER,
+                    password=param_all.TELEMETRYSAVEPASS)
+        sftp = ssh.open_sftp()
+        # creates the root user-folder if missing and moves into it
+        sftp = moveto_save_folder(sftp=sftp)
+        SERVER = [ssh, sftp]
     running = True
 
 
@@ -145,9 +196,13 @@ def close():
     global SAVE_TRANS
     global SAVE_REC_LISTEN
     global running
+    global SERVER
     if not running:
         return
     running = False
+    if param_all.SAVERAWFILE:
+        SERVER[0].close()
+        SERVER[1].close()
     SAVE_TRANS.close()
     SAVE_REC_LISTEN.stop_connectLoop()
     SAVE_REC_LISTEN.close()

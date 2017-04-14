@@ -104,7 +104,7 @@ fi
 
 ############################################
 
-ALLPYTHONLIBS="ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil patiencebar"
+ALLPYTHONLIBS="ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil patiencebar paramiko"
 
 if [ "$doserver" ==  1  ];then
     sleep 0.5
@@ -213,6 +213,7 @@ if [ "$doserver" ==  1  ];then
     echo 'postgresql://postgres:<pass>@localhost:5432/picsat' > $WHEREPARAM/db_server
     echo 'postgres' > $WHEREPARAM/artichaut
     echo 'You wish!' > $WHEREPARAM/perefouras
+    echo '' > $WHEREPARAM/godsavesthequeen
 
     cd $WHERESCRIPTS
     echo "Init the git repo for scripts"

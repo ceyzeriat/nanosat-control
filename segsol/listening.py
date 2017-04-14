@@ -91,8 +91,8 @@ def process_data(data):
         return
     now = core.now()
     name = now.strftime(param_all.TELEMETRYNAMEFORMAT)
-    path = param_all.TELEMETRYDUMPFOLDER + [name]
-    name = core.home_dir(*path)
+    name = param_all.TELEMETRYDUMPFOLDER + [name]
+    name = core.home_dir(*name)
     if os.path.isfile(name):  # already exists
         name += ".{}".format(len(glob.glob(name))+1)
     # locally saved
@@ -101,16 +101,6 @@ def process_data(data):
     f.close()
     # sends packets on the socket
     LISTEN_TRANS.tell_dict(t=now, path=name, data=data)
-
-
-def init_checkoutbox():
-    global ANTENNA
-    ANTENNA = RFCheckoutbox()
-
-
-def init_serial():
-    global ANTENNA
-    ANTENNA = SerialUSB()
 
 
 def report(*args, **kwargs):
@@ -193,9 +183,9 @@ def init(antenna):
                                 hostname = 'localhost')
     report('SettingUpAntenna', antenna=antenna)
     if antenna == 'checkoutbox':
-        init_checkoutbox()
+        ANTENNA = RFCheckoutbox()
     elif antenna == 'serial':
-        init_serial()
+        ANTENNA = SerialUSB()
     else:
         close()
         raise ctrlexception.UnknownAntenna(antenna)

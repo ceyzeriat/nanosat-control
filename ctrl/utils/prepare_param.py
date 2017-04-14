@@ -49,6 +49,25 @@ if not JUSTALIB:
         else:
             raise ctrlexception.BrokenTelemetryDumpFolder(TELEMETRYDUMPFOLDER)
 
+
+    # if need to transfer the TM on the server
+    TELEMETRYSAVEPASS = ''
+    if SAVERAWFILE:
+        # get pass for telemetry saving to server
+        _f = home_dir(*TELEMETRYSAVEPASSFILE)
+        try:
+            f = open(_f, mode='r')
+            TELEMETRYSAVEPASS = f.readline().strip()
+            f.close()
+            if len(TELEMETRYSAVEPASS) == 0:
+                raise IOError
+        except IOError:
+            if NOERRORATIMPORT:
+                print(ctrlexception.MissingServerUserPass(_f))
+            else:
+                raise ctrlexception.MissingServerUserPass(_f)
+
+
     # preparing the DB server
     try:
         f = open(home_dir(*DBFILE), mode='r')
