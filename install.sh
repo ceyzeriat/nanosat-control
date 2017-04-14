@@ -17,6 +17,13 @@ WHEREPYENV="$HOME/pythonsegsol"
 ######################################################
 
 
+DOC="Use -s to install the libraries and scripts, -d to install the desktop shortcuts, -b to install the local database, -a to install all"
+
+if [[ $# -eq 0 ]] ; then
+    echo $DOC
+    exit 0
+fi
+
 # Reset in case getopts has been used previously in the shell.
 OPTIND=1
 
@@ -27,10 +34,10 @@ doserver=0
 dodesk=0
 
 # parses the input commands
-while getopts "h?bsda:" opt; do
+while getopts ":h?bsda" opt; do
     case "$opt" in
     h|\?)
-        echo "Use -s to install the libraries and scripts, -d to install the desktop shortcuts, -b to install the local database, -a to install all"
+        echo $DOC
         exit 0
         ;;
     b)  dobdd=1
@@ -58,7 +65,6 @@ function clearterm {
     clear
     }
 
-PUT(){ echo -en "\033[${1};${2}H";}
 HIDECURSOR(){ echo -en "\033[?25l";}
 SHOWCURSOR(){ echo -en "\033[?25h";}
 
@@ -71,7 +77,6 @@ SHOWCURSOR
 INITPWD=$(pwd)
 
 
-PUT 1 0
 echo "You're about to install the ground segment of PicSat."
 echo "You will install:"
 if [ "$doserver" ==  1  ]; then
@@ -86,8 +91,16 @@ fi
 
 
 read -t 0.2 -n 10000 discard
-PUT 8 0
 
+echo ""
+echo -n "Proceed? [y|N] "
+read -r -n 1 newpython
+if [ "$newpython" == "Y" ] || [ "$newpython" == "y" ]; then
+    echo ""
+else
+    echo ""
+    exit 0
+fi
 
 ############################################
 
@@ -108,8 +121,8 @@ if [ "$doserver" ==  1  ];then
 	cd $WHEREPYENV
 	virtualenv -p /usr/bin/python2.7 venv
 	source venv/bin/activate
-	pip install "$ALLPYTHONLIBS"
-	pip install --upgrade "$ALLPYTHONLIBS"
+	pip install $ALLPYTHONLIBS
+	pip install --upgrade $ALLPYTHONLIBS
 	IPY="$WHEREPYENV/venv/bin/ipython"
 	sleep 0.5
 	clearterm
@@ -118,8 +131,8 @@ if [ "$doserver" ==  1  ];then
 	read -r -n 1 prepend
     else
 	# install and/or update python dependencies
-	pip install "$ALLPYTHONLIBS"
-	pip install --upgrade "$ALLPYTHONLIBS"
+	pip install $ALLPYTHONLIBS
+	pip install --upgrade $ALLPYTHONLIBS
 	IPY=$(which ipython)
     fi
     
@@ -185,7 +198,7 @@ if [ "$doserver" ==  1  ];then
 
     echo "Move logging binaries"
     chmod a+x bins/log*
-    mv bins/log* $WHEREBINS/
+    cp bins/log* $WHEREBINS/
 
 
     echo "Compiling hmac library"
