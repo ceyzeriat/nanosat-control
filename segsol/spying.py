@@ -34,16 +34,15 @@ from threading import Thread
 from ctrl.utils.report import REPORTS
 from ctrl.utils import core
 from param import param_all
+from param import params
 from ctrl.utils import ctrlexception
 from ctrl.rfcheckoutbox import RFCheckoutbox
 from ctrl.serialusb import SerialUSB
 
 __all__ = ['process_data', 'init', 'close']
 
-# get the name of the user
-USERNAME = os.getlogin()
 # the path where to create the directories in which packets data will be stored
-DEFAULT_PATH = '/home/'+USERNAME+'/all_telemetries/'
+ALL_TEL = 'all_telemetries'
 # the name of the dir
 DIRNAME = None
 
@@ -85,13 +84,11 @@ def process_data(data):
     """
     if len(data) == 0:
         return
-    path = str(data['path']).split('/')
-    name = path[-1]
-    path[2]=DIRNAME
-    local_path = '/'.join(path[2:])
-    print("Spying: " + str(data['data'].hex()) + " >> " + local_path)
+    filename = os.path.split(str(data['path']))[1]
+    local_path = os.path.join(DIRNAME, 'tm_data', filename)
+    print("Spying: '{}' >> {}".format(data['data'].hex(), local_path)
     # locally saved
-    f = open(DEFAULT_PATH+local_path, mode='wb')
+    f = open(params.home_dir(ALL_TEL, local_path), mode='wb')
     f.write(data['data'])
     f.close()
     SPY_TRANS.tell_dict(**data)
@@ -107,12 +104,14 @@ def init(dir_name):
     global DIRNAME
     if running:
         return
-    if os.path.isdir(DEFAULT_PATH+str(dir_name)):
-        print('Directory already exists. Please change the name!')
+    DIRNAME = str(dir_name).lstrip('/')
+    sub_dir = params.home_dir(ALL_TEL, DIRNAME)
+    if os.path.isdir(sub_dir):
+        print('Directory '{}' already exists. Please change the name!'\
+                                                        .format(sub_dir))
     else:
-        os.mkdir(DEFAULT_PATH+str(dir_name))
-        os.mkdir(DEFAULT_PATH+str(dir_name)+'/tm_data')        
-        DIRNAME = dir_name
+        os.mkdir(sub_dir)
+        os.mkdir(params.home_dir(ALL_TEL, DIRNAME, 'tm_data'))
         SPY_TRANS = SpyTrans(port=param_all.SPYINGPORT[0],
                              nreceivermax=1,
                              start=True,
