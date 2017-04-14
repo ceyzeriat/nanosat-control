@@ -1,17 +1,54 @@
 #!/bin/bash
 
-# input can be "all", "server", "desk", "bdd"
 
 REPONAME="segsol"
 SCRIPTNAME="scripts"
-WHERESEGSOL="$HOME/Documents/lib/$REPONAME"
-WHEREBDD="$HOME/Documents/lib/bdd"
-WHERESCRIPTS="$HOME/Documents/$SCRIPTNAME"
-WHEREBINS="$HOME/Documents/bin"
+DOCS=$(xdg-user-dir DOCUMENTS)
+DESKTOP=$(xdg-user-dir DESKTOP)
+WHERESEGSOL="$DOCS/lib/$REPONAME"
+WHEREBDD="$DOCS/lib/bdd"
+WHERESCRIPTS="$DOCS/$SCRIPTNAME"
+WHEREBINS="$DOCS/bin"
 WHEREPARAM="$HOME/.segsol"
 WHEREDATA="$HOME/tm_data"
-DESKTOP="$HOME/Bureau"
 WHEREPYENV="$HOME/pythonsegsol"
+
+
+######################################################
+
+
+# Reset in case getopts has been used previously in the shell.
+OPTIND=1
+
+# Initialize our own variables:
+output_file=""
+dobdd=0
+doserver=0
+dodesk=0
+
+# parses the input commands
+while getopts "h?bsda:" opt; do
+    case "$opt" in
+    h|\?)
+        echo "Use -s to install the libraries and scripts, -d to install the desktop shortcuts, -b to install the local database, -a to install all"
+        exit 0
+        ;;
+    b)  dobdd=1
+        ;;
+    s)  doserver=1
+        ;;
+    d)  dodesk=1
+        ;;
+    a)  dodesk=1
+        dobdd=1
+        doserver=1
+        ;;
+    esac
+done
+
+shift $((OPTIND-1))
+
+[ "$1" = "--" ] && shift
 
 
 function clearterm {
@@ -30,10 +67,6 @@ sleep 0.5
 clearterm
 SHOWCURSOR
 
-if [ $# -eq 0 ];
-  then DOINSTALL="server"
-  else DOINSTALL="$1"
-fi
 
 INITPWD=$(pwd)
 
@@ -41,13 +74,13 @@ INITPWD=$(pwd)
 PUT 1 0
 echo "You're about to install the ground segment of PicSat."
 echo "You will install:"
-if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
+if [ "$doserver" ==  1  ]; then
     echo "- the python repositories, libraries and scripts"
 fi
-if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "desk" ]; then
+if [ "$dodesk" ==  1  ]; then
     echo "- the desktop shortcuts"
 fi
-if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "bdd" ]; then
+if [ "$dobdd" ==  1  ]; then
     echo "- the local database"
 fi
 
@@ -58,8 +91,12 @@ PUT 8 0
 
 ############################################
 
+ALLPYTHONLIBS="ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil patiencebar"
 
-if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
+if [ "$doserver" ==  1  ];then
+    sleep 0.5
+    clearterm
+    SHOWCURSOR
 
     echo -n "Do you wish to install a separate python environment? [y|N] "
     read -r -n 1 newpython
@@ -71,8 +108,8 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
 	cd $WHEREPYENV
 	virtualenv -p /usr/bin/python2.7 venv
 	source venv/bin/activate
-	pip install ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil
-	pip install --upgrade ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil
+	pip install "$ALLPYTHONLIBS"
+	pip install --upgrade "$ALLPYTHONLIBS"
 	IPY="$WHEREPYENV/venv/bin/ipython"
 	sleep 0.5
 	clearterm
@@ -81,12 +118,12 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
 	read -r -n 1 prepend
     else
 	# install and/or update python dependencies
-	pip install ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil
-	pip install --upgrade ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil
+	pip install "$ALLPYTHONLIBS"
+	pip install --upgrade "$ALLPYTHONLIBS"
 	IPY=$(which ipython)
     fi
     
-    # create directories
+    echo "Create directories"
     mkdir -p $WHERESEGSOL
     mkdir -p $WHEREPARAM
     mkdir -p $WHEREDATA
@@ -97,16 +134,19 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
 
     # generate private/public key if not existing
     if [ ! -f $HOME/.ssh/id_rsa.pub ]; then
+        echo "Generate private/public key"
         ssh-keygen -b 2048 -t rsa -f $HOME/.ssh/id_rsa -q -N ""
     fi
 
     # git user initialization
     if [ ! -f $HOME/.gitconfig ]; then
+        echo "Git user initialization"
         git config --global user.name "segsol"
         git config --global user.email "picsat.office@obspm.fr"
     fi
 
     # update paths
+    echo "Update paths"
     echo '' >> $HOME/.bashrc
     echo '' >> $HOME/.bashrc
     echo '# segsol append' >> $HOME/.bashrc
@@ -132,7 +172,7 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
 
     cd $WHERESEGSOL
 
-    # init the git repo for segsol
+    echo "Init the git repo for libraries"
     git init
     git remote add origin git@gitlab.obspm.fr:picsat/segsol.git
 
@@ -142,16 +182,18 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     # make the copy of param_all to replicate parameters
     cp ./param/param_all_example.py ./param/param_all.py
 
-    # move binaries
+
+    echo "Move logging binaries"
     chmod a+x bins/log*
     mv bins/log* $WHEREBINS/
 
-    # compiling hmac library
+
+    echo "Compiling hmac library"
     cd $WHERESEGSOL/ctrl/utils/hmac/
     gcc -shared -o hmaclib.so -fPIC L0AppHmac.c L0AppSha256.c
     
 
-    # create parameter files
+    echo "Create parameter files"
     echo 'PICSAT' > $WHEREPARAM/callsign_destination
     echo 'ground' > $WHEREPARAM/callsign_source
     echo '0' > $WHEREPARAM/tc_packet_id
@@ -160,7 +202,7 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     echo 'You wish!' > $WHEREPARAM/perefouras
 
     cd $WHERESCRIPTS
-    # init the git repo for scripts
+    echo "Init the git repo for scripts"
     git init
     git remote add origin git@gitlab.obspm.fr:picsat/scripts.git
 
@@ -169,6 +211,7 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
 
 
     # create the binaries
+    echo "Generate binaries"
     cd $WHEREBINS
 
     echo '#!/bin/bash' > piccontrol
@@ -215,13 +258,19 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "server" ]; then
     echo "fi" >> picspy    
 
     echo "xterm -T 'Chat' $BASICFONT -geometry 80x15-0+0 -e /bin/bash -l -c '$WHEREBINS/logdisp';" >> picchat
+
+    echo ""
+    echo "Done"
 fi
 
 
 ############################################
 
 
-if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "bdd" ]; then
+if [ "$dobdd" ==  1  ];then
+    sleep 0.5
+    clearterm
+    SHOWCURSOR
 
     echo "Installing local BDD. Need first to install postgresql binaries"
     sudo apt-get install postgresql postgresql-client postgresql-contrib libpq-dev pgadmin3
@@ -242,15 +291,18 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "bdd" ]; then
     echo 'postgresql://postgres:<pass>@localhost:5432/picsat' > $WHEREPARAM/db_server
 
     bash new_database.sh picsat
+    echo ""
+    echo "Done"
 fi
 
 
 ############################################
 
 
-if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "desk" ]; then
-    # create directory
-    mkdir -p $DESKTOP
+if [ "$dodesk" ==  1  ];then
+    sleep 0.5
+    clearterm
+    SHOWCURSOR
 
     # create the shortcuts on Desktop
     cd $DESKTOP
@@ -320,7 +372,12 @@ if [ "$DOINSTALL" == "all" -o "$DOINSTALL" == "desk" ]; then
     echo 'Path='"$HOME" >> PicChat.desktop
     echo 'Terminal=false' >> PicChat.desktop
     echo 'StartupNotify=false' >> PicChat.desktop
+
+    echo ""
+    echo "Done"
 fi
 
 # got back where we were
 cd "$INITPWD"
+
+echo "You're good to go"

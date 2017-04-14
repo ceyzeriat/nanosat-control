@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-__all__ = ['param_apid', 'param_all', 'params', 'param_category',
+"""__all__ = ['param_apid', 'param_all', 'params', 'param_category',
             'param_beacon', 'param_hf_science', 'param_payload_hk',
             'param_pld_report', 'param_exe_ack', 'param_pld_beacon',
             'param_commands', 'param_dump_ans_data', 'param_patch_list_segs',
@@ -44,4 +44,56 @@ from . import param_category
 from . import param_commands
 from . import param_dump_ans_data
 from . import param_patch_list_segs
-from . import param_tc_answer
+from . import param_tc_answer"""
+
+
+from types import ModuleType
+import sys
+import glob
+import os
+import importlib
+
+
+allparamfiles = []
+for item in glob.glob(os.path.join(os.path.dirname(__file__), '*.py')):
+    dum = os.path.splitext(os.path.split(item)[1])[0]
+    if dum == '__init__':
+        continue
+    allparamfiles.append(dum)
+
+
+class module(ModuleType):
+    """
+    Automatically import objects from the modules
+    """
+    def __getattr__(self, name):
+        if name in allparamfiles:
+            module = importlib.import_module('param.{}'.format(name))
+            setattr(self, name, module)
+            return module
+        return ModuleType.__getattribute__(self, name)
+
+    def __dir__(self):
+        """
+        Just show what we want to show
+        """
+        result = list(new_module.__all__)
+        result.extend(('__file__', '__path__', '__doc__', '__all__',
+                       '__docformat__', '__name__', '__path__',
+                       '__package__', '__version__'))
+        return result
+
+# keep a reference to this module so that it's not garbage collected
+old_module = sys.modules['param']
+
+
+# setup the new module and patch it into the dict of loaded modules
+new_module = sys.modules['param'] = module('param')
+new_module.__dict__.update({
+    '__file__':         __file__,
+    '__package__':      'pld',
+    '__path__':         __path__,
+    '__doc__':          __doc__,
+    '__all__':          tuple(allparamfiles),
+    '__docformat__':    'restructuredtext en'
+})
