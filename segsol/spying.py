@@ -25,19 +25,11 @@
 ###############################################################################
 
 
-import time
 import os
-import glob
 import hein
-from byt import Byt
-from threading import Thread
-from ctrl.utils.report import REPORTS
 from ctrl.utils import core
 from param import param_all
-from param import params
 from ctrl.utils import ctrlexception
-from ctrl.rfcheckoutbox import RFCheckoutbox
-from ctrl.serialusb import SerialUSB
 
 __all__ = ['process_data', 'init', 'close']
 
@@ -88,7 +80,7 @@ def process_data(data):
     local_path = os.path.join(DIRNAME, 'tm_data', filename)
     print("Spying: '{}' >> {}".format(data['data'].hex(), local_path)
     # locally saved
-    f = open(params.home_dir(ALL_TEL, local_path), mode='wb')
+    f = open(core.home_dir(ALL_TEL, local_path), mode='wb')
     f.write(data['data'])
     f.close()
     SPY_TRANS.tell_dict(**data)
@@ -105,13 +97,13 @@ def init(dir_name):
     if running:
         return
     DIRNAME = str(dir_name).lstrip('/')
-    sub_dir = params.home_dir(ALL_TEL, DIRNAME)
+    sub_dir = core.home_dir(ALL_TEL, DIRNAME)
     if os.path.isdir(sub_dir):
         print('Directory '{}' already exists. Please change the name!'\
                                                         .format(sub_dir))
     else:
         os.mkdir(sub_dir)
-        os.mkdir(params.home_dir(ALL_TEL, DIRNAME, 'tm_data'))
+        os.mkdir(core.home_dir(ALL_TEL, DIRNAME, 'tm_data'))
         SPY_TRANS = SpyTrans(port=param_all.SPYINGPORT[0],
                              nreceivermax=1,
                              start=True,
