@@ -1,0 +1,6 @@
+#!/bin/bash
+logdir="$HOME/seglog"/$(date -u +'%Y%m%d')
+mkdir -p $logdir
+touch $logdir/$1.log || exit
+tolog=$(echo ${@:2} | sed -e "s/ / /")
+printf "%s %-10s %s\n" "$(date -u +'%Y/%m/%d %H:%M:%S.%N')" "$1" "$tolog" >> $logdir/$1.log

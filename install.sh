@@ -198,7 +198,7 @@ if [ "$doserver" ==  1  ];then
 
     echo "Move logging binaries"
     chmod a+x bins/log*
-    mv bins/log* $WHEREBINS/
+    cp bins/log* $WHEREBINS/
 
 
     echo "Compiling hmac library"
