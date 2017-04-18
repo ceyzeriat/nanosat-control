@@ -32,6 +32,7 @@ from sqlalchemy import desc
 from sqlalchemy import update
 from param import param_category
 from param import param_apid
+from byt import Byt
 from ..utils import core
 from ..utils import ctrlexception
 from ..ccsds import param_ccsds
@@ -102,15 +103,16 @@ def save_TC_to_DB(hd, hdx, inputs):
     for k, v in inputs.items():
         DB.add(TABLES['TelecommandDatum'](telecommand_id=TC.id,
                                             param_key=k, 
-                                            value=v))
+                                            value=repr(v)))
     DB.commit()
     return TC.id
 
 
 def update_sent_TC_time(pkid, t):
     """
-    Updates the time_sent column in telecommands are the
+    Updates the time_sent column in telecommands once the
     TC has been sent
+    Returns the id of the updated TC
 
     Args:
       * pkid (int): the packet_id
@@ -119,12 +121,53 @@ def update_sent_TC_time(pkid, t):
     t = str(t)
     TC = TABLES['Telecommand']
     idx = DB.query(TC.id).filter_by(packet_id=pkid)\
-            .order_by(TC.id.desc()).limit(1).with_for_update()
+            .order_by(desc('id')).limit(1).with_for_update()
     q = update(TC).values({'time_sent': t}).where(TC.id == idx.as_scalar())
     DB.execute(q)
     DB.commit()
     DB.flush()
     return idx.first()[0]
+
+
+def get_TC_dbid_from_pkid(self, pkid):
+    """
+    Given a packet_id, returns a list of (id, timestamp) where
+    id is the database id and timestamp is the time_sent
+    """
+    if not running:
+        raise ctrlexception.NoDBConnection()
+    res = DB.query(TABLES['Telecommand']).filter_by(packet_id=int(pkid))\
+            .order_by(desc('id'))
+    return [(item.id, item.time_sent) for item in res]
+
+
+def get_TC(self, pkid=None, dbid=None):
+    """
+    Given a pkid or a dbid, returns a TC
+    """
+    if not running:
+        raise ctrlexception.NoDBConnection()
+    TC = TABLES['Telecommand']
+    res = DB.query(TC)
+    if dbid is not None:
+        res = res.filter_by(id=int(dbid))
+    else:
+        res = res.filter_by(packet_id=int(pkid))
+    res = res.order_by(desc('id')).limit(1).first()
+    if res is None:
+        return None
+    ret = {}
+    for key in get_column_keys(TC):
+        ret[key] = getattr(res, key, None)
+    params = {}
+    for item in res.telecommand_data_collection:
+        thevalue = str(Byt(item.value))
+        try:
+            thevalue = eval(thevalue)
+        except:
+            pass
+        params[str(Byt(item.param_key))] = thevalue
+    return ret, params
 
 
 def save_TM_to_DB(hd, hdx, data):

@@ -47,14 +47,14 @@ NOERRORATIMPORT = True
 JUSTALIB = False
 
 # which antenna are you using
-ANTENNALISTENED = 'serial'  # or 'checkoutbox' or 'serial'
+ANTENNALISTENED = 'checkoutbox'  # or 'checkoutbox' or 'serial'
 
 # the path to the file containing the packet id counter
 PACKETIDFILE = ['.segsol', 'tc_packet_id']
 
 # the path to the parameter file containing the DB connection settings
 DBFILE = ['.segsol', 'db_server']
-PASSTAGS = {'<pass>': ['.segsol', 'artichaut'], '<dbname>': ['.segsol', 'banane']}
+PASSTAGS = {'<pass>': ['.segsol', 'artichaut']}
 
 
 # the log file
@@ -65,10 +65,10 @@ LOGFILE = ['watch.log']
 CSSOURCEFILE = ['.segsol', 'callsign_source']
 CSDESTFILE = ['.segsol', 'callsign_destination']
 
-# who is the emitter, cf database
+# who is the emitter
 EMITTERID = 1  # ['.segsol', 'radio_id']
 
-# who is the receiver, cf database
+# who is the receiver
 RECEIVERID = 1  # ['.segsol', 'callsign_source']
 
 # day-reference from unix time
@@ -85,12 +85,12 @@ LISTENINGNAME = 'listen'  # telemetryport
 CONTROLLINGNAME = 'control'
 SAVINGNAME = 'save'
 WATCHINGNAME = 'watch'
-SPYINGNAME = 'spy'
 SHOWINGNAME = 'show'
+
 
 # the port for telemetry broadcasting/listening (alpha)
 LISTENINGPORT = (50007, LISTENINGNAME)
-LISTENINGPORTLISTENERS = [SAVINGNAME, WATCHINGNAME, SPYINGNAME]
+LISTENINGPORTLISTENERS = [SAVINGNAME, WATCHINGNAME, CONTROLLINGNAME]
 
 # the port for telecommand broadcasting/listening (beta)
 CONTROLLINGPORT = (50006, CONTROLLINGNAME)
@@ -102,10 +102,7 @@ SAVINGPORTLISTENERS = [WATCHINGNAME]
 
 # the port for saving status broadcasting/listening (delta)
 WATCHINGPORT = (50004, WATCHINGNAME)
-WATCHINGPORTLISTENERS = [CONTROLLINGNAME]
-
-# the port for retrieving telemetries from a remote location
-SPYINGPORT = (50010, SPYINGNAME)
+WATCHINGPORTLISTENERS = [SHOWINGNAME]  # CONTROLLINGNAME
 
 
 # process timeout for the watchdog to get angry
@@ -114,14 +111,14 @@ PROCESSTIMEOUT = 5  # sec
 # RFCHECKOUTBOX
 # port
 RFCHECKOUTBOXPORT = 3211
-RFCHECKOUTBOXTIMEOUT = 1  # sec
+RFCHECKOUTBOXTIMEOUT = 1.  # sec
 RFCHECKOUTBOXLENGTH = 1024  # octet
 
 
 # SERIAL
 # port 
 SERIALUSBPORT = '/dev/ttyUSB0'
-SERIALUSBTIMEOUT = 1  # sec
+SERIALUSBTIMEOUT = 1.  # sec
 SERIALUSBLENGTH = 1024  # octet
 SERIALUSBBAUDRATE = 57600  # bananas per pencil
 
@@ -131,13 +128,21 @@ TELEMETRYDUMPFOLDER = ['tm_data']
 TELEMETRYNAMEFORMAT = 'TM_%Y%m%dT%H%M%S_%f.packet'
 
 
+REMOVERAWFILEAFTERSAVE = True
+SAVERAWFILE = True
+TELEMETRYSAVESERVER = 'vmpicsat.obspm.fr'
+TELEMETRYSAVEUSER = 'picsatdata'
+TELEMETRYSAVEPASSFILE = ['.segsol', 'godsavesthequeen']
+TELEMETRYSAVEFOLDER = '/volumes/hra/picsat/data/user_{user_id}/%Y%m%d'
+
+
 # whether the listened flow of data is encapsulated in AX25/KISS standard
-AX25ENCAPS = False
-KISSENCAPS = False
+AX25ENCAPS = True
+KISSENCAPS = True
 # note: there can't be a KISS encapsulation without AX25
 
 # whether to expect a continuous flow of CCSDS frames or a natural split
-FRAMESFLOW = True
+FRAMESFLOW = False
 
 # for when 
 # the split characters between CCSDS continuous frames
@@ -159,9 +164,8 @@ LOGFILETIMESTAMPFMT = '%F %T.%f'
 # the reserved input parameter key for declaring the report key
 REPORTKEY = 'report_key'
 
-
 # whether to save the TCs and initialize the DB with control
-SAVETC = False
+SAVETC = True
 
 
 # length of the key
@@ -169,7 +173,7 @@ KEYLENGTH = 32  # in octets
 KEYLENGTHCCSDS = 16  # in octets
 # file of the key
 KEYFILE = ['.segsol', 'perefouras']
-USESIGGY = False
+USESIGGY = True
 KEYMASK = '1'*16+'0'*16  # mask of 1 and 0, 1 == takeit
 
 

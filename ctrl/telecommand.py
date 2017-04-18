@@ -39,14 +39,15 @@ __all__ = ['Telecommand']
 
 
 class Telecommand(object):
-    def __init__(self, dbid):
+    def __init__(self, pkid):
         """
         Reads a telecommand from the database
         """
-        self.dbid = dbid
+        self.pkid = pkid
         # TC not saved
-        if dbid is None:
+        if pkid is None:
             return
+        
         # read database and take a telecommand
 
     def show(self, *args, **kwargs):
@@ -68,6 +69,13 @@ class Telecommand(object):
                 and self.EACK is not False
     @isok.setter
     def isok(self, value):
+        pass
+
+    @property
+    def istimedout(self):
+        return self.timedout
+    @istimedout.setter
+    def istimedout(self, value):
         pass
 
     @classmethod
