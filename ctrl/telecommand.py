@@ -105,7 +105,7 @@ class Telecommand(object):
                         hd=hd, hdx=hdx, inputs=inputs)
         cls.timedout = False
         cls.hd = hd
-        cls.hd.udate(hdx)
+        cls.hd.update(hdx)
         cls.inputs = inputs
         # no wait
         if not kwargs.pop('wait', core.DEFAULTWAITCMD):
