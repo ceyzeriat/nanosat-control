@@ -191,7 +191,26 @@ def get_TC(pkid=None, dbid=None):
     for item in thetc.telecommand_data_collection:
         # unicode to str for the key, eval on the value
         params[str(item.param_key)] = eval(item.value)
-    return (thetc, sqltc), params
+    # get the DB id of the ACK
+    if len(thetc.tmcat_rec_acknowledgements_collection) > 0:
+        rackid = self._telecommand\
+                    .tmcat_rec_acknowledgements_collection[0].telemetry_packet
+    else:
+        # nothing received, set to None
+        rackid = None
+    if len(thetc.tmcat_fmt_acknowledgements_collection) > 0:
+        fackid = self._telecommand\
+                    .tmcat_fmt_acknowledgements_collection[0].telemetry_packet
+    else:
+        # nothing received, set to None
+        fackid = None
+    if len(thetc.tmcat_exe_acknowledgements_collection) > 0:
+        eackid = self._telecommand\
+                    .tmcat_exe_acknowledgements_collection[0].telemetry_packet
+    else:
+        # nothing received, set to None
+        eackid = None
+    return (thetc, sqltc), params, (rackid, fackid, eackid)
 
 
 def get_TM(pkid=None, dbid=None):

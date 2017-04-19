@@ -31,9 +31,9 @@ COMMANDSFILE = ["ctrl", "cmd", "cmds.json"]
 
 COMMANDSADCSFILE = ["ctrl", "cmd", "cmdsadcs.json"]
 
-RANGESEPARATOR = ';'
+RANGESEPARATOR = '_'
 
-LISTSEPARATOR = ','
+LISTSEPARATOR = '!'
 
 LENPARAMNAME = 25
 
