@@ -131,7 +131,7 @@ def update_sent_TC_time(pkid, t):
     return idx.first()[0]
 
 
-def get_TC_dbid_from_pkid(self, pkid):
+def get_TC_dbid_from_pkid(pkid):
     """
     Gives list of (id, timestamp) where id is the database id and
     timestamp is the time_sent
@@ -147,7 +147,7 @@ def get_TC_dbid_from_pkid(self, pkid):
     return [(item.id, item.time_sent) for item in res]
 
 
-def get_TC(self, pkid=None, dbid=None):
+def get_TC(pkid=None, dbid=None):
     """
     Gives a full TC object
 
