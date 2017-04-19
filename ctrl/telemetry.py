@@ -46,12 +46,13 @@ class Telemetry(object):
         if ret is None:
             print("Could not find this TM id")
         else:
-            self._telemetry = ret[0]
-            self.hd = ret[1]
-            self.inputs = ret[2]
+            (self._telemetry, self.hd), (self._telemetry_hdx, self.hdx),\
+                (self._telemetry_data, self.data) = ret
             # copy fields to object root
             for k in self.hd.keys():
                 setattr(self, k, getattr(self._telemetry, k))
+            for k in self.hdx.keys():
+                setattr(self, k, getattr(self._telemetry_hdx, k))
 
     @classmethod
     def _fromPacket(cls, packet, time_received=None, user_id=None, **kwargs):

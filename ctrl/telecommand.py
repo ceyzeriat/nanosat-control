@@ -50,9 +50,7 @@ class Telecommand(object):
         if ret is None:
             print("Could not find this TC id")
         else:
-            self._telecommand = ret[0]
-            self.hd = ret[1]
-            self.inputs = ret[2]
+            (self._telecommand, self.hd), self.inputs = ret
             # copy fields to object root
             for k in self.hd.keys():
                 setattr(self, k, getattr(self._telecommand, k))

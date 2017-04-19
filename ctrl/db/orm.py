@@ -39,7 +39,7 @@ from ..ccsds import param_ccsds
 
 __all__ = ['init_DB', 'get_column_keys', 'save_TC_to_DB', 'close_DB',
             'save_TM_to_DB', 'update_sent_TC_time', 'get_TC_dbid_from_pkid',
-            'get_TC', 'update_RACK_id']
+            'get_TC', 'update_RACK_id', 'get_TM_dbid_from_pkid', 'get_TM']
 
 
 running = False
@@ -149,6 +149,22 @@ def get_TC_dbid_from_pkid(pkid):
     return [(item.id, item.time_sent) for item in res]
 
 
+def get_TM_dbid_from_pkid(pkid):
+    """
+    Gives list of (id, timestamp) where id is the database id and
+    timestamp is the time_sent
+
+    Args:
+      * pkid (int): the packet_id to investigate
+    """
+    if not running:
+        raise ctrlexception.NoDBConnection()
+    TM = TABLES['Telemetry']
+    res = DB.query(TM).filter(TM.packet_id == int(pkid))\
+            .order_by(TM.id.desc())
+    return [(item.id, item.time_sent) for item in res]
+
+
 def get_TC(pkid=None, dbid=None):
     """
     Gives a full TC object
@@ -160,22 +176,22 @@ def get_TC(pkid=None, dbid=None):
     if not running:
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
-    res = DB.query(TC)
+    thetc = DB.query(TC)
     if dbid is None:
-        res = res.filter(TC.packet_id == int(pkid))
+        thetc = thetc.filter(TC.packet_id == int(pkid))
     else:
-        res = res.filter(TC.id == int(dbid))
-    res = res.order_by(TC.id.desc()).limit(1).first()
-    if res is None:
+        thetc = thetc.filter(TC.id == int(dbid))
+    thetc = thetc.order_by(TC.id.desc()).limit(1).first()
+    if thetc is None:
         return None
-    ret = {}
+    sqltc = {}
     for key in get_column_keys(TC):
-        ret[key] = getattr(res, key, None)
+        sqltc[key] = getattr(thetc, key, None)
     params = {}
-    for item in res.telecommand_data_collection:
+    for item in thetc.telecommand_data_collection:
         # unicode to str for the key, eval on the value
         params[str(item.param_key)] = eval(item.value)
-    return res, ret, params
+    return (thetc, sqltc), params
 
 
 def get_TM(pkid=None, dbid=None):
@@ -189,22 +205,53 @@ def get_TM(pkid=None, dbid=None):
     if not running:
         raise ctrlexception.NoDBConnection()
     TM = TABLES['Telemetry']
-    res = DB.query(TM)
+    thetm = DB.query(TM)
     if dbid is None:
-        res = res.filter(TM.packet_id == int(pkid))
+        thetm = thetm.filter(TM.packet_id == int(pkid))
     else:
-        res = res.filter(TM.id == int(dbid))
-    res = res.order_by(TM.id.desc()).limit(1).first()
-    if res is None:
+        thetm = thetm.filter(TM.id == int(dbid))
+    thetm = thetm.order_by(TM.id.desc()).limit(1).first()
+    if thetm is None:
         return None
-    ret = {}
+    dictm = {}
     for key in get_column_keys(TM):
-        ret[key] = getattr(res, key, None)
-    params = {}
-    for item in res.telecommand_data_collection:
-        # unicode to str for the key, eval on the value
-        params[str(item.param_key)] = eval(item.value)
-    return res, ret, params
+        dictm[key] = getattr(thetm, key, None)
+    # grab pld flag and category
+    catnum = int(dictm[param_ccsds.PACKETCATEGORY.name])
+    pldflag = int(dictm[param_ccsds.PAYLOADFLAG.name])
+    # deal with header aux
+    # table name for hdx
+    cattbl = param_category.TABLECATEGORY[catnum][pldflag]
+    dichdx = {}
+    if cattbl is None:
+        thehdx = None
+    else:
+        TMHDX = TABLES[cattbl]
+        thehdx = getattr(thetm, TABLENAMES_REV[cattbl] + '_collection', [])
+        if len(thehdx) > 0:
+            # there can be only one
+            thehdx = thehdx[0]
+            for key in get_column_keys(TMHDX):
+                dichdx[key] = getattr(thehdx[0], key, None)
+        else:
+            thehdx = None
+    # deal with data
+    # table name for data
+    datatbl = param_category.TABLEDATA[catnum][pldflag]
+    dicdata = []
+    if datatbl is None:
+        thedata = None
+    else:
+        TMDATA = TABLES[datatbl]
+        thedata = getattr(thetm, TABLENAMES_REV[datatbl] + '_collection', [])
+        if len(thedata) == 0:
+            for dataline in thedata:
+                dicdata.append({})
+                for key in get_column_keys(TMDATA):
+                    dicdata[key] = getattr(dataline, key, None)
+        else:
+            thedata = None
+    return (thetm, dictm), (thehdx, dichdx), (thedata, dicdata)
 
 
 def save_TM_to_DB(hd, hdx, data):
