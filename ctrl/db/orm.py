@@ -232,7 +232,7 @@ def get_TM(pkid=None, dbid=None):
             # there can be only one
             thehdx = thehdx[0]
             for key in get_column_keys(TMHDX):
-                dichdx[key] = getattr(thehdx[0], key, None)
+                dichdx[key] = getattr(thehdx, key, None)
         else:
             thehdx = None
     # deal with data
