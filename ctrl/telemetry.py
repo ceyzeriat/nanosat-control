@@ -26,6 +26,7 @@
 
 
 from param import param_category
+from param import param_category_common as pcc
 from .utils import core
 from .ccsds import TMUnPacker
 from .ccsds import param_ccsds
@@ -36,10 +37,14 @@ __all__ = ['Telemetry']
 
 
 class Telemetry(object):
-    def __init__(self, dbid):
+    def __init__(self, pkid=None, dbid=None):
         """
         Gets a telemetry from the database
         """
+        if dbid is None:
+            pass
+        else:
+            pass
         self.dbid = int(dbid)
 
     @classmethod
@@ -60,15 +65,16 @@ class Telemetry(object):
                 if isinstance(time_received, core.datetime.datetime)\
                 else core.now()
         dbid = db.save_TM_to_DB(cls.hd, cls.hdx, cls.data)
+        # if it is a RACK, update the TM after checking the TC
+        if int(cls.hd[param_ccsds.PACKETCATEGORY.name]) == int(RACKCAT):
+            tcid = db.update_RACK_id(dbid=dbid)
+        # elif it is a FACK or EACK
+        elif (int(cls.hd[param_ccsds.PAYLOADFLAG.name]),
+            int(cls.hd[param_ccsds.PACKETCATEGORY.name]))\
+                in param_category.ACKCATEGORIES:
+            tcid = db.update_ACK_id(dbid=dbid,
+                                    pkid=cls.hdx[pcc.PACKETIDMIRROR.name])
+        else:
+            tcid = None
+        cls.tcid = tcid
         return cls(dbid=dbid)
-
-    def find_ack_TC(self):
-        """
-        Searches for the TC of which the TM is the acknowledgement
-        """
-        if (int(self.hd[param_ccsds.PAYLOADFLAG.name]),
-            int(self.hd[param_ccsds.PACKETCATEGORY.name]))\
-                not in param_category.ACKCATEGORIES:
-            return None
-        res = db.get_ack_TC(timestamp=self.hd['time_received'])
-        return res

@@ -33,22 +33,42 @@ except:
 from segsol import controlling
 from .ccsds import param_ccsds
 from .utils import core
+from . import db
+from . import Telemetry
 
 
 __all__ = ['Telecommand']
 
 
 class Telecommand(object):
-    def __init__(self, pkid):
+    def __init__(self, pkid=None, dbid=None):
         """
-        Reads a telecommand from the database
+        Reads a TC from the database
         """
-        self.pkid = pkid
-        # TC not saved
-        if pkid is None:
-            return
-        
-        # read database and take a telecommand
+        # returns None if id not existing, else (hd, inputs)
+        ret = db.get_TC(pkid=pkid, dbid=dbid)
+        if ret is None:
+            print("Could not find this TC id")
+        else:
+            self._telecommands = ret[0]
+            self.hd = ret[1]
+            self.inputs = ret[2]
+            # copy fields to object root
+            for k in self.hd.keys():
+                setattr(self, k, self._telecommands[0][k])
+        # load acknowledgements
+        theid = getattr(
+                self._telecommands.tmcat_rec_acknowledgements_collection[0],
+                    'telemetry_packet', None)
+        self.tm_RACK = None if theid is None else Telemetry(dbid=theid)
+        theid = getattr(
+                self._telecommands.tmcat_fmt_acknowledgements_collection[0],
+                    'telemetry_packet', None)
+        self.tm_FACK = None if theid is None else Telemetry(dbid=theid)
+        theid = getattr(
+                self._telecommands.tmcat_exe_acknowledgements_collection[0],
+                    'telemetry_packet', None)
+        self.tm_EACK = None if theid is None else Telemetry(dbid=theid)
 
     def show(self, *args, **kwargs):
         """
@@ -85,7 +105,7 @@ class Telecommand(object):
                         hd=hd, hdx=hdx, inputs=inputs)
         cls.timedout = False
         cls.hd = hd
-        cls.hdx = hdx
+        cls.hd.udate(hdx)
         cls.inputs = inputs
         # no wait
         if not kwargs.pop('wait', core.DEFAULTWAITCMD):

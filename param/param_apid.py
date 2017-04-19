@@ -28,11 +28,9 @@
 # taken from https://nubes-lesia.obspm.fr/index.php/apps/files?dir=%2FPicSat%2FProjet%2FtrxDoc
 
 # the PID that sends the packets eventually, useful to know for the
-# acknowledgement of receipt
-RECACKPACKETPID = 0
 
 
-PIDREGISTRATION_OBC_L0 = {  'L0ComManager': RECACKPACKETPID,
+PIDREGISTRATION_OBC_L0 = {  'L0ComManager': 0,
                             'L0MemoryManager': 1,
                             'L0Housekeeper': 2,
                             'L0EpsManager': 3,

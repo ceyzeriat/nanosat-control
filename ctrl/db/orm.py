@@ -28,7 +28,6 @@
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
-from sqlalchemy import desc
 from sqlalchemy import update
 from param import param_category
 from param import param_apid
@@ -39,7 +38,8 @@ from ..ccsds import param_ccsds
 
 
 __all__ = ['init_DB', 'get_column_keys', 'save_TC_to_DB', 'close_DB',
-            'save_TM_to_DB', 'update_sent_TC_time']
+            'save_TM_to_DB', 'update_sent_TC_time', 'get_TC_dbid_from_pkid',
+            'get_TC', 'update_RACK_id']
 
 
 running = False
@@ -118,10 +118,12 @@ def update_sent_TC_time(pkid, t):
       * pkid (int): the packet_id
       * t (datetime): the sent time
     """
+    if not running:
+        raise ctrlexception.NoDBConnection()
     t = str(t)
     TC = TABLES['Telecommand']
-    idx = DB.query(TC.id).filter_by(packet_id=pkid)\
-            .order_by(desc('id')).limit(1).with_for_update()
+    idx = DB.query(TC.id).filter(TC.packet_id == int(pkid))\
+            .order_by(TC.id.desc()).limit(1).with_for_update()
     q = update(TC).values({'time_sent': t}).where(TC.id == idx.as_scalar())
     DB.execute(q)
     DB.commit()
@@ -131,29 +133,37 @@ def update_sent_TC_time(pkid, t):
 
 def get_TC_dbid_from_pkid(self, pkid):
     """
-    Given a packet_id, returns a list of (id, timestamp) where
-    id is the database id and timestamp is the time_sent
+    Gives list of (id, timestamp) where id is the database id and
+    timestamp is the time_sent
+
+    Args:
+      * pkid (int): the packet_id to investigate
     """
     if not running:
         raise ctrlexception.NoDBConnection()
-    res = DB.query(TABLES['Telecommand']).filter_by(packet_id=int(pkid))\
-            .order_by(desc('id'))
+    TC = TABLES['Telecommand']
+    res = DB.query(TC).filter(TC.packet_id == int(pkid))\
+            .order_by(TC.id.desc())
     return [(item.id, item.time_sent) for item in res]
 
 
 def get_TC(self, pkid=None, dbid=None):
     """
-    Given a pkid or a dbid, returns a TC
+    Gives a full TC object
+
+    Args:
+      * pkid (int): the packet_id of the TC to output
+      * dbid (int) [alternative]: the DB id of the TC to output
     """
     if not running:
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
     res = DB.query(TC)
-    if dbid is not None:
-        res = res.filter_by(id=int(dbid))
+    if dbid is None:
+        res = res.filter(TC.packet_id == int(pkid))
     else:
-        res = res.filter_by(packet_id=int(pkid))
-    res = res.order_by(desc('id')).limit(1).first()
+        res = res.filter(TC.id == int(dbid))
+    res = res.order_by(TC.id.desc()).limit(1).first()
     if res is None:
         return None
     ret = {}
@@ -161,13 +171,9 @@ def get_TC(self, pkid=None, dbid=None):
         ret[key] = getattr(res, key, None)
     params = {}
     for item in res.telecommand_data_collection:
-        thevalue = str(Byt(item.value))
-        try:
-            thevalue = eval(thevalue)
-        except:
-            pass
-        params[str(Byt(item.param_key))] = thevalue
-    return ret, params
+        # unicode to str for the key, eval on the value
+        params[str(item.param_key)] = eval(item.value)
+    return res, ret, params
 
 
 def save_TM_to_DB(hd, hdx, data):
@@ -223,20 +229,53 @@ def save_TM_to_DB(hd, hdx, data):
     return TM.id
 
 
-def get_ack_TC(timestamp):
+def update_RACK_id(dbid):
     """
-    returns the DB id of the TC of which the input telemetry packet
-    is the acknowledgement
+    Updates a RACK TM with the id of the latest TC sent
+    Returns the DB id of the TC
+
+    Args:
+      * dbid (int): the DB id of the RACK TM to update
     """
-    
-    ack_rec_id = getattr(
-                    db.query(Telecommand)\
-                        .filter_by(and_(
-                                Telecommand.pid==param_apid.RECACKPACKETPID,
-                                Telecommand.ack_reception_id==None,
-                                #Telecommand.reqack_reception==1,
-                                Telecommand.time_sent<=timestamp))\
-                        .order_by(desc(Telecommand.time_sent))\
-                        .limit(1),
-                    'id', None)
-    ack_fmt_id = None
+    if not running:
+        raise ctrlexception.NoDBConnection()
+    TC = TABLES['Telecommand']
+    TM = TABLES['Telemetry']
+    # just grab the latest TC that was actually sent
+    idx = DB.query(TC.id).filter(TC.time_sent != None).\
+            order_by(TC.id.desc()).limit(1).with_for_update()
+    # 
+    q = update(TM).values({'telecommand_id': idx.as_scalar()})\
+            .where(TM.id == int(dbid))
+    DB.execute(q)
+    DB.commit()
+    DB.flush()
+    return idx.first()[0]
+
+
+def update_ACK_id(dbid, pkid):
+    """
+    Updates a EACK or FACK TM with the id of the latest TC whose
+    packet_id is provided
+    Returns the DB id of the TC
+
+    Args:
+      * dbid (int): the DB id of the RACK TM to update
+      * pkid (int): the packet_id of the TC to which the FACK or EACK
+        is replying
+    """
+    if not running:
+        raise ctrlexception.NoDBConnection()
+    TC = TABLES['Telecommand']
+    TM = TABLES['Telemetry']
+    # just grab the latest TC that was actually sent
+    idx = DB.query(TC.id).filter(and_(TC.time_sent != None,
+                                      TC.packet_id == int(pkid))).\
+            order_by(TC.id.desc()).limit(1).with_for_update()
+    # 
+    q = update(TM).values({'telecommand_id': idx.as_scalar()})\
+            .where(TM.id == int(dbid))
+    DB.execute(q)
+    DB.commit()
+    DB.flush()
+    return idx.first()[0]

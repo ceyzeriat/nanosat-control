@@ -67,14 +67,16 @@ STARTADDRESS = CCSDSKey(name='start_address',
                         l=32,
                         fctunpack=bincore.bin2hex,
                         fctpack=bincore.hex2bin,
-                        verbose="Start Adress of Dump")
+                        verbose="Start Adress of Dump",
+                        disp='Addr')
 
 BYTESNUMBER = CCSDSKey( name='bytes_number',
                         start=64,
                         l=8,
                         fctunpack=bincore.bin2int,
                         fctpack=bincore.int2bin,
-                        verbose="Length of data in dump packet")
+                        verbose="Length of data in dump packet",
+                        disp='len')
 
 NSEGS = CCSDSKey(       name='n_segments',
                         start=32,

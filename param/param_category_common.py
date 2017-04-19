@@ -71,12 +71,15 @@ ERRORCODE = CCSDSKey(       name='error_code',
                             disp="errcode")
 
 
+# exec ack
 CATEGORY_EACKCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
-                                octets=False, name='exec ack')  # exec ack
+                                octets=False, name='exec ack')
+# fmt ack
 CATEGORY_FACKCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
-                                octets=False, name='fmt ack')  # fmt ack
+                                octets=False, name='fmt ack')
+# tc answer
 CATEGORY_TELECOMMANDANSWERCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR],
-                                octets=False, name='tc answer')  # tc answer
+                                octets=False, name='tc answer')
 
 
 # (payloadd, category)
