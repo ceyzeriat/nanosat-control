@@ -98,17 +98,17 @@ class Telecommand(object):
     
     @property
     def iserror(self):
-        return not((self.FACK is None or self.FACK)\
-                    and (self.EACK is None or self.EACK))
+        return not(bool(self.FACK is None or self.FACK)\
+                    and bool(self.EACK is None or self.EACK))
     @iserror.setter
     def iserror(self, value):
         pass
 
     @property
     def isok(self):
-        return (self.RACK is None or self.RACK)\
-                and (self.FACK is None or self.FACK)\
-                and (self.EACK is None or self.EACK)
+        return bool(self.RACK is None or self.RACK)\
+                and bool(self.FACK is None or self.FACK)\
+                and bool(self.EACK is None or self.EACK)
     @isok.setter
     def isok(self, value):
         pass
