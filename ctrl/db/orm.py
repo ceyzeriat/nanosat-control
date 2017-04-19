@@ -221,7 +221,7 @@ def get_TM(pkid=None, dbid=None):
     pldflag = int(dictm[param_ccsds.PAYLOADFLAG.name])
     # deal with header aux
     # table name for hdx
-    cattbl = param_category.TABLECATEGORY[catnum][pldflag]
+    cattbl = param_category.TABLECATEGORY[pldflag][catnum]
     dichdx = {}
     if cattbl is None:
         thehdx = None
