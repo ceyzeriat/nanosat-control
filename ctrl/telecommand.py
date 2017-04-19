@@ -49,33 +49,39 @@ class Telecommand(object):
         ret = db.get_TC(pkid=pkid, dbid=dbid)
         if ret is None:
             print("Could not find this TC id")
-        else:
-            (self._telecommand, self.hd), self.inputs = ret
-            # copy fields to object root
-            for k in self.hd.keys():
-                setattr(self, k, getattr(self._telecommand, k))
+            return
+        (self._telecommand, self.hd), self.inputs = ret
+        # copy fields to object root
+        for k in self.hd.keys():
+            setattr(self, k, getattr(self._telecommand, k))
         # load acknowledgements as real Telemetry objects
         if len(self._telecommand.tmcat_rec_acknowledgements_collection) > 0:
             theid = self._telecommand\
                         .tmcat_rec_acknowledgements_collection[0]\
                             .telemetry_packet
-            self.tm_RACK = Telemetry(dbid=theid)
+            self.RACK = Telemetry(dbid=theid)
         else:
-            self.tm_RACK = None
+            # use already existing value, obtained from '_fromCommand' method
+            # or set to None
+            self.RACK = getattr(self, 'RACK', None)
         if len(self._telecommand.tmcat_fmt_acknowledgements_collection) > 0:
             theid = self._telecommand\
                         .tmcat_fmt_acknowledgements_collection[0]\
                             .telemetry_packet
-            self.tm_FACK = Telemetry(dbid=theid)
+            self.FACK = Telemetry(dbid=theid)
         else:
-            self.tm_FACK = None
+            # use already existing value, obtained from '_fromCommand' method
+            # or set to None
+            self.FACK = getattr(self, 'FACK', None)
         if len(self._telecommand.tmcat_exe_acknowledgements_collection) > 0:
             theid = self._telecommand\
                         .tmcat_exe_acknowledgements_collection[0]\
                             .telemetry_packet
-            self.tm_EACK = Telemetry(dbid=theid)
+            self.EACK = Telemetry(dbid=theid)
         else:
-            self.tm_EACK = None
+            # use already existing value, obtained from '_fromCommand' method
+            # or set to None
+            self.EACK = getattr(self, 'EACK', None)
 
     def show(self, *args, **kwargs):
         """
@@ -84,16 +90,25 @@ class Telecommand(object):
         return
 
     @property
+    def issent(self):
+        return (self.time_sent is not None)
+    @issent.setter
+    def issent(self, value):
+        pass
+    
+    @property
     def iserror(self):
-        return self.RACK is False or self.FACK is False or self.EACK is False
+        return not((self.FACK is None or self.FACK)\
+                    and (self.EACK is None or self.EACK))
     @iserror.setter
     def iserror(self, value):
         pass
 
     @property
     def isok(self):
-        return self.RACK is not False and self.FACK is not False\
-                and self.EACK is not False
+        return (self.RACK is None or self.RACK)\
+                and (self.FACK is None or self.FACK)\
+                and (self.EACK is None or self.EACK)
     @isok.setter
     def isok(self, value):
         pass

@@ -54,6 +54,11 @@ class Telemetry(object):
             for k in self.hdx.keys():
                 setattr(self, k, getattr(self._telemetry_hdx, k))
 
+    def __bool__(self):
+        return int(getattr(self, 'hdx', {}).get(pcc.ERRORCODE.name, 0)) == 0
+
+    __nonzero__ = __bool__
+
     @classmethod
     def _fromPacket(cls, packet, time_received=None, user_id=None, **kwargs):
         """
