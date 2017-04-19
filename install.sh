@@ -115,7 +115,7 @@ if [ "$doserver" ==  1  ];then
     read -r -n 1 newpython
     echo ""
     if [ "$newpython" == "Y" ] || [ "$newpython" == "y" ]; then
-	sudo apt-get install python-dev python-pip
+	sudo apt-get install python-dev python-pip libffi-dev
 	pip install virtualenv
 	mkdir -p $WHEREPYENV
 	cd $WHEREPYENV
