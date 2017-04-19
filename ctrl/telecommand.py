@@ -103,7 +103,7 @@ class Telecommand(object):
 
     @property
     def isRACK(self):
-        rack = getattr(self, param_ccsds.REQACKRECEPTIONTELECOMMAND.name)
+        rack = bool(getattr(self, param_ccsds.REQACKRECEPTIONTELECOMMAND.name))
         return (self.RACK is None and rack is False)\
                 or (bool(self.RACK) and rack is True)
     @isRACK.setter
@@ -112,7 +112,7 @@ class Telecommand(object):
 
     @property
     def isFACK(self):
-        fack = getattr(self, param_ccsds.REQACKFORMATTELECOMMAND.name)
+        fack = bool(getattr(self, param_ccsds.REQACKFORMATTELECOMMAND.name))
         return (self.FACK is None and fack is False)\
                 or (bool(self.FACK) and fack is True)
     @isFACK.setter
@@ -121,7 +121,7 @@ class Telecommand(object):
 
     @property
     def isEACK(self):
-        eack = getattr(self, param_ccsds.REQACKEXECUTIONTELECOMMAND.name)
+        eack = bool(getattr(self, param_ccsds.REQACKEXECUTIONTELECOMMAND.name))
         return (self.EACK is None and eack is False)\
                 or (bool(self.EACK) and eack is True)
     @isEACK.setter
