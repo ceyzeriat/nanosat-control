@@ -61,27 +61,24 @@ class Telecommand(object):
                             .telemetry_packet
             self.RACK = Telemetry(dbid=theid)
         else:
-            # use already existing value, obtained from '_fromCommand' method
-            # or set to None
-            self.RACK = getattr(self, 'RACK', None)
+            # nothing received, set to None
+            self.RACK = None
         if len(self._telecommand.tmcat_fmt_acknowledgements_collection) > 0:
             theid = self._telecommand\
                         .tmcat_fmt_acknowledgements_collection[0]\
                             .telemetry_packet
             self.FACK = Telemetry(dbid=theid)
         else:
-            # use already existing value, obtained from '_fromCommand' method
-            # or set to None
-            self.FACK = getattr(self, 'FACK', None)
+            # nothing received, set to None
+            self.FACK = None
         if len(self._telecommand.tmcat_exe_acknowledgements_collection) > 0:
             theid = self._telecommand\
                         .tmcat_exe_acknowledgements_collection[0]\
                             .telemetry_packet
             self.EACK = Telemetry(dbid=theid)
         else:
-            # use already existing value, obtained from '_fromCommand' method
-            # or set to None
-            self.EACK = getattr(self, 'EACK', None)
+            # nothing received, set to None
+            self.EACK = None
 
     def show(self, *args, **kwargs):
         """
@@ -98,24 +95,58 @@ class Telecommand(object):
     
     @property
     def iserror(self):
-        return not(bool(self.FACK is None or self.FACK)\
-                    and bool(self.EACK is None or self.EACK))
+        return not((self.FACK is None or bool(self.FACK))\
+                    and (self.EACK is None or bool(self.EACK)))
     @iserror.setter
     def iserror(self, value):
         pass
 
     @property
+    def isRACK(self):
+        rack = getattr(self, param_ccsds.REQACKRECEPTIONTELECOMMAND.name)
+        return (self.RACK is None and rack is False)\
+                or (bool(self.RACK) and rack is True)
+    @isRACK.setter
+    def isRACK(self, value):
+        pass
+
+    @property
+    def isFACK(self):
+        fack = getattr(self, param_ccsds.REQACKFORMATTELECOMMAND.name)
+        return (self.FACK is None and fack is False)\
+                or (bool(self.FACK) and fack is True)
+    @isFACK.setter
+    def isFACK(self, value):
+        pass
+
+    @property
+    def isEACK(self):
+        eack = getattr(self, param_ccsds.REQACKEXECUTIONTELECOMMAND.name)
+        return (self.EACK is None and eack is False)\
+                or (bool(self.EACK) and eack is True)
+    @isEACK.setter
+    def isEACK(self, value):
+        pass
+
+    @property
+    def isALLACK(self):
+        return self.isRACK and self.isFACK and self.isEACK
+    @isALLACK.setter
+    def isALLACK(self, value):
+        pass    
+
+    @property
     def isok(self):
-        return bool(self.RACK is None or self.RACK)\
-                and bool(self.FACK is None or self.FACK)\
-                and bool(self.EACK is None or self.EACK)
+        return (self.RACK is None or bool(self.RACK))\
+                and (self.FACK is None or bool(self.FACK))\
+                and (self.EACK is None or bool(self.EACK))
     @isok.setter
     def isok(self, value):
         pass
 
     @property
     def istimedout(self):
-        return self.timedout
+        return getattr(self, '_timedout', None)
     @istimedout.setter
     def istimedout(self, value):
         pass
@@ -125,34 +156,38 @@ class Telecommand(object):
         # broadcast on socket to the antenna process and watchdog
         controlling.broadcast_TC(cmdname=name, dbid=dbid, packet=packet,
                         hd=hd, hdx=hdx, inputs=inputs)
-        cls.timedout = False
-        cls.hd = hd
-        cls.hd.update(hdx)
-        cls.inputs = inputs
+        cls._timedout = False
+        hd = hd
+        hd.update(hdx)
         # no wait
         if not kwargs.pop('wait', core.DEFAULTWAITCMD):
+            time.sleep(0.1)
             return cls(dbid=dbid)
         # False if waiting for ACK, else None
-        cls.rack = bool(int(hd[param_ccsds.REQACKRECEPTIONTELECOMMAND.name]))
-        cls.RACK = None
-        cls.fack = bool(int(hd[param_ccsds.REQACKFORMATTELECOMMAND.name]))
-        cls.FACK = None
-        cls.eack = bool(int(hd[param_ccsds.REQACKEXECUTIONTELECOMMAND.name]))
-        cls.EACK = None
+        rack = bool(int(hd[param_ccsds.REQACKRECEPTIONTELECOMMAND.name]))
+        RACK = None
+        fack = bool(int(hd[param_ccsds.REQACKFORMATTELECOMMAND.name]))
+        FACK = None
+        eack = bool(int(hd[param_ccsds.REQACKEXECUTIONTELECOMMAND.name]))
+        EACK = None
+        # init ccsds keys, just in case a meteorite kills all form of life
+        setattr(cls, param_ccsds.REQACKRECEPTIONTELECOMMAND.name, rack)
+        setattr(cls, param_ccsds.REQACKFORMATTELECOMMAND.name, fack)
+        setattr(cls, param_ccsds.REQACKEXECUTIONTELECOMMAND.name, eack)
         # don't expect any ack
-        if not (cls.rack or cls.fack or cls.eack):
+        if not (rack or fack or eack):
             return cls(dbid=dbid)
         pkid = int(hd[param_ccsds.PACKETID.name])
         doneat = time.time() + kwargs.pop('timeout', core.DEFAULTTIMEOUTCMD)
         # check format first since it may prevent eack from being sent
         while time.time() < doneat:
             # if no ACK is False (waiting for ACK), then break
-            if cls.EACK is True or\
-                cls.EACK is False or\
-                cls.FACK is False or\
-                (cls.eack is False and cls.FACK is not None) or\
-                (cls.eack is False and cls.fack is False\
-                                    and cls.RACK is not None):
+            if EACK is True or\
+                EACK is False or\
+                FACK is False or\
+                (eack is False and FACK is not None) or\
+                (eack is False and fack is False\
+                                    and RACK is not None):
                 break
             try:
                 res = controlling.ACKQUEUE.get(
@@ -160,16 +195,16 @@ class Telecommand(object):
                                 timeout=max(0, doneat - time.time()))
                 controlling.ACKQUEUE.task_done()
             except queue.Empty:
-                cls.timedout = True
+                cls._timedout = True
                 break
             # pkid mathcing except for when it is None, meaning it is RACK
             # because TM packets being RACK don't copy the PACKETID of the TC
             if res[0] is None:
                 if res[1] == 0:
-                    cls.RACK = True
+                    RACK = True
             elif res[0] == pkid:
                 if res[1] == 1:
-                    cls.FACK = (res[2] == 0)
+                    FACK = (res[2] == 0)
                 elif res[1] == 2:
-                    cls.EACK = (res[2] == 0)
+                    EACK = (res[2] == 0)
         return cls(dbid=dbid)
