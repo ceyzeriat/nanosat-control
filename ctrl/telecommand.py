@@ -55,7 +55,7 @@ class Telecommand(object):
             self.inputs = ret[2]
             # copy fields to object root
             for k in self.hd.keys():
-                setattr(self, k, self._telecommands[k])
+                setattr(self, k, getattr(self._telecommands, k))
         # load acknowledgements
         theid = getattr(
                 self._telecommands.tmcat_rec_acknowledgements_collection[0],
