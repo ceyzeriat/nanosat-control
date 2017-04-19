@@ -237,7 +237,7 @@ def get_TM(pkid=None, dbid=None):
             thehdx = None
     # deal with data
     # table name for data
-    datatbl = param_category.TABLEDATA[catnum][pldflag]
+    datatbl = param_category.TABLEDATA[pldflag][catnum]
     dicdata = []
     if datatbl is None:
         thedata = None
