@@ -50,30 +50,30 @@ class Telecommand(object):
         if ret is None:
             print("Could not find this TC id")
         else:
-            self._telecommands = ret[0]
+            self._telecommand = ret[0]
             self.hd = ret[1]
             self.inputs = ret[2]
             # copy fields to object root
             for k in self.hd.keys():
-                setattr(self, k, getattr(self._telecommands, k))
+                setattr(self, k, getattr(self._telecommand, k))
         return
         # load acknowledgements as real Telemetry objects
-        if len(self._telecommands.tmcat_rec_acknowledgements_collection) > 0:
-            theid = self._telecommands\
+        if len(self._telecommand.tmcat_rec_acknowledgements_collection) > 0:
+            theid = self._telecommand\
                         .tmcat_rec_acknowledgements_collection[0]\
                             .telemetry_packet
             self.tm_RACK = Telemetry(dbid=theid)
         else:
             self.tm_RACK = None
-        if len(self._telecommands.tmcat_fmt_acknowledgements_collection) > 0:
-            theid = self._telecommands\
+        if len(self._telecommand.tmcat_fmt_acknowledgements_collection) > 0:
+            theid = self._telecommand\
                         .tmcat_fmt_acknowledgements_collection[0]\
                             .telemetry_packet
             self.tm_FACK = Telemetry(dbid=theid)
         else:
             self.tm_FACK = None
-        if len(self._telecommands.tmcat_exe_acknowledgements_collection) > 0:
-            theid = self._telecommands\
+        if len(self._telecommand.tmcat_exe_acknowledgements_collection) > 0:
+            theid = self._telecommand\
                         .tmcat_exe_acknowledgements_collection[0]\
                             .telemetry_packet
             self.tm_EACK = Telemetry(dbid=theid)

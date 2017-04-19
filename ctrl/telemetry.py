@@ -41,11 +41,17 @@ class Telemetry(object):
         """
         Gets a telemetry from the database
         """
-        if dbid is None:
-            pass
+        # returns None if id not existing, else (hd, inputs)
+        ret = db.get_TM(pkid=pkid, dbid=dbid)
+        if ret is None:
+            print("Could not find this TM id")
         else:
-            pass
-        self.dbid = int(dbid)
+            self._telemetry = ret[0]
+            self.hd = ret[1]
+            self.inputs = ret[2]
+            # copy fields to object root
+            for k in self.hd.keys():
+                setattr(self, k, getattr(self._telemetry, k))
 
     @classmethod
     def _fromPacket(cls, packet, time_received=None, user_id=None, **kwargs):

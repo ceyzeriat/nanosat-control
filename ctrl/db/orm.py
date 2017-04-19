@@ -45,6 +45,7 @@ __all__ = ['init_DB', 'get_column_keys', 'save_TC_to_DB', 'close_DB',
 running = False
 DB = None
 TABLES = {}
+TABLENAMES_REV = {}
 
 
 def init_DB():
@@ -62,6 +63,7 @@ def init_DB():
     TABLES = {}
     for k in Base.classes.keys():
         nk = core.camelize_singular(k)
+        TABLENAMES_REV[nk] = k
         TABLES[nk] = Base.classes[k]
         globals()[nk] = Base.classes[k]
     DB = Session(engine)
@@ -168,6 +170,35 @@ def get_TC(pkid=None, dbid=None):
         return None
     ret = {}
     for key in get_column_keys(TC):
+        ret[key] = getattr(res, key, None)
+    params = {}
+    for item in res.telecommand_data_collection:
+        # unicode to str for the key, eval on the value
+        params[str(item.param_key)] = eval(item.value)
+    return res, ret, params
+
+
+def get_TM(pkid=None, dbid=None):
+    """
+    Gives a full TM object
+
+    Args:
+      * pkid (int): the packet_id of the TC to output
+      * dbid (int) [alternative]: the DB id of the TC to output
+    """
+    if not running:
+        raise ctrlexception.NoDBConnection()
+    TM = TABLES['Telemetry']
+    res = DB.query(TM)
+    if dbid is None:
+        res = res.filter(TM.packet_id == int(pkid))
+    else:
+        res = res.filter(TM.id == int(dbid))
+    res = res.order_by(TM.id.desc()).limit(1).first()
+    if res is None:
+        return None
+    ret = {}
+    for key in get_column_keys(TM):
         ret[key] = getattr(res, key, None)
     params = {}
     for item in res.telecommand_data_collection:
