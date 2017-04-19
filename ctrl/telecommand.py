@@ -54,7 +54,6 @@ class Telecommand(object):
             # copy fields to object root
             for k in self.hd.keys():
                 setattr(self, k, getattr(self._telecommand, k))
-        return
         # load acknowledgements as real Telemetry objects
         if len(self._telecommand.tmcat_rec_acknowledgements_collection) > 0:
             theid = self._telecommand\
