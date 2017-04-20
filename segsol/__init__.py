@@ -28,15 +28,16 @@
 __all__ = []
 
 
-if not param.param_all.JUSTALIB:
+from param import param_all
+
+
+if not param_all.JUSTALIB:
     __all__ = ['listening', 'saving', 'watching', 'controlling', 'spying']
 
-
-    import param
     from . import listening
     from . import saving
     from . import watching
     from . import controlling
     from . import spying
-    if param.param_all.ENABLESHOW:
+    if param_all.ENABLESHOW:
         from . import showing
