@@ -42,6 +42,7 @@ ALLCMDSNAMES = []
 
 
 for item in allcmds:
+	# force command number and pid corresponding to the generic adcs function
 	item['number'] = param_commands.GENERICADCSCOMMANDNUMBER
 	item['pid'] = param_commands.GENERICADCSCOMMANDPID
     c = CommandADCS(**item)
