@@ -78,7 +78,8 @@ class Telemetry(object):
                 else core.now()
         dbid = db.save_TM_to_DB(cls.hd, cls.hdx, cls.data)
         # if it is a RACK, update the TM after checking the TC
-        if int(cls.hd[param_ccsds.PACKETCATEGORY.name]) == int(RACKCAT):
+        if int(cls.hd[param_ccsds.PACKETCATEGORY.name]) ==\
+                                        int(param_category.RACKCAT):
             tcid = db.update_RACK_id(dbid=dbid)
         # elif it is a FACK or EACK
         elif (int(cls.hd[param_ccsds.PAYLOADFLAG.name]),

@@ -53,7 +53,6 @@ class Telecommand(object):
         if ret is None:
             print("Could not find this TC id")
             return
-        print ret
         (self._telecommand, self.hd), self.inputs, (rack, fack, eack) = ret
         # copy fields to object root
         for k in self.hd.keys():
