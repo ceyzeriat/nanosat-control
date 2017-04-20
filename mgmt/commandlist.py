@@ -306,11 +306,12 @@ class CommandList(object):
                         self.allcmds.pop(idx)
             self.allcmds += to_upd
             print("Updated {:d} commands from CSV".format(cnt))
-            print("\nWARNING: Updating a command")
+            print("\nWARNING: Updating a command might corrupt the TC/TM"\
+                  "data previously recorded in the database")
 
     def apply(self):
         """
-        Applies the add/remove changes to the JSON file
+        Applies the add/update/remove changes to the JSON files
         """
         core.save_json_cmds(param_commands.COMMANDSFILE[self._cmds],
                             cmds=self.allcmds)
