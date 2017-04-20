@@ -30,11 +30,14 @@ try:
     import Queue as queue
 except:
     import queue
-from segsol import controlling
+from param import param_all
+if not param_all.JUSTALIB:
+    from segsol import controlling
 from .ccsds import param_ccsds
 from .utils import core
-from . import db
-from .telemetry import Telemetry
+if not param_all.JUSTALIB:
+    from . import db
+    from .telemetry import Telemetry
 
 
 __all__ = ['Telecommand']

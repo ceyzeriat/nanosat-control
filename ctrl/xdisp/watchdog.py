@@ -39,32 +39,10 @@ from param import param_category
 
 __all__ = ['XDISP']
 
-
 locale.setlocale(locale.LC_ALL, '')
 locale_code = locale.getpreferredencoding()
 
 
-def e(txt):
-    return txt.encode(locale_code)
-
-
-LISTENICO = (9, u'\u260E')
-CONTROLICO = (11, u'\u262D')
-SAVEICO = (13, u'\u2744')
-
-SENTICO = (75, u'\u2191')
-RACKICO = (76, u'\u21AF')
-FACKICO = (77, u'\u03A6')
-EACKICO = (78, u'\u2020')
-
-PAYLOADICO = u'\u03C0'
-OBCICO = u'\u03A9'
-L0ICO = u'\u2218'
-L1ICO = u'\u25CE'
-HORLINE = u'\u2500'
-
-TCFMT = u'{timestamp} {pld} {lvl} {pid:<15.15} #{pkid:<5.5} {cmd_name:<27.27}'
-TMFMT = u'{timestamp} {pld} {lvl} {pid:<15.15} #{pkid:<5.5} cat: {cat:>13.13} ({catnum:>2.2}) len: {sz:>3.3}'
 MAXSTORETC = 100
 MAXDISPLAYTC = 8
 MAXSTORETM = 100
@@ -76,18 +54,54 @@ TIMEUPDFREQ = 3.
 PRINTFREQ = 5.
 
 
-"""
-VERLINESPLITLEFT = u'\u2524'
-VERLINESPLITRIGHT = u'\u251C'
-UPLEFTCORNER = u'\u256D'
-UPRIGHTCORNER = u'\u256E'
-BOTTOMRIGHTCORNER = u'\u256F'
-BOTTOMLEFTCORNER = u'\u2570'
-VERLINE = u'\u2502'
-HORLINESPLITUP = u'\u2534'
-HORLINESPLITDOWN = u'\u252C'
-CROSS = u'\u253C'
-"""
+TCFMT = '{timestamp} {pld} {lvl} {pid:<15.15} #{pkid:<5.5} {cmd_name:<27.27}'
+TMFMT = '{timestamp} {pld} {lvl} {pid:<15.15} #{pkid:<5.5} cat: {cat:>13.13} '\
+        '({catnum:>2.2}) len: {sz:>3.3}'
+
+
+# do we want to use unicode ?
+if param_all.SHOWUNICODE:
+    def e(txt):
+        return txt.encode(locale_code)
+
+
+    LISTENICO = (9, u'\u260E')
+    CONTROLICO = (11, u'\u262D')
+    SAVEICO = (13, u'\u2744')
+
+    SENTICO = (75, u'\u2191')
+    RACKICO = (76, u'\u21AF')
+    FACKICO = (77, u'\u03A6')
+    EACKICO = (78, u'\u2020')
+
+    PAYLOADICO = u'\u03C0'
+    OBCICO = u'\u03A9'
+    L0ICO = u'\u2218'
+    L1ICO = u'\u25CE'
+    HORLINE = u'\u2500'
+
+    TCFMT = e(TCFMT)
+    TMFMT = e(TMFMT)
+else:
+    def e(txt):
+        return txt
+
+
+    LISTENICO = (9, 'L')
+    CONTROLICO = (11, 'C')
+    SAVEICO = (13, 'S')
+
+    SENTICO = (75, 's')
+    RACKICO = (76, 'r')
+    FACKICO = (77, 'f')
+    EACKICO = (78, 'e')
+
+    PAYLOADICO = 'p'
+    OBCICO = 'o'
+    L0ICO = '0'
+    L1ICO = '1'
+    HORLINE = '-'
+
 
 class PrintOut(object):
     def __init__(self, text, loc, opts=None, newline=False):

@@ -35,10 +35,10 @@ if not param.param_all.JUSTALIB:
     from . import c0
     from . import c1
     from . import cadcs
-    from . import xdisp
-#from . import clib
+    if param.param_all.ENABLESHOW:
+        from . import xdisp
 from . import kiss
 from ._version import __version__, __major__, __minor__, __micro__
 if not param.param_all.JUSTALIB:
-	from .telecommand import *
-	from .telemetry import *
+    from .telecommand import *
+    from .telemetry import *

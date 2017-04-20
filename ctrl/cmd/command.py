@@ -31,7 +31,6 @@ from ..ccsds import TCPacker
 from ..utils import core
 from ..telecommand import Telecommand
 from .. import db
-from segsol import controlling
 
 
 __all__ = ['Command']
