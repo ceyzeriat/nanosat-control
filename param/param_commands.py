@@ -34,6 +34,10 @@ COMMANDSFILE = {'obc0': ["ctrl", "cmd", "cmds_obc0.json"],
 				'adcs': ["ctrl", "cmd", "cmds_adcs.json"],}
 
 
+GENERICADCSCOMMANDNUMBER = 99
+GENERICADCSCOMMANDPID = 'L0ComManager'
+
+
 RANGESEPARATOR = '_'
 
 LISTSEPARATOR = '!'

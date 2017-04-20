@@ -42,6 +42,8 @@ ALLCMDSNAMES = []
 
 
 for item in allcmds:
+	item['number'] = param_commands.GENERICADCSCOMMANDNUMBER
+	item['pid'] = param_commands.GENERICADCSCOMMANDPID
     c = CommandADCS(**item)
     ALLCMDS.append(c)
     ALLCMDSNAMES.append(c.name)
