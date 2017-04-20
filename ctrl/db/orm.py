@@ -192,7 +192,6 @@ def get_TC(pkid=None, dbid=None):
         # unicode to str for the key, eval on the value
         params[str(item.param_key)] = eval(item.value)
     # get the DB id of the ACK
-    print thetc, thetc.__dict__
     if len(thetc.tmcat_rec_acknowledgements_collection) > 0:
         rackid = self._telecommand\
                     .tmcat_rec_acknowledgements_collection[0].telemetry_packet
