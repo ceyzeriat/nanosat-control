@@ -29,6 +29,8 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from sqlalchemy import update
+from sqlalchemy import and_
+#from sqlalchemy import or_
 from param import param_category
 from param import param_apid
 from byt import Byt
