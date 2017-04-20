@@ -27,9 +27,12 @@
 
 MINLENPARAMSTRUCTURE = 3
 
-COMMANDSFILE = ["ctrl", "cmd", "cmds.json"]
+COMMANDSFILE = {'obc0': ["ctrl", "cmd", "cmds_obc0.json"],
+				'obc1': ["ctrl", "cmd", "cmds_obc1.json"],
+				'pld0': ["ctrl", "cmd", "cmds_pld0.json"],
+				'pld1': ["ctrl", "cmd", "cmds_pld1.json"],
+				'adcs': ["ctrl", "cmd", "cmds_adcs.json"],}
 
-COMMANDSADCSFILE = ["ctrl", "cmd", "cmdsadcs.json"]
 
 RANGESEPARATOR = '_'
 

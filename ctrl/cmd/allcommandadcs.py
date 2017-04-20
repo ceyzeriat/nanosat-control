@@ -34,7 +34,7 @@ from ..utils import core
 __all__ = ['ALLCMDS', 'ALLCMDSNAMES']
 
 
-allcmds = core.load_json_cmds(param_commands.COMMANDSADCSFILE)
+allcmds = core.load_json_cmds(param_commands.COMMANDSFILE['adcs'])
 
 
 ALLCMDS = []

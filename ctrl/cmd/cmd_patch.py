@@ -25,34 +25,25 @@
 ###############################################################################
 
 
+from datetime import datetime
 
-class MGMTException(Exception):
-    """
-    Root for CCSDS Exceptions
-    """
-    def _init(self, *args, **kwargs):
-        self.args = [a for a in args] + [a for a in kwargs.values()]
-
-    def __repr__(self):
-        return repr(self.message)
-
-    __str__ = __repr__
+from .command import Command
 
 
-class RedundantCm(MGMTException):
-    """
-    If the Cm number or name is already in the json file
-    """
-    def __init__(self, i, n, *args, **kwargs):
-        self._init(i, n, *args, **kwargs)
-        self.message = "Number '{}' or name '{}' of the Cm is already found "\
-                       "in the json file".format(i, n)
-
-
-class MissinfCm(MGMTException):
-    """
-    If the Cm number is not in the json file
-    """
-    def __init__(self, i, *args, **kwargs):
-        self._init(i, *args, **kwargs)
-        self.message = "Number '{}' is not found in the json file".format(i)
+# function set_datetime of PLD, aim is to allow the input of a
+# datetime or date-tuple instead of a dirty integer timestamp
+class setDatetime(Command):
+    def generate_data(self, *args, **kwargs):
+        stamp = kwargs.get('datetime')
+        if not isinstance(stamp, (datetime, list, tuple)):
+            raise TypeError
+        if isinstance(stamp, (list, tuple)):
+            stamp = datetime(*stamp)
+        newkwargs = {}
+        newkwargs['years'] = stamp.year - 1970
+        newkwargs['months'] = stamp.month
+        newkwargs['days'] = stamp.day
+        newkwargs['hours'] = stamp.hour
+        newkwargs['minutes'] = stamp.minute                
+        newkwargs['seconds'] = stamp.second
+        return super(setDatetime, self).generate_data(*args, **newkwargs)

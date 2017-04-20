@@ -25,18 +25,24 @@
 ###############################################################################
 
 
-from datetime import datetime
 from param import param_commands
 
 from .command import Command
 from ..utils import core
 
 
+# import all patches from patch-file
+from .cmd_patch import *
+
+
 __all__ = ['ALLCMDS', 'L0CMDS', 'L1CMDS', 'ALLCMDSNAMES', 'L0CMDSNAMES',
             'L1CMDSNAMES']
 
 
-allcmds = core.load_json_cmds(param_commands.COMMANDSFILE)
+allcmds = {}
+for key, item in param_commands.COMMANDSFILE.items():
+    if key != 'adcs':
+        allcmds[key] = core.load_json_cmds(item)
 
 
 ALLCMDS = []
@@ -47,35 +53,30 @@ L0CMDSNAMES = []
 L1CMDSNAMES = []
 
 
-class setDatetime(Command):
-    def generate_data(self, *args, **kwargs):
-        stamp = kwargs.get('datetime')
-        if not isinstance(stamp, (datetime, list, tuple)):
-            raise TypeError
-        if isinstance(stamp, (list, tuple)):
-            stamp = datetime(*stamp)
-        newkwargs=dict([])
-        newkwargs['years'] = stamp.year - 1970
-        newkwargs['months'] = stamp.month
-        newkwargs['days'] = stamp.day
-        newkwargs['hours'] = stamp.hour
-        newkwargs['minutes'] = stamp.minute                
-        newkwargs['seconds'] = stamp.second
-        return super(setDatetime, self).generate_data(*args, **newkwargs)
-
-
-for item in allcmds:
-    if item['name'] == 'set_datetime':
-        c = setDatetime(**item)
-        c.generate_data.__func__.__doc__ =\
-            super(setDatetime, c).generate_data.__func__.__doc__
-    else:
-        c = Command(**item)
-    ALLCMDS.append(c)
-    ALLCMDSNAMES.append(c.name)
-    if c.level == 0:
-        L0CMDS.append(c)
-        L0CMDSNAMES.append(c)
-    else:
-        L1CMDS.append(c)
-        L1CMDSNAMES.append(c)
+for key, cmdfile in allcmds.keys():
+    for item in cmdfile:
+        if item['name'] == 'set_datetime':
+            c = setDatetime(**item)
+            # copy doc string
+            c.generate_data.__func__.__doc__ =\
+                super(setDatetime, c).generate_data.__func__.__doc__
+        elif item['name'] == 'my_other_function_to_patch':
+            # c = classPatchName(**item)
+            # copy doc string
+            #c.generate_data.__func__.__doc__ =\
+            #    super(classPatchName, c).generate_data.__func__.__doc__
+        elif item['name'] == 'my_other_function_to_patch':
+            # c = classPatchName(**item)
+            # copy doc string
+            #c.generate_data.__func__.__doc__ =\
+            #    super(classPatchName, c).generate_data.__func__.__doc__
+        else:
+            c = Command(**item)
+        ALLCMDS.append(c)
+        ALLCMDSNAMES.append(c.name)
+        if c.level == 0:
+            L0CMDS.append(c)
+            L0CMDSNAMES.append(c)
+        else:
+            L1CMDS.append(c)
+            L1CMDSNAMES.append(c)
