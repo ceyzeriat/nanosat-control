@@ -80,8 +80,9 @@ if param_all.SHOWUNICODE:
     L1ICO = u'\u25CE'
     HORLINE = u'\u2500'
 
-    TCFMT = e(TCFMT)
-    TMFMT = e(TMFMT)
+    TCFMT = u'{timestamp} {pld} {lvl} {pid:<15.15} #{pkid:<5.5} {cmd_name:<27.27}'
+    TMFMT = u'{timestamp} {pld} {lvl} {pid:<15.15} #{pkid:<5.5} cat: {cat:>13.13} '\
+             '({catnum:>2.2}) len: {sz:>3.3}'
 else:
     def e(txt):
         return txt
