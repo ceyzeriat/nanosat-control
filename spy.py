@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from ctrl.utils import core
-from segsol import spying
+if __name__ == "__main__":
 
-dir_name = raw_input('Name of the directory where to save TM_DATA: ')
+    from ctrl.utils import core
+    from segsol import spying
 
-core.prepare_terminal('Spy')
-print("Initialization...")
-spying.init(dir_name)
-print("Spying...")
+    dir_name = raw_input('Name of the directory where to save TM_DATA: ')
+
+    core.prepare_terminal('Spy')
+    print("Initialization...")
+    spying.init(dir_name)
+    print("Spying...")

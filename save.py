@@ -24,18 +24,19 @@
 #
 ###############################################################################
 
+if __name__ == "__main__":
+    
+    import time
+    from ctrl.utils import core
+    from ctrl import db
+    from segsol import saving
 
-import time
-from ctrl.utils import core
-from ctrl import db
-from segsol import saving
 
+    core.prepare_terminal('Save')
+    print("Initialization...")
+    db.init_DB()
 
-core.prepare_terminal('Save')
-print("Initialization...")
-db.init_DB()
+    time.sleep(0.5)
 
-time.sleep(0.5)
-
-saving.init()
-print("Saving...")
+    saving.init()
+    print("Saving...")

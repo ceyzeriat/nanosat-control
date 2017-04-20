@@ -78,7 +78,7 @@ def process_data(data):
         return
     filename = os.path.split(str(data['path']))[1]
     local_path = os.path.join(DIRNAME, 'tm_data', filename)
-    print("Spying: '{}' >> {}".format(data['data'].hex(), local_path)
+    print("Spying: '{}' >> {}".format(data['data'].hex(), local_path))
     # locally saved
     f = open(core.home_dir(ALL_TEL, local_path), mode='wb')
     f.write(data['data'])
@@ -99,7 +99,7 @@ def init(dir_name):
     DIRNAME = str(dir_name).lstrip('/')
     sub_dir = core.home_dir(ALL_TEL, DIRNAME)
     if os.path.isdir(sub_dir):
-        print('Directory '{}' already exists. Please change the name!'\
+        print("Directory '{}' already exists. Please change the name!"\
                                                         .format(sub_dir))
     else:
         os.mkdir(sub_dir)

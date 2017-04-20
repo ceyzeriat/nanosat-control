@@ -24,19 +24,20 @@
 #
 ###############################################################################
 
+if __name__ == "__main__":
+    
+    from threading import Thread
+    from ctrl.utils import core
+    from segsol import listening
+    from param import param_all
 
-from threading import Thread
-from ctrl.utils import core
-from segsol import listening
-from param import param_all
 
+    core.prepare_terminal('Listen')
+    print("Initialization...")
+    listening.init(antenna=param_all.ANTENNALISTENED)
 
-core.prepare_terminal('Listen')
-print("Initialization...")
-listening.init(antenna=param_all.ANTENNALISTENED)
+    print("Listening...")
 
-print("Listening...")
-
-listenLoop = Thread(target=listening.theloop)
-listenLoop.daemon = True
-listenLoop.start()
+    listenLoop = Thread(target=listening.theloop)
+    listenLoop.daemon = True
+    listenLoop.start()

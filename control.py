@@ -24,29 +24,30 @@
 #
 ###############################################################################
 
+if __name__ == "__main__":
+        
+    import time
+    from byt import Byt
+    from ctrl.utils import core
+    from ctrl.utils import bincore
+    from ctrl import c
+    from ctrl import c0
+    from ctrl import c1
+    from ctrl import cadcs
+    from ctrl import db
+    from segsol import controlling
+    from param import param_all
 
-import time
-from byt import Byt
-from ctrl.utils import core
-from ctrl.utils import bincore
-from ctrl import c
-from ctrl import c0
-from ctrl import c1
-from ctrl import cadcs
-from ctrl import db
-from segsol import controlling
-from param import param_all
 
-
-core.prepare_terminal('Control')
-print("Initialization...")
-controlling.init()
-if param_all.SAVETC:
+    core.prepare_terminal('Control')
+    print("Initialization...")
+    controlling.init()
+    if param_all.SAVETC:
 	db.init_DB()
-else:
+    else:
 	print('DB not initialized')
 
-time.sleep(0.5)
+    time.sleep(0.5)
 
-core.prepare_terminal('Control')
-print(core.ART)
+    core.prepare_terminal('Control')
+    print(core.ART)

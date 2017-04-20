@@ -86,11 +86,11 @@ CONTROLLINGNAME = 'control'
 SAVINGNAME = 'save'
 WATCHINGNAME = 'watch'
 SHOWINGNAME = 'show'
-
+SPYINGNAME = 'spy'
 
 # the port for telemetry broadcasting/listening (alpha)
 LISTENINGPORT = (50007, LISTENINGNAME)
-LISTENINGPORTLISTENERS = [SAVINGNAME, WATCHINGNAME, CONTROLLINGNAME]
+LISTENINGPORTLISTENERS = [SAVINGNAME, WATCHINGNAME, CONTROLLINGNAME, SPYINGNAME]
 
 # the port for telecommand broadcasting/listening (beta)
 CONTROLLINGPORT = (50006, CONTROLLINGNAME)
@@ -104,6 +104,9 @@ SAVINGPORTLISTENERS = [WATCHINGNAME]
 WATCHINGPORT = (50004, WATCHINGNAME)
 WATCHINGPORTLISTENERS = [SHOWINGNAME]  # CONTROLLINGNAME
 
+# the port for saving status broadcasting/listening (delta)
+SPYINGPORT = (50007, SPYINGNAME)
+SPYINGPORTLISTENERS = [SAVINGNAME, WATCHINGNAME, CONTROLLINGNAME]
 
 # process timeout for the watchdog to get angry
 PROCESSTIMEOUT = 5  # sec
@@ -158,7 +161,7 @@ RAWPACKETFOLDER = './raw_data'
 
 
 # the format of the timestamp in the log file
-LOGFILETIMESTAMPFMT = '%F %T.%f'
+LOGFILETIMESTAMPFMT = '%Y-%m-%d %H:%M:%S.%f'
 
 
 # the reserved input parameter key for declaring the report key
