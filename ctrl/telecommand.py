@@ -58,10 +58,13 @@ class Telecommand(object):
         # copy fields to object root
         for k in self.hd.keys():
             setattr(self, k, getattr(self._telecommand, k))
-        # load acknowledgements as real Telemetry objects
-        self.RACK = None if rack is None else Telemetry(dbid=rack)
-        self.FACK = None if rack is None else Telemetry(dbid=fack)
-        self.EACK = None if rack is None else Telemetry(dbid=eack)
+        # load acknowledgements as real Telemetry objects, default to current
+        self.RACK = getattr(self, 'RACK', None) if rack is None\
+                                                else Telemetry(dbid=rack)
+        self.FACK = getattr(self, 'FACK', None) if rack is None\
+                                                else Telemetry(dbid=fack)
+        self.EACK = getattr(self, 'EACK', None) if rack is None\
+                                                else Telemetry(dbid=eack)
 
     def show(self, *args, **kwargs):
         """
@@ -153,7 +156,7 @@ class Telecommand(object):
         FACK = None
         eack = bool(int(hd[param_ccsds.REQACKEXECUTIONTELECOMMAND.name]))
         EACK = None
-        # init ccsds keys, just in case a meteorite kills all form of life
+        # init ccsds keys, in case ACK are not saved to DB
         setattr(cls, param_ccsds.REQACKRECEPTIONTELECOMMAND.name, rack)
         setattr(cls, param_ccsds.REQACKFORMATTELECOMMAND.name, fack)
         setattr(cls, param_ccsds.REQACKEXECUTIONTELECOMMAND.name, eack)
