@@ -152,11 +152,11 @@ class Telecommand(object):
             return cls(dbid=dbid)
         # False if waiting for ACK, else None
         rack = bool(int(hd[param_ccsds.REQACKRECEPTIONTELECOMMAND.name]))
-        RACK = None
+        cls.RACK = None
         fack = bool(int(hd[param_ccsds.REQACKFORMATTELECOMMAND.name]))
-        FACK = None
+        cls.FACK = None
         eack = bool(int(hd[param_ccsds.REQACKEXECUTIONTELECOMMAND.name]))
-        EACK = None
+        cls.EACK = None
         # init ccsds keys, in case ACK are not saved to DB
         setattr(cls, param_ccsds.REQACKRECEPTIONTELECOMMAND.name, rack)
         setattr(cls, param_ccsds.REQACKFORMATTELECOMMAND.name, fack)
@@ -169,12 +169,12 @@ class Telecommand(object):
         # check format first since it may prevent eack from being sent
         while time.time() < doneat:
             # if no ACK is False (waiting for ACK), then break
-            if EACK is True or\
-                EACK is False or\
-                FACK is False or\
-                (eack is False and FACK is not None) or\
+            if cls.EACK is True or\
+                cls.EACK is False or\
+                cls.FACK is False or\
+                (eack is False and cls.FACK is not None) or\
                 (eack is False and fack is False\
-                                    and RACK is not None):
+                                    and cls.RACK is not None):
                 break
             try:
                 res = controlling.ACKQUEUE.get(
@@ -188,10 +188,10 @@ class Telecommand(object):
             # because TM packets being RACK don't copy the PACKETID of the TC
             if res[0] is None:
                 if res[1] == 0:
-                    RACK = True
+                    cls.RACK = True
             elif res[0] == pkid:
                 if res[1] == 1:
-                    FACK = (res[2] == 0)
+                    cls.FACK = (res[2] == 0)
                 elif res[1] == 2:
-                    EACK = (res[2] == 0)
+                    cls.EACK = (res[2] == 0)
         return cls(dbid=dbid)
