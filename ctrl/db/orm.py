@@ -340,20 +340,20 @@ def update_RACK_id(dbid):
     if not running:
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
-    TM = TABLES['Telemetry']
+    TMHX = TABLES['TmcatRecAcknowledgement']
     # just grab the latest TC that was actually sent
     idx = DB.query(TC.id).filter(TC.time_sent != None).\
             order_by(TC.id.desc()).limit(1).with_for_update()
     # 
-    q = update(TM).values({'telecommand_id': idx.as_scalar()})\
-            .where(TM.id == int(dbid))
+    q = update(TMHX).values({'telecommand_id': idx.as_scalar()})\
+            .where(TMHX.id == int(dbid))
     DB.execute(q)
     DB.commit()
     DB.flush()
     return idx.first()[0]
 
 
-def update_ACK_id(dbid, pkid):
+def update_ACK_id(dbid, pkid, ack):
     """
     Updates a EACK or FACK TM with the id of the latest TC whose
     packet_id is provided
@@ -367,14 +367,17 @@ def update_ACK_id(dbid, pkid):
     if not running:
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
-    TM = TABLES['Telemetry']
-    # just grab the latest TC that was actually sent
+    if ack == 'fack':
+        TMHX = TABLES['TmcatFmtAcknowledgement']
+    else:
+        TMHX = TABLES['TmcatExeAcknowledgement']
+    # grab the TC that was sent and to which we're replying
     idx = DB.query(TC.id).filter(and_(TC.time_sent != None,
                                       TC.packet_id == int(pkid))).\
             order_by(TC.id.desc()).limit(1).with_for_update()
     # 
-    q = update(TM).values({'telecommand_id': idx.as_scalar()})\
-            .where(TM.id == int(dbid))
+    q = update(TMHX).values({'telecommand_id': idx.as_scalar()})\
+            .where(TMHX.id == int(dbid))
     DB.execute(q)
     DB.commit()
     DB.flush()
