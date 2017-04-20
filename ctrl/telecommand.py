@@ -54,6 +54,8 @@ class Telecommand(object):
             print("Could not find this TC id")
             return
         (self._telecommand, self.hd), self.inputs, (rack, fack, eack) = ret
+        print ret
+        print getattr(self, 'RACK', '-'), getattr(self, 'FACK', '-'), getattr(self, 'EACK', '-')
         # copy fields to object root
         for k in self.hd.keys():
             setattr(self, k, getattr(self._telecommand, k))
