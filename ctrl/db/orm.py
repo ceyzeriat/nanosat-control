@@ -332,8 +332,6 @@ def save_TM_to_DB(hd, hdx, data):
     # save changes
     print 'docommit fin'
     DB.commit()
-    print 'doflush fin'
-    DB.flush()
     return TM.id
 
 
