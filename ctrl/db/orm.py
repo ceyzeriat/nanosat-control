@@ -110,6 +110,7 @@ def save_TC_to_DB(hd, hdx, inputs):
                                             param_key=k, 
                                             value=repr(v)))
     DB.commit()
+    DB.flush()
     return TC.id
 
 
@@ -382,7 +383,7 @@ def update_ACK_id(dbid, pkid, ack):
     # grab the TC that was sent and to which we're replying
     idx = DB.query(TC.id).filter(TC.packet_id == int(pkid)).\
             order_by(TC.id.desc()).limit(1).with_for_update()
-    # can't find the TC... wasn't saved ?
+    # can't find the TC... wasn't saved?
     if idx is None:
         return
     print idx.as_scalar()
