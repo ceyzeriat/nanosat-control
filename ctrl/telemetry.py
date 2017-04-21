@@ -73,29 +73,23 @@ class Telemetry(object):
         * time_received (datetime+tz): the reception time of the packet
         """
         cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet, retdbvalues=True)
-        print 'saving'
         cls.hd['raw_file'] = core.RAWPACKETFOLDER
         cls.hd['user_id'] = core.RECEIVERID if user_id is None\
                                     else int(user_id)
         cls.hd['time_received'] = time_received\
                 if isinstance(time_received, core.datetime.datetime)\
                 else core.now()
-        print 'orm'
         catnum = int(cls.hd[param_ccsds.PACKETCATEGORY.name])
         # if it is a RACK, update the TM after checking the TC
-        print catnum, int(param_category.RACKCAT), dbid
         if catnum == int(param_category.RACKCAT):
-            print 'israck'
             tcid = db.get_RACK_TCid(dbid=dbid)
             cls.hdx['telecommand_id'] = tcid
         # elif it is a FACK or EACK
         elif (int(cls.hd[param_ccsds.PAYLOADFLAG.name]), catnum)\
                                         in param_category.ACKCATEGORIES:
             if catnum == int(param_category.FACKCAT):
-                print 'isfack'
                 ack = 'fack'
             else:
-                print 'iseack'
                 ack = 'eack'
             tcid = db.get_ACK_TCid(pkid=cls.hdx[pcc.PACKETIDMIRROR.name],
                                     ack=ack)
