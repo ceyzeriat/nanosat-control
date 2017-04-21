@@ -56,6 +56,10 @@ class Telecommand(object):
             return
         (self._telecommand, self.hd), self.inputs, (rack, fack, eack) = ret
         print rack, fack, eack
+        if rack is None:
+            print getattr(self, 'FACK', None)
+        else:
+            print Telemetry(dbid=fack)
         print getattr(self, 'FACK', None) if rack is None\
                                                 else Telemetry(dbid=fack)
         # copy fields to object root
