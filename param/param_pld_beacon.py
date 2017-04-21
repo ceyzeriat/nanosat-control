@@ -51,9 +51,9 @@ def txt2bin(txt, **kwargs):
                                                 if i >= 32 and i <= 126])
 
 
-KEYS = [    dict(name='message', start=0, l=LENGTHBEACONMESSAGE, fctunpack=bin2txt, fctpack=txt2bin,
+KEYS = [    dict(name='message', start=0, l=LENGTHBEACONMESSAGE*8, fctunpack=bin2txt, fctpack=txt2bin,
                     verbose="A beacon message",
-                    disp='text', pad=False, octets=True),
+                    disp='text'),
             dict(name='proc_freq', start=LENGTHBEACONMESSAGE*8+40, l=8, disp="proc_freq",
                     verbose="processor frequency",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)                        
