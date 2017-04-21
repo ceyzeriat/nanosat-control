@@ -348,7 +348,7 @@ def update_RACK_id(dbid):
     # just grab the latest TC that was actually sent
     idx = DB.query(TC.id).filter(TC.time_sent != None).\
             order_by(TC.id.desc()).limit(1).first()
-    print idx.as_scalar()
+    print idx[0]
     q = update(TMHX).values({'telecommand_id': idx[0]})\
             .where(TMHX.telemetry_packet == int(dbid))
     print 'done'
@@ -386,7 +386,7 @@ def update_ACK_id(dbid, pkid, ack):
     # can't find the TC... wasn't saved?
     if idx is None:
         return
-    print idx.as_scalar()
+    print idx[0]
     q = update(TMHX).values({'telecommand_id': idx[0]})\
             .where(TMHX.telemetry_packet == int(dbid))
     print 'done'
