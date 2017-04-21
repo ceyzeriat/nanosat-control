@@ -49,11 +49,11 @@ class Telemetry(object):
         else:
             (self._telemetry, self.hd), (self._telemetry_hdx, self.hdx),\
                 (self._telemetry_data, self.data) = ret
-            # copy fields to object root
-            for k in self.hd.keys():
-                setattr(self, k, getattr(self._telemetry, k))
+            # copy fields to object root, first with hdx in case of overiding
             for k in self.hdx.keys():
                 setattr(self, k, getattr(self._telemetry_hdx, k))
+            for k in self.hd.keys():
+                setattr(self, k, getattr(self._telemetry, k))
 
     def __bool__(self):
         return int(getattr(self, 'hdx', {}).get(pcc.ERRORCODE.name, 0)) == 0

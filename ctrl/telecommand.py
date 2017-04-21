@@ -55,6 +55,9 @@ class Telecommand(object):
             print("Could not find this TC id")
             return
         (self._telecommand, self.hd), self.inputs, (rack, fack, eack) = ret
+        print rack, fack, eack
+        print getattr(self, 'FACK', None) if rack is None\
+                                                else Telemetry(dbid=fack)
         # copy fields to object root
         for k in self.hd.keys():
             setattr(self, k, getattr(self._telecommand, k))
