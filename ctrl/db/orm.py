@@ -296,7 +296,9 @@ def save_TM_to_DB(hd, hdx, data):
     hd['time_saved'] = core.now()
     TM = TABLES['Telemetry'](**hd)
     DB.add(TM)
+    print 'docommit'
     DB.commit()
+    print 'doflush'
     DB.flush()
     catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
     pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
@@ -306,6 +308,7 @@ def save_TM_to_DB(hd, hdx, data):
         hdx = dict(hdx)
         hdx['telemetry_packet'] = TM.id
         DB.add(TABLES[tbl](**hdx))
+        print 'did HX'
     # saving the data
     if param_category.TABLEDATA[pldflag][catnum] is not None:
         tbl = param_category.TABLEDATA[pldflag][catnum]
@@ -327,7 +330,9 @@ def save_TM_to_DB(hd, hdx, data):
             dt['telemetry_packet'] = TM.id
             DB.add(TABLES[tbl](**dt))
     # save changes
+    print 'docommit fin'
     DB.commit()
+    print 'doflush fin'
     DB.flush()
     return TM.id
 
