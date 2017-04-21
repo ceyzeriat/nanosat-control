@@ -352,6 +352,7 @@ def update_RACK_id(dbid):
     DB.execute(q)
     DB.commit()
     DB.flush()
+    print 'ret'
     return idx.first()[0]
 
 
@@ -385,4 +386,5 @@ def update_ACK_id(dbid, pkid, ack):
     DB.execute(q)
     DB.commit()
     DB.flush()
+    print 'ret'
     return idx.first()[0]
