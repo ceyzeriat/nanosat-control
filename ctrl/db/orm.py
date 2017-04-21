@@ -290,6 +290,8 @@ def save_TM_to_DB(hd, hdx, data):
     """
     if not running:
         raise ctrlexception.NoDBConnection()
+    print time.time(), 'commit prepa save_TM_to_DB'
+    DB.commit()
     # save prim and sec headers
     # forced field
     hd['time_sent'] = core.stamps2time(hd['days_since_ref'],
