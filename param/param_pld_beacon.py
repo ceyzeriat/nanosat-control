@@ -39,7 +39,7 @@ def hex2txt(v, **kwargs):
     """
     verbose = "binary -> message"
     """
-    return ''.join([chr(i) for i in v.ints() if i >= 32 and i <= 126])
+    return ''.join([chr(i) for i in Byt(v).ints() if i >= 32 and i <= 126])
 
 
 def txt2hex(txt, **kwargs):
