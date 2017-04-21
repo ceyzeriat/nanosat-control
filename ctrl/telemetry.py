@@ -81,14 +81,13 @@ class Telemetry(object):
                 if isinstance(time_received, core.datetime.datetime)\
                 else core.now()
         print 'orm'
-        dbid = db.save_TM_to_DB(cls.hd, cls.hdx, cls.data)
-        print 'done'
         catnum = int(cls.hd[param_ccsds.PACKETCATEGORY.name])
         # if it is a RACK, update the TM after checking the TC
         print catnum, int(param_category.RACKCAT), dbid
         if catnum == int(param_category.RACKCAT):
             print 'israck'
-            tcid = db.update_RACK_id(dbid=dbid)
+            tcid = db.get_RACK_TCid(dbid=dbid)
+            cls.hdx = 
         # elif it is a FACK or EACK
         elif (int(cls.hd[param_ccsds.PAYLOADFLAG.name]), catnum)\
                                         in param_category.ACKCATEGORIES:
@@ -98,10 +97,12 @@ class Telemetry(object):
             else:
                 print 'iseack'
                 ack = 'eack'
-            tcid = db.update_ACK_id(dbid=dbid,
+            tcid = db.get_ACK_TCid(dbid=dbid,
                                     pkid=cls.hdx[pcc.PACKETIDMIRROR.name],
                                     ack=ack)
         else:
             tcid = None
-        cls.tcid = None #tcid
+        cls.tcid = tcid
+        cls.hdx['telecommand_id'] = tcid
+        dbid = db.save_TM_to_DB(cls.hd, cls.hdx, cls.data)
         return cls(dbid=dbid)

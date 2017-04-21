@@ -332,7 +332,7 @@ def save_TM_to_DB(hd, hdx, data):
     return TM.id
 
 
-def update_RACK_id(dbid):
+def get_RACK_TCid(dbid):
     """
     Updates a RACK TM with the id of the latest TC sent
     Returns the DB id of the TC
@@ -359,14 +359,13 @@ def update_RACK_id(dbid):
     return idx[0]
 
 
-def update_ACK_id(dbid, pkid, ack):
+def get_ACK_TCid(pkid, ack):
     """
-    Updates a EACK or FACK TM with the id of the latest TC whose
-    packet_id is provided
+    Gets the TC id to be recorded in a EACK or FACK TM given the id of
+    the latest TC whose packet_id is provided
     Returns the DB id of the TC
 
     Args:
-      * dbid (int): the DB id of the RACK TM to update
       * pkid (int): the packet_id of the TC to which the FACK or EACK
         is replying
     """
@@ -386,7 +385,8 @@ def update_ACK_id(dbid, pkid, ack):
     # can't find the TC... wasn't saved?
     if idx is None:
         return
-    print idx[0]
+    else:
+        return idx[0]
     #dum = DB.query(TMHX).filter(TMHX.telemetry_packet == int(dbid))\
     #                                .update({'telecommand_id': idx[0]})
     print 'done'
