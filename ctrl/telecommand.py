@@ -50,27 +50,19 @@ class Telecommand(object):
         """
         # returns None if id not existing, else (hd, inputs)
         ret = db.get_TC(pkid=pkid, dbid=dbid)
-        print ret, self.RACK, self.FACK, self.EACK
         if ret is None:
             print("Could not find this TC id")
             return
         (self._telecommand, self.hd), self.inputs, (rack, fack, eack) = ret
-        print rack, fack, eack
-        if rack is None:
-            print getattr(self, 'FACK', None)
-        else:
-            print Telemetry(dbid=fack)
-        print getattr(self, 'FACK', None) if rack is None\
-                                                else Telemetry(dbid=fack)
         # copy fields to object root
         for k in self.hd.keys():
             setattr(self, k, getattr(self._telecommand, k))
         # load acknowledgements as real Telemetry objects, default to current
         self.RACK = getattr(self, 'RACK', None) if rack is None\
                                                 else Telemetry(dbid=rack)
-        self.FACK = getattr(self, 'FACK', None) if rack is None\
+        self.FACK = getattr(self, 'FACK', None) if fack is None\
                                                 else Telemetry(dbid=fack)
-        self.EACK = getattr(self, 'EACK', None) if rack is None\
+        self.EACK = getattr(self, 'EACK', None) if eack is None\
                                                 else Telemetry(dbid=eack)
 
     def show(self, *args, **kwargs):
