@@ -345,7 +345,7 @@ def update_RACK_id(dbid):
     # just grab the latest TC that was actually sent
     idx = DB.query(TC.id).filter(TC.time_sent != None).\
             order_by(TC.id.desc()).limit(1).with_for_update()
-    print idx
+    print idx.as_scalar()
     q = update(TMHX).values({'telecommand_id': idx.as_scalar()})\
             .where(TMHX.id == int(dbid))
     print 'done'
@@ -379,7 +379,7 @@ def update_ACK_id(dbid, pkid, ack):
     idx = DB.query(TC.id).filter(and_(TC.time_sent != None,
                                       TC.packet_id == int(pkid))).\
             order_by(TC.id.desc()).limit(1).with_for_update()
-    print idx
+    print idx.as_scalar()
     q = update(TMHX).values({'telecommand_id': idx.as_scalar()})\
             .where(TMHX.id == int(dbid))
     print 'done'

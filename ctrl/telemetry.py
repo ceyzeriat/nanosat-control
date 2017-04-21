@@ -99,5 +99,5 @@ class Telemetry(object):
                                     ack=ack)
         else:
             tcid = None"""
-        cls.tcid = tcid
+        cls.tcid = None #tcid
         return cls(dbid=dbid)
