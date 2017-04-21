@@ -87,7 +87,7 @@ class Telemetry(object):
         if catnum == int(param_category.RACKCAT):
             print 'israck'
             tcid = db.get_RACK_TCid(dbid=dbid)
-            cls.hdx = 
+            cls.hdx['telecommand_id'] = tcid
         # elif it is a FACK or EACK
         elif (int(cls.hd[param_ccsds.PAYLOADFLAG.name]), catnum)\
                                         in param_category.ACKCATEGORIES:
@@ -97,12 +97,11 @@ class Telemetry(object):
             else:
                 print 'iseack'
                 ack = 'eack'
-            tcid = db.get_ACK_TCid(dbid=dbid,
-                                    pkid=cls.hdx[pcc.PACKETIDMIRROR.name],
+            tcid = db.get_ACK_TCid(pkid=cls.hdx[pcc.PACKETIDMIRROR.name],
                                     ack=ack)
+            cls.hdx['telecommand_id'] = tcid
         else:
             tcid = None
         cls.tcid = tcid
-        cls.hdx['telecommand_id'] = tcid
         dbid = db.save_TM_to_DB(cls.hd, cls.hdx, cls.data)
         return cls(dbid=dbid)
