@@ -97,5 +97,6 @@ class Telemetry(object):
         else:
             tcid = None
         cls.tcid = tcid
+        print tcid
         dbid = db.save_TM_to_DB(cls.hd, cls.hdx, cls.data)
         return cls(dbid=dbid)
