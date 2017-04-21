@@ -50,7 +50,7 @@ class Telecommand(object):
         """
         # returns None if id not existing, else (hd, inputs)
         ret = db.get_TC(pkid=pkid, dbid=dbid)
-        print ret
+        print ret, self.RACK, self.FACK, self.EACK
         if ret is None:
             print("Could not find this TC id")
             return

@@ -197,20 +197,20 @@ def get_TC(pkid=None, dbid=None):
         params[str(item.param_key)] = eval(item.value)
     # get the DB id of the ACK
     if len(thetc.tmcat_rec_acknowledgements_collection) > 0:
-        rackid = self._telecommand\
-                    .tmcat_rec_acknowledgements_collection[0].telemetry_packet
+        rackid = thetc.tmcat_rec_acknowledgements_collection[0]\
+                                                    .telemetry_packet
     else:
         # nothing received, set to None
         rackid = None
     if len(thetc.tmcat_fmt_acknowledgements_collection) > 0:
-        fackid = self._telecommand\
-                    .tmcat_fmt_acknowledgements_collection[0].telemetry_packet
+        fackid = thetc.tmcat_fmt_acknowledgements_collection[0]\
+                                                    .telemetry_packet
     else:
         # nothing received, set to None
         fackid = None
     if len(thetc.tmcat_exe_acknowledgements_collection) > 0:
-        eackid = self._telecommand\
-                    .tmcat_exe_acknowledgements_collection[0].telemetry_packet
+        eackid = thetc.tmcat_exe_acknowledgements_collection[0]\
+                                                    .telemetry_packet
     else:
         # nothing received, set to None
         eackid = None
