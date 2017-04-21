@@ -330,8 +330,8 @@ def save_TM_to_DB(hd, hdx, data):
             dt['telemetry_packet'] = TM.id
             DB.add(TABLES[tbl](**dt))
     # save changes
-    print 'docommit fin'
-    DB.commit()
+    print 'doflush fin'
+    DB.flush()
     return TM.id
 
 
