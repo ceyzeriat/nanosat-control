@@ -25,6 +25,7 @@
 ###############################################################################
 
 
+import time
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
@@ -104,13 +105,14 @@ def save_TC_to_DB(hd, hdx, inputs):
     hd.pop('signature', '')
     TC = TABLES['Telecommand'](**hd)
     DB.add(TC)
+    print time.time(), 'flush TC save_TC_to_DB'
     DB.flush()
     for k, v in inputs.items():
         DB.add(TABLES['TelecommandDatum'](telecommand_id=TC.id,
                                             param_key=k, 
                                             value=repr(v)))
+    print time.time(), 'commit TCDATA save_TC_to_DB'
     DB.commit()
-    DB.flush()
     return TC.id
 
 
@@ -132,8 +134,8 @@ def update_sent_TC_time(pkid, t):
             .order_by(TC.id.desc()).limit(1).with_for_update()
     q = update(TC).values({'time_sent': t}).where(TC.id == idx.as_scalar())
     DB.execute(q)
+    print time.time(), 'commit TC update_sent_TC_time'
     DB.commit()
-    DB.flush()
     return idx.first()[0]
 
 
@@ -296,9 +298,7 @@ def save_TM_to_DB(hd, hdx, data):
     hd['time_saved'] = core.now()
     TM = TABLES['Telemetry'](**hd)
     DB.add(TM)
-    print 'docommit'
-    DB.commit()
-    print 'doflush'
+    print time.time(), 'flush TM save_TM_to_DB'
     DB.flush()
     catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
     pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
@@ -308,7 +308,6 @@ def save_TM_to_DB(hd, hdx, data):
         hdx = dict(hdx)
         hdx['telemetry_packet'] = TM.id
         DB.add(TABLES[tbl](**hdx))
-        print 'did HX'
     # saving the data
     if param_category.TABLEDATA[pldflag][catnum] is not None:
         tbl = param_category.TABLEDATA[pldflag][catnum]
@@ -330,7 +329,7 @@ def save_TM_to_DB(hd, hdx, data):
             dt['telemetry_packet'] = TM.id
             DB.add(TABLES[tbl](**dt))
     # save changes
-    print 'doflush fin'
+    print time.time(), 'flush TMDATA save_TM_to_DB'
     DB.flush()
     return TM.id
 
@@ -347,11 +346,13 @@ def get_RACK_TCid(dbid):
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
     TMHX = TABLES['TmcatRecAcknowledgement']
-    print 'rack'
     # just grab the latest TC that was actually sent
     idx = DB.query(TC.id).filter(TC.time_sent != None).\
             order_by(TC.id.desc()).limit(1).first()
-    print idx[0]
+    if idx is None:
+        return
+    else:
+        return idx[0]
     q = update(TMHX).values({'telecommand_id': idx[0]})\
             .where(TMHX.telemetry_packet == int(dbid))
     print 'done'
@@ -381,12 +382,10 @@ def get_ACK_TCid(pkid, ack):
         TMHX = TABLES['TmcatExeAcknowledgement']
     else:
         return
-    print ack
     # grab the TC that was sent and to which we're replying
     idx = DB.query(TC.id).filter(TC.packet_id == int(pkid)).\
             order_by(TC.id.desc()).limit(1).first()
     # can't find the TC... wasn't saved?
-    print 'boo'
     if idx is None:
         return
     else:
