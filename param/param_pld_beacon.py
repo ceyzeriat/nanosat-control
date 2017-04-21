@@ -94,39 +94,9 @@ class PLDBeaconCCSDSTrousseau(CCSDSTrousseau):
         Generates the single-line formatting for later display
         Overriding mother's method
         """
-        self.fmt = ''.join(["%s:{%s}" % (key['disp'], key['name']) for key in KEYS[0:1]])
+        self.fmt = ''.join(["%s:{%s}" % (key['disp'], key['name']) for key in KEYS[0]])
         self.fmt += '\n'
         self.fmt += ", ".join(["%s:{%s}" % (key['disp'], key['name']) for key in KEYS[1:]])
-    
-    def unpack(self, data, **kwargs):
-        """
-        Unpacks the data contained in the payload beacon
-
-        Args:
-        * data (byts): the chain of octets to unpack
-        """
-        res = dict([])
-        dt = bincore.hex2bin(data[:self.size])
-        for item in self.keys:
-            if item.name == 'message':
-                res[item.name] = str(data[:MAXLENGTHBEACONMESSAGE])
-            else:
-                res[item.name] = item.unpack(dt)
-        return res
-
-    def disp(self, vals):
-        """
-        Display the data values of the payload hk
-        Overriding mother's method
-
-        Args:
-          * data (list of dict): a list of dictionaries containing the
-            values to display
-        """
-        return "{}\nhex: {}".format(super(PLDBeaconCCSDSTrousseau, self).disp(vals),
-                                    Byt(vals['message']).hex())
-
-
 
 
 TROUSSEAU = PLDBeaconCCSDSTrousseau(KEYS, octets=False)

@@ -70,6 +70,7 @@ class Telemetry(object):
         * time_received (datetime+tz): the reception time of the packet
         """
         cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet, retdbvalues=True)
+        
         cls.hd['raw_file'] = core.RAWPACKETFOLDER
         cls.hd['user_id'] = core.RECEIVERID if user_id is None\
                                     else int(user_id)
