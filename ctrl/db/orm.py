@@ -295,6 +295,7 @@ def save_TM_to_DB(hd, hdx, data):
     hd['time_saved'] = core.now()
     TM = TABLES['Telemetry'](**hd)
     DB.add(TM)
+    DB.commit()
     DB.flush()
     catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
     pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
@@ -326,6 +327,7 @@ def save_TM_to_DB(hd, hdx, data):
             DB.add(TABLES[tbl](**dt))
     # save changes
     DB.commit()
+    DB.flush()
     return TM.id
 
 

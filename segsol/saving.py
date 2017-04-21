@@ -146,7 +146,7 @@ def process_incoming(t, path, data, **kwargs):
     os.remove(path+'.tmp')
     if param_all.REMOVERAWFILEAFTERSAVE:
         os.remove(path)
-    report('savedTM', dbid=tm.id)
+    ###report('savedTM', dbid=tm.id)
 
 
 def report(*args, **kwargs):
