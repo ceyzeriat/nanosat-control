@@ -124,7 +124,7 @@ class PLDBeaconCCSDSTrousseau(CCSDSTrousseau):
             values to display
         """
         return "{}\nhex: {}".format(super(PLDBeaconCCSDSTrousseau, self).disp(vals),
-                                    vals['message'].hex())
+                                    Byt(vals['message']).hex())
 
 
 
