@@ -300,8 +300,8 @@ def save_TM_to_DB(hd, hdx, data):
     hd['time_saved'] = core.now()
     TM = TABLES['Telemetry'](**hd)
     DB.add(TM)
-    print time.time(), 'flush TM save_TM_to_DB'
-    DB.flush()
+    print time.time(), 'commit TM save_TM_to_DB'
+    DB.commit()
     catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
     pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
     # saving the aux header
@@ -331,8 +331,8 @@ def save_TM_to_DB(hd, hdx, data):
             dt['telemetry_packet'] = TM.id
             DB.add(TABLES[tbl](**dt))
     # save changes
-    print time.time(), 'flush TMDATA save_TM_to_DB'
-    DB.flush()
+    print time.time(), 'commit TMDATA save_TM_to_DB'
+    DB.commit()
     return TM.id
 
 
