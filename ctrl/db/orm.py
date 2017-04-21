@@ -41,8 +41,8 @@ from ..ccsds import param_ccsds
 
 __all__ = ['init_DB', 'get_column_keys', 'save_TC_to_DB', 'close_DB',
             'save_TM_to_DB', 'update_sent_TC_time', 'get_TC_dbid_from_pkid',
-            'get_TC', 'update_RACK_id', 'get_TM_dbid_from_pkid', 'get_TM',
-            'update_ACK_id']
+            'get_TC', 'get_RACK_TCid', 'get_TM_dbid_from_pkid', 'get_TM',
+            'get_ACK_TCid']
 
 
 running = False
