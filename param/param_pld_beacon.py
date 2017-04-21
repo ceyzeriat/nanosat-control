@@ -51,39 +51,39 @@ def txt2hex(txt, **kwargs):
 
 KEYS = [    dict(name='message', start=0, l=MAXLENGTHBEACONMESSAGE, fctunpack=hex2txt, fctpack=txt2hex,
                     verbose="A beacon message",
-                    disp='beacon message', pad=False, octets=True),
+                    disp='text', pad=False, octets=True),
             dict(name='proc_freq', start=MAXLENGTHBEACONMESSAGE*8+40, l=8, disp="proc_freq",
-                    verbose="proc_freq",
+                    verbose="processor frequency",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)                        
             dict(name='phot', start=MAXLENGTHBEACONMESSAGE*8, l=16, disp="phot",
-                    verbose="phot",
+                    verbose="photometry",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
             dict(name='mode', start=MAXLENGTHBEACONMESSAGE*8+16, l=8, disp="mode",
                     verbose="mode",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
             dict(name='acqmode', start=MAXLENGTHBEACONMESSAGE*8+24, l=8, disp="acqmode",
-                    verbose="acqmode",
+                    verbose="acquisition mode",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
             dict(name='beacon_flag', start=MAXLENGTHBEACONMESSAGE*8+33, l=1, disp="beacon_flag",
-                    verbose="beacon_flag",
+                    verbose="beacon flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)                                    
             dict(name='tec_flag', start=MAXLENGTHBEACONMESSAGE*8+34, l=1, disp="tec_flag",
-                    verbose="tec_flag",
+                    verbose="tec flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)                                    
             dict(name='sensors_flag', start=MAXLENGTHBEACONMESSAGE*8+35, l=1, disp="sensors_flag",
-                    verbose="sensors_flag",
+                    verbose="sensors flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
             dict(name='hv_flag', start=MAXLENGTHBEACONMESSAGE*8+36, l=1, disp="hv_flag",
-                    verbose="hv_flag",
+                    verbose="high voltage flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)            
             dict(name='dac_flag', start=MAXLENGTHBEACONMESSAGE*8+37, l=1, disp="dac_flag",
-                    verbose="dac_flag",
+                    verbose="dac flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
             dict(name='interrupt_flag', start=MAXLENGTHBEACONMESSAGE*8+38, l=1, disp="interrupt_flag",
-                    verbose="interrupt_flag",
+                    verbose="interrupt flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
             dict(name='diode_flag', start=MAXLENGTHBEACONMESSAGE*8+39, l=1, disp="diode_flag",
-                    verbose="diode_flag",
+                    verbose="diode flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin)#fctunpack=temp_unpack, fctpack=temp_pack)
             ]
 
@@ -113,6 +113,18 @@ class PLDBeaconCCSDSTrousseau(CCSDSTrousseau):
             else:
                 res[item.name] = item.unpack(dt)
         return res
+
+    def disp(self, vals):
+        """
+        Display the data values of the payload hk
+        Overriding mother's method
+
+        Args:
+          * data (list of dict): a list of dictionaries containing the
+            values to display
+        """
+        return "{}\nhex: {}".format(super(PLDBeaconCCSDSTrousseau, self).disp(vals),
+                                    vals['message'].hex())
 
 
 
