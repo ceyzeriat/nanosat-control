@@ -383,6 +383,7 @@ def get_ACK_TCid(pkid, ack):
     idx = DB.query(TC.id).filter(TC.packet_id == int(pkid)).\
             order_by(TC.id.desc()).limit(1).first()
     # can't find the TC... wasn't saved?
+    print 'boo'
     if idx is None:
         return
     else:
