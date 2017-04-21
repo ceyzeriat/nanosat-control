@@ -42,9 +42,7 @@ class Telemetry(object):
         Gets a telemetry from the database
         """
         # returns None if id not existing, else (hd, inputs)
-        print 'preparing'
         ret = db.get_TM(pkid=pkid, dbid=dbid)
-        print 'got TM'
         if ret is None:
             print("Could not find this TM id")
             return
@@ -97,6 +95,5 @@ class Telemetry(object):
         else:
             tcid = None
         cls.tcid = tcid
-        print tcid
         dbid = db.save_TM_to_DB(cls.hd, cls.hdx, cls.data)
         return cls(dbid=dbid)

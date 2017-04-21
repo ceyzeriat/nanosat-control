@@ -105,13 +105,11 @@ def save_TC_to_DB(hd, hdx, inputs):
     hd.pop('signature', '')
     TC = TABLES['Telecommand'](**hd)
     DB.add(TC)
-    print time.time(), 'flush TC save_TC_to_DB'
     DB.flush()
     for k, v in inputs.items():
         DB.add(TABLES['TelecommandDatum'](telecommand_id=TC.id,
                                             param_key=k, 
                                             value=repr(v)))
-    print time.time(), 'commit TCDATA save_TC_to_DB'
     DB.commit()
     return TC.id
 
@@ -131,11 +129,9 @@ def update_sent_TC_time(pkid, t):
     t = str(t)
     TC = TABLES['Telecommand']
     idx = DB.query(TC.id).filter(TC.packet_id == int(pkid))\
-            .order_by(TC.id.desc()).limit(1).first()
-    if idx is None:
-        return
-    q = DB.query(TC).filter(TC.id == idx[0]).update({'time_sent': t})
-    print time.time(), 'commit TC update_sent_TC_time'
+            .order_by(TC.id.desc()).limit(1).wait_for_update()
+    q = update(TC).values({'time_sent': t}).filter(TC.id == idx.as_scalar())
+    DB.execute(q)
     DB.commit()
     return idx[0]
 
@@ -237,7 +233,6 @@ def get_TM(pkid=None, dbid=None):
     else:
         thetm = thetm.filter(TM.id == int(dbid))
     thetm = thetm.order_by(TM.id.desc()).limit(1).first()
-    print time.time(), 'commit TM get_TM'
     DB.commit()
     if thetm is None:
         return None
@@ -293,7 +288,6 @@ def save_TM_to_DB(hd, hdx, data):
     """
     if not running:
         raise ctrlexception.NoDBConnection()
-    print time.time(), 'commit prepa save_TM_to_DB'
     DB.commit()
     # save prim and sec headers
     # forced field
@@ -303,7 +297,6 @@ def save_TM_to_DB(hd, hdx, data):
     hd['time_saved'] = core.now()
     TM = TABLES['Telemetry'](**hd)
     DB.add(TM)
-    print time.time(), 'commit TM save_TM_to_DB'
     DB.commit()
     catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
     pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
@@ -313,7 +306,6 @@ def save_TM_to_DB(hd, hdx, data):
         hdx = dict(hdx)
         hdx['telemetry_packet'] = TM.id
         DB.add(TABLES[tbl](**hdx))
-        print time.time(), 'commit TMHX save_TM_to_DB'
         DB.commit()
     # saving the data
     if param_category.TABLEDATA[pldflag][catnum] is not None:
@@ -336,7 +328,6 @@ def save_TM_to_DB(hd, hdx, data):
             dt['telemetry_packet'] = TM.id
             DB.add(TABLES[tbl](**dt))
     # save changes
-    print time.time(), 'commit TMDATA save_TM_to_DB'
     DB.commit()
     return TM.id
 
@@ -356,18 +347,11 @@ def get_RACK_TCid(dbid):
     # just grab the latest TC that was actually sent
     idx = DB.query(TC.id).filter(TC.time_sent != None).\
             order_by(TC.id.desc()).limit(1).first()
+    DB.commit()
     if idx is None:
         return
     else:
         return idx[0]
-    q = update(TMHX).values({'telecommand_id': idx[0]})\
-            .where(TMHX.telemetry_packet == int(dbid))
-    print 'done'
-    DB.execute(q)
-    DB.commit()
-    DB.flush()
-    print 'ret'
-    return idx[0]
 
 
 def get_ACK_TCid(pkid, ack):
@@ -392,16 +376,9 @@ def get_ACK_TCid(pkid, ack):
     # grab the TC that was sent and to which we're replying
     idx = DB.query(TC.id).filter(TC.packet_id == int(pkid)).\
             order_by(TC.id.desc()).limit(1).first()
+    DB.commit()
     # can't find the TC... wasn't saved?
     if idx is None:
         return
     else:
         return idx[0]
-    #dum = DB.query(TMHX).filter(TMHX.telemetry_packet == int(dbid))\
-    #                                .update({'telecommand_id': idx[0]})
-    print 'done'
-    #print q
-    DB.commit()
-    DB.flush()
-    print 'ret'
-    return idx[0]
