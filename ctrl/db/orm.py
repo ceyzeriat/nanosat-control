@@ -387,11 +387,10 @@ def update_ACK_id(dbid, pkid, ack):
     if idx is None:
         return
     print idx[0]
-    q = update(TMHX).values({'telecommand_id': idx[0]})\
-            .where(TMHX.telemetry_packet == int(dbid))
+    dum = DB.query(TMHX).filter(TMHX.telemetry_packet == int(dbid))\
+                                    .update(({'telecommand_id': idx[0]})
     print 'done'
     print q
-    DB.execute(q)
     DB.commit()
     DB.flush()
     print 'ret'
