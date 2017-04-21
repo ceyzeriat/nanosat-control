@@ -131,12 +131,13 @@ def update_sent_TC_time(pkid, t):
     t = str(t)
     TC = TABLES['Telecommand']
     idx = DB.query(TC.id).filter(TC.packet_id == int(pkid))\
-            .order_by(TC.id.desc()).limit(1).with_for_update()
-    q = update(TC).values({'time_sent': t}).where(TC.id == idx.as_scalar())
-    DB.execute(q)
+            .order_by(TC.id.desc()).limit(1).first()
+    if idx is None:
+        return
+    q = DB.query(TC).filter(TC.id == idx[0]).update({'time_sent': t})
     print time.time(), 'commit TC update_sent_TC_time'
     DB.commit()
-    return idx.first()[0]
+    return idx[0]
 
 
 def get_TC_dbid_from_pkid(pkid):
@@ -236,6 +237,8 @@ def get_TM(pkid=None, dbid=None):
     else:
         thetm = thetm.filter(TM.id == int(dbid))
     thetm = thetm.order_by(TM.id.desc()).limit(1).first()
+    print time.time(), 'commit TM get_TM'
+    DB.commit()
     if thetm is None:
         return None
     dictm = {}
@@ -310,6 +313,8 @@ def save_TM_to_DB(hd, hdx, data):
         hdx = dict(hdx)
         hdx['telemetry_packet'] = TM.id
         DB.add(TABLES[tbl](**hdx))
+        print time.time(), 'commit TMHX save_TM_to_DB'
+        DB.commit()
     # saving the data
     if param_category.TABLEDATA[pldflag][catnum] is not None:
         tbl = param_category.TABLEDATA[pldflag][catnum]
