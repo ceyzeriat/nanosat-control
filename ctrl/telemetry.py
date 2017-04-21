@@ -41,7 +41,6 @@ class Telemetry(object):
         """
         Gets a telemetry from the database
         """
-        return
         # returns None if id not existing, else (hd, inputs)
         print 'preparing'
         ret = db.get_TM(pkid=pkid, dbid=dbid)
