@@ -48,7 +48,6 @@ class Telecommand(object):
         """
         Reads a TC from the database
         """
-        return
         # returns None if id not existing, else (hd, inputs)
         ret = db.get_TC(pkid=pkid, dbid=dbid)
         if ret is None:
