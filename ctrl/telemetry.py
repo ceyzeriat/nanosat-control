@@ -70,14 +70,16 @@ class Telemetry(object):
         * time_received (datetime+tz): the reception time of the packet
         """
         cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet, retdbvalues=True)
-        
+        print 'saving'
         cls.hd['raw_file'] = core.RAWPACKETFOLDER
         cls.hd['user_id'] = core.RECEIVERID if user_id is None\
                                     else int(user_id)
         cls.hd['time_received'] = time_received\
                 if isinstance(time_received, core.datetime.datetime)\
                 else core.now()
+        print 'orm'
         dbid = db.save_TM_to_DB(cls.hd, cls.hdx, cls.data)
+        print 'done'
         catnum = int(cls.hd[param_ccsds.PACKETCATEGORY.name])
         # if it is a RACK, update the TM after checking the TC
         if catnum == int(param_category.RACKCAT):
