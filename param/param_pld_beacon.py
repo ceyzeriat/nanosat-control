@@ -32,57 +32,59 @@ from ctrl.utils import bincore
 __all__ = ['TROUSSEAU']
 
 
-MAXLENGTHBEACONMESSAGE = 29  # octets
+LENGTHBEACONMESSAGE = 29  # octets
 
 
-def hex2txt(v, **kwargs):
+def bin2txt(v, **kwargs):
     """
     verbose = "binary -> message"
     """
-    return ''.join([chr(i) for i in Byt(v).ints() if i >= 32 and i <= 126])
+    return ''.join([chr(i) for i in bincore.bin2hex(v).ints()\
+                                                if i >= 32 and i <= 126])
 
 
-def txt2hex(txt, **kwargs):
+def txt2bin(txt, **kwargs):
     """
     verbose = "message -> binary"
     """
-    return Byt([i for i in Byt(txt).ints() if i >= 32 and i <= 126])
+    return ''.join([bincore.int2bin(i, pad=8) for i in Byt(txt).ints()\
+                                                if i >= 32 and i <= 126])
 
 
-KEYS = [    dict(name='message', start=0, l=MAXLENGTHBEACONMESSAGE, fctunpack=hex2txt, fctpack=txt2hex,
+KEYS = [    dict(name='message', start=0, l=LENGTHBEACONMESSAGE, fctunpack=bin2txt, fctpack=txt2bin,
                     verbose="A beacon message",
                     disp='text', pad=False, octets=True),
-            dict(name='proc_freq', start=MAXLENGTHBEACONMESSAGE*8+40, l=8, disp="proc_freq",
+            dict(name='proc_freq', start=LENGTHBEACONMESSAGE*8+40, l=8, disp="proc_freq",
                     verbose="processor frequency",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)                        
-            dict(name='phot', start=MAXLENGTHBEACONMESSAGE*8, l=16, disp="phot",
+            dict(name='phot', start=LENGTHBEACONMESSAGE*8, l=16, disp="phot",
                     verbose="photometry",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
-            dict(name='mode', start=MAXLENGTHBEACONMESSAGE*8+16, l=8, disp="mode",
+            dict(name='mode', start=LENGTHBEACONMESSAGE*8+16, l=8, disp="mode",
                     verbose="mode",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
-            dict(name='acqmode', start=MAXLENGTHBEACONMESSAGE*8+24, l=8, disp="acqmode",
+            dict(name='acqmode', start=LENGTHBEACONMESSAGE*8+24, l=8, disp="acqmode",
                     verbose="acquisition mode",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
-            dict(name='beacon_flag', start=MAXLENGTHBEACONMESSAGE*8+33, l=1, disp="beacon_flag",
+            dict(name='beacon_flag', start=LENGTHBEACONMESSAGE*8+33, l=1, disp="beacon_flag",
                     verbose="beacon flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)                                    
-            dict(name='tec_flag', start=MAXLENGTHBEACONMESSAGE*8+34, l=1, disp="tec_flag",
+            dict(name='tec_flag', start=LENGTHBEACONMESSAGE*8+34, l=1, disp="tec_flag",
                     verbose="tec flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)                                    
-            dict(name='sensors_flag', start=MAXLENGTHBEACONMESSAGE*8+35, l=1, disp="sensors_flag",
+            dict(name='sensors_flag', start=LENGTHBEACONMESSAGE*8+35, l=1, disp="sensors_flag",
                     verbose="sensors flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
-            dict(name='hv_flag', start=MAXLENGTHBEACONMESSAGE*8+36, l=1, disp="hv_flag",
+            dict(name='hv_flag', start=LENGTHBEACONMESSAGE*8+36, l=1, disp="hv_flag",
                     verbose="high voltage flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)            
-            dict(name='dac_flag', start=MAXLENGTHBEACONMESSAGE*8+37, l=1, disp="dac_flag",
+            dict(name='dac_flag', start=LENGTHBEACONMESSAGE*8+37, l=1, disp="dac_flag",
                     verbose="dac flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
-            dict(name='interrupt_flag', start=MAXLENGTHBEACONMESSAGE*8+38, l=1, disp="interrupt_flag",
+            dict(name='interrupt_flag', start=LENGTHBEACONMESSAGE*8+38, l=1, disp="interrupt_flag",
                     verbose="interrupt flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
-            dict(name='diode_flag', start=MAXLENGTHBEACONMESSAGE*8+39, l=1, disp="diode_flag",
+            dict(name='diode_flag', start=LENGTHBEACONMESSAGE*8+39, l=1, disp="diode_flag",
                     verbose="diode flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin)#fctunpack=temp_unpack, fctpack=temp_pack)
             ]
