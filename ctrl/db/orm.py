@@ -389,6 +389,7 @@ def update_ACK_id(dbid, pkid, ack):
     q = update(TMHX).values({'telecommand_id': idx.as_scalar()})\
             .where(TMHX.id == int(dbid))
     print 'done'
+    print q
     DB.execute(q)
     DB.commit()
     DB.flush()
