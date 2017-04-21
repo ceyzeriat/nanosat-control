@@ -42,9 +42,12 @@ class Telemetry(object):
         Gets a telemetry from the database
         """
         # returns None if id not existing, else (hd, inputs)
+        print 'preparing'
         ret = db.get_TM(pkid=pkid, dbid=dbid)
+        print 'got TM'
         if ret is None:
             print("Could not find this TM id")
+            return
         else:
             (self._telemetry, self.hd), (self._telemetry_hdx, self.hdx),\
                 (self._telemetry_data, self.data) = ret
@@ -80,7 +83,7 @@ class Telemetry(object):
         print 'orm'
         dbid = db.save_TM_to_DB(cls.hd, cls.hdx, cls.data)
         print 'done'
-        catnum = int(cls.hd[param_ccsds.PACKETCATEGORY.name])
+        """catnum = int(cls.hd[param_ccsds.PACKETCATEGORY.name])
         # if it is a RACK, update the TM after checking the TC
         if catnum == int(param_category.RACKCAT):
             tcid = db.update_RACK_id(dbid=dbid)
@@ -95,6 +98,6 @@ class Telemetry(object):
                                     pkid=cls.hdx[pcc.PACKETIDMIRROR.name],
                                     ack=ack)
         else:
-            tcid = None
+            tcid = None"""
         cls.tcid = tcid
         return cls(dbid=dbid)

@@ -141,6 +141,7 @@ def process_incoming(t, path, data, **kwargs):
         SERVER[1].put(path, '.')
     # save TM to DB
     tm = Telemetry._fromPacket(data, time_received=t)
+    print 'done', (tm is None)
     # remove temp file after copy and DB saving successful
     os.remove(path+'.tmp')
     if param_all.REMOVERAWFILEAFTERSAVE:
