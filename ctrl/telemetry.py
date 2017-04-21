@@ -83,7 +83,7 @@ class Telemetry(object):
         print 'orm'
         dbid = db.save_TM_to_DB(cls.hd, cls.hdx, cls.data)
         print 'done'
-        """catnum = int(cls.hd[param_ccsds.PACKETCATEGORY.name])
+        catnum = int(cls.hd[param_ccsds.PACKETCATEGORY.name])
         # if it is a RACK, update the TM after checking the TC
         if catnum == int(param_category.RACKCAT):
             tcid = db.update_RACK_id(dbid=dbid)
@@ -98,6 +98,6 @@ class Telemetry(object):
                                     pkid=cls.hdx[pcc.PACKETIDMIRROR.name],
                                     ack=ack)
         else:
-            tcid = None"""
+            tcid = None
         cls.tcid = None #tcid
         return cls(dbid=dbid)
