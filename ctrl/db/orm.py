@@ -341,12 +341,14 @@ def update_RACK_id(dbid):
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
     TMHX = TABLES['TmcatRecAcknowledgement']
+    print 'rack'
     # just grab the latest TC that was actually sent
     idx = DB.query(TC.id).filter(TC.time_sent != None).\
             order_by(TC.id.desc()).limit(1).with_for_update()
-    # 
+    print idx
     q = update(TMHX).values({'telecommand_id': idx.as_scalar()})\
             .where(TMHX.id == int(dbid))
+    print 'done'
     DB.execute(q)
     DB.commit()
     DB.flush()
@@ -371,13 +373,15 @@ def update_ACK_id(dbid, pkid, ack):
         TMHX = TABLES['TmcatFmtAcknowledgement']
     else:
         TMHX = TABLES['TmcatExeAcknowledgement']
+    print ack
     # grab the TC that was sent and to which we're replying
     idx = DB.query(TC.id).filter(and_(TC.time_sent != None,
                                       TC.packet_id == int(pkid))).\
             order_by(TC.id.desc()).limit(1).with_for_update()
-    # 
+    print idx
     q = update(TMHX).values({'telecommand_id': idx.as_scalar()})\
             .where(TMHX.id == int(dbid))
+    print 'done'
     DB.execute(q)
     DB.commit()
     DB.flush()
