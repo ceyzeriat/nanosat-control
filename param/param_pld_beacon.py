@@ -94,7 +94,7 @@ class PLDBeaconCCSDSTrousseau(CCSDSTrousseau):
         Generates the single-line formatting for later display
         Overriding mother's method
         """
-        self.fmt = ''.join(["%s:{%s}" % (KEYS[0]['disp'], KEYS[0]['name'])
+        self.fmt = "%s:{%s}" % (KEYS[0]['disp'], KEYS[0]['name'])
         self.fmt += '\n'
         self.fmt += ", ".join(["%s:{%s}" % (key['disp'], key['name']) for key in KEYS[1:]])
 
