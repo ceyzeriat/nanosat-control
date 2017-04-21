@@ -347,16 +347,16 @@ def update_RACK_id(dbid):
     print 'rack'
     # just grab the latest TC that was actually sent
     idx = DB.query(TC.id).filter(TC.time_sent != None).\
-            order_by(TC.id.desc()).limit(1).with_for_update()
+            order_by(TC.id.desc()).limit(1).first()
     print idx.as_scalar()
-    q = update(TMHX).values({'telecommand_id': idx.as_scalar()})\
+    q = update(TMHX).values({'telecommand_id': idx[0]})\
             .where(TMHX.telemetry_packet == int(dbid))
     print 'done'
     DB.execute(q)
     DB.commit()
     DB.flush()
     print 'ret'
-    return idx.first()[0]
+    return idx[0]
 
 
 def update_ACK_id(dbid, pkid, ack):
@@ -382,12 +382,12 @@ def update_ACK_id(dbid, pkid, ack):
     print ack
     # grab the TC that was sent and to which we're replying
     idx = DB.query(TC.id).filter(TC.packet_id == int(pkid)).\
-            order_by(TC.id.desc()).limit(1).with_for_update()
+            order_by(TC.id.desc()).limit(1).first()
     # can't find the TC... wasn't saved?
     if idx is None:
         return
     print idx.as_scalar()
-    q = update(TMHX).values({'telecommand_id': idx.as_scalar()})\
+    q = update(TMHX).values({'telecommand_id': idx[0]})\
             .where(TMHX.telemetry_packet == int(dbid))
     print 'done'
     print q
@@ -395,4 +395,4 @@ def update_ACK_id(dbid, pkid, ack):
     DB.commit()
     DB.flush()
     print 'ret'
-    return idx.first()[0]
+    return idx[0]
