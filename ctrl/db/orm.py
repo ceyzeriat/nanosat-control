@@ -374,8 +374,10 @@ def update_ACK_id(dbid, pkid, ack):
     TC = TABLES['Telecommand']
     if ack == 'fack':
         TMHX = TABLES['TmcatFmtAcknowledgement']
-    else:
+    elif ack == 'eack':
         TMHX = TABLES['TmcatExeAcknowledgement']
+    else:
+        return
     print ack
     # grab the TC that was sent and to which we're replying
     idx = DB.query(TC.id).filter(and_(TC.time_sent != None,
