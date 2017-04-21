@@ -388,7 +388,7 @@ def update_ACK_id(dbid, pkid, ack):
         return
     print idx[0]
     dum = DB.query(TMHX).filter(TMHX.telemetry_packet == int(dbid))\
-                                    .update(({'telecommand_id': idx[0]})
+                                    .update({'telecommand_id': idx[0]})
     print 'done'
     print q
     DB.commit()
