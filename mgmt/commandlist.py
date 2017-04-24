@@ -299,7 +299,7 @@ class CommandList(object):
             # for each cmd to update
             for cmd in to_upd:
                 print("UPDATE commands SET name='{}' WHERE id={};".format(\
-                            item['name'], item['number']))
+                            cmd['name'], cmd['number']))
                 # scan the loaded commands to remove it
                 for idx, v in enumerate(self.allcmds):
                     if v['number'] == cmd['number']:
