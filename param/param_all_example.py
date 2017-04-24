@@ -72,10 +72,10 @@ LOGFILE = ['watch.log']
 CSSOURCEFILE = ['.segsol', 'callsign_source']
 CSDESTFILE = ['.segsol', 'callsign_destination']
 
-# who is the emitter
+# who is the emitter, cf database
 EMITTERID = 1  # ['.segsol', 'radio_id']
 
-# who is the receiver
+# who is the receiver, cf database
 RECEIVERID = 1  # ['.segsol', 'callsign_source']
 
 # day-reference from unix time
