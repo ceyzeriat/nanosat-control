@@ -43,9 +43,9 @@ if __name__ == "__main__":
     print("Initialization...")
     controlling.init()
     if param_all.SAVETC:
-	db.init_DB()
+    db.init_DB()
     else:
-	print('DB not initialized')
+    print('DB not initialized')
 
     time.sleep(0.5)
 
