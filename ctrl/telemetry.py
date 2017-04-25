@@ -45,14 +45,15 @@ class Telemetry(object):
         ret = db.get_TM(pkid=pkid, dbid=dbid)
         if ret is None:
             print("Could not find this TM id")
+            return
         else:
             (self._telemetry, self.hd), (self._telemetry_hdx, self.hdx),\
                 (self._telemetry_data, self.data) = ret
-            # copy fields to object root
-            for k in self.hd.keys():
-                setattr(self, k, getattr(self._telemetry, k))
+            # copy fields to object root, first with hdx in case of overiding
             for k in self.hdx.keys():
                 setattr(self, k, getattr(self._telemetry_hdx, k))
+            for k in self.hd.keys():
+                setattr(self, k, getattr(self._telemetry, k))
 
     def __bool__(self):
         return int(getattr(self, 'hdx', {}).get(pcc.ERRORCODE.name, 0)) == 0
@@ -76,17 +77,23 @@ class Telemetry(object):
         cls.hd['time_received'] = time_received\
                 if isinstance(time_received, core.datetime.datetime)\
                 else core.now()
-        dbid = db.save_TM_to_DB(cls.hd, cls.hdx, cls.data)
+        catnum = int(cls.hd[param_ccsds.PACKETCATEGORY.name])
         # if it is a RACK, update the TM after checking the TC
-        if int(cls.hd[param_ccsds.PACKETCATEGORY.name]) == int(RACKCAT):
-            tcid = db.update_RACK_id(dbid=dbid)
+        if catnum == int(param_category.RACKCAT):
+            tcid = db.get_RACK_TCid(dbid=dbid)
+            cls.hdx['telecommand_id'] = tcid
         # elif it is a FACK or EACK
-        elif (int(cls.hd[param_ccsds.PAYLOADFLAG.name]),
-            int(cls.hd[param_ccsds.PACKETCATEGORY.name]))\
-                in param_category.ACKCATEGORIES:
-            tcid = db.update_ACK_id(dbid=dbid,
-                                    pkid=cls.hdx[pcc.PACKETIDMIRROR.name])
+        elif (int(cls.hd[param_ccsds.PAYLOADFLAG.name]), catnum)\
+                                        in param_category.ACKCATEGORIES:
+            if catnum == int(param_category.FACKCAT):
+                ack = 'fack'
+            else:
+                ack = 'eack'
+            tcid = db.get_ACK_TCid(pkid=cls.hdx[pcc.PACKETIDMIRROR.name],
+                                    ack=ack)
+            cls.hdx['telecommand_id'] = tcid
         else:
             tcid = None
         cls.tcid = tcid
+        dbid = db.save_TM_to_DB(cls.hd, cls.hdx, cls.data)
         return cls(dbid=dbid)

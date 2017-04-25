@@ -46,6 +46,13 @@ NOERRORATIMPORT = True
 # if you don't wanna execute anything at import and just use as a library
 JUSTALIB = False
 
+# you might not want fancy characters in show, especially if you are running windows
+SHOWUNICODE = True
+
+# if you are running windows, you might not be interested in show that requires the
+# custom install of curses library
+ENABLESHOW = True
+
 # which antenna are you using
 ANTENNALISTENED = 'checkoutbox'  # or 'checkoutbox' or 'serial'
 
@@ -65,10 +72,10 @@ LOGFILE = ['watch.log']
 CSSOURCEFILE = ['.segsol', 'callsign_source']
 CSDESTFILE = ['.segsol', 'callsign_destination']
 
-# who is the emitter
+# who is the emitter, cf database
 EMITTERID = 1  # ['.segsol', 'radio_id']
 
-# who is the receiver
+# who is the receiver, cf database
 RECEIVERID = 1  # ['.segsol', 'callsign_source']
 
 # day-reference from unix time

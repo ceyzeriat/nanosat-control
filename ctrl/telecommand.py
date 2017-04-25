@@ -30,11 +30,14 @@ try:
     import Queue as queue
 except:
     import queue
-from segsol import controlling
+from param import param_all
+if not param_all.JUSTALIB:
+    from segsol import controlling
 from .ccsds import param_ccsds
 from .utils import core
-from . import db
-from .telemetry import Telemetry
+if not param_all.JUSTALIB:
+    from . import db
+    from .telemetry import Telemetry
 
 
 __all__ = ['Telecommand']
@@ -54,10 +57,13 @@ class Telecommand(object):
         # copy fields to object root
         for k in self.hd.keys():
             setattr(self, k, getattr(self._telecommand, k))
-        # load acknowledgements as real Telemetry objects
-        self.RACK = None if rack is None else Telemetry(dbid=rack)
-        self.FACK = None if rack is None else Telemetry(dbid=fack)
-        self.EACK = None if rack is None else Telemetry(dbid=eack)
+        # load acknowledgements as real Telemetry objects, default to current
+        self.RACK = getattr(self, 'RACK', None) if rack is None\
+                                                else Telemetry(dbid=rack)
+        self.FACK = getattr(self, 'FACK', None) if fack is None\
+                                                else Telemetry(dbid=fack)
+        self.EACK = getattr(self, 'EACK', None) if eack is None\
+                                                else Telemetry(dbid=eack)
 
     def show(self, *args, **kwargs):
         """
@@ -144,12 +150,12 @@ class Telecommand(object):
             return cls(dbid=dbid)
         # False if waiting for ACK, else None
         rack = bool(int(hd[param_ccsds.REQACKRECEPTIONTELECOMMAND.name]))
-        RACK = None
+        cls.RACK = None
         fack = bool(int(hd[param_ccsds.REQACKFORMATTELECOMMAND.name]))
-        FACK = None
+        cls.FACK = None
         eack = bool(int(hd[param_ccsds.REQACKEXECUTIONTELECOMMAND.name]))
-        EACK = None
-        # init ccsds keys, just in case a meteorite kills all form of life
+        cls.EACK = None
+        # init ccsds keys, in case ACK are not saved to DB
         setattr(cls, param_ccsds.REQACKRECEPTIONTELECOMMAND.name, rack)
         setattr(cls, param_ccsds.REQACKFORMATTELECOMMAND.name, fack)
         setattr(cls, param_ccsds.REQACKEXECUTIONTELECOMMAND.name, eack)
@@ -161,12 +167,12 @@ class Telecommand(object):
         # check format first since it may prevent eack from being sent
         while time.time() < doneat:
             # if no ACK is False (waiting for ACK), then break
-            if EACK is True or\
-                EACK is False or\
-                FACK is False or\
-                (eack is False and FACK is not None) or\
+            if cls.EACK is True or\
+                cls.EACK is False or\
+                cls.FACK is False or\
+                (eack is False and cls.FACK is not None) or\
                 (eack is False and fack is False\
-                                    and RACK is not None):
+                                    and cls.RACK is not None):
                 break
             try:
                 res = controlling.ACKQUEUE.get(
@@ -180,10 +186,10 @@ class Telecommand(object):
             # because TM packets being RACK don't copy the PACKETID of the TC
             if res[0] is None:
                 if res[1] == 0:
-                    RACK = True
+                    cls.RACK = True
             elif res[0] == pkid:
                 if res[1] == 1:
-                    FACK = (res[2] == 0)
+                    cls.FACK = (res[2] == 0)
                 elif res[1] == 2:
-                    EACK = (res[2] == 0)
+                    cls.EACK = (res[2] == 0)
         return cls(dbid=dbid)
