@@ -92,13 +92,74 @@ NPOINTS = CCSDSKey(     name='n_points',
                         disp="npts")
 
 
-CATEGORY_4 = CCSDSTrousseau([], octets=False, name='HK')  # HK payload, NO HEADER
-CATEGORY_5 = CCSDSTrousseau([ACQMODE, INTEGRATIONTIME, DELAY, MODULATION, RADIUS, NPOINTS], octets=False, name='science HF')  # science HF
-CATEGORY_6 = CCSDSTrousseau([], octets=False, name='report')  # report
-CATEGORY_7 = CCSDSTrousseau([], octets=False, name='beacon')  # beacon
+HKTICK = CCSDSKey(      name='hk_tick', start=0, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin,
+                        verbose='sampling time for hks',
+                        disp='tic')
+
+BINNING = CCSDSKey(     name='binning', start=16, l=8, fctunpack=bincore.bin2int, fctpack=bincore.int2bin,
+                        verbose='binning of hk datas',
+                        disp='bin')
+
+MAINMODE = CCSDSKey(    name='main_mode', start=24, l=8, fctunpack=bincore.bin2int, fctpack=bincore.int2bin,
+                        verbose='mode of the payload',
+                        disp='mMod')
+
+ACQMODE = CCSDSKey(     name='acq_mode', start=32, l=8, fctunpack=bincore.bin2int, fctpack=bincore.int2bin,
+                        verbose='mode for the acquisition manager',
+                        disp='acq')
+
+DIODEFLAG = CCSDSKey(   name='diode_flag', start=40, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin,
+                        verbose='on/off flags of the photodiode',
+                        disp='diod_f')
+
+INTERRUPTFAG = CCSDSKey(name='interrupt_fag', start=41, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin,
+                        verbose='on/off flags of the diode interruption',
+                        disp='inter_f')
+
+PIEZOFLAG = CCSDSKey(   name='piezo_flag', start=42, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin,
+                        verbose='on/off flags of the piezo DAC',
+                        disp='piezo_f')
+
+HVFLAG = CCSDSKey(      name='hv_flag', start=43, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin,
+                        verbose='on/off flags of the piezo high voltage line',
+                        disp='hv_f')
+
+SESONRSFLAG = CCSDSKey( name='sesnors_flag', start=44, l=1, fctunpack=bincbool.bin2int, fctpack=boolcore.int2bin,
+                        verbose='on/off flag for the piezo strain gauges',
+                        disp='sens_f')
+
+TECFLAG = CCSDSKey(     name='tec_flag', start=45, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin,
+                        verbose='on/off flag for the tec controller',
+                        disp='tec_f')
+
+BEACONFLAG = CCSDSKey(  name='beacon_flag', start=46, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin,
+                        verbose='on/off flag for the beacon',
+                        disp='bcn_f')
+
+PROCFREQ = CCSDSKey(    name='proc_freq', start=48, l=8, fctunpack=bincore.bin2int, fctpack=bincore.int2bin,
+                        verbose='frequency (in MHz) of SYSCLOCK',
+                        disp='freq')
+
+TECSETPOINT = CCSDSKey( name='tec_setpoint', start=56, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin,
+                        verbose='setpoint for TEC controller',
+                        disp='tecpt')
+
+
+# HK payload
+CATEGORY_4 = CCSDSTrousseau([HKTICK, BINNING, MAINMODE, ACQMODE, DIODEFLAG,
+                                INTERRUPTFAG, PIEZOFLAG, HVFLAG, SESONRSFLAG, TECFLAG,
+                                BEACONFLAG, PROCFREQ, TECSETPOINT], octets=False, name='HK')
+# science HF
+CATEGORY_5 = CCSDSTrousseau([ACQMODE, INTEGRATIONTIME, DELAY, MODULATION, RADIUS,
+                                NPOINTS], octets=False, name='science HF')
+# report
+CATEGORY_6 = CCSDSTrousseau([], octets=False, name='report')
+# beacon
+CATEGORY_7 = CCSDSTrousseau([], octets=False, name='beacon')
 
 
 # (payloadd, category)
+# no specific acknowledgement for payload
 ACKCATEGORIESPLD = []
 
 
@@ -114,7 +175,7 @@ for k, cat in PACKETCATEGORIESPLD.items():
     PACKETCATEGORYSIZESPLD[k] = cat.size
 
 
-TABLECATEGORYPLD = {4: None,  # HK
+TABLECATEGORYPLD = {4: 'TmcatPayloadHk',  # HK
                     5: 'TmcatHfScience',  # science HF
                     6: None,  # report
                     7: None}  # beacon

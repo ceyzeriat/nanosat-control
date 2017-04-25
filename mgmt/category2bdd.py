@@ -25,6 +25,30 @@
 ###############################################################################
 
 
+import csv
+from param import param_all
+from param import param_apid
+from param import param_commands
+from byt import Byt
+
+from . import core
 from . import mgmtexception
-from . import categoryregistration
-from . import commandlist
+
+
+
+
+
+
+
+CREATE TABLE IF NOT EXISTS tmcat_payload_hks
+(
+	id 					serial PRIMARY KEY,
+	telemetry_packet	integer UNIQUE
+);
+ALTER TABLE tmcat_payload_hks OWNER TO picsat_admin;
+GRANT ALL ON tmcat_payload_hks TO picsat_admin;
+GRANT select ON tmcat_payload_hks TO picsat_read;
+GRANT select, insert, update ON tmcat_payload_hks TO picsat_edit;
+CREATE INDEX ON tmcat_payload_hks(telemetry_packet);
+ALTER TABLE tmcat_payload_hks ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+GRANT ALL ON SEQUENCE tmcat_payload_hks_id_seq TO picsat_edit;
