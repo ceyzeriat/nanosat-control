@@ -195,12 +195,28 @@ class Cm(object):
         raise cmdexception.ReadOnly('pid')
 
     @property
-    def man(self, ret=False):
-        if ret:
-            return str(self)
-        else:
-            print(self)
+    def man(self):
+        print(self)
 
     @man.setter
     def man(self, value):
         raise cmdexception.ReadOnly('man')
+
+    @property
+    def ex(self):
+        params = []
+        for p in self._params:
+            v = p.rng[0]
+            if p.typ.typ == 'str':
+                # transform into char if string expected and quote it
+                v = "'{}'".format(chr(v)*p.size)
+            else:
+                v = str(v)
+            if p.size > 1 and p.typ.typ != 'str':
+                v = "[{}]".format(','.join([v for i in range(p.size)]))
+            params.append("{}={}".format(p.name, v))
+        print("c.{}({})".format(self.name, ', '.join(params)))
+
+    @ex.setter
+    def ex(self, value):
+        raise cmdexception.ReadOnly('ex')
