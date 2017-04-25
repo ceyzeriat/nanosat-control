@@ -25,10 +25,13 @@
 ###############################################################################
 
 
+import time
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from sqlalchemy import update
+from sqlalchemy import and_
+#from sqlalchemy import or_
 from param import param_category
 from param import param_apid
 from byt import Byt
@@ -39,7 +42,8 @@ from ..ccsds import param_ccsds
 
 __all__ = ['init_DB', 'get_column_keys', 'save_TC_to_DB', 'close_DB',
             'save_TM_to_DB', 'update_sent_TC_time', 'get_TC_dbid_from_pkid',
-            'get_TC', 'update_RACK_id', 'get_TM_dbid_from_pkid', 'get_TM']
+            'get_TC', 'get_RACK_TCid', 'get_TM_dbid_from_pkid', 'get_TM',
+            'get_ACK_TCid']
 
 
 running = False
@@ -101,11 +105,13 @@ def save_TC_to_DB(hd, hdx, inputs):
     hd.pop('signature', '')
     TC = TABLES['Telecommand'](**hd)
     DB.add(TC)
+    print time.time(), 'flush TC save_TC_to_DB'
     DB.flush()
     for k, v in inputs.items():
         DB.add(TABLES['TelecommandDatum'](telecommand_id=TC.id,
                                             param_key=k, 
                                             value=repr(v)))
+    print time.time(), 'commit TCDATA save_TC_to_DB'
     DB.commit()
     return TC.id
 
@@ -128,8 +134,8 @@ def update_sent_TC_time(pkid, t):
             .order_by(TC.id.desc()).limit(1).with_for_update()
     q = update(TC).values({'time_sent': t}).where(TC.id == idx.as_scalar())
     DB.execute(q)
+    print time.time(), 'commit TC update_sent_TC_time'
     DB.commit()
-    DB.flush()
     return idx.first()[0]
 
 
@@ -284,6 +290,8 @@ def save_TM_to_DB(hd, hdx, data):
     """
     if not running:
         raise ctrlexception.NoDBConnection()
+    print time.time(), 'commit prepa save_TM_to_DB'
+    DB.commit()
     # save prim and sec headers
     # forced field
     hd['time_sent'] = core.stamps2time(hd['days_since_ref'],
@@ -292,6 +300,7 @@ def save_TM_to_DB(hd, hdx, data):
     hd['time_saved'] = core.now()
     TM = TABLES['Telemetry'](**hd)
     DB.add(TM)
+    print time.time(), 'flush TM save_TM_to_DB'
     DB.flush()
     catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
     pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
@@ -322,11 +331,12 @@ def save_TM_to_DB(hd, hdx, data):
             dt['telemetry_packet'] = TM.id
             DB.add(TABLES[tbl](**dt))
     # save changes
-    DB.commit()
+    print time.time(), 'flush TMDATA save_TM_to_DB'
+    DB.flush()
     return TM.id
 
 
-def update_RACK_id(dbid):
+def get_RACK_TCid(dbid):
     """
     Updates a RACK TM with the id of the latest TC sent
     Returns the DB id of the TC
@@ -337,42 +347,56 @@ def update_RACK_id(dbid):
     if not running:
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
-    TM = TABLES['Telemetry']
+    TMHX = TABLES['TmcatRecAcknowledgement']
     # just grab the latest TC that was actually sent
     idx = DB.query(TC.id).filter(TC.time_sent != None).\
-            order_by(TC.id.desc()).limit(1).with_for_update()
-    # 
-    q = update(TM).values({'telecommand_id': idx.as_scalar()})\
-            .where(TM.id == int(dbid))
+            order_by(TC.id.desc()).limit(1).first()
+    if idx is None:
+        return
+    else:
+        return idx[0]
+    q = update(TMHX).values({'telecommand_id': idx[0]})\
+            .where(TMHX.telemetry_packet == int(dbid))
+    print 'done'
     DB.execute(q)
     DB.commit()
     DB.flush()
-    return idx.first()[0]
+    print 'ret'
+    return idx[0]
 
 
-def update_ACK_id(dbid, pkid):
+def get_ACK_TCid(pkid, ack):
     """
-    Updates a EACK or FACK TM with the id of the latest TC whose
-    packet_id is provided
+    Gets the TC id to be recorded in a EACK or FACK TM given the id of
+    the latest TC whose packet_id is provided
     Returns the DB id of the TC
 
     Args:
-      * dbid (int): the DB id of the RACK TM to update
       * pkid (int): the packet_id of the TC to which the FACK or EACK
         is replying
     """
     if not running:
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
-    TM = TABLES['Telemetry']
-    # just grab the latest TC that was actually sent
-    idx = DB.query(TC.id).filter(and_(TC.time_sent != None,
-                                      TC.packet_id == int(pkid))).\
-            order_by(TC.id.desc()).limit(1).with_for_update()
-    # 
-    q = update(TM).values({'telecommand_id': idx.as_scalar()})\
-            .where(TM.id == int(dbid))
-    DB.execute(q)
+    if ack == 'fack':
+        TMHX = TABLES['TmcatFmtAcknowledgement']
+    elif ack == 'eack':
+        TMHX = TABLES['TmcatExeAcknowledgement']
+    else:
+        return
+    # grab the TC that was sent and to which we're replying
+    idx = DB.query(TC.id).filter(TC.packet_id == int(pkid)).\
+            order_by(TC.id.desc()).limit(1).first()
+    # can't find the TC... wasn't saved?
+    if idx is None:
+        return
+    else:
+        return idx[0]
+    #dum = DB.query(TMHX).filter(TMHX.telemetry_packet == int(dbid))\
+    #                                .update({'telecommand_id': idx[0]})
+    print 'done'
+    #print q
     DB.commit()
     DB.flush()
-    return idx.first()[0]
+    print 'ret'
+    return idx[0]

@@ -46,7 +46,8 @@ class CCSDSKey(object):
           * dic (dict): dictionary of possible values
           * start (int): start-position in bit from the beginning of the
             primary header, or whatever reference you decided
-          * l (int): length of the strip of bits (or octets)
+          * l (int): length of the strip of bits (or octets is Trousseau
+            is in octet).
           * fctunpack (callable): function to apply to the raw data to
             get the value. Shall remain ``None`` if ``dic`` is provided
           * fctpack (callable): reverse function of ``fctunpack``
@@ -60,6 +61,7 @@ class CCSDSKey(object):
           * verbose (string): Human-readable meaning of this key
           * disp (string): short alias for human-reading display
           * octets (bool): if the values are (un)packed as octets or binary
+            Only useful when raw mode of (un)packing is True.
           * pad (bool): whether to pad the raw data up to the length ``l``
           * padchar (str or Byt): the character to be used for padding.
             It shall be a '0' or '1' if ``octets`` is ``True``, or a
