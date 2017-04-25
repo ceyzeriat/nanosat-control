@@ -45,19 +45,19 @@ class CategoryRegistration(object):
         """
         self.pld_flag = int(pld_flag)
         self.cat_num = int(cat_num)
-        self.keys = PACKETCATEGORIES[self.pld_flag][self.cat_num]
-        self.table_name = TABLECATEGORY[self.pld_flag][self.cat_num]
-        decam = core.camelize_singular_rev(self.table_name)
+        self.cat = PACKETCATEGORIES[self.pld_flag][self.cat_num]
+        self.cat_name = TABLECATEGORY[self.pld_flag][self.cat_num]
+        decam = core.camelize_singular_rev(self.cat_name)
         if decam is False:
             print("The name '{}' is not a valid camelized "\
-                  "plural".format(self.table_name))
+                  "plural".format(self.cat_name))
             return
         recam = core.camelize_singular(decam)
-        if recam is False or recam != self.table_name:
+        if recam is False or recam != self.cat_name:
             print("The name '{}' is not reversely camelize-able. You killed "\
-                  "a camel and you should be ashamed".format(self.table_name))
+                  "a camel and you should be ashamed".format(self.cat_name))
             return
-        self.table_name_decam = decam
+        self.table_name = decam
 
     def delete_table(self):
         """
@@ -68,9 +68,18 @@ class CategoryRegistration(object):
               "contained in it and may corrupt other data referring to it. "\
               "Use at your own risk.")
 
+    def show(self):
+        """
+        Show the content of the category
+        """
+        print("Category '{}', Table '{}'".format(self.cat_name,
+                                                 self.table_name))
+        for item in self.cat:
+            print("Champ '{}' bits: {}-->{}".format(item.name, item.start, item.len))
 
 
 
+"""
 CREATE TABLE IF NOT EXISTS tmcat_payload_hks
 (
 	id 					serial PRIMARY KEY,
@@ -83,3 +92,4 @@ GRANT select, insert, update ON tmcat_payload_hks TO picsat_edit;
 CREATE INDEX ON tmcat_payload_hks(telemetry_packet);
 ALTER TABLE tmcat_payload_hks ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
 GRANT ALL ON SEQUENCE tmcat_payload_hks_id_seq TO picsat_edit;
+"""
