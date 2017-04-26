@@ -36,7 +36,7 @@ from .cmd_patch import *
 
 
 __all__ = ['ALLCMDS', 'L0CMDS', 'L1CMDS', 'ALLCMDSNAMES', 'L0CMDSNAMES',
-            'L1CMDSNAMES']
+            'L1CMDSNAMES', 'L1OBCCMDS', 'L1OBCCMDSNAMES']
 
 
 allcmds = {}
@@ -48,9 +48,11 @@ for key, item in param_commands.COMMANDSFILE.items():
 ALLCMDS = []
 L0CMDS = []
 L1CMDS = []
+L1OBCCMDS = []
 ALLCMDSNAMES = []
 L0CMDSNAMES = []
 L1CMDSNAMES = []
+L1OBCCMDSNAMES = []
 
 
 for key, cmdfile in allcmds.items():
@@ -82,3 +84,6 @@ for key, cmdfile in allcmds.items():
         else:
             L1CMDS.append(c)
             L1CMDSNAMES.append(c)
+            if c.payload == 0:
+                L1OBCCMDS.append(c)
+                L1OBCCMDSNAMES.append(c)
