@@ -25,27 +25,37 @@
 ###############################################################################
 
 
-from param import param_category
+import param
+from ctrl.utils import core as ctrlcore
 
 from . import mgmtexception
 from .registration import Registration
 
 
-__all__ = ['CategoryRegistration']
+__all__ = ['DataRegistration']
 
 
-class CategoryRegistration(Registration):
-    def __init__(self, pld_flag, cat_num):
+class DataRegistration(Registration):
+    def __init__(self, param_file, table_name):
         """
-        Registers a new TM category into the database
+        Registers a new TM data-category into the database
 
         Args:
-          * pld_flag (int): payload flag, 0 or 1
-          * cat_num (int): category number
+          * param_file (str): the param file name containing the
+            ccsds keys Trousseau
+          * table_name (str): the name of the table, lower-case
+            underscored plural, e.g. 'the_aliens'
         """
-        self.pld_flag = int(pld_flag)
-        self.cat_num = int(cat_num)
-        self.cat = param_category.PACKETCATEGORIES[self.pld_flag][self.cat_num]
-        self.cat_name = param_category.TABLECATEGORY[self.pld_flag\
-                                                        ][self.cat_num]
-        super(CategoryRegistration, self).__init__()
+        if not hasattr(param, str(param_file)):
+            print("No such file parameter '{}'".format(param_file))
+            return
+        self.cat = getattr(param, str(param_file)).TROUSSEAU
+        if table_name[:5] != 'data_':
+            table_name = 'data_' + table_name
+        cat_name = ctrlcore.camelize_singular(str(table_name))
+        if cat_name is False:
+            print('The name provided is not a valid lower-case underscored '\
+                  'plural')
+            return
+        self.cat_name = cat_name
+        super(DataRegistration, self).__init__()

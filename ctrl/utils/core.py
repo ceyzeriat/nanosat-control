@@ -98,7 +98,7 @@ def camelize_singular_rev(txt):
     decamelize = str(txt[0].lower() +\
                     re.sub(r'([A-Z])',
                            lambda m: '_'+m.group(1).lower(), txt[1:]))
-    return inflect.engine().plural_noun(camelize)
+    return inflect.engine().plural_noun(decamelize)
 
 def get_pid():
     """

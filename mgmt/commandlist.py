@@ -42,7 +42,7 @@ DISPSTRING = " #{:<3} L{:} PID {:<20} {:<30}  Np {:>2}  Lp {:>2}"
 
 
 class CommandList(object):
-    def __init__(self, cmds=None, autoLoad=True):
+    def __init__(self, cmds=None, autoLoad=True, raiseerror=True):
         """
         Manages the list of commands.
 
@@ -51,6 +51,7 @@ class CommandList(object):
             'pld1' or 'adcs'
           * autoLoad (bool): loads all the commands automatically
         """
+        self.raiseerror = bool(raiseerror)
         if cmds not in param_commands.COMMANDSFILE.keys():
             print("Unknow cmds type, should be in {}"\
                         .format(list(param_commands.COMMANDSFILE.keys())))
@@ -247,8 +248,12 @@ class CommandList(object):
             if item['number'] in ids:
                 if item['number'] in allids\
                             or item['name'].lower() in allnames:
-                    raise mgmtexception.RedundantCm(i=item['number'],
-                                                    n=item['name'])
+                    if self.raiseerror:
+                        raise mgmtexception.RedundantCm(i=item['number'],
+                                                        n=item['name'])
+                    else:
+                        print(mgmtexception.RedundantCm(i=item['number'],
+                                                        n=item['name']))
                 copyitem = dict(item)
                 # we do not save n_nparam
                 copyitem.pop('n_nparam')
@@ -286,7 +291,10 @@ class CommandList(object):
         for item in self.csvcontent:
             if item['number'] in ids:
                 if item['number'] not in allids:
-                    raise mgmtexception.MissinfCm(i=item['number'])
+                    if self.raiseerror:
+                        raise mgmtexception.MissinfCm(i=item['number'])
+                    else:
+                        print(mgmtexception.MissinfCm(i=item['number']))
                 copyitem = dict(item)
                 # we do not save n_nparam
                 copyitem.pop('n_nparam')
