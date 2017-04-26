@@ -188,7 +188,7 @@ V_KEYS = [  dict(name='volt5', start=0, l=16, disp="volt5",
             dict(name='vitec', start=80, l=16, disp="vitec",
                     verbose="vitec",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=vitec_unpack, fctpack=vitec_pack),
-            dict(name='temp0', start=98, l=16, disp="temp0",
+            dict(name='temp0', start=96, l=16, disp="temp0",
                     verbose="temp0",
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp0_unpack, fctpack=temp0_pack),
             dict(name='errortherm', start=112, l=16, disp="errortherm",
@@ -230,13 +230,16 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         * data (byts): the chain of octets to unpack
         """
         nlines = len(data) // self.size
-        lines = [{}] * nlines
+        lines = []
+        for k in range(nlines):
+            lines.append(dict({}))
+
         for idx in range(nlines):
             lines[idx][VOLTPELTIER] = 0
             dt = data[idx*self.size:(idx+1)*self.size]
             # octets is False
             dt = bincore.hex2bin(dt[:self.size])
-            # if octets were True: dt = dt[:self.size]
+            # if octets were True: dt = dt[:self.size]            
             for item in self.keys:
                 lines[idx][item.name] = item.unpack(
                                             dt,

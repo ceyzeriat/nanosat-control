@@ -52,8 +52,8 @@ class CommandList(object):
           * autoLoad (bool): loads all the commands automatically
         """
         if cmds not in param_commands.COMMANDSFILE.keys():
-            print("Unknow cmds type, should be '{}'"\
-                        .format(param_commands.COMMANDSFILE.keys()))
+            print("Unknow cmds type, should be in {}"\
+                        .format(list(param_commands.COMMANDSFILE.keys())))
         else:
             self._cmds = cmds
             if autoLoad:

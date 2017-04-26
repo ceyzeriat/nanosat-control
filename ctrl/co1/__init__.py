@@ -25,6 +25,12 @@
 ###############################################################################
 
 
-from . import mgmtexception
-from . import categoryregistration
-from . import commandlist
+from ..cmd.allcommand import L1OBCCMDS as _ALL
+
+
+__all__ = []
+
+
+for _cmd in _ALL:
+    locals()[_cmd.name] = _cmd
+    __all__.append(_cmd.name)
