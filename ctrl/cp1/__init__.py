@@ -25,22 +25,12 @@
 ###############################################################################
 
 
-import param
-from . import utils
-from . import ccsds
-if not param.param_all.JUSTALIB:
-    from . import cmd
-    from . import db
-    from . import c
-    from . import c0
-    from . import c1
-    from . import co1
-    from . import cp1
-    from . import cadcs
-    if param.param_all.ENABLESHOW:
-        from . import xdisp
-from . import kiss
-from ._version import __version__, __major__, __minor__, __micro__
-if not param.param_all.JUSTALIB:
-    from .telecommand import *
-    from .telemetry import *
+from ..cmd.allcommand import L1PLDCMDS as _ALL
+
+
+__all__ = []
+
+
+for _cmd in _ALL:
+    locals()[_cmd.name] = _cmd
+    __all__.append(_cmd.name)

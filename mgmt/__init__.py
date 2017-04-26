@@ -26,5 +26,6 @@
 
 
 from . import mgmtexception
-from . import categoryregistration
-from . import commandlist
+from .categoryregistration import *
+from .dataregistration import *
+from .commandlist import *

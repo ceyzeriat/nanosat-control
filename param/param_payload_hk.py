@@ -230,10 +230,7 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         * data (byts): the chain of octets to unpack
         """
         nlines = len(data) // self.size
-        lines = []
-        for k in range(nlines):
-            lines.append(dict({}))
-
+        lines = [{} for i in range(nlines)]
         for idx in range(nlines):
             lines[idx][VOLTPELTIER] = 0
             dt = data[idx*self.size:(idx+1)*self.size]
@@ -273,7 +270,7 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         * allvalues (dict): the values to pack
         """
         Vref = allvalues[VOLTPELTIER]
-        return Super(HKPayloadCCSDSTrousseau, self).\
+        return super(HKPayloadCCSDSTrousseau, self).\
                         pack(allvalues, retdbvalues=True, Vref=Vref)
 
 
