@@ -43,13 +43,13 @@ CATEGORYREGISTRATIONPLD = { 4: '00100',  # HK
                             7: '00111'}  # beacon
 
 
-ACQMODESCIENCE = CCSDSKey(     name='acq_mode',
-                        start=0,
-                        l=8,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="Activates science mode (0=Searching, 1=Tracking, 2=Test). Valid for the entire packet.",
-                        disp="mode")
+ACQMODESCIENCE = CCSDSKey(  name='acq_mode',
+                            start=0,
+                            l=8,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="Activates science mode (0=Searching, 1=Tracking, 2=Test). Valid for the entire packet.",
+                            disp="mode")
 
 INTEGRATIONTIME = CCSDSKey( name='integration_time',
                             start=8,
@@ -92,182 +92,122 @@ NPOINTS = CCSDSKey(     name='n_points',
                         disp="npts")
 
 
-<<<<<<< HEAD
-HKTICK = CCSDSKey(      name='hk_tick', start=0, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin,
-                        verbose='sampling time for hks',
-                        disp='tic')
+HKTICK = CCSDSKey(          name='hk_tick',
+                            start=0,
+                            l=16,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="Sampling time for hk data (in ms). Valid for the entire packet.",
+                            disp="hk_tick")
 
-BINNING = CCSDSKey(     name='binning', start=16, l=8, fctunpack=bincore.bin2int, fctpack=bincore.int2bin,
-                        verbose='binning of hk datas',
-                        disp='bin')
+BINNING = CCSDSKey(         name='binning',
+                            start=16,
+                            l=8,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="Binning of the hk data (real sampling is thus binning*hkTick). Valid for the entire packet.",
+                            disp="binning")
 
-MAINMODE = CCSDSKey(    name='main_mode', start=24, l=8, fctunpack=bincore.bin2int, fctpack=bincore.int2bin,
-                        verbose='mode of the payload',
-                        disp='mMod')
+MAINMODE = CCSDSKey(        name='main_mode',
+                            start=24,
+                            l=8,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                             verbose="Main mode of the payload (SBY = 0, IDL = 1, SCI = 2, IMG = 3, TST = 4). Valid for the entire packet.",
+                            disp="mode")
 
-ACQMODE = CCSDSKey(     name='acq_mode', start=32, l=8, fctunpack=bincore.bin2int, fctpack=bincore.int2bin,
-                        verbose='mode for the acquisition manager',
-                        disp='acq')
+ACQMODEHK = CCSDSKey(       name='acq_mode',
+                            start=32,
+                            l=8,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="Activates science mode (0=Searching, 1=Tracking, 2=Test). Valid for the entire packet.",
+                            disp="acq_mode")
 
-DIODEFLAG = CCSDSKey(   name='diode_flag', start=40, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin,
-                        verbose='on/off flags of the photodiode',
-                        disp='diod_f')
+DIODEFLAG = CCSDSKey(       name='diode_flag',
+                            start=40,
+                            l=1,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="Is diode active?. Valid for the entire packet.",
+                            disp="diode_flag")
 
-INTERRUPTFAG = CCSDSKey(name='interrupt_fag', start=41, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin,
-                        verbose='on/off flags of the diode interruption',
-                        disp='inter_f')
+INTERRUPTFLAG = CCSDSKey(   name='interrupt_flag',
+                            start=41,
+                            l=2,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="Is interrupt active?. Valid for the entire packet.",
+                            disp="interrupt_flag")
 
-PIEZOFLAG = CCSDSKey(   name='piezo_flag', start=42, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin,
-                        verbose='on/off flags of the piezo DAC',
-                        disp='piezo_f')
+PIEZOFLAG = CCSDSKey(       name='piezo_flag',
+                            start=42,
+                            l=1,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="Is piezo active?. Valid for the entire packet.",
+                            disp="piezo_flag")
 
-HVFLAG = CCSDSKey(      name='hv_flag', start=43, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin,
-                        verbose='on/off flags of the piezo high voltage line',
-                        disp='hv_f')
+HVFLAG = CCSDSKey(          name='hv_flag',
+                            start=43,
+                            l=1,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="Is high-voltage line active?. Valid for the entire packet.",
+                            disp="hv_flag")
 
-SESONRSFLAG = CCSDSKey( name='sesnors_flag', start=44, l=1, fctunpack=bincbool.bin2int, fctpack=boolcore.int2bin,
-                        verbose='on/off flag for the piezo strain gauges',
-                        disp='sens_f')
+SENSORSFLAG = CCSDSKey(     name='sensors_flag',
+                            start=44,
+                            l=1,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="Are straing gauges active?. Valid for the entire packet.",
+                            disp="sensors_flag")
 
-TECFLAG = CCSDSKey(     name='tec_flag', start=45, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin,
-                        verbose='on/off flag for the tec controller',
-                        disp='tec_f')
+TECFLAG = CCSDSKey(         name='tec_flag',
+                            start=45,
+                            l=1,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="Is tec active?. Valid for the entire packet.",
+                            disp="hv_flag")
 
-BEACONFLAG = CCSDSKey(  name='beacon_flag', start=46, l=1, fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin,
-                        verbose='on/off flag for the beacon',
-                        disp='bcn_f')
+BEACONFLAG = CCSDSKey(      name='beacon_flag',
+                            start=46,
+                            l=1,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="Is beacon active?. Valid for the entire packet.",
+                            disp="beacon_flag")
 
-PROCFREQ = CCSDSKey(    name='proc_freq', start=48, l=8, fctunpack=bincore.bin2int, fctpack=bincore.int2bin,
-                        verbose='frequency (in MHz) of SYSCLOCK',
-                        disp='freq')
+PROCFREQ = CCSDSKey(        name='proc_freq',
+                            start=48,
+                            l=8,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="SYSCLOK frequency (in MHz). Valid for the entire packet.",
+                            disp="proc_freq")
 
-TECSETPOINT = CCSDSKey( name='tec_setpoint', start=56, l=16, fctunpack=bincore.bin2int, fctpack=bincore.int2bin,
-                        verbose='setpoint for TEC controller',
-                        disp='tecpt')
+TECSETPOINT = CCSDSKey(     name='tec_setpoint',
+                            start=56,
+                            l=16,
+                            fctunpack=bincore.bin2int,
+                            fctpack=bincore.int2bin,
+                            verbose="Setpoint for the TEC controller (ADU). Valid for the entire packet.",
+                            disp="tec_setpoint")
 
 
 # HK payload
-CATEGORY_4 = CCSDSTrousseau([HKTICK, BINNING, MAINMODE, ACQMODE, DIODEFLAG,
-                                INTERRUPTFAG, PIEZOFLAG, HVFLAG, SESONRSFLAG, TECFLAG,
+CATEGORY_4 = CCSDSTrousseau([HKTICK, BINNING, MAINMODE, ACQMODEHK, DIODEFLAG,
+                                INTERRUPTFLAG, PIEZOFLAG, HVFLAG, SENSORSFLAG, TECFLAG,
                                 BEACONFLAG, PROCFREQ, TECSETPOINT], octets=False, name='HK')
 # science HF
-CATEGORY_5 = CCSDSTrousseau([ACQMODE, INTEGRATIONTIME, DELAY, MODULATION, RADIUS,
+CATEGORY_5 = CCSDSTrousseau([ACQMODESCIENCE, INTEGRATIONTIME, DELAY, MODULATION, RADIUS,
                                 NPOINTS], octets=False, name='science HF')
 # report
 CATEGORY_6 = CCSDSTrousseau([], octets=False, name='report')
 # beacon
 CATEGORY_7 = CCSDSTrousseau([], octets=False, name='beacon')
-=======
-HKTICK = CCSDSKey(     name='hk_tick',
-                        start=0,
-                        l=16,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="Sampling time for hk data (in ms). Valid for the entire packet.",
-                        disp="hk_tick")
-
-BINNING = CCSDSKey(     name='binning',
-                        start=16,
-                        l=8,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="Binning of the hk data (real sampling is thus binning*hkTick). Valid for the entire packet.",
-                        disp="binning")
-
-MAINMODE = CCSDSKey(     name='main_mode',
-                        start=24,
-                        l=8,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                         verbose="Main mode of the payload (SBY = 0, IDL = 1, SCI = 2, IMG = 3, TST = 4). Valid for the entire packet.",
-                        disp="mode")
-
-ACQMODEHK = CCSDSKey(     name='acq_mode',
-                        start=32,
-                        l=8,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="Activates science mode (0=Searching, 1=Tracking, 2=Test). Valid for the entire packet.",
-                        disp="acq_mode")
-
-DIODEFLAG = CCSDSKey(     name='diode_flag',
-                        start=40,
-                        l=1,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="Is diode active?. Valid for the entire packet.",
-                        disp="diode_flag")
-
-INTERRUPTFLAG = CCSDSKey(     name='interrupt_flag',
-                        start=41,
-                        l=2,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="Is interrupt active?. Valid for the entire packet.",
-                        disp="interrupt_flag")
-
-PIEZOFLAG = CCSDSKey(     name='piezo_flag',
-                        start=42,
-                        l=1,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="Is piezo active?. Valid for the entire packet.",
-                        disp="piezo_flag")
-
-HVFLAG = CCSDSKey(     name='hv_flag',
-                        start=43,
-                        l=1,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="Is high-voltage line active?. Valid for the entire packet.",
-                        disp="hv_flag")
-
-SENSORSFLAG = CCSDSKey(     name='sensors_flag',
-                        start=44,
-                        l=1,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="Are straing gauges active?. Valid for the entire packet.",
-                        disp="sensors_flag")
-
-TECFLAG = CCSDSKey(     name='tec_flag',
-                        start=45,
-                        l=1,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="Is tec active?. Valid for the entire packet.",
-                        disp="hv_flag")
-
-BEACONFLAG = CCSDSKey(     name='beacon_flag',
-                        start=46,
-                        l=1,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="Is beacon active?. Valid for the entire packet.",
-                        disp="beacon_flag")
-
-PROCFREQ = CCSDSKey(     name='proc_freq',
-                        start=48,
-                        l=8,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="SYSCLOK frequency (in MHz). Valid for the entire packet.",
-                        disp="proc_freq")
-
-TECSETPOINT = CCSDSKey(     name='tec_setpoint',
-                        start=56,
-                        l=16,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
-                        verbose="Setpoint for the TEC controller (ADU). Valid for the entire packet.",
-                        disp="tec_setpoint")
-
-
-CATEGORY_4 = CCSDSTrousseau([HKTICK, BINNING, MAINMODE, ACQMODEHK, DIODEFLAG, INTERRUPTFLAG, PIEZOFLAG, HVFLAG, SENSORSFLAG, TECFLAG, BEACONFLAG, PROCFREQ, TECSETPOINT], octets=False, name='HK')  # HK payload, NO HEADER
-CATEGORY_5 = CCSDSTrousseau([ACQMODESCIENCE, INTEGRATIONTIME, DELAY, MODULATION, RADIUS, NPOINTS], octets=False, name='science HF')  # science HF
-CATEGORY_6 = CCSDSTrousseau([], octets=False, name='report')  # report
-CATEGORY_7 = CCSDSTrousseau([], octets=False, name='beacon')  # beacon
->>>>>>> 90c2683f7b99abb0d2823886ce66accc57cb5b6a
 
 
 # (payloadd, category)
