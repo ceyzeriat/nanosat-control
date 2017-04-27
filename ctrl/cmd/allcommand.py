@@ -79,6 +79,11 @@ for key, cmdfile in allcmds.items():
             #    super(classPatchName, c).generate_data.__func__.__doc__
         else:
             c = Command(**item)
+            params = ', '.join(["{}={}".format(n.name, n.name)\
+                                                for n in c._params])
+            lam_param = ', '.join([str(n.name) for n in c._params])
+            exec('c.__call__ = lambda {}: c._wrapcall({})'\
+                                        .format(lam_param, params))
         ALLCMDS.append(c)
         ALLCMDSNAMES.append(c.name)
         if c.level == 0:

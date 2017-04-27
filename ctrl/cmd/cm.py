@@ -90,6 +90,9 @@ class Cm(object):
         return self.__str__()
 
     def __call__(self, *args, **kwargs):
+        return _wrapcall(**kwargs)
+
+    def _wrapcall(self, *args, **kwargs):
         return self.generate_data(**kwargs)
 
     def to_dict(self):
