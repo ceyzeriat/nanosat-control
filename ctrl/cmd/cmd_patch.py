@@ -27,12 +27,12 @@
 
 from datetime import datetime
 
-from .command import Command
+from .commandpatch import CommandPatch
 
 
 # function set_datetime of PLD, aim is to allow the input of a
 # datetime or date-tuple instead of a dirty integer timestamp
-class setDatetime(Command):
+class setDatetime(CommandPatch):
     def generate_data(self, *args, **kwargs):
         """
         This command has been patched.
@@ -56,7 +56,3 @@ class setDatetime(Command):
         newkwargs['minutes'] = stamp.minute                
         newkwargs['seconds'] = stamp.second
         return super(setDatetime, self).generate_data(*args, **newkwargs)
-
-    def __str__(self):
-        return self.generate_data.__func__.__doc__
-        
