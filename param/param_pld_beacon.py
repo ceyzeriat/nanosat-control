@@ -35,23 +35,7 @@ __all__ = ['TROUSSEAU']
 LENGTHBEACONMESSAGE = 29  # octets
 
 
-def bin2txt(v, **kwargs):
-    """
-    verbose = "binary -> message"
-    """
-    return ''.join([chr(i) for i in bincore.bin2hex(v).ints()\
-                                                if i >= 32 and i <= 126])
-
-
-def txt2bin(txt, **kwargs):
-    """
-    verbose = "message -> binary"
-    """
-    return ''.join([bincore.int2bin(i, pad=8) for i in Byt(txt).ints()\
-                                                if i >= 32 and i <= 126])
-
-
-KEYS = [    dict(name='message', start=0, l=LENGTHBEACONMESSAGE*8, fctunpack=bin2txt, fctpack=txt2bin,
+KEYS = [    dict(name='message', start=0, l=LENGTHBEACONMESSAGE*8, fctunpack=bincore.bin2txt, fctpack=bincore.txt2bin,
                     verbose="A beacon message",
                     disp='text'),
             dict(name='proc_freq', start=LENGTHBEACONMESSAGE*8+40, l=8, disp="proc_freq",

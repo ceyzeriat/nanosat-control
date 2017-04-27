@@ -86,7 +86,8 @@ class Cm(object):
                             self.lparam if self.lparam is not None else "*",
                             "\n".join([str(item) for item in self._params]))
 
-    __repr__ = __str__
+    def __repr__(self):
+        return self.__str__()
 
     def __call__(self, *args, **kwargs):
         return self.generate_data(**kwargs)

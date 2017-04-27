@@ -25,22 +25,27 @@
 ###############################################################################
 
 
-import param
-from . import utils
-from . import ccsds
-if not param.param_all.JUSTALIB:
-    from . import cmd
-    from . import db
-    from . import c
-    from . import c0
-    from . import c1
-    from . import co1
-    from . import cp1
-    from . import cadcs
-    if param.param_all.ENABLESHOW:
-        from . import xdisp
-from . import kiss
-from ._version import __version__, __major__, __minor__, __micro__
-if not param.param_all.JUSTALIB:
-    from .telecommand import *
-    from .telemetry import *
+from param import param_category
+
+from . import mgmtexception
+from .registration import Registration
+
+
+__all__ = ['CategoryRegistration']
+
+
+class CategoryRegistration(Registration):
+    def __init__(self, pld_flag, cat_num):
+        """
+        Registers a new TM category into the database
+
+        Args:
+          * pld_flag (int): payload flag, 0 or 1
+          * cat_num (int): category number
+        """
+        self.pld_flag = int(pld_flag)
+        self.cat_num = int(cat_num)
+        self.cat = param_category.PACKETCATEGORIES[self.pld_flag][self.cat_num]
+        self.cat_name = param_category.TABLECATEGORY[self.pld_flag\
+                                                        ][self.cat_num]
+        super(CategoryRegistration, self).__init__()

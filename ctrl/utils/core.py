@@ -90,6 +90,16 @@ def camelize_singular(txt):
                            lambda m: m.group(1).upper(), txt[1:]))
     return inflect.engine().singular_noun(camelize)
 
+def camelize_singular_rev(txt):
+    """
+    Produce a 'decamelized' and plural class name.
+    e.g. 'TheUnderscore' -> 'the_underscores'
+    """
+    decamelize = str(txt[0].lower() +\
+                    re.sub(r'([A-Z])',
+                           lambda m: '_'+m.group(1).lower(), txt[1:]))
+    return inflect.engine().plural_noun(decamelize)
+
 def get_pid():
     """
     Returns the process ID number of the invoking thread

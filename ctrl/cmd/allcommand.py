@@ -36,7 +36,8 @@ from .cmd_patch import *
 
 
 __all__ = ['ALLCMDS', 'L0CMDS', 'L1CMDS', 'ALLCMDSNAMES', 'L0CMDSNAMES',
-            'L1CMDSNAMES']
+            'L1CMDSNAMES', 'L1OBCCMDS', 'L1OBCCMDSNAMES', 'L1PLDCMDS',
+            'L1PLDCMDSNAMES']
 
 
 allcmds = {}
@@ -48,9 +49,13 @@ for key, item in param_commands.COMMANDSFILE.items():
 ALLCMDS = []
 L0CMDS = []
 L1CMDS = []
+L1OBCCMDS = []
+L1PLDCMDS = []
 ALLCMDSNAMES = []
 L0CMDSNAMES = []
 L1CMDSNAMES = []
+L1OBCCMDSNAMES = []
+L1PLDCMDSNAMES = []
 
 
 for key, cmdfile in allcmds.items():
@@ -58,8 +63,8 @@ for key, cmdfile in allcmds.items():
         if item['name'] == 'set_datetime':
             c = setDatetime(**item)
             # copy doc string
-            c.generate_data.__func__.__doc__ =\
-                super(setDatetime, c).generate_data.__func__.__doc__
+#            c.generate_data.__func__.__doc__ =\
+#                super(setDatetime, c).generate_data.__func__.__doc__
         elif item['name'] == 'my_other_function_to_patch':
             pass
             # c = classPatchName(**item)
@@ -82,3 +87,9 @@ for key, cmdfile in allcmds.items():
         else:
             L1CMDS.append(c)
             L1CMDSNAMES.append(c)
+            if c.payload == 0:
+                L1OBCCMDS.append(c)
+                L1OBCCMDSNAMES.append(c)
+            else:
+                L1PLDCMDS.append(c)
+                L1PLDCMDSNAMES.append(c)

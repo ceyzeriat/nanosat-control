@@ -49,7 +49,6 @@ __all__ = ['init_DB', 'get_column_keys', 'save_TC_to_DB', 'close_DB',
 running = False
 DB = None
 TABLES = {}
-TABLENAMES_REV = {}
 
 
 def init_DB():
@@ -67,7 +66,9 @@ def init_DB():
     TABLES = {}
     for k in Base.classes.keys():
         nk = core.camelize_singular(k)
-        TABLENAMES_REV[nk] = k
+        if nk is False:
+            print("The table '{}' was given a name without plurals. "\
+                  "This is wrong and it will probably crash".format(k))
         TABLES[nk] = Base.classes[k]
         globals()[nk] = Base.classes[k]
     DB = Session(engine)
@@ -196,19 +197,19 @@ def get_TC(pkid=None, dbid=None):
         # unicode to str for the key, eval on the value
         params[str(item.param_key)] = eval(item.value)
     # get the DB id of the ACK
-    if len(thetc.tmcat_rec_acknowledgements_collection) > 0:
+    if len(getattr(thetc, 'tmcat_rec_acknowledgements_collection', [])) > 0:
         rackid = thetc.tmcat_rec_acknowledgements_collection[0]\
                                                     .telemetry_packet
     else:
         # nothing received, set to None
         rackid = None
-    if len(thetc.tmcat_fmt_acknowledgements_collection) > 0:
+    if len(getattr(thetc, 'tmcat_fmt_acknowledgements_collection', [])) > 0:
         fackid = thetc.tmcat_fmt_acknowledgements_collection[0]\
                                                     .telemetry_packet
     else:
         # nothing received, set to None
         fackid = None
-    if len(thetc.tmcat_exe_acknowledgements_collection) > 0:
+    if len(getattr(thetc, 'tmcat_exe_acknowledgements_collection', [])) > 0:
         eackid = thetc.tmcat_exe_acknowledgements_collection[0]\
                                                     .telemetry_packet
     else:
@@ -251,7 +252,8 @@ def get_TM(pkid=None, dbid=None):
         thehdx = None
     else:
         TMHDX = TABLES[cattbl]
-        thehdx = getattr(thetm, TABLENAMES_REV[cattbl] + '_collection', [])
+        thehdx = getattr(thetm, core.camelize_singular_rev(cattbl) +\
+                            '_collection', [])
         if len(thehdx) > 0:
             # there can be only one
             thehdx = thehdx[0]
@@ -267,7 +269,8 @@ def get_TM(pkid=None, dbid=None):
         thedata = None
     else:
         TMDATA = TABLES[datatbl]
-        thedata = getattr(thetm, TABLENAMES_REV[datatbl] + '_collection', [])
+        thedata = getattr(thetm, core.camelize_singular_rev(datatbl) +\
+                            '_collection', [])
         if len(thedata) == 0:
             for dataline in thedata:
                 dicdata.append({})

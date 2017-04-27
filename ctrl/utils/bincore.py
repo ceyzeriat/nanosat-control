@@ -36,6 +36,20 @@ from . import ctrlexception
 TWINKLETWINKLELITTLEINDIA = False
 
 
+def bin2txt(v, **kwargs):
+    """
+    verbose = "binary -> message"
+    """
+    return ''.join([chr(i) for i in bin2hex(v).ints()\
+                                                if i >= 32 and i <= 126])
+
+def txt2bin(txt, **kwargs):
+    """
+    verbose = "message -> binary"
+    """
+    return ''.join([int2bin(i, pad=8) for i in Byt(txt).ints()\
+                                                if i >= 32 and i <= 126])
+
 def float2hex(v, bits=32, pad=0, **kwargs):
     """
     Give a float32, returns chars
