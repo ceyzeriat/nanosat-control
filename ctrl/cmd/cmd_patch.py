@@ -33,14 +33,14 @@ from .command import Command
 # function set_datetime of PLD, aim is to allow the input of a
 # datetime or date-tuple instead of a dirty integer timestamp
 class setDatetime(Command):
-    """
-    This command has been patched.
-    Convert a datetime object to an acceptable format, and sent it 
-    to the payload for updating the Real Time Clock. 
-    Very useful in combination with datetime.datetime.utcnow().
-    @param datetime datetime: the datetime object to convert. 
-    """
     def generate_data(self, *args, **kwargs):
+        """
+        This command has been patched.
+        Convert a datetime object to an acceptable format, and sent it 
+        to the payload for updating the Real Time Clock. 
+        Very useful in combination with datetime.datetime.utcnow().
+        @param datetime datetime: the datetime or tuple object to convert. 
+        """      
         stamp = kwargs.get('datetime')
         if stamp is None:
             raise Exception("datetime is not an optional argument!")
@@ -56,3 +56,7 @@ class setDatetime(Command):
         newkwargs['minutes'] = stamp.minute                
         newkwargs['seconds'] = stamp.second
         return super(setDatetime, self).generate_data(*args, **newkwargs)
+
+    def __str__(self):
+        return self.generate_data.__func__.__doc__
+        

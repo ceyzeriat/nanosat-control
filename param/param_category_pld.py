@@ -161,7 +161,7 @@ SENSORSFLAG = CCSDSKey(     name='sensors_flag',
                             l=1,
                             fctunpack=bincore.bin2int,
                             fctpack=bincore.int2bin,
-                            verbose="Are straing gauges active?. Valid for the entire packet.",
+                            verbose="Are strain gauges active?. Valid for the entire packet.",
                             disp="sensors_flag")
 
 TECFLAG = CCSDSKey(         name='tec_flag',
@@ -185,7 +185,7 @@ PROCFREQ = CCSDSKey(        name='proc_freq',
                             l=8,
                             fctunpack=bincore.bin2int,
                             fctpack=bincore.int2bin,
-                            verbose="SYSCLOK frequency (in MHz). Valid for the entire packet.",
+                            verbose="SYSCLOCK frequency (in MHz). Valid for the entire packet.",
                             disp="proc_freq")
 
 TECSETPOINT = CCSDSKey(     name='tec_setpoint',

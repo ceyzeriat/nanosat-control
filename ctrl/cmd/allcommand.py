@@ -63,8 +63,8 @@ for key, cmdfile in allcmds.items():
         if item['name'] == 'set_datetime':
             c = setDatetime(**item)
             # copy doc string
-            c.generate_data.__func__.__doc__ =\
-                super(setDatetime, c).generate_data.__func__.__doc__
+#            c.generate_data.__func__.__doc__ =\
+#                super(setDatetime, c).generate_data.__func__.__doc__
         elif item['name'] == 'my_other_function_to_patch':
             pass
             # c = classPatchName(**item)
