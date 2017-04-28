@@ -33,6 +33,8 @@ if __name__ == "__main__":
     from ctrl import c
     from ctrl import c0
     from ctrl import c1
+    from ctrl import co1
+    from ctrl import cp1
     from ctrl import cadcs
     from ctrl import db
     from segsol import controlling

@@ -62,23 +62,15 @@ for key, cmdfile in allcmds.items():
     for item in cmdfile:
         if item['name'] == 'set_datetime':
             c = setDatetime(**item)
-            # copy doc string
-#            c.generate_data.__func__.__doc__ =\
-#                super(setDatetime, c).generate_data.__func__.__doc__
         elif item['name'] == 'my_other_function_to_patch':
             pass
             # c = classPatchName(**item)
-            # copy doc string
-            #c.generate_data.__func__.__doc__ =\
-            #    super(classPatchName, c).generate_data.__func__.__doc__
         elif item['name'] == 'my_other_function_to_patch':
             pass
             # c = classPatchName(**item)
-            # copy doc string
-            #c.generate_data.__func__.__doc__ =\
-            #    super(classPatchName, c).generate_data.__func__.__doc__
         else:
             c = Command(**item)
+            # dirty dirt to make auto-completion on commands
             params = ', '.join(["{}={}".format(n.name, n.name)\
                                                 for n in c._params])
             lam_param = ', '.join([str(n.name) for n in c._params])
