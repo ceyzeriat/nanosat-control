@@ -37,6 +37,7 @@ from param import param_all
 from ctrl.utils import ctrlexception
 from ctrl.rfcheckoutbox import RFCheckoutbox
 from ctrl.serialusb import SerialUSB
+from ctrl.tncrfbox import TNCRFBox
 
 
 __all__ = ['process_data', 'init', 'close', 'report', 'theloop']
@@ -186,6 +187,8 @@ def init(antenna):
         ANTENNA = RFCheckoutbox()
     elif antenna == 'serial':
         ANTENNA = SerialUSB()
+    elif antenna == 'tncrfbox':
+        ANTENNA = TNCRFBox()
     else:
         close()
         raise ctrlexception.UnknownAntenna(antenna)
