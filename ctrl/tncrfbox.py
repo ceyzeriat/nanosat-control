@@ -70,11 +70,11 @@ class TNCRFBox(object):
         self.exit_TNCconversation()
         self.exit_TNCconfig()
         # flush random dirt
-        self.writeport.write(NEWLINECHAR)
+        self.writeport.write(self.NEWLINECHAR)
         time.sleep(0.1)
-        self.writeport.write(Byt('KISS ON') + NEWLINECHAR)
+        self.writeport.write(Byt('KISS ON') + self.NEWLINECHAR)
         time.sleep(0.1)
-        self.writeport.write(Byt('RESTART') + NEWLINECHAR)
+        self.writeport.write(Byt('RESTART') + self.NEWLINECHAR)
         time.sleep(1)
 
     def exit_TNCconversation(self):
