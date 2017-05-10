@@ -104,7 +104,7 @@ fi
 
 ############################################
 
-ALLPYTHONLIBS="ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil patiencebar paramiko"
+ALLPYTHONLIBS="ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil patiencebar paramiko pylatex"
 
 if [ "$doserver" ==  1  ];then
     sleep 0.5
