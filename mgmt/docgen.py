@@ -55,12 +55,12 @@ class DocGen(object):
             docname = docname[:-4]
         self.docname = docname
 
-    def generate(self, keep_tex=False):
+    def generate(self, clean_tex=True):
         """
         Generates the document and saves it to disk
 
         Args:
-          * keep_tex (bool): whether to delete the .tex file after
+          * clean_tex (bool): whether to delete the .tex file after
             compiling
         """
         doc = Document(self.docname)
@@ -115,15 +115,15 @@ class DocGen(object):
                             dat, catnum=catnum, pldflag=False)
                 section.append(subsection)
             doc.append(section)
-        self._compile(doc, keep_tex=False)
+        self._compile(doc, clean_tex=False)
 
-    def _compile(self, doc, keep_tex=False):
+    def _compile(self, doc, clean_tex=False):
         """
         Just compile the doc and save to disk
 
         Args:
           * doc (pylatex Document): the document to compile
-          * keep_tex (bool): whether to delete the .tex file after
+          * clean_tex (bool): whether to delete the .tex file after
             compiling
         """
         # Triple compilation, just because latex is awesome
@@ -131,7 +131,7 @@ class DocGen(object):
                          compiler='pdflatex')
         doc.generate_pdf(self.docname, clean=False, clean_tex=False,
                          compiler='pdflatex')
-        doc.generate_pdf(self.docname, clean=True, clean_tex=bool(keep_tex),
+        doc.generate_pdf(self.docname, clean=True, clean_tex=bool(clean_tex),
                          compiler='pdflatex')
         if os.path.isfile(self.docname + ".toc"):
             os.remove(self.docname + ".toc")
