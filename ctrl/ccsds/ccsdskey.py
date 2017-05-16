@@ -68,6 +68,7 @@ class CCSDSKey(object):
             Byt if it is ``False``
         """
         self.name = str(name)
+        self.verbose = str(verbose)
         self.disp = self.name[:3] if disp is None else str(disp)
         self.octets = bool(octets)
         self.pad = bool(pad)

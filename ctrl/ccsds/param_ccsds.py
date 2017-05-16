@@ -38,7 +38,7 @@ MAXIMUMPACKETLENGTH = MAXIMUMDATALENGTH + 6  # octets
 
 # length of packet as recorded in ccsds - LENGTHMODIFIER =
 #   real length of Packet - length of Primary Header
-# the official CCSDS standard specifies that LENGTHMODIFIER = 1
+# the official CCSDS standard specifies LENGTHMODIFIER = 1
 LENGTHMODIFIER = 0
 
 
@@ -148,7 +148,8 @@ AUTHPACKETLENGTH = 11
 
 def days_unpack(v):
     """
-    verbose = "binary -> unsigned integer"
+    type = unsigned integer
+    verbose = binary -> unsigned integer
     """
     # apply a maximum to the rounded number of days from 1970 to the
     # maximum of gmtime
@@ -157,7 +158,8 @@ def days_unpack(v):
 
 def msec_unpack(v):
     """
-    verbose = "binary -> unsigned integer"
+    type = unsigned integer
+    verbose = binary -> unsigned integer
     """
     # apply a maximum to the possible number of msec per day
     return Ms(min(86399999, bincore.bin2int(v)))
