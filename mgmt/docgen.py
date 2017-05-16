@@ -115,9 +115,9 @@ class DocGen(object):
                             dat, catnum=catnum, pldflag=False)
                 section.append(subsection)
             doc.append(section)
-        self._compile(doc, clean_tex=False)
+        self._compile(doc, clean_tex=clean_tex)
 
-    def _compile(self, doc, clean_tex=False):
+    def _compile(self, doc, clean_tex=True):
         """
         Just compile the doc and save to disk
 
