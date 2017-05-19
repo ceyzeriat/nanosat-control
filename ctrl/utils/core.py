@@ -111,7 +111,7 @@ def append_logfile(message):
     Appends message at the end of the log file, with a timestamp
 
     Args:
-    * message (str): the message to append
+      * message (str): the message to append
     """
     f = open(LOGFILE, mode="a")
     f.write('{} {}\n'.format(now().strftime(LOGFILETIMESTAMPFMT),
@@ -123,7 +123,7 @@ def recover_ccsds(data):
     Recovers the un-escaped split characters
 
     Args:
-    * data (str or list of str): the text to process
+      * data (str or list of str): the text to process
     """
     return data.replace(CCSDSESCAPEDSPLIT, CCSDSSPLITCHAR)
 
@@ -134,8 +134,8 @@ def split_ccsds(data, n):
     [-1] element is the remainder of the operation
     
     Args:
-    * data (Byt): the bytes-chain to split
-    * n (int): the maximum number of packets to split
+      * data (Byt): the bytes-chain to split
+      * n (int): the maximum number of packets to split
     """
     return data.split(CCSDSSPLITCHAR*2, n)
 
@@ -144,8 +144,8 @@ def split_flow(data, n=-1):
     Splits packets from flow if flow mode activated
 
     Args:
-    * data (Byt): the data flow to split
-    * n (int): how many packets should be splited, at maximum,
+      * data (Byt): the data flow to split
+      * n (int): how many packets should be splited, at maximum,
         set to -1 for all
     """
     if not FRAMESFLOW:

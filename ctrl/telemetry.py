@@ -67,8 +67,8 @@ class Telemetry(object):
         ``data`` attributes
 
         Args:
-        * packet (str): the raw packet to unpack
-        * time_received (datetime+tz): the reception time of the packet
+          * packet (str): the raw packet to unpack
+          * time_received (datetime+tz): the reception time of the packet
         """
         cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet, retdbvalues=True)
         cls.hd['raw_file'] = core.RAWPACKETFOLDER

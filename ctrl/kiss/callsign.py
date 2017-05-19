@@ -118,4 +118,4 @@ class Callsign(object):
         frame = Byt(frame[:7]).ints()
         callsign = Byt(x >> 1 for x in frame[:6])
         self.callsign = callsign.strip()
-        self.ssid = Byt((frame[6] >> 1) & 0x0f)
+        self.ssid = Byt(str((frame[6] >> 1) & 0x0f))

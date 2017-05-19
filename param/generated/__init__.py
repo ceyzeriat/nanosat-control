@@ -31,15 +31,13 @@ import glob
 import os
 import importlib
 
-from . import generated
 
-
-allparamfiles = ['generated']
+allgenparam = []
 for item in glob.glob(os.path.join(os.path.dirname(__file__), '*.py')):
     dum = os.path.splitext(os.path.split(item)[1])[0]
     if dum == '__init__':
         continue
-    allparamfiles.append(dum)
+    allgenparam.append(dum)
 
 
 class module(ModuleType):
@@ -47,10 +45,15 @@ class module(ModuleType):
     Automatically import objects from the modules
     """
     def __getattr__(self, name):
-        if name in allparamfiles:
-            module = importlib.import_module('param.{}'.format(name))
-            setattr(self, name, module)
-            return module
+        if name in allgenparam:
+            module = importlib.import_module('param.generated.{}'.format(name))
+            if callable(getattr(module, name, None)):
+                fct = getattr(module, name)
+                fct.module = module
+            else:
+                fct = module
+            setattr(self, name, fct)
+            return fct
         return ModuleType.__getattribute__(self, name)
 
     def __dir__(self):
@@ -64,16 +67,17 @@ class module(ModuleType):
         return result
 
 # keep a reference to this module so that it's not garbage collected
-old_module = sys.modules['param']
+old_module = sys.modules['param.generated']
 
 
 # setup the new module and patch it into the dict of loaded modules
-new_module = sys.modules['param'] = module('param')
+new_module = sys.modules['param.generated'] = module('param.generated')
 new_module.__dict__.update({
     '__file__':         __file__,
-    '__package__':      'pld',
+    '__package__':      'generated',
     '__path__':         __path__,
     '__doc__':          __doc__,
-    '__all__':          tuple(allparamfiles),
+    '__all__':          tuple(allgenparam),
     '__docformat__':    'restructuredtext en'
 })
+

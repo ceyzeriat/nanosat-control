@@ -104,7 +104,7 @@ fi
 
 ############################################
 
-ALLPYTHONLIBS="ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil patiencebar paramiko"
+ALLPYTHONLIBS="ipython psycopg2 SQLAlchemy inflect pyserial byt hein pytz python-dateutil patiencebar paramiko pylatex"
 
 if [ "$doserver" ==  1  ];then
     sleep 0.5
@@ -115,7 +115,7 @@ if [ "$doserver" ==  1  ];then
     read -r -n 1 newpython
     echo ""
     if [ "$newpython" == "Y" ] || [ "$newpython" == "y" ]; then
-	sudo apt-get install python-dev python-pip libffi-dev
+	sudo apt-get install python-dev python-pip libffi-dev virtualenv
 	pip install virtualenv
 	mkdir -p $WHEREPYENV
 	cd $WHEREPYENV
@@ -241,7 +241,7 @@ if [ "$doserver" ==  1  ];then
 
     BASICFONT="-bg black -fg lightgrey -fa 'Monospace' -fs 10"
 
-    echo "    xterm -T 'Control' $BASICFONT -geometry 80x24-0+200 -e '$IPY -i $WHERESEGSOL/control.py';" >> piccontrol
+    echo "    xterm -T 'Control' $BASICFONT -geometry 80x24-0+200 -e 'source $HOME/.bashrc;$IPY -i $WHERESEGSOL/control.py';" >> piccontrol
     echo "else" >> piccontrol
     echo "    $IPY -i $WHERESEGSOL/control.py" >> piccontrol
     echo "fi" >> piccontrol

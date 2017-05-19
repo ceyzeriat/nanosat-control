@@ -48,8 +48,9 @@ class PatchListSegCCSDSTrousseau(CCSDSTrousseau):
         * data (byts): the chain of octets to unpack
         """
         theOnlyKey = self.keys[0]
-        nums = []
-        for idx in range(len(data) // self.size):
+        nlines = len(data) // self.size
+        nums = [{} for i in range(nlines)]
+        for idx in range(nlines):
             chunk = data[idx*self.size:(idx+1)*self.size]
             nums.append(theOnlyKey.unpack(chunk))
         # returns a list of the pk_id
@@ -71,4 +72,4 @@ class PatchListSegCCSDSTrousseau(CCSDSTrousseau):
         pass
 
 
-TROUSSEAU = PatchListSegCCSDSTrousseau(KEYS, octets=True)
+TROUSSEAU = PatchListSegCCSDSTrousseau(KEYS, octets=True, listof=True)

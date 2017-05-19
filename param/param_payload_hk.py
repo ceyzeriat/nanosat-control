@@ -36,77 +36,83 @@ __all__ = ['TROUSSEAU']
 
 def volt_line_unpack(v, **kwargs):
     """
-    verbose = "(binary -> unsigned integer) * 0.00459"
+    type = unsigned integer
+    verbose = (binary -> unsigned integer) * 0.00459
     """
     return bincore.bin2int(v) * 0.00459
 
 
 def volt_line_pack(v, pad, **kwargs):
     """
-    verbose = "UnsignedInt(float / 0.00459) -> binary"
+    verbose = UnsignedInt(float / 0.00459) -> binary
     """
     return bincore.int2bin(round(v / 0.00459), pad=pad)
 
 
 def current_line_unpack(v, **kwargs):
     """
-    verbose = "(binary -> unsigned integer) * 0.00161"
+    type = unsigned integer
+    verbose = (binary -> unsigned integer) * 0.00161
     """
     return bincore.bin2int(v) * 0.00161
 
 
 def current_line_pack(v, pad, **kwargs):
     """
-    verbose = "UnsignedInt(float / 0.00161) -> binary"
+    verbose = UnsignedInt(float / 0.00161) -> binary
     """
     return bincore.int2bin(round(v / 0.00161), pad=pad)
 
 
 def volthv_unpack(v, **kwargs):
     """
-    verbose = "(binary -> unsigned integer) * 3.3 / 4096 * 213.77"
+    type = unsigned integer
+    verbose = (binary -> unsigned integer) * 3.3 / 4096 * 213.77
     """
     return bincore.bin2int(v) * 3.3 / 4096.0 * 213.77
 
 
 def volthv_pack(v, pad, **kwargs):
     """
-    verbose = "UnsignedInt(float / 3.3 * 4096 / 213.77) -> binary"
+    verbose = UnsignedInt(float / 3.3 * 4096 / 213.77) -> binary
     """
     return bincore.int2bin(round(v / 3.3 * 4096.0 / 213.77), pad=pad)
 
 
 def temp_unpack(v, **kwargs):
     """
-    verbose = "(binary -> signed integer) * 0.0625"
+    type = signed integer
+    verbose = (binary -> signed integer) * 0.0625
     """
     return bincore.bin2intSign(v) * 0.0625
 
 
 def temp_pack(v, pad, **kwargs):
     """
-    verbose = "SignedInt(float / 0.0625) -> binary"
+    verbose = SignedInt(float / 0.0625) -> binary
     """
     return bincore.intSign2bin(round(v / 0.0625), pad=pad)
 
 
 def volt_peltier_unpack(v, **kwargs):
     """
-    verbose = "(binary -> unsigned integer) * 3.3 / 4096"
+    type = unsigned integer
+    verbose = (binary -> unsigned integer) * 3.3 / 4096
     """
     return bincore.bin2int(v) * 3.3 / 4096.0
 
 
 def volt_peltier_pack(v, pad, **kwargs):
     """
-    verbose = "UnsignedInt(float / 3.3 * 4096.0) -> binary"
+    verbose = UnsignedInt(float / 3.3 * 4096.0) -> binary
     """
     return bincore.int2bin(round(v / 3.3 * 4096), pad=pad)
 
 
 def vitec_unpack(v, Vref, **kwargs):
     """
-    verbose = "((binary -> unsigned integer) * 3.3 / 4096.0 - Voltage Peltier) / 0.00016"
+    type = unsigned integer
+    verbose = ((binary -> unsigned integer) * 3.3 / 4096.0 - Voltage Peltier) / 0.00016
     """
     if Vref == 0:
         Vref = 1
@@ -115,7 +121,7 @@ def vitec_unpack(v, Vref, **kwargs):
 
 def vitec_pack(v, Vref, pad, **kwargs):
     """
-    verbose = "UnsignedInt((float * 0.00016 + Vref) * 4096 / 3.3) -> binary"
+    verbose = UnsignedInt((float * 0.00016 + Vref) * 4096 / 3.3) -> binary
     """
     if Vref == 0:
         Vref = 1
@@ -124,7 +130,8 @@ def vitec_pack(v, Vref, pad, **kwargs):
 
 def errortherm_unpack(v, Vref, **kwargs):
     """
-    verbose = "((binary -> unsigned integer) * 3.3 / 4096.0 - Voltage Peltier) / 25"
+    type = unsigned integer
+    verbose = ((binary -> unsigned integer) * 3.3 / 4096.0 - Voltage Peltier) / 25
     """
     if Vref == 0:
         Vref = 1
@@ -133,7 +140,7 @@ def errortherm_unpack(v, Vref, **kwargs):
 
 def errortherm_pack(v, Vref, pad, **kwargs):
     """
-    verbose = "UnsignedInt((float * 25 + Vref) * 4096 / 3.3) -> binary"
+    verbose = UnsignedInt((float * 25 + Vref) * 4096 / 3.3) -> binary
     """
     if Vref == 0:
         Vref = 1
@@ -142,7 +149,8 @@ def errortherm_pack(v, Vref, pad, **kwargs):
 
 def temp0_unpack(v, Vref, **kwargs):
     """
-    verbose = "293 / (293 / 2918.9 * LOG(50 / 11 * (binary -> unsigned integer) / (Voltage Peltier / 3.3 * 4096 - (binary -> unsigned integer))) + 1) - 273"
+    type = unsigned integer
+    verbose = 293 / (293 / 2918.9 * LOG(50 / 11 * (binary -> unsigned integer) / (Voltage Peltier / 3.3 * 4096 - (binary -> unsigned integer))) + 1) - 273
     """
     if Vref == 0:
         Vref = 1
@@ -153,7 +161,7 @@ def temp0_unpack(v, Vref, **kwargs):
 
 def temp0_pack(v, Vref, pad, **kwargs):
     """
-    verbose = "UnsignedInt((Voltage Peltier / 3.3 * 4096) / (1 + 50 / (11 * math.exp(2918.9 / 293 * (293 / (float + 273.0) - 1))))) -> binary"
+    verbose = UnsignedInt((Voltage Peltier / 3.3 * 4096) / (1 + 50 / (11 * math.exp(2918.9 / 293 * (293 / (float + 273.0) - 1))))) -> binary
     """
     if Vref == 0:
         Vref = 1
@@ -274,4 +282,4 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
                         pack(allvalues, retdbvalues=True, Vref=Vref)
 
 
-TROUSSEAU = HKPayloadCCSDSTrousseau(V_KEYS, octets=False)
+TROUSSEAU = HKPayloadCCSDSTrousseau(V_KEYS, octets=False, listof=True)
