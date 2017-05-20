@@ -246,14 +246,13 @@ def get_TM(pkid=None, dbid=None):
     pldflag = int(dictm[param_ccsds.PAYLOADFLAG.name])
     # deal with header aux
     # table name for hdx
-    cattbl = param_category.TABLECATEGORY[pldflag][catnum]
+    cattbl = param_category.CATEGORIES[pldflag][catnum].object_aux_name
     dichdx = {}
     if cattbl is None:
         thehdx = None
     else:
         TMHDX = TABLES[cattbl]
-        thehdx = getattr(thetm, core.camelize_singular_rev(cattbl) +\
-                            '_collection', [])
+        thehdx = getattr(thetm, cat.table_name + '_collection', [])
         if len(thehdx) > 0:
             # there can be only one
             thehdx = thehdx[0]
@@ -263,19 +262,19 @@ def get_TM(pkid=None, dbid=None):
             thehdx = None
     # deal with data
     # table name for data
-    datatbl = param_category.TABLEDATA[pldflag][catnum]
+    cat = param_category.CATEGORIES[pldflag][catnum]
     dicdata = []
-    if datatbl is None:
+    if cat.object_data_name is None:
         thedata = None
     else:
-        TMDATA = TABLES[datatbl]
-        thedata = getattr(thetm, core.camelize_singular_rev(datatbl) +\
-                            '_collection', [])
-        if len(thedata) == 0:
+        TMDATA = TABLES[cat.object_data_name]
+        thedata = getattr(thetm, cat.table_data_name + '_collection', [])
+        if len(thedata) > 0:
             for dataline in thedata:
-                dicdata.append({})
+                thedicline = {}
                 for key in get_column_keys(TMDATA):
-                    dicdata[key] = getattr(dataline, key, None)
+                    thedicline[key] = getattr(dataline, key, None)
+                dicdata.append(thedicline)
         else:
             thedata = None
     return (thetm, dictm), (thehdx, dichdx), (thedata, dicdata)
@@ -305,15 +304,15 @@ def save_TM_to_DB(hd, hdx, data):
     catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
     pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
     # saving the aux header
-    tbl = param_category.TABLECATEGORY[pldflag][catnum]
-    if tbl is not None:
+    cat = param_category.CATEGORIES[pldflag][catnum]
+    if cat.object_aux_name is not None:
         hdx = dict(hdx)
         hdx['telemetry_packet'] = TM.id
-        DB.add(TABLES[tbl](**hdx))
+        DB.add(TABLES[cat.object_aux_name](**hdx))
         DB.commit()
     # saving the data
-    if param_category.TABLEDATA[pldflag][catnum] is not None:
-        tbl = param_category.TABLEDATA[pldflag][catnum]
+    tbl = cat.object_data_name
+    if tbl is not None:
         # if saving the data from TC answer
         if catnum == param_category.TELECOMMANDANSWERCAT:
             for k, v in data['unpacked'].items():

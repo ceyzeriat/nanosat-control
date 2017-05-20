@@ -126,13 +126,12 @@ def process_report(inputs):
         # print Header Sec TM
         print(param_ccsds.HEADER_S_KEYS_TELEMETRY.disp(hd))
         # print Header Aux if any
-        auxtrousseau = param_category.PACKETCATEGORIES[pldflag][catnum]
-        if auxtrousseau.size > 0:
-            print(auxtrousseau.disp(hdx))
+        cat = param_category.CATEGORIES[pldflag][catnum]
+        if cat.size > 0:
+            print(cat.aux_trousseau.disp(hdx))
         # print data if any
-        datafile = param_category.FILEDATACRUNCHING[pldflag][catnum]
-        if datafile is not None:
-            print(getattr(param, datafile).TROUSSEAU.disp(dd['unpacked']))
+        if cat.data_file is not None:
+            print(getattr(param, cat.data_file).TROUSSEAU.disp(dd['unpacked']))
     else:
         pass
 

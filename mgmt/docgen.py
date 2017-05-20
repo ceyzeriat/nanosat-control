@@ -99,20 +99,18 @@ class DocGen(object):
         for idx, pldflag in ([0, False], [1, True]):
             section = Section(sectionname[idx])
             for catnum, cat in param.param_category.\
-                                    PACKETCATEGORIES[idx].items():
+                                    CATEGORIES[idx].items():
                 subsection = self._trousseau2subsection(
                     '{} ({:d}) - Auxiliary Header'.format(cat.name, catnum),
-                    cat, catnum=catnum, pldflag=pldflag)
+                    cat.aux_trousseau, catnum=catnum, pldflag=pldflag)
                 section.append(subsection)
-                cat_params = param.param_category.FILEDATACRUNCHING[\
-                                                            idx][catnum]
-                if cat_params is None:  # no specifics for unpacking data
+                if cat.data_file is None:  # no specifics for unpacking data
                     dat = None
                 else:
-                    dat = getattr(param, cat_params).TROUSSEAU
+                    dat = getattr(param, cat.data_file).TROUSSEAU
                 subsection = self._trousseau2subsection(
                             '{} ({:d}) - Data'.format(cat.name, catnum),
-                            dat, catnum=catnum, pldflag=False)
+                            dat, catnum=catnum, pldflag=pldflag)
                 section.append(subsection)
             doc.append(section)
         self._compile(doc, clean_tex=clean_tex)

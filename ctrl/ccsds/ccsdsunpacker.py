@@ -118,17 +118,17 @@ class CCSDSUnPacker(object):
             return {}
         pldFlag = int(pldFlag)
         pktCat = int(pktCat)
-        if pktCat not in param_category.PACKETCATEGORIES[pldFlag].keys():
+        if pktCat not in param_category.CATEGORIES[pldFlag].keys():
             raise ccsdsexception.CategoryMissing(pktCat, pldFlag)
-        hx = param_category.PACKETCATEGORIES[pldFlag][pktCat]
-        if hx.size == 0:
+        cat = param_category.CATEGORIES[pldFlag][pktCat]
+        if cat.aux_size == 0:
             return {}
         start = param_ccsds.HEADER_P_KEYS.size
         if self.mode == 'telemetry':
             start += param_ccsds.HEADER_S_KEYS_TELEMETRY.size
         else:
             start += param_ccsds.HEADER_S_KEYS_TELECOMMAND.size
-        return hx.unpack(packet[start:])
+        return hx.aux_trousseau.unpack(packet[start:])
 
     def unpack_data(self, packet, hds):
         """
@@ -147,9 +147,9 @@ class CCSDSUnPacker(object):
         cat = int(hds[param_ccsds.PACKETCATEGORY.name])
         pld = int(hds[param_ccsds.PAYLOADFLAG.name])
         # aux header size
-        start += param_category.PACKETCATEGORYSIZES[pld][cat]
+        start += param_category.CATEGORIES[pld][cat].aux_size
         data['all'] = packet[start:]
-        cat_params = param_category.FILEDATACRUNCHING[pld][cat]
+        cat_params = param_category.CATEGORIES[pld][cat].data_file
         if cat_params is None:
             return data  # no specifics for unpacking data
         else:

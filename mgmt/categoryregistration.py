@@ -45,7 +45,6 @@ class CategoryRegistration(Registration):
         """
         self.pld_flag = int(pld_flag)
         self.cat_num = int(cat_num)
-        self.cat = param_category.PACKETCATEGORIES[self.pld_flag][self.cat_num]
-        self.cat_name = param_category.TABLECATEGORY[self.pld_flag\
-                                                        ][self.cat_num]
+        self.cat = param_category.CATEGORIES[self.pld_flag][self.cat_num]
+        self.cat_name = self.cat.table_name
         super(CategoryRegistration, self).__init__()

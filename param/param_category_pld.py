@@ -32,15 +32,7 @@ from ctrl.utils import bincore
 from . import param_category_common as cmn
 
 
-__all__ = ['CATEGORYREGISTRATIONPLD', 'ACKCATEGORIESPLD',
-            'PACKETCATEGORIESPLD', 'PACKETCATEGORYSIZESPLD',
-            'TABLECATEGORYPLD', 'TABLEDATAPLD', 'FILEDATACRUNCHINGPLD']
-
-
-CATEGORYREGISTRATIONPLD = { 4: '00100',  # HK
-                            5: '00101',  # science HF
-                            6: '00110',  # report
-                            7: '00111'}  # beacon
+__all__ = []
 
 
 ACQMODESCIENCE = CCSDSKey(  name='acq_mode',
@@ -198,16 +190,16 @@ TECSETPOINT = CCSDSKey(     name='tec_setpoint',
 
 
 # HK payload
-CATEGORY_4 = CCSDSTrousseau([HKTICK, BINNING, MAINMODE, ACQMODEHK, DIODEFLAG,
+HEADAUX_4 = CCSDSTrousseau([HKTICK, BINNING, MAINMODE, ACQMODEHK, DIODEFLAG,
                                 INTERRUPTFLAG, PIEZOFLAG, HVFLAG, SENSORSFLAG, TECFLAG,
-                                BEACONFLAG, PROCFREQ, TECSETPOINT], octets=False, name='HK')
+                                BEACONFLAG, PROCFREQ, TECSETPOINT], octets=False)
 # science HF
-CATEGORY_5 = CCSDSTrousseau([ACQMODESCIENCE, INTEGRATIONTIME, DELAY, MODULATION, RADIUS,
-                                NPOINTS], octets=False, name='science HF')
+HEADAUX_5 = CCSDSTrousseau([ACQMODESCIENCE, INTEGRATIONTIME, DELAY, MODULATION, RADIUS,
+                                NPOINTS], octets=False)
 # report
-CATEGORY_6 = CCSDSTrousseau([], octets=False, name='report')
+#HEADAUX_6 = CCSDSTrousseau([], octets=False)
 # beacon
-CATEGORY_7 = CCSDSTrousseau([], octets=False, name='beacon')
+#HEADAUX_7 = CCSDSTrousseau([], octets=False)
 
 
 # (payloadd, category)
@@ -215,43 +207,30 @@ CATEGORY_7 = CCSDSTrousseau([], octets=False, name='beacon')
 ACKCATEGORIESPLD = []
 
 
-# header aux
-PACKETCATEGORIESPLD = { 4: CATEGORY_4,  # HK
-                        5: CATEGORY_5,  # science HF
-                        6: CATEGORY_6,  # report
-                        7: CATEGORY_7}  # beacon
+CATEGORIESPLD = {
+                4: CCSDSCategory(name='payload HK',
+                                        number=4,
+                                        aux_trousseau=HEADAUX_4,
+                                        data_file='param_payload_hk'),
 
+               5: CCSDSCategory(name='HF science',
+                                number=5,
+                                aux_trousseau=HEADAUX_5,
+                                data_file='param_hf_science'),
 
-PACKETCATEGORYSIZESPLD = {}
-for k, cat in PACKETCATEGORIESPLD.items():
-    PACKETCATEGORYSIZESPLD[k] = cat.size
+               6: CCSDSCategory(name='pld report',
+                                number=6,
+                                aux_trousseau=None,
+                                data_file='param_pld_report'),
 
-
-TABLECATEGORYPLD = {4: 'TmcatPayloadHk',  # HK
-                    5: 'TmcatHfScience',  # science HF
-                    6: None,  # report
-                    7: None}  # beacon
-
-
-TABLEDATAPLD = {4: 'DataPayloadHk',  # HK
-                5: 'DataHfScience',  # science HF
-                6: 'DataPldReport',  # report
-                7: 'DataPldBeacon'}  # beacon
-
-
-FILEDATACRUNCHINGPLD = {4: 'param_payload_hk',  # HK
-                        5: 'param_hf_science',  # science HF
-                        6: 'param_pld_report',  # report
-                        7: 'param_pld_beacon'}  # beacon
-
+               7: CCSDSCategory(name='pld beacon',
+                                number=7,
+                                aux_trousseau=None,
+                                data_file='param_pld_beacon')
+                        }
 
 # extend all keys with common categories
-for k in cmn.CATEGORYREGISTRATIONCOMMON.keys():
-    CATEGORYREGISTRATIONPLD[k] = cmn.CATEGORYREGISTRATIONCOMMON[k]
-    PACKETCATEGORIESPLD[k] = cmn.PACKETCATEGORIESCOMMON[k]
-    PACKETCATEGORYSIZESPLD[k] = cmn.PACKETCATEGORYSIZESCOMMON[k]
-    TABLECATEGORYPLD[k] = cmn.TABLECATEGORYCOMMON[k]
-    TABLEDATAPLD[k] = cmn.TABLEDATACOMMON[k]
-    FILEDATACRUNCHINGPLD[k] = cmn.FILEDATACRUNCHINGCOMMON[k]
+CATEGORIESPLD.update(cmn.CATEGORIESCOMMON)
+
 
 ACKCATEGORIESPLD += cmn.ACKCATEGORIESCOMMON

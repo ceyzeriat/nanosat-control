@@ -54,7 +54,7 @@ class CCSDSBlob(object):
         pk = CCSDSPacker(mode=mode)
         vals = {param_ccsds.PID.name: '',
                 param_ccsds.PACKETCATEGORY.name:\
-                    list(pcc.CATEGORYREGISTRATIONCOMMON.keys())[0]}
+                    list(pcc.CATEGORIESCOMMON.keys())[0]}
                     # just pick first common one cause it is not
                     # taken into account in auth_start anyways
         # building of possible packet start flags
@@ -91,7 +91,7 @@ class CCSDSBlob(object):
                     # check packet category
                     pld = int(param_ccsds.PAYLOADFLAG.unpack(head))
                     cat = int(param_ccsds.PACKETCATEGORY.unpack(head))
-                    if cat in param_category.CATEGORYREGISTRATION[pld].keys():
+                    if cat in param_category.CATEGORIES[pld].keys():
                         return i
         else:
             return None
