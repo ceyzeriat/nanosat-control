@@ -128,7 +128,7 @@ class CCSDSUnPacker(object):
             start += param_ccsds.HEADER_S_KEYS_TELEMETRY.size
         else:
             start += param_ccsds.HEADER_S_KEYS_TELECOMMAND.size
-        return hx.aux_trousseau.unpack(packet[start:])
+        return cat.aux_trousseau.unpack(packet[start:])
 
     def unpack_data(self, packet, hds):
         """
@@ -149,10 +149,6 @@ class CCSDSUnPacker(object):
         # aux header size
         start += param_category.CATEGORIES[pld][cat].aux_size
         data['all'] = packet[start:]
-        cat_params = param_category.CATEGORIES[pld][cat].data_file
-        if cat_params is None:
-            return data  # no specifics for unpacking data
-        else:
-            TROUSSEAU = getattr(param, cat_params).TROUSSEAU
-        data['unpacked'] = TROUSSEAU.unpack(data['all'])
+        if param_category.CATEGORIES[pld][cat].data_trousseau is not None:
+            data['unpacked'] = TROUSSEAU.unpack(data['all'])
         return data

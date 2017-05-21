@@ -27,6 +27,7 @@
 
 import param
 import inflect
+from . import ccsdsexception as exc
 from ..utils import bincore
 from ..utils import core
 
@@ -50,14 +51,23 @@ class CCSDSCategory(object):
             field, or the name of the parameter file where its trousseau
             is defined
         """
+        # deal with name checking
         self.name = str(name)
-        self.table_name = core.clean_name(str(name).replace(' ', '_')).lower()
+        self.table_name = core.clean_name(self.name.replace(' ', '_')).lower()
         inf = inflect.engine()
         if inf.singular_noun(self.table_name) is False:
             self.table_name = inf.plural_noun(self.table_name)
+            if self.table_name is False:
+                raise exc.WrongCategoryTableName(self.table_name)
         self.object_name = core.camelize_singular(self.table_name)
+        if self.object_name is False:
+            raise exc.WrongCategoryObjectName(self.object_name)
+        if self.table_name != core.camelize_singular_rev(self.object_name):
+            raise exc.WrongCategoryTableName(self.table_name)
+        # name was satisfactory, doing other stuff
         self.number = int(number)
         self.bits = bincore.int2bin(self.number, pad=5)
+        # AUX HEADER STUFF
         self.aux_trousseau = aux_trousseau
         self.aux_size = getattr(self.aux_trousseau, 'size', 0)
         if self.aux_trousseau is None:
@@ -66,10 +76,14 @@ class CCSDSCategory(object):
         else:
             self.table_aux_name = "tmcat_" + self.table_name
             self.object_aux_name = core.camelize_singular(self.table_aux_name)
-        self.data_file = data_file if data_file is None else str(data_file)
+        # DATA FIELD STUFF
+        self.data_file = None if data_file is None else str(data_file)
         if self.data_file is None:
             self.table_data_name = None
             self.object_data_name = None
+            self.data_trousseau = None
         else:
             self.table_data_name = "data_" + self.table_name
-            self.object_data_name = core.camelize_singular(self.table_data_name)
+            self.object_data_name = core.camelize_singular(\
+                                                self.table_data_name)
+            self.data_trousseau = getattr(param, self.data_file).TROUSSEAU

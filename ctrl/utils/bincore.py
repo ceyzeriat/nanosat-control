@@ -80,6 +80,7 @@ def hex2hex(v, pad=0, **kwargs):
     """
     Give some hex, get some hex
     pad in hex chars
+    type = hexadecimal
     verbose = Kept as hexadecimal
     """
     return padit(txt=v, l=pad, ch=Byt(0))

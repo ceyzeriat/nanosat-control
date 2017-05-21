@@ -27,6 +27,7 @@
 
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.ccsds.ccsdskey import CCSDSKey
+from ctrl.ccsds.ccsdscategory import CCSDSCategory
 from ctrl.utils import bincore
 
 
@@ -60,13 +61,13 @@ ERRORCODE = CCSDSKey(       name='error_code',
 
 # exec ack
 HEADAUX_EACKCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
-                                octets=False, name='exec acknowledgement')
+                                octets=False)
 # fmt ack
 HEADAUX_FACKCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
-                                octets=False, name='fmt acknowledgement')
+                                octets=False)
 # tc answer
 HEADAUX_TELECOMMANDANSWERCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR],
-                                octets=False, name='tc answer')
+                                octets=False)
 
 
 EACKCAT = 31

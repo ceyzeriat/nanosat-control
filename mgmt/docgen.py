@@ -94,8 +94,8 @@ class DocGen(object):
         section.append(subsection)
         doc.append(section)
         # Packet Categories
-        sectionname = {0: 'Packet Categories OBC',
-                       1: 'Packet Categories Payload'}
+        sectionname = {0: 'Packet Categories for OBC',
+                       1: 'Packet Categories for Payload'}
         for idx, pldflag in ([0, False], [1, True]):
             section = Section(sectionname[idx])
             for catnum, cat in param.param_category.\
@@ -104,13 +104,9 @@ class DocGen(object):
                     '{} ({:d}) - Auxiliary Header'.format(cat.name, catnum),
                     cat.aux_trousseau, catnum=catnum, pldflag=pldflag)
                 section.append(subsection)
-                if cat.data_file is None:  # no specifics for unpacking data
-                    dat = None
-                else:
-                    dat = getattr(param, cat.data_file).TROUSSEAU
                 subsection = self._trousseau2subsection(
-                            '{} ({:d}) - Data'.format(cat.name, catnum),
-                            dat, catnum=catnum, pldflag=pldflag)
+                    '{} ({:d}) - Data'.format(cat.name, catnum),
+                    cat.data_trousseau, catnum=catnum, pldflag=pldflag)
                 section.append(subsection)
             doc.append(section)
         self._compile(doc, clean_tex=clean_tex)
@@ -203,7 +199,7 @@ class DocGen(object):
                    NewLine(), NewLine()]
             if T.listof:
                 res += [r"NB: The keys-structure presented below is "\
-                        r"repeated N-times in the packet.",
+                        r"repeated N times up to the total size.",
                         NewLine(), NewLine()]
             return res
 

@@ -26,15 +26,15 @@
 
 
 from param import param_category
+from ctrl.utils import core
 
 from . import mgmtexception
-from .registration import Registration
 
 
 __all__ = ['CategoryRegistration']
 
 
-class CategoryRegistration(Registration):
+class CategoryRegistration(object):
     def __init__(self, pld_flag, cat_num):
         """
         Registers a new TM category into the database
@@ -46,5 +46,99 @@ class CategoryRegistration(Registration):
         self.pld_flag = int(pld_flag)
         self.cat_num = int(cat_num)
         self.cat = param_category.CATEGORIES[self.pld_flag][self.cat_num]
-        self.cat_name = self.cat.table_name
-        super(CategoryRegistration, self).__init__()
+
+    def delete_table(self):
+        """
+        Provides postgresql code to delete the table
+        """
+        one = False
+        if self.cat.table_aux_name is not None:
+            print("DROP TABLE {} CASCADE;".format(self.cat.table_aux_name))
+            one = True
+        if self.cat.table_data_name is not None:
+            print("DROP TABLE {} CASCADE;".format(self.cat.table_data_name))
+            one = True
+        if one:
+            print('No table associated to this category.')
+        else:
+            print("If this table contains data, deleting it will delete all"\
+                  "data contained in it and may corrupt other data referring"\
+                  " to it. Use at your own risk.")
+
+    def show(self):
+        """
+        Show the content of the category
+        """
+        # AUX HEADER
+        if self.cat.table_aux_name is not None:
+            print("Category '{}', Auxiliary Header Table '{}'\n".format(
+                                                self.cat.name,
+                                                self.cat.table_aux_name))
+            for item in self.cat.aux_trousseau.keys:
+                print(item)
+                if item.name != item.name.lower():
+                    print('!!! uppercase is not allowed in ccsds keys')
+        # DATA FIELD
+        if self.cat.table_data_name is not None:
+            print("Category '{}', Data field Table '{}'\n".format(
+                                                self.cat.name,
+                                                self.cat.table_data_name))
+            for item in self.cat.data_trousseau.keys:
+                print(item)
+                if item.name != item.name.lower():
+                    print('!!! uppercase is not allowed in ccsds keys')
+
+    def create_table(self):
+        """
+        Provides postgresql code to create the table
+        """
+        query = """
+CREATE TABLE IF NOT EXISTS {table_name}
+(
+    id serial PRIMARY KEY,
+    telemetry_packet integer{fields}
+);
+ALTER TABLE {table_name} OWNER TO picsat_admin;
+GRANT ALL ON {table_name} TO picsat_admin;
+GRANT select ON {table_name} TO picsat_read;
+GRANT select, insert, update ON {table_name} TO picsat_edit;
+ALTER TABLE {table_name} ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
+        """
+        # syntax: 'type tag in function': 'sql type'
+        # or 'type tag in function': [len limit (int),
+        #                             'sql type if len <= than len limit',
+        #                             'sql type if len > than len limit']
+        types_conv = {'2bool': 'boolean',
+                      '2intSign': [16, 'smallint', 'integer'],
+                      '2int': [15, 'smallint', 'integer'],
+                      '2hex': 'bytea',
+                      '2txt': [125, 'varchar({len})', 'text'],
+                      '2float': [32, 'real', 'double precision']}
+        # HEADER AUX
+        fields = ""
+        for item in self.cat.aux_trousseau.keys:
+            for k, v in types_conv.items():
+                if item._fctunpack.__name__.endswith(k):
+                    if isinstance(v, list):
+                        v = v[1] if item.len <= v[0] else v[2]
+                    break
+            else:
+                v = '?TYPE?'
+            fields += ',\n    {} {}'.format(item.name,
+                                            str(v).format(len=item.len))
+        print(query.format(table_name=self.cat.table_aux_name, fields=fields))
+        # DATA FIELD
+        fields = ""
+        for item in self.cat.data_trousseau.keys:
+            for k, v in types_conv.items():
+                if item._fctunpack.__name__.endswith(k):
+                    if isinstance(v, list):
+                        v = v[1] if item.len <= v[0] else v[2]
+                    break
+            else:
+                v = '?TYPE?'
+            fields += ',\n    {} {}'.format(item.name,
+                                            str(v).format(len=item.len))
+        print(query.format(table_name=self.cat.table_data_name, fields=fields))
+

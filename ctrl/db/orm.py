@@ -246,13 +246,13 @@ def get_TM(pkid=None, dbid=None):
     pldflag = int(dictm[param_ccsds.PAYLOADFLAG.name])
     # deal with header aux
     # table name for hdx
-    cattbl = param_category.CATEGORIES[pldflag][catnum].object_aux_name
+    cat = param_category.CATEGORIES[pldflag][catnum]
     dichdx = {}
-    if cattbl is None:
+    if cat.object_aux_name is None:
         thehdx = None
     else:
-        TMHDX = TABLES[cattbl]
-        thehdx = getattr(thetm, cat.table_name + '_collection', [])
+        TMHDX = TABLES[cat.object_aux_name]
+        thehdx = getattr(thetm, cat.table_aux_name + '_collection', [])
         if len(thehdx) > 0:
             # there can be only one
             thehdx = thehdx[0]
@@ -262,7 +262,6 @@ def get_TM(pkid=None, dbid=None):
             thehdx = None
     # deal with data
     # table name for data
-    cat = param_category.CATEGORIES[pldflag][catnum]
     dicdata = []
     if cat.object_data_name is None:
         thedata = None

@@ -62,10 +62,10 @@ class CCSDSKey(object):
           * disp (string): short alias for human-reading display
           * octets (bool): if the values are (un)packed as octets or binary
             Only useful when raw mode of (un)packing is True.
-          * pad (bool): whether to pad the raw data up to the length ``l``
+          * pad (bool): whether to pad the data up to the key length ``l``
           * padchar (str or Byt): the character to be used for padding.
-            It shall be a '0' or '1' if ``octets`` is ``True``, or a
-            Byt if it is ``False``
+            It shall be a binary string '010' if ``octets`` is ``True``,
+            or a Byt if it is ``False``
         """
         self.name = str(name)
         self.verbose = str(verbose)

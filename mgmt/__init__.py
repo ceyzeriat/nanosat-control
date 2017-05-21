@@ -27,6 +27,5 @@
 
 from . import mgmtexception
 from .categoryregistration import *
-from .dataregistration import *
 from .commandlist import *
 from .docgen import *
