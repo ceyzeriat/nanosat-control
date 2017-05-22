@@ -81,7 +81,7 @@ class Telemetry(object):
         # if it is a RACK, update the TM after checking the TC
         if catnum == int(param_category.RACKCAT):
             tcid = db.get_RACK_TCid(dbid=dbid)
-            cls.hdx['telecommand_id'] = tcid
+            cls.hdx['telecommand_id_mirror'] = tcid
         # elif it is a FACK or EACK
         elif (int(cls.hd[param_ccsds.PAYLOADFLAG.name]), catnum)\
                                         in param_category.ACKCATEGORIES:
@@ -91,7 +91,7 @@ class Telemetry(object):
                 ack = 'eack'
             tcid = db.get_ACK_TCid(pkid=cls.hdx[pcc.PACKETIDMIRROR.name],
                                     ack=ack)
-            cls.hdx['telecommand_id'] = tcid
+            cls.hdx['telecommand_id_mirror'] = tcid
         else:
             tcid = None
         cls.tcid = tcid
