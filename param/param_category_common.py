@@ -76,7 +76,7 @@ TELECOMMANDANSWERCAT = 29
 
 
 CATEGORIESCOMMON = {
-            EACKCAT: CCSDSCategory(name='exec acknowledgement',
+            EACKCAT: CCSDSCategory(name='exe acknowledgement',
                                     number=EACKCAT,
                                     aux_trousseau=HEADAUX_EACKCAT,
                                     data_file='param_exe_ack'),
