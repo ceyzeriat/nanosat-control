@@ -131,7 +131,7 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
                                                 str(v).format(len=item.len))
             ret.append(query.format(table_name=self.cat.table_aux_name,
                                     unique=" UNIQUE",
-                                    fields=fields)))
+                                    fields=fields))
         # DATA FIELD
         if self.cat.data_trousseau is not None:
             fields = ""
@@ -147,5 +147,5 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
                                                 str(v).format(len=item.len))
             ret.append(query.format(table_name=self.cat.table_data_name,
                                     unique="",
-                                    fields=fields)))
+                                    fields=fields))
         return "\n\n".join(ret)
