@@ -96,7 +96,7 @@ class CategoryRegistration(object):
 CREATE TABLE IF NOT EXISTS {table_name}
 (
     id serial PRIMARY KEY,
-    telemetry_packet integer{fields}
+    telemetry_packet integer{unique}{fields}
 );
 ALTER TABLE {table_name} OWNER TO picsat_admin;
 GRANT ALL ON {table_name} TO picsat_admin;
@@ -129,6 +129,7 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
                 fields += ',\n    {} {}'.format(item.name,
                                                 str(v).format(len=item.len))
             print(query.format(table_name=self.cat.table_aux_name,
+                               unique=" UNIQUE"
                                fields=fields))
         # DATA FIELD
         if self.cat.data_trousseau is not None:
@@ -144,5 +145,6 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
                 fields += ',\n    {} {}'.format(item.name,
                                                 str(v).format(len=item.len))
             print(query.format(table_name=self.cat.table_data_name,
+                               unique=""
                                fields=fields))
 
