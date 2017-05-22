@@ -51,14 +51,14 @@ class CategoryRegistration(object):
         """
         Provides postgresql code to delete the table
         """
-        one = False
+        theresone = False
         if self.cat.table_aux_name is not None:
             print("DROP TABLE {} CASCADE;".format(self.cat.table_aux_name))
-            one = True
+            theresone = True
         if self.cat.table_data_name is not None:
             print("DROP TABLE {} CASCADE;".format(self.cat.table_data_name))
-            one = True
-        if one:
+            theresone = True
+        if not theresone:
             print('No table associated to this category.')
         else:
             print("If this table contains data, deleting it will delete all"\
