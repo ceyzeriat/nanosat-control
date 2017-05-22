@@ -35,10 +35,10 @@ import os
 import re
 
 
-__all__ = ['DocGen']
+__all__ = ['DocComm']
 
 
-class DocGen(object):
+class DocComm(object):
     def __init__(self, docname):
         """
         Generates the pdf for PicSat communication specifications
@@ -193,8 +193,9 @@ class DocGen(object):
         if T is None or getattr(T, 'size', 0) == 0:
             return [r"Total size (octets): 0", NewLine()]
         else:
-            res = [r"Total size (octets): {}".format(T.size), NewLine(),
-                   r"Keys count: {}".format(len(T.keys)), NewLine(),
+            Ns = " x N" if T.listof else ""
+            res = [r"Total size (octets): {}{}".format(T.size, Ns), NewLine(),
+                   r"Keys count: {}{}".format(len(T.keys), Ns), NewLine(),
                    r"To be treated as octets: {}".format(str(T.octets)),
                    NewLine(), NewLine()]
             if T.listof:

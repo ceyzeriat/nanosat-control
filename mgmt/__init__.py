@@ -28,4 +28,4 @@
 from . import mgmtexception
 from .categoryregistration import *
 from .commandlist import *
-from .docgen import *
+from .doccomm import *

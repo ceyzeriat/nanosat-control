@@ -116,29 +116,33 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
                       '2txt': [125, 'varchar({len})', 'text'],
                       '2float': [32, 'real', 'double precision']}
         # HEADER AUX
-        fields = ""
-        for item in self.cat.aux_trousseau.keys:
-            for k, v in types_conv.items():
-                if item._fctunpack.__name__.endswith(k):
-                    if isinstance(v, list):
-                        v = v[1] if item.len <= v[0] else v[2]
-                    break
-            else:
-                v = '?TYPE?'
-            fields += ',\n    {} {}'.format(item.name,
-                                            str(v).format(len=item.len))
-        print(query.format(table_name=self.cat.table_aux_name, fields=fields))
+        if self.cat.aux_trousseau is not None:
+            fields = ""
+            for item in self.cat.aux_trousseau.keys:
+                for k, v in types_conv.items():
+                    if item._fctunpack.__name__.endswith(k):
+                        if isinstance(v, list):
+                            v = v[1] if item.len <= v[0] else v[2]
+                        break
+                else:
+                    v = '?TYPE?'
+                fields += ',\n    {} {}'.format(item.name,
+                                                str(v).format(len=item.len))
+            print(query.format(table_name=self.cat.table_aux_name,
+                               fields=fields))
         # DATA FIELD
-        fields = ""
-        for item in self.cat.data_trousseau.keys:
-            for k, v in types_conv.items():
-                if item._fctunpack.__name__.endswith(k):
-                    if isinstance(v, list):
-                        v = v[1] if item.len <= v[0] else v[2]
-                    break
-            else:
-                v = '?TYPE?'
-            fields += ',\n    {} {}'.format(item.name,
-                                            str(v).format(len=item.len))
-        print(query.format(table_name=self.cat.table_data_name, fields=fields))
+        if self.cat.data_trousseau is not None:
+            fields = ""
+            for item in self.cat.data_trousseau.keys:
+                for k, v in types_conv.items():
+                    if item._fctunpack.__name__.endswith(k):
+                        if isinstance(v, list):
+                            v = v[1] if item.len <= v[0] else v[2]
+                        break
+                else:
+                    v = '?TYPE?'
+                fields += ',\n    {} {}'.format(item.name,
+                                                str(v).format(len=item.len))
+            print(query.format(table_name=self.cat.table_data_name,
+                               fields=fields))
 
