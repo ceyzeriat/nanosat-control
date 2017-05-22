@@ -71,7 +71,7 @@ class CategoryRegistration(object):
         """
         # AUX HEADER
         if self.cat.table_aux_name is not None:
-            print("Category '{}', Auxiliary Header Table '{}'\n".format(
+            print("\n\nCategory '{}', Auxiliary Header Table '{}'\n".format(
                                                 self.cat.name,
                                                 self.cat.table_aux_name))
             for item in self.cat.aux_trousseau.keys:
@@ -80,7 +80,7 @@ class CategoryRegistration(object):
                     print('!!! uppercase is not allowed in ccsds keys')
         # DATA FIELD
         if self.cat.table_data_name is not None:
-            print("Category '{}', Data field Table '{}'\n".format(
+            print("\n\nCategory '{}', Data field Table '{}'\n".format(
                                                 self.cat.name,
                                                 self.cat.table_data_name))
             for item in self.cat.data_trousseau.keys:
@@ -115,6 +115,7 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
                       '2hex': 'bytea',
                       '2txt': [125, 'varchar({len})', 'text'],
                       '2float': [32, 'real', 'double precision']}
+        ret = []
         # HEADER AUX
         if self.cat.aux_trousseau is not None:
             fields = ""
@@ -128,9 +129,9 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
                     v = '?TYPE?'
                 fields += ',\n    {} {}'.format(item.name,
                                                 str(v).format(len=item.len))
-            print(query.format(table_name=self.cat.table_aux_name,
-                               unique=" UNIQUE",
-                               fields=fields))
+            ret.append(query.format(table_name=self.cat.table_aux_name,
+                                    unique=" UNIQUE",
+                                    fields=fields)))
         # DATA FIELD
         if self.cat.data_trousseau is not None:
             fields = ""
@@ -144,7 +145,7 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
                     v = '?TYPE?'
                 fields += ',\n    {} {}'.format(item.name,
                                                 str(v).format(len=item.len))
-            print(query.format(table_name=self.cat.table_data_name,
-                               unique="",
-                               fields=fields))
-
+            ret.append(query.format(table_name=self.cat.table_data_name,
+                                    unique="",
+                                    fields=fields)))
+        return "\n\n".join(ret)

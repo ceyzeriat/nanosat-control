@@ -214,20 +214,20 @@ CATEGORIESPLD = {
                                         aux_trousseau=HEADAUX_4,
                                         data_file='param_payload_hk'),
 
-               5: CCSDSCategory(name='HF science',
-                                number=5,
-                                aux_trousseau=HEADAUX_5,
-                                data_file='param_hf_science'),
+                5: CCSDSCategory(name='HF science',
+                                 number=5,
+                                 aux_trousseau=HEADAUX_5,
+                                 data_file='param_hf_science'),
 
-               6: CCSDSCategory(name='pld report',
-                                number=6,
-                                aux_trousseau=None,
-                                data_file='param_pld_report'),
+                6: CCSDSCategory(name='pld report',
+                                 number=6,
+                                 aux_trousseau=None,
+                                 data_file='param_pld_report'),
 
-               7: CCSDSCategory(name='pld beacon',
-                                number=7,
-                                aux_trousseau=None,
-                                data_file='param_pld_beacon')
+                7: CCSDSCategory(name='pld beacon',
+                                 number=7,
+                                 aux_trousseau=None,
+                                 data_file='param_pld_beacon')
                         }
 
 # extend all keys with common categories
