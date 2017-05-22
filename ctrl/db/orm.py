@@ -334,29 +334,25 @@ def save_TM_to_DB(hd, hdx, data):
     return TM.id
 
 
-def get_RACK_TCid(dbid):
+def get_RACK_TCid():
     """
-    Updates a RACK TM with the id of the latest TC sent
-    Returns the DB id of the TC
-
-    Args:
-      * dbid (int): the DB id of the RACK TM to update
+    Returns the DB id of the latest TC sent to which the current RACK TM
+    is acknowledging the receipt
     """
     if not running:
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
-    TMHX = TABLES['TmcatRecAcknowledgement']
     # just grab the latest TC that was actually sent
     idx = DB.query(TC.id).filter(TC.time_sent != None).\
             order_by(TC.id.desc()).limit(1).first()
     DB.commit()
     if idx is None:
-        return
+        return None
     else:
         return idx[0]
 
 
-def get_ACK_TCid(pkid, ack):
+def get_ACK_TCid(pkid):
     """
     Gets the TC id to be recorded in a EACK or FACK TM given the id of
     the latest TC whose packet_id is provided
@@ -369,18 +365,12 @@ def get_ACK_TCid(pkid, ack):
     if not running:
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
-    if ack == 'fack':
-        TMHX = TABLES['TmcatFmtAcknowledgement']
-    elif ack == 'eack':
-        TMHX = TABLES['TmcatExeAcknowledgement']
-    else:
-        return
     # grab the TC that was sent and to which we're replying
     idx = DB.query(TC.id).filter(TC.packet_id == int(pkid)).\
             order_by(TC.id.desc()).limit(1).first()
     DB.commit()
     # can't find the TC... wasn't saved?
     if idx is None:
-        return
+        return None
     else:
         return idx[0]
