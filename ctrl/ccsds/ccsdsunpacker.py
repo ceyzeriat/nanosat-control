@@ -144,11 +144,12 @@ class CCSDSUnPacker(object):
             start += param_ccsds.HEADER_S_KEYS_TELEMETRY.size
         else:
             start += param_ccsds.HEADER_S_KEYS_TELECOMMAND.size
-        cat = int(hds[param_ccsds.PACKETCATEGORY.name])
+        catnum = int(hds[param_ccsds.PACKETCATEGORY.name])
         pld = int(hds[param_ccsds.PAYLOADFLAG.name])
         # aux header size
-        start += param_category.CATEGORIES[pld][cat].aux_size
+        cat = param_category.CATEGORIES[pld][catnum]
+        start += cat.aux_size
         data['all'] = packet[start:]
-        if param_category.CATEGORIES[pld][cat].data_trousseau is not None:
-            data['unpacked'] = TROUSSEAU.unpack(data['all'])
+        if cat.data_trousseau is not None:
+            data['unpacked'] = cat.data_trousseau.unpack(data['all'])
         return data
