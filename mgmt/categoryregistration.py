@@ -129,7 +129,7 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
                 fields += ',\n    {} {}'.format(item.name,
                                                 str(v).format(len=item.len))
             print(query.format(table_name=self.cat.table_aux_name,
-                               unique=" UNIQUE"
+                               unique=" UNIQUE",
                                fields=fields))
         # DATA FIELD
         if self.cat.data_trousseau is not None:
@@ -145,6 +145,6 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
                 fields += ',\n    {} {}'.format(item.name,
                                                 str(v).format(len=item.len))
             print(query.format(table_name=self.cat.table_data_name,
-                               unique=""
+                               unique="",
                                fields=fields))
 
