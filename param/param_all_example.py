@@ -182,7 +182,7 @@ RAWPACKETFOLDER = './raw_data'
 
 
 # the format of the timestamp in the log file
-LOGFILETIMESTAMPFMT = '%F %T.%f'
+LOGFILETIMESTAMPFMT = '%Y-%m-%d %H:%M:%S.%f'
 
 
 # the reserved input parameter key for declaring the report key

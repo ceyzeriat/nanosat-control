@@ -180,8 +180,8 @@ def init():
         ssh.load_host_keys(os.path.expanduser( os.path.join("~", ".ssh",
                                                             "known_hosts")))
         ssh.connect(param_all.TELEMETRYSAVESERVER,
-                    username=param_all.TELEMETRYSAVEUSER,
-                    password=param_all.TELEMETRYSAVEPASS)
+                    username=core.TELEMETRYSAVEUSER,
+                    password=core.TELEMETRYSAVEPASS)
         sftp = ssh.open_sftp()
         # creates the root user-folder if missing and moves into it
         sftp = moveto_save_folder(sftp=sftp)
