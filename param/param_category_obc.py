@@ -27,23 +27,13 @@
 
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.ccsds.ccsdskey import CCSDSKey
+from ctrl.ccsds.ccsdscategory import CCSDSCategory
 from ctrl.utils import bincore
 
 from . import param_category_common as cmn
 
 
 __all__ = []
-
-
-RACKCAT = 0
-
-CATEGORYREGISTRATIONOBC = { RACKCAT: '00000',  # rec ack
-                            1: '00001',  # beacon
-                            2: '00010',  # boot error report
-                            3: '00011',  # event report
-                            4: '00100',  # house keeping
-                            5: '00101',  # dump answer data
-                            6: '00110'}  # patch list segments
 
 
 TELECOMMANDIDMIRROR = CCSDSKey( name='telecommand_id_mirror',
@@ -86,67 +76,62 @@ NSEGS = CCSDSKey(       name='n_segments',
                         verbose="Total Number of segments received",
                         disp="Nseg")
 
-CATEGORY_RACKCAT = CCSDSTrousseau([], octets=False, name='reception ack')  # rec ack
-CATEGORY_1 = CCSDSTrousseau([], octets=False, name='beacon')  # beacon
-CATEGORY_2 = CCSDSTrousseau([], octets=False, name='boot error report')  # boot error report ?????
-CATEGORY_3 = CCSDSTrousseau([], octets=False, name='event report')  # event report ?????
-CATEGORY_4 = CCSDSTrousseau([], octets=False, name='HK')  # HK
-CATEGORY_5 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, STARTADDRESS, BYTESNUMBER], octets=False, name='dump answer data')  # dump answer data
-CATEGORY_6 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, NSEGS], octets=False, name='patch list segments')  # patch list segments
+HEADAUX_RACKCAT = CCSDSTrousseau([], octets=False)  # rec ack
+#HEADAUX_1 = CCSDSTrousseau([], octets=False)  # beacon
+#HEADAUX_2 = CCSDSTrousseau([], octets=False report')  # boot error report ?????
+#HEADAUX_3 = CCSDSTrousseau([], octets=False)  # event report ?????
+#HEADAUX_4 = CCSDSTrousseau([], octets=False)  # HK
+HEADAUX_5 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, STARTADDRESS, BYTESNUMBER], octets=False)  # dump answer data
+HEADAUX_6 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, NSEGS], octets=False)  # patch list segments
 
 
-# (payloadd, category)
+# acknowledgement of reception
+RACKCAT = 0
+
+# (payload, category)
 ACKCATEGORIESOBC = [(0, RACKCAT)]
 
 
-# header aux
-PACKETCATEGORIESOBC = { RACKCAT: CATEGORY_RACKCAT,  # rec ack
-                        1: CATEGORY_1,  # beacon
-                        2: CATEGORY_2,  # boot error report
-                        3: CATEGORY_3,  # event report
-                        4: CATEGORY_4,  # HK
-                        5: CATEGORY_5,  # dump answer data
-                        6: CATEGORY_6}  # patch list segs
+CATEGORIESOBC = {
+                RACKCAT: CCSDSCategory(name='recep acknowledgement',
+                                        number=RACKCAT,
+                                        aux_trousseau=HEADAUX_RACKCAT,
+                                        data_file=None),
 
+               1: CCSDSCategory(name='beacon',
+                                number=1,
+                                aux_trousseau=None,
+                                data_file=None),
 
-PACKETCATEGORYSIZESOBC = {}
-for k, cat in PACKETCATEGORIESOBC.items():
-    PACKETCATEGORYSIZESOBC[k] = cat.size
+               2: CCSDSCategory(name='boot error report',
+                                number=2,
+                                aux_trousseau=None,
+                                data_file=None),
 
+               3: CCSDSCategory(name='event report',
+                                number=3,
+                                aux_trousseau=None,
+                                data_file=None),
 
-TABLECATEGORYOBC = {RACKCAT: 'TmcatRcpAcknowledgement',  # rec ack
-                    1: None,  # beacon
-                    2: None,  # boot error report
-                    3: None,  # event report
-                    4: None,  # HK
-                    5: None,  # dump answer data
-                    6: None}  # patch list segs
+               4: CCSDSCategory(name='house keeping',
+                                number=4,
+                                aux_trousseau=None,
+                                data_file=None),
 
-TABLEDATAOBC = {    RACKCAT: None,  # rec ack
-                    1: None,  # beacon
-                    2: None,  # boot error report
-                    3: None,  # event report
-                    4: None,  # HK
-                    5: None,  # dump answer data
-                    6: None}  # patch list segs
+               5: CCSDSCategory(name='dump answer data',
+                                number=5,
+                                aux_trousseau=HEADAUX_5,
+                                data_file='param_dump_ans_data'),
 
-
-FILEDATACRUNCHINGOBC = {RACKCAT: None,  # rec ack
-                        1: 'param_beacon',  # beacon
-                        2: None,  # boot error report
-                        3: None,  # event report
-                        4: None, # HK
-                        5: 'param_dump_ans_data',  # dump answer data
-                        6: 'param_patch_list_segs'}  # patch list segs
+               6: CCSDSCategory(name='patch list segment',
+                                number=6,
+                                aux_trousseau=HEADAUX_6,
+                                data_file='param_patch_list_segs')
+                }
 
 
 # extend all keys with common categories
-for k in cmn.CATEGORYREGISTRATIONCOMMON.keys():
-    CATEGORYREGISTRATIONOBC[k] = cmn.CATEGORYREGISTRATIONCOMMON[k]
-    PACKETCATEGORIESOBC[k] = cmn.PACKETCATEGORIESCOMMON[k]
-    PACKETCATEGORYSIZESOBC[k] = cmn.PACKETCATEGORYSIZESCOMMON[k]
-    TABLECATEGORYOBC[k] = cmn.TABLECATEGORYCOMMON[k]
-    TABLEDATAOBC[k] = cmn.TABLEDATACOMMON[k]
-    FILEDATACRUNCHINGOBC[k] = cmn.FILEDATACRUNCHINGCOMMON[k]
+CATEGORIESOBC.update(cmn.CATEGORIESCOMMON)
+
 
 ACKCATEGORIESOBC += cmn.ACKCATEGORIESCOMMON

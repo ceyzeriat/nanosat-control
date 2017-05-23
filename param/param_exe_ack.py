@@ -27,6 +27,7 @@
 
 from byt import Byt
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from ctrl.utils import bincore
 
 
 __all__ = ['TROUSSEAU']
@@ -35,21 +36,7 @@ __all__ = ['TROUSSEAU']
 MAXLENGTHERRORMESSAGE = 100
 
 
-def hex2txt(v, **kwargs):
-    """
-    verbose = "binary -> message"
-    """
-    return ''.join([chr(i) for i in v.ints() if i >= 32 and i <= 126])
-
-
-def txt2hex(txt, **kwargs):
-    """
-    verbose = "message -> binary"
-    """
-    return Byt([i for i in Byt(txt).ints() if i >= 32 and i <= 126])
-
-
-KEYS = [dict(name='error_message', start=0, l=MAXLENGTHERRORMESSAGE, fctunpack=hex2txt, fctpack=txt2hex,
+KEYS = [dict(name='error_message', start=0, l=MAXLENGTHERRORMESSAGE, fctunpack=bincore.bin2hex, fctpack=bincore.hex2bin,
 				verbose="Optional: an error message (ascii string). The message is only put in the frame if errorCode is not 0",
                 disp='err')]
 

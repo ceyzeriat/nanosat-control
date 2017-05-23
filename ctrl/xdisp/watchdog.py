@@ -312,7 +312,7 @@ class Xdisp(object):
         lvl = int(infos[param_ccsds.LEVELFLAG.name])
         pid = int(infos[param_ccsds.PID.name])
         catnum = int(infos[param_ccsds.PACKETCATEGORY.name])
-        cat = param_category.PACKETCATEGORIES[pld][catnum].name
+        cat = param_category.CATEGORIES[pld][catnum]
         self._disp(self.TM,
                    PrintOut(TMFMT.format(
                                 timestamp=core.now().strftime("%F %T"),
@@ -320,7 +320,7 @@ class Xdisp(object):
                                 lvl=L1ICO if lvl == 1 else L0ICO,
                                 pid=str(PIDREGISTRATION_REV[pid][pld][lvl]),
                                 pkid=str(packet_id),
-                                cat=str(cat),
+                                cat=str(cat.name),
                                 catnum=str(catnum),
                                 sz=str(infos['sz'])),
                             (0, 0), opts=self.WHITE, newline=True))

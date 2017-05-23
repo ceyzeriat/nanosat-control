@@ -214,9 +214,9 @@ class CCSDSPacker(object):
         # add the header aux size into the packet length
         if not self.mode == 'telecommand':
             values[param_ccsds.DATALENGTH.name] +=\
-                param_category.PACKETCATEGORYSIZES[\
+                param_category.CATEGORIES[\
                     int(values[param_ccsds.PAYLOADFLAG.name])][\
-                    int(values.get(param_ccsds.PACKETCATEGORY.name, 0))]
+                    int(values[param_ccsds.PACKETCATEGORY.name])].aux_size
         # update the length with data length
         values[param_ccsds.DATALENGTH.name] += int(datalen)
         data, retvals = param_ccsds.HEADER_P_KEYS.pack(allvalues=values,
@@ -288,12 +288,13 @@ class CCSDSPacker(object):
         if self.mode != 'telemetry':
             return (Byt(), {}) if retvalues else Byt()
         pktCat = int(pktCat)
-        if pktCat not in param_category.PACKETCATEGORIES[int(pldFlag)].keys():
+        if pktCat not in param_category.CATEGORIES[int(pldFlag)].keys():
             raise ccsdsexception.CategoryMissing(pktCat, pldFlag)
-        hdx = param_category.PACKETCATEGORIES[int(pldFlag)][pktCat]
-        if hdx.size == 0:
+        cat = param_category.CATEGORIES[int(pldFlag)][pktCat]
+        if cat.aux_size == 0:
             return (Byt(), {}) if retvalues else Byt()
-        data, retvals = hdx.pack(allvalues=values, retdbvalues=retdbvalues)
+        data, retvals = cat.aux_trousseau.pack(allvalues=values,
+                                               retdbvalues=retdbvalues)
         if retvalues:
             return data, retvals
         else:

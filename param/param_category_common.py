@@ -27,23 +27,11 @@
 
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.ccsds.ccsdskey import CCSDSKey
+from ctrl.ccsds.ccsdscategory import CCSDSCategory
 from ctrl.utils import bincore
 
 
-__all__ = ['CATEGORYREGISTRATIONCOMMON', 'ACKCATEGORIESCOMMON',
-            'PACKETCATEGORIESCOMMON', 'PACKETCATEGORYSIZESCOMMON',
-            'TABLECATEGORYCOMMON', 'TABLEDATACOMMON',
-            'FILEDATACRUNCHINGCOMMON', 'TELECOMMANDANSWERCAT']
-
-
-EACKCAT = 31
-FACKCAT = 30
-TELECOMMANDANSWERCAT = 29
-
-
-CATEGORYREGISTRATIONCOMMON = {  EACKCAT: '11111',  # exec ack
-                                FACKCAT: '11110',  # fmt ack
-                                TELECOMMANDANSWERCAT: '11101'}  # tc answer
+__all__ = []
 
 
 TELECOMMANDIDMIRROR = CCSDSKey( name='telecommand_id_mirror',
@@ -72,45 +60,40 @@ ERRORCODE = CCSDSKey(       name='error_code',
 
 
 # exec ack
-CATEGORY_EACKCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
-                                octets=False, name='exec ack')
+HEADAUX_EACKCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
+                                octets=False)
 # fmt ack
-CATEGORY_FACKCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
-                                octets=False, name='fmt ack')
+HEADAUX_FACKCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
+                                octets=False)
 # tc answer
-CATEGORY_TELECOMMANDANSWERCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR],
-                                octets=False, name='tc answer')
+HEADAUX_TELECOMMANDANSWERCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR],
+                                octets=False)
 
 
-# (payloadd, category)
+EACKCAT = 31
+FACKCAT = 30
+TELECOMMANDANSWERCAT = 29
+
+
+CATEGORIESCOMMON = {
+            EACKCAT: CCSDSCategory(name='exe acknowledgement',
+                                    number=EACKCAT,
+                                    aux_trousseau=HEADAUX_EACKCAT,
+                                    data_file='param_exe_ack'),
+
+           FACKCAT: CCSDSCategory(name='fmt acknowledgement',
+                                    number=FACKCAT,
+                                    aux_trousseau=HEADAUX_FACKCAT,
+                                    data_file=None),
+
+           TELECOMMANDANSWERCAT: CCSDSCategory(name='tc answer',
+                                                number=TELECOMMANDANSWERCAT,
+                                                aux_trousseau=HEADAUX_TELECOMMANDANSWERCAT,
+                                                data_file='param_tc_answer')
+                    }
+
+# (payload, category)
 ACKCATEGORIESCOMMON = [(0, EACKCAT),
                        (0, FACKCAT),
                        (1, EACKCAT),
                        (1, FACKCAT)]
-
-
-# header aux
-PACKETCATEGORIESCOMMON = {  EACKCAT: CATEGORY_EACKCAT,  # exec ack
-                            FACKCAT: CATEGORY_FACKCAT,  # fmt ack
-                            TELECOMMANDANSWERCAT: CATEGORY_TELECOMMANDANSWERCAT}  # tc answer
-
-
-PACKETCATEGORYSIZESCOMMON = {}
-for k, cat in PACKETCATEGORIESCOMMON.items():
-    PACKETCATEGORYSIZESCOMMON[k] = cat.size
-
-
-
-TABLECATEGORYCOMMON = { EACKCAT: 'TmcatExeAcknowledgement',  # exec ack
-                        FACKCAT: 'TmcatFmtAcknowledgement',  # fmt ack
-                        TELECOMMANDANSWERCAT: 'TmcatTelecommandAnswer'}  # tc answer
-
-
-TABLEDATACOMMON = { EACKCAT: 'DataExeAcknowledgement',  # exec ack
-                    FACKCAT: None,  # fmt ack
-                    TELECOMMANDANSWERCAT: 'DataTelecommandAnswer'}  # tc answer
-
-
-FILEDATACRUNCHINGCOMMON = { EACKCAT: 'param_exe_ack',  # exec ack
-                            FACKCAT: None,  # fmt ack
-                            TELECOMMANDANSWERCAT: 'param_tc_answer'}  # tc answer

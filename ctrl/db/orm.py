@@ -246,14 +246,13 @@ def get_TM(pkid=None, dbid=None):
     pldflag = int(dictm[param_ccsds.PAYLOADFLAG.name])
     # deal with header aux
     # table name for hdx
-    cattbl = param_category.TABLECATEGORY[pldflag][catnum]
+    cat = param_category.CATEGORIES[pldflag][catnum]
     dichdx = {}
-    if cattbl is None:
+    if cat.object_aux_name is None:
         thehdx = None
     else:
-        TMHDX = TABLES[cattbl]
-        thehdx = getattr(thetm, core.camelize_singular_rev(cattbl) +\
-                            '_collection', [])
+        TMHDX = TABLES[cat.object_aux_name]
+        thehdx = getattr(thetm, cat.table_aux_name + '_collection', [])
         if len(thehdx) > 0:
             # there can be only one
             thehdx = thehdx[0]
@@ -263,19 +262,18 @@ def get_TM(pkid=None, dbid=None):
             thehdx = None
     # deal with data
     # table name for data
-    datatbl = param_category.TABLEDATA[pldflag][catnum]
     dicdata = []
-    if datatbl is None:
+    if cat.object_data_name is None:
         thedata = None
     else:
-        TMDATA = TABLES[datatbl]
-        thedata = getattr(thetm, core.camelize_singular_rev(datatbl) +\
-                            '_collection', [])
-        if len(thedata) == 0:
+        TMDATA = TABLES[cat.object_data_name]
+        thedata = getattr(thetm, cat.table_data_name + '_collection', [])
+        if len(thedata) > 0:
             for dataline in thedata:
-                dicdata.append({})
+                thedicline = {}
                 for key in get_column_keys(TMDATA):
-                    dicdata[key] = getattr(dataline, key, None)
+                    thedicline[key] = getattr(dataline, key, None)
+                dicdata.append(thedicline)
         else:
             thedata = None
     return (thetm, dictm), (thehdx, dichdx), (thedata, dicdata)
@@ -305,15 +303,15 @@ def save_TM_to_DB(hd, hdx, data):
     catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
     pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
     # saving the aux header
-    tbl = param_category.TABLECATEGORY[pldflag][catnum]
-    if tbl is not None:
+    cat = param_category.CATEGORIES[pldflag][catnum]
+    if cat.object_aux_name is not None:
         hdx = dict(hdx)
         hdx['telemetry_packet'] = TM.id
-        DB.add(TABLES[tbl](**hdx))
+        DB.add(TABLES[cat.object_aux_name](**hdx))
         DB.commit()
     # saving the data
-    if param_category.TABLEDATA[pldflag][catnum] is not None:
-        tbl = param_category.TABLEDATA[pldflag][catnum]
+    tbl = cat.object_data_name
+    if tbl is not None:
         # if saving the data from TC answer
         if catnum == param_category.TELECOMMANDANSWERCAT:
             for k, v in data['unpacked'].items():
@@ -336,29 +334,25 @@ def save_TM_to_DB(hd, hdx, data):
     return TM.id
 
 
-def get_RACK_TCid(dbid):
+def get_RACK_TCid():
     """
-    Updates a RACK TM with the id of the latest TC sent
-    Returns the DB id of the TC
-
-    Args:
-      * dbid (int): the DB id of the RACK TM to update
+    Returns the DB id of the latest TC sent to which the current RACK TM
+    is acknowledging the receipt
     """
     if not running:
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
-    TMHX = TABLES['TmcatRecAcknowledgement']
     # just grab the latest TC that was actually sent
     idx = DB.query(TC.id).filter(TC.time_sent != None).\
             order_by(TC.id.desc()).limit(1).first()
     DB.commit()
     if idx is None:
-        return
+        return None
     else:
         return idx[0]
 
 
-def get_ACK_TCid(pkid, ack):
+def get_ACK_TCid(pkid):
     """
     Gets the TC id to be recorded in a EACK or FACK TM given the id of
     the latest TC whose packet_id is provided
@@ -371,18 +365,12 @@ def get_ACK_TCid(pkid, ack):
     if not running:
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
-    if ack == 'fack':
-        TMHX = TABLES['TmcatFmtAcknowledgement']
-    elif ack == 'eack':
-        TMHX = TABLES['TmcatExeAcknowledgement']
-    else:
-        return
     # grab the TC that was sent and to which we're replying
     idx = DB.query(TC.id).filter(TC.packet_id == int(pkid)).\
             order_by(TC.id.desc()).limit(1).first()
     DB.commit()
     # can't find the TC... wasn't saved?
     if idx is None:
-        return
+        return None
     else:
         return idx[0]

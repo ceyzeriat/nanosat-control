@@ -27,6 +27,7 @@
 
 from byt import Byt
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from ctrl.utils import bincore
 
 
 __all__ = []
@@ -35,22 +36,8 @@ __all__ = []
 MAXLENGTHMESSAGE = 235  # octets
 
 
-def hex2txt(v, **kwargs):
-    """
-    verbose = "binary -> message"
-    """
-    return ''.join([chr(i) for i in v.ints() if i >= 32 and i <= 126])
-
-
-def txt2hex(txt, pad, **kwargs):
-    """
-    verbose = "message -> binary"
-    """
-    return Byt([i for i in Byt(txt).ints() if i >= 32 and i <= 126])
-
-
-KEYS = [dict(name='message', start=0, l=MAXLENGTHMESSAGE, fctunpack=hex2txt,
-                fctpack=txt2hex,
+KEYS = [dict(name='message', start=0, l=MAXLENGTHMESSAGE, fctunpack=bincore.bin2txt,
+                fctpack=bincore.txt2bin,
                 verbose="A report message (ascii string)",
                 disp='text', pad=False)]
 

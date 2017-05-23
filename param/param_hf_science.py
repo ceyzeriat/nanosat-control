@@ -56,7 +56,7 @@ class HFScienceCCSDSTrousseau(CCSDSTrousseau):
         * data (byts): the chain of octets to unpack
         """
         nlines = len(data) // self.size
-        lines = [{}] * nlines
+        lines = [{} for i in range(nlines)]
         for idx in range(nlines):
             lines[idx] = super(HFScienceCCSDSTrousseau, self).unpack(
                                         data[idx*self.size:(idx+1)*self.size])
@@ -75,4 +75,4 @@ class HFScienceCCSDSTrousseau(CCSDSTrousseau):
         return "\n".join(res)
 
 
-TROUSSEAU = HFScienceCCSDSTrousseau(KEYS, octets=True)
+TROUSSEAU = HFScienceCCSDSTrousseau(KEYS, octets=True, listof=True)

@@ -158,6 +158,24 @@ class CategoryMissing(CCSDSException):
         self.message = "Packet category '{}' with payload flag '{}' does "\
                        "not exist".format(cat, pld)
 
+class WrongCategoryTableName(CCSDSException):
+    """
+    Category has wrong name format
+    """
+    def __init__(self, name, *args, **kwargs):
+        self._init(name, *args, **kwargs)
+        self.message = "Category '{}' is not valid. Should be "\
+                       "underscorded-lower-plural".format(name)
+
+class WrongCategoryObjectName(CCSDSException):
+    """
+    Category has wrong name format
+    """
+    def __init__(self, name, *args, **kwargs):
+        self._init(name, *args, **kwargs)
+        self.message = "Category '{}' is not valid. Should be "\
+                       "Capitalized-Camelcase-singular".format(name)
+
 class PIDMissing(CCSDSException):
     """
     PID does not exist

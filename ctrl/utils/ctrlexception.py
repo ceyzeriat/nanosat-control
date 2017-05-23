@@ -166,6 +166,15 @@ class RFCheckoutBoxIssue(CTRLException):
         self.message = "Can't listen to RFCheckoutBox"
 
 
+class TNCIssue(CTRLException):
+    """
+    When can't init TNC
+    """
+    def __init__(self, *args, **kwargs):
+        self._init(*args, **kwargs)
+        self.message = "Can't initialize TNC"
+
+
 class NegativeUnsignedInteger(CTRLException):
     """
     When an unsigned int is given a negative value

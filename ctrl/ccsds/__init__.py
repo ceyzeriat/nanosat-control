@@ -29,6 +29,8 @@ from . import param_ccsds
 from . import ccsdsexception
 from .ccsdskey import *
 from .ccsdspacker import *
+from .ccsdstrousseau import *
+from .ccsdscategory import *
 from .ccsdsblob import *
 from .ccsdsunpacker import CCSDSUnPacker as _CCSDSUnPacker
 from .ccsdspacker import CCSDSPacker as _CCSDSPacker
