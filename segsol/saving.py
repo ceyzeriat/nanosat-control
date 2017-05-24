@@ -97,13 +97,14 @@ def moveto_save_folder(sftp, t=None):
     """
     Given the sftp object, cd to the save folder after
     creating it if it didn't exist.
+
     Args:
       * t (datetime): if None, goes to the user_id save folder,
         otherwise to the user_id/YYYYMMDD save folder
     """
     path = param_all.TELEMETRYSAVEFOLDER.rstrip('/')\
                     .format(user_id=param_all.RECEIVERID)
-    if root:
+    if t is None:
         path = path[:path.rfind('/')]  # server is linux
     else:
         path = t.strftime(path)
