@@ -54,7 +54,7 @@ SHOWUNICODE = True
 ENABLESHOW = True
 
 # which antenna are you using
-ANTENNALISTENED = 'tncrfbox'  # or 'checkoutbox' or 'serial' or 'tncrfbox'
+ANTENNALISTENED = 'checkoutbox'  # or 'checkoutbox' or 'serial'
 
 # the path to the file containing the packet id counter
 PACKETIDFILE = ['.segsol', 'tc_packet_id']
@@ -72,10 +72,10 @@ LOGFILE = ['watch.log']
 CSSOURCEFILE = ['.segsol', 'callsign_source']
 CSDESTFILE = ['.segsol', 'callsign_destination']
 
-# who is the emitter
+# who is the emitter, cf database
 EMITTERID = 1  # ['.segsol', 'radio_id']
 
-# who is the receiver
+# who is the receiver, cf database
 RECEIVERID = 1  # ['.segsol', 'callsign_source']
 
 # day-reference from unix time
@@ -93,11 +93,11 @@ CONTROLLINGNAME = 'control'
 SAVINGNAME = 'save'
 WATCHINGNAME = 'watch'
 SHOWINGNAME = 'show'
-
+SPYINGNAME = 'spy'
 
 # the port for telemetry broadcasting/listening (alpha)
 LISTENINGPORT = (50007, LISTENINGNAME)
-LISTENINGPORTLISTENERS = [SAVINGNAME, WATCHINGNAME, CONTROLLINGNAME]
+LISTENINGPORTLISTENERS = [SAVINGNAME, WATCHINGNAME, CONTROLLINGNAME, SPYINGNAME]
 
 # the port for telecommand broadcasting/listening (beta)
 CONTROLLINGPORT = (50006, CONTROLLINGNAME)
@@ -111,6 +111,9 @@ SAVINGPORTLISTENERS = [WATCHINGNAME]
 WATCHINGPORT = (50004, WATCHINGNAME)
 WATCHINGPORTLISTENERS = [SHOWINGNAME]  # CONTROLLINGNAME
 
+# the port for saving status broadcasting/listening (delta)
+SPYINGPORT = (50007, SPYINGNAME)
+SPYINGPORTLISTENERS = [SAVINGNAME, WATCHINGNAME, CONTROLLINGNAME]
 
 # process timeout for the watchdog to get angry
 PROCESSTIMEOUT = 5  # sec
@@ -120,14 +123,6 @@ PROCESSTIMEOUT = 5  # sec
 RFCHECKOUTBOXPORT = 3211
 RFCHECKOUTBOXTIMEOUT = 1.  # sec
 RFCHECKOUTBOXLENGTH = 1024  # octet
-
-
-# SERIAL
-# port 
-SERIALUSBPORT = '/dev/ttyUSB0'
-SERIALUSBTIMEOUT = 1.  # sec
-SERIALUSBLENGTH = 1024  # octet
-SERIALUSBBAUDRATE = 57600  # bananas per pencil
 
 
 # mix, TNC for TC and RFCheckoutBox for reading
@@ -145,6 +140,12 @@ TNCPATHOLOGICCMDREPLACE = TNCPATHOLOGICCMD + TNCPATHOLOGICESC
 GPREDICTPORT = 4532
 
 
+# SERIAL
+# port 
+SERIALUSBPORT = '/dev/ttyUSB0'
+SERIALUSBTIMEOUT = 1.  # sec
+SERIALUSBLENGTH = 1024  # octet
+SERIALUSBBAUDRATE = 57600  # bananas per pencil
 
 # where the raw telemetry are dumped (locally), relative to HOME
 TELEMETRYDUMPFOLDER = ['tm_data']
@@ -182,7 +183,7 @@ RAWPACKETFOLDER = './raw_data'
 
 
 # the format of the timestamp in the log file
-LOGFILETIMESTAMPFMT = '%F %T.%f'
+LOGFILETIMESTAMPFMT = '%Y-%m-%d %H:%M:%S.%f'
 
 
 # the reserved input parameter key for declaring the report key
@@ -192,7 +193,7 @@ REPORTKEY = 'report_key'
 SAVETC = True
 
 
-# length of the signature key
+# length of the key
 KEYLENGTH = 32  # in octets
 KEYLENGTHCCSDS = 16  # in octets
 # file of the key
