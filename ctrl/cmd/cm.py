@@ -216,8 +216,9 @@ class Cm(object):
                 v = "'{}'".format(chr(v)*p.size)
             else:
                 v = str(v)
-            if p.size > 1 and p.typ.typ != 'str':
-                v = "[{}]".format(','.join([v for i in range(p.size)]))
+            sz = p.size if p.size is not None else 5
+            if sz > 1 and p.typ.typ != 'str':
+                v = "[{}]".format(','.join([v for i in range(sz)]))
             params.append("{}={}".format(p.name, v))
         print("c.{}({})".format(self.name, ', '.join(params)))
 

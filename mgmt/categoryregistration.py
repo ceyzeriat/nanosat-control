@@ -119,11 +119,12 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
         # HEADER AUX
         if self.cat.aux_trousseau is not None:
             fields = ""
+            conv = 8 if self.cat.aux_trousseau.octets else 1
             for item in self.cat.aux_trousseau.keys:
                 for k, v in types_conv.items():
                     if item._fctunpack.__name__.endswith(k):
                         if isinstance(v, list):
-                            v = v[1] if item.len <= v[0] else v[2]
+                            v = v[1] if item.len*conv <= v[0] else v[2]
                         break
                 else:
                     v = '?TYPE?'
@@ -135,11 +136,12 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
         # DATA FIELD
         if self.cat.data_trousseau is not None:
             fields = ""
+            conv = 8 if self.cat.data_trousseau.octets else 1
             for item in self.cat.data_trousseau.keys:
                 for k, v in types_conv.items():
                     if item._fctunpack.__name__.endswith(k):
                         if isinstance(v, list):
-                            v = v[1] if item.len <= v[0] else v[2]
+                            v = v[1] if item.len*conv <= v[0] else v[2]
                         break
                 else:
                     v = '?TYPE?'
