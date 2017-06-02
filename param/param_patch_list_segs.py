@@ -34,9 +34,9 @@ __all__ = ['TROUSSEAU']
 
 
 # there should be only one key here
-KEYS = [dict(name='packet_id', start=0, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
+KEYS = [dict(name='seg_id', start=0, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
                 verbose="Segment ID currently received by the satellite",
-                disp='ids', octets=True)]
+                disp='seg', octets=True)]
 
 
 class PatchListSegCCSDSTrousseau(CCSDSTrousseau):
@@ -56,17 +56,18 @@ class PatchListSegCCSDSTrousseau(CCSDSTrousseau):
         # returns a list of the pk_id
         return nums
 
-    def disp(self, vals):
+    def disp(self, data):
         """
         Display the trousseau values
+        Overriding mother's method
 
         Args:
-          * vals (dict): a dictionary containing the values to display
+          * data (list of dict): a list of dictionaries containing the
+            values to display
         """
-        copyvals = dict(vals)
-        # transform the list of the pk_id into a string
-        copyvals[self.keys[0].name] = repr(vals[self.keys[0].name])
-        return super(PatchListSegCCSDSTrousseau, self).disp(copyvals)
+        res = [super(PatchListSegCCSDSTrousseau, self).disp(line)\
+                    for line in data]
+        return "\n".join(res)
 
     def pack(self, allvalues, retdbvalues, **kwargs):
         pass

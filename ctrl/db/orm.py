@@ -123,14 +123,15 @@ def update_sent_TC_time(pkid, t):
     Returns the id of the updated TC
 
     Args:
-      * pkid (int): the packet_id
+      * pkid (int): the packet counter id
       * t (datetime): the sent time
     """
     if not running:
         raise ctrlexception.NoDBConnection()
     t = str(t)
     TC = TABLES['Telecommand']
-    idx = DB.query(TC.id).filter(TC.packet_id == int(pkid))\
+    idx = DB.query(TC.id)\
+            .filter(getattr(TC, param_ccsds.PACKETID.name) == int(pkid))\
             .order_by(TC.id.desc()).limit(1).first()
     if idx is None:
         return
@@ -145,12 +146,13 @@ def get_TC_dbid_from_pkid(pkid):
     timestamp is the time_sent
 
     Args:
-      * pkid (int): the packet_id to investigate
+      * pkid (int): the packet counter id to investigate
     """
     if not running:
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
-    res = DB.query(TC).filter(TC.packet_id == int(pkid))\
+    res = DB.query(TC)\
+            .filter(getattr(TC, param_ccsds.PACKETID.name) == int(pkid))\
             .order_by(TC.id.desc())
     return [(item.id, item.time_sent) for item in res]
 
@@ -161,12 +163,13 @@ def get_TM_dbid_from_pkid(pkid):
     timestamp is the time_sent
 
     Args:
-      * pkid (int): the packet_id to investigate
+      * pkid (int): the packet counter id to investigate
     """
     if not running:
         raise ctrlexception.NoDBConnection()
     TM = TABLES['Telemetry']
-    res = DB.query(TM).filter(TM.packet_id == int(pkid))\
+    res = DB.query(TM)\
+            .filter(getattr(TM, param_ccsds.PACKETID.name) == int(pkid))\
             .order_by(TM.id.desc())
     return [(item.id, item.time_sent) for item in res]
 
@@ -176,7 +179,7 @@ def get_TC(pkid=None, dbid=None):
     Gives a full TC object
 
     Args:
-      * pkid (int): the packet_id of the TC to output
+      * pkid (int): the packet counter id of the TC to output
       * dbid (int) [alternative]: the DB id of the TC to output
 
     Returns:
@@ -193,7 +196,8 @@ def get_TC(pkid=None, dbid=None):
     TC = TABLES['Telecommand']
     thetc = DB.query(TC)
     if dbid is None:
-        thetc = thetc.filter(TC.packet_id == int(pkid))
+        thetc = thetc.filter(
+                    getattr(TC, param_ccsds.PACKETID.name) == int(pkid))
     else:
         thetc = thetc.filter(TC.id == int(dbid))
     thetc = thetc.order_by(TC.id.desc()).limit(1).first()
@@ -230,8 +234,8 @@ def get_TC(pkid=None, dbid=None):
     if len(getattr(thetc, 'tmcat_tc_answers_collection', [])) > 0:
         ansid = thetc.tmcat_tc_answers_collection[0].telemetry_packet
     else:
-        pkid = thetc.getattr(param_ccsds.PACKETID.name)
-        cid = thetc.getattr(param_ccsds.TELECOMMANDID.name)
+        pkid = getattr(thetc, param_ccsds.PACKETID.name)
+        cid = getattr(thetc, param_ccsds.TELECOMMANDID.name)
         ansid = get_TMid_answer_from_TC(cid=cid, pkid=pkid)
         # nothing received, set to None
     return (thetc, dictc), params, (rackid, fackid, eackid), ansid
@@ -242,7 +246,7 @@ def get_TM(pkid=None, dbid=None):
     Gives a full TM object
 
     Args:
-      * pkid (int): the packet_id of the TM to output (will only
+      * pkid (int): the packet counter id of the TM to output (will only
         return the most recent one)
       * dbid (int) [alternative]: the DB id of the TM to output
     """
@@ -251,7 +255,8 @@ def get_TM(pkid=None, dbid=None):
     TM = TABLES['Telemetry']
     thetm = DB.query(TM)
     if dbid is None:
-        thetm = thetm.filter(TM.packet_id == int(pkid))
+        thetm = thetm.filter(
+                    getattr(TM, param_ccsds.PACKETID.name) == int(pkid))
     else:
         thetm = thetm.filter(TM.id == int(dbid))
     thetm = thetm.order_by(TM.id.desc()).limit(1).first()
@@ -363,8 +368,9 @@ def get_RACK_TCid():
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
     # just grab the latest TC that was actually sent
-    idx = DB.query(TC.id).filter(TC.time_sent != None).\
-            order_by(TC.id.desc()).limit(1).first()
+    idx = DB.query(TC.id)\
+            .filter(TC.time_sent != None)\
+            .order_by(TC.id.desc()).limit(1).first()
     DB.commit()
     if idx is None:
         return None
@@ -375,19 +381,20 @@ def get_RACK_TCid():
 def get_ACK_TCid(pkid):
     """
     Gets the TC id to be recorded in a EACK or FACK TM given the id of
-    the latest TC whose packet_id is provided
+    the latest TC whose packet counter id is provided
     Returns the DB id of the TC
 
     Args:
-      * pkid (int): the packet_id of the TC to which the FACK or EACK
-        is replying
+      * pkid (int): the packet counter id of the TC to which the FACK
+        or EACK is replying
     """
     if not running:
         raise ctrlexception.NoDBConnection()
     TC = TABLES['Telecommand']
     # grab the TC that was sent and to which we're replying
-    idx = DB.query(TC.id).filter(TC.packet_id == int(pkid)).\
-            order_by(TC.id.desc()).limit(1).first()
+    idx = DB.query(TC.id)\
+            .filter(getattr(TC, param_ccsds.PACKETID.name) == int(pkid))\
+            .order_by(TC.id.desc()).limit(1).first()
     DB.commit()
     # can't find the TC... wasn't saved?
     if idx is None:
@@ -401,7 +408,7 @@ def get_tcanswer_TCid(pkid=None, dbid=None):
     Finds the dbid of a tcanswer TM
 
     Args:
-      * pkid (int): the packet_id of the TC to scan (will only
+      * pkid (int): the packet counter id of the TC to scan (will only
         return the most recent one)
       * dbid (int) [alternative]: the DB id of the TC to scan
     """
@@ -410,7 +417,7 @@ def get_tcanswer_TCid(pkid=None, dbid=None):
     TC = TABLES['Telecommand']
     thetc = DB.query(TC.id)
     if dbid is None:
-        thetc = thetc.filter(TC.packet_id == int(pkid))
+        thetc = thetc.filter(getattr(TC, param_ccsds.PACKETID.name) == int(pkid))
     else:
         thetc = thetc.filter(TC.id == int(dbid))
     idx = thetc.order_by(TC.id.desc()).limit(1).first()
@@ -428,7 +435,7 @@ def get_TMid_answer_from_TC(cid=None, pkid=None, dbid=None):
 
     Args:
       * cid (int): the command id inside the TC
-      * pkid (int): the packet_id of the TC to scan (will only
+      * pkid (int): the packet counter id of the TC to scan (will only
         return the most recent one)
       * dbid (int) [alternative]: the DB id of the TC to scan
     """
@@ -438,13 +445,14 @@ def get_TMid_answer_from_TC(cid=None, pkid=None, dbid=None):
         TC = TABLES['Telecommand']
         thetc = DB.query(TC)
         if dbid is None:
-            thetc = thetc.filter(TC.packet_id == int(pkid))
+            thetc = thetc.filter(
+                        getattr(TC, param_ccsds.PACKETID.name) == int(pkid))
         else:
             thetc = thetc.filter(TC.id == int(dbid))
         thetc = thetc.order_by(TC.id.desc()).limit(1).first()
         # grab info
-        pkid = thetc.getattr(param_ccsds.PACKETID.name)
-        cid = thetc.getattr(param_ccsds.TELECOMMANDID.name)
+        pkid = getattr(thetc, param_ccsds.PACKETID.name)
+        cid = getattr(thetc, param_ccsds.TELECOMMANDID.name)
         DB.commit()
     for pldflag in [0, 1]:
         for catnum, cat in param_category.CATEGORIES[pldflag].items():
@@ -464,11 +472,15 @@ def get_TMid_answer_from_TC(cid=None, pkid=None, dbid=None):
                     pcc.TELECOMMANDIDMIRROR.name not in cols:
                 continue
             idx = DB.query(TMAUX.telemetry_packet)\
-                    .filter(TMAUX.packet_id_mirror == int(pkid))\
-                    .filter(TMAUX.telecommand_id_mirror == int(cid))\
+                    .filter(getattr(TMAUX,
+                                    param_ccsds.PACKETIDMIRROR.name)\
+                                == int(pkid))\
+                    .filter(getattr(TMAUX,
+                                    param_ccsds.TELECOMMANDIDMIRROR.name)\
+                                == int(cid))\
                     .order_by(TMAUX.id.desc()).limit(1).first()
             DB.commit()
             if idx is not None:
                 return idx[0]
-    # can't find the TC... wasn't saved?
+    # can't find the TM... wasn't saved?
     return None
