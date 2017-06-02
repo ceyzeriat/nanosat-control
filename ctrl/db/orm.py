@@ -33,6 +33,7 @@ from sqlalchemy import update
 from sqlalchemy import and_
 #from sqlalchemy import or_
 from param import param_category
+from param import param_category_common as pcc
 from param import param_apid
 from byt import Byt
 from ..utils import core
@@ -43,7 +44,7 @@ from ..ccsds import param_ccsds
 __all__ = ['init_DB', 'get_column_keys', 'save_TC_to_DB', 'close_DB',
             'save_TM_to_DB', 'update_sent_TC_time', 'get_TC_dbid_from_pkid',
             'get_TC', 'get_RACK_TCid', 'get_TM_dbid_from_pkid', 'get_TM',
-            'get_ACK_TCid']
+            'get_ACK_TCid', 'get_TMid_answer_from_TC', 'get_tcanswer_TCid']
 
 
 running = False
@@ -109,8 +110,8 @@ def save_TC_to_DB(hd, hdx, inputs):
     DB.flush()
     for k, v in inputs.items():
         DB.add(TABLES['TelecommandDatum'](telecommand_id=TC.id,
-                                            param_key=k, 
-                                            value=repr(v)))
+                                          param_key=k, 
+                                          value=repr(v)))
     DB.commit()
     return TC.id
 
@@ -177,6 +178,15 @@ def get_TC(pkid=None, dbid=None):
     Args:
       * pkid (int): the packet_id of the TC to output
       * dbid (int) [alternative]: the DB id of the TC to output
+
+    Returns:
+      * (thetc, dictc): the TC as sqlalchemy object and the values
+        as dict object
+      * params: the input parameters of the TC
+      * (rackid, fackid, eackid): the ids of the rack, fack and eack, 
+        or None
+      * ansid: the id of the answer if the telemetry generate is of
+        tcanswer category, or None
     """
     if not running:
         raise ctrlexception.NoDBConnection()
@@ -189,9 +199,9 @@ def get_TC(pkid=None, dbid=None):
     thetc = thetc.order_by(TC.id.desc()).limit(1).first()
     if thetc is None:
         return None
-    sqltc = {}
+    dictc = {}
     for key in get_column_keys(TC):
-        sqltc[key] = getattr(thetc, key, None)
+        dictc[key] = getattr(thetc, key, None)
     params = {}
     for item in thetc.telecommand_data_collection:
         # unicode to str for the key, eval on the value
@@ -215,7 +225,16 @@ def get_TC(pkid=None, dbid=None):
     else:
         # nothing received, set to None
         eackid = None
-    return (thetc, sqltc), params, (rackid, fackid, eackid)
+    # get the DB id of the Answer
+    # basic tcanswer category
+    if len(getattr(thetc, 'tmcat_tc_answers_collection', [])) > 0:
+        ansid = thetc.tmcat_tc_answers_collection[0].telemetry_packet
+    else:
+        pkid = thetc.getattr(param_ccsds.PACKETID.name)
+        cid = thetc.getattr(param_ccsds.TELECOMMANDID.name)
+        ansid = get_TMid_answer_from_TC(cid=cid, pkid=pkid)
+        # nothing received, set to None
+    return (thetc, dictc), params, (rackid, fackid, eackid), ansid
 
 
 def get_TM(pkid=None, dbid=None):
@@ -223,8 +242,9 @@ def get_TM(pkid=None, dbid=None):
     Gives a full TM object
 
     Args:
-      * pkid (int): the packet_id of the TC to output
-      * dbid (int) [alternative]: the DB id of the TC to output
+      * pkid (int): the packet_id of the TM to output (will only
+        return the most recent one)
+      * dbid (int) [alternative]: the DB id of the TM to output
     """
     if not running:
         raise ctrlexception.NoDBConnection()
@@ -316,8 +336,8 @@ def save_TM_to_DB(hd, hdx, data):
         if catnum == param_category.TELECOMMANDANSWERCAT:
             for k, v in data['unpacked'].items():
                 DB.add(TABLES[tbl](telemetry_packet=TM.id,
-                                    param_key=k,
-                                    value=v))
+                                   param_key=k,
+                                   value=v))
         # if dealing with list of dict, i.e. science or payload hk
         elif isinstance(data['unpacked'], (list, tuple)):
             for item in data['unpacked']:
@@ -374,3 +394,81 @@ def get_ACK_TCid(pkid):
         return None
     else:
         return idx[0]
+
+
+def get_tcanswer_TCid(pkid=None, dbid=None):
+    """
+    Finds the dbid of a tcanswer TM
+
+    Args:
+      * pkid (int): the packet_id of the TC to scan (will only
+        return the most recent one)
+      * dbid (int) [alternative]: the DB id of the TC to scan
+    """
+    if not running:
+        raise ctrlexception.NoDBConnection()
+    TC = TABLES['Telecommand']
+    thetc = DB.query(TC.id)
+    if dbid is None:
+        thetc = thetc.filter(TC.packet_id == int(pkid))
+    else:
+        thetc = thetc.filter(TC.id == int(dbid))
+    idx = thetc.order_by(TC.id.desc()).limit(1).first()
+    DB.commit()
+    # can't find the TC... wasn't saved?
+    if idx is None:
+        return None
+    else:
+        return idx[0]
+
+
+def get_TMid_answer_from_TC(cid=None, pkid=None, dbid=None):
+    """
+    Finds the dbid of an TM-answer which is not a tcanswer category
+
+    Args:
+      * cid (int): the command id inside the TC
+      * pkid (int): the packet_id of the TC to scan (will only
+        return the most recent one)
+      * dbid (int) [alternative]: the DB id of the TC to scan
+    """
+    if not running:
+        raise ctrlexception.NoDBConnection()
+    if cid is None or pkid is None:
+        TC = TABLES['Telecommand']
+        thetc = DB.query(TC)
+        if dbid is None:
+            thetc = thetc.filter(TC.packet_id == int(pkid))
+        else:
+            thetc = thetc.filter(TC.id == int(dbid))
+        thetc = thetc.order_by(TC.id.desc()).limit(1).first()
+        # grab info
+        pkid = thetc.getattr(param_ccsds.PACKETID.name)
+        cid = thetc.getattr(param_ccsds.TELECOMMANDID.name)
+        DB.commit()
+    for pldflag in [0, 1]:
+        for catnum, cat in param_category.CATEGORIES[pldflag].items():
+            # we want answer, not an ack
+            if (pldflag, catnum) in param_category.ACKCATEGORIES:
+                continue
+            # an answer must have an aux header to identify the TC
+            if cat.aux_trousseau is None:
+                continue
+            # patch to allow partly designed DB
+            if cat.object_aux_name not in TABLES.keys():
+                continue
+            TMAUX = TABLES[cat.object_aux_name]
+            cols = get_column_keys(TMAUX)
+            # can only be answer if there is packet id mirror + tc id mirror
+            if pcc.PACKETIDMIRROR.name not in cols or\
+                    pcc.TELECOMMANDIDMIRROR.name not in cols:
+                continue
+            idx = DB.query(TMAUX.telemetry_packet)\
+                    .filter(TMAUX.packet_id_mirror == int(pkid))\
+                    .filter(TMAUX.telecommand_id_mirror == int(cid))\
+                    .order_by(TMAUX.id.desc()).limit(1).first()
+            DB.commit()
+            if idx is not None:
+                return idx[0]
+    # can't find the TC... wasn't saved?
+    return None

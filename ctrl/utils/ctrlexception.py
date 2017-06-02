@@ -247,6 +247,26 @@ class MissingServerUserPass(CTRLException):
         self.message = "Pass file '{}' empty or missing".format(f)
 
 
+class NoSuchTM(CTRLException):
+    """
+    Cannot find the TM requested
+    """
+    def __init__(self, pkid, dbid, *args, **kwargs):
+        self._init(pkid, dbid, *args, **kwargs)
+        self.message = "No such TM, pkid: '{}' or dbid: '{}'"\
+                       .format(pkid, dbid)
+
+
+class NoSuchTC(CTRLException):
+    """
+    Cannot find the TM requested
+    """
+    def __init__(self, pkid, dbid, *args, **kwargs):
+        self._init(pkid, dbid, *args, **kwargs)
+        self.message = "No such TC, pkid: '{}' or dbid: '{}'"\
+                       .format(pkid, dbid)
+
+
 
 # not used
 class NoSuchKey(CTRLException):

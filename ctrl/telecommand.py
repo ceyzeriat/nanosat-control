@@ -35,6 +35,7 @@ if not param_all.JUSTALIB:
     from segsol import controlling
 from .ccsds import param_ccsds
 from .utils import core
+from .utils import ctrlexception as exc
 if not param_all.JUSTALIB:
     from . import db
     from .telemetry import Telemetry
@@ -51,12 +52,12 @@ class Telecommand(object):
         # returns None if id not existing, else (hd, inputs)
         ret = db.get_TC(pkid=pkid, dbid=dbid)
         if ret is None:
-            print("Could not find this TC id")
-            return
-        (self._telecommand, self.hd), self.inputs, (rack, fack, eack) = ret
+            raise exc.NoSuchTC(pkid=pkid, dbid=dbid)
+        (self._telecommand, self.hd), self.inputs, (rack, fack, eack),\
+            ansid = ret
         # copy fields to object root
-        for k in self.hd.keys():
-            setattr(self, k, getattr(self._telecommand, k))
+        for k, v in self.hd.items():
+            setattr(self, k, v)
         # load acknowledgements as real Telemetry objects, default to current
         self.RACK = getattr(self, 'RACK', None) if rack is None\
                                                 else Telemetry(dbid=rack)
@@ -64,6 +65,7 @@ class Telecommand(object):
                                                 else Telemetry(dbid=fack)
         self.EACK = getattr(self, 'EACK', None) if eack is None\
                                                 else Telemetry(dbid=eack)
+        self.TCANS = None if ansid is None else Telemetry(dbid=ansid)
 
     def show(self, *args, **kwargs):
         """
@@ -136,12 +138,22 @@ class Telecommand(object):
     def istimedout(self, value):
         pass
 
+    def get_answer(self):
+        cid = self.getattr(param_ccsds.TELECOMMANDID.name)
+        pkid = self.getattr(param_ccsds.PACKETID.name)
+        ansid = db.get_TMid_answer_from_TC(cid=cid, pkid=pkid)
+        if ansid is not None:
+            self.TCANS = Telemetry(dbid=ansid)
+        else:
+            self.TCANS = None
+
     @classmethod
     def _fromCommand(cls, name, packet, dbid, hd, hdx, inputs, **kwargs):
         # broadcast on socket to the antenna process and watchdog
         controlling.broadcast_TC(cmdname=name, dbid=dbid, packet=packet,
                         hd=hd, hdx=hdx, inputs=inputs)
         cls._timedout = False
+        self.TCANS = None
         hd = hd
         hd.update(hdx)
         # no wait
