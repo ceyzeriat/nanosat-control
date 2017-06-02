@@ -28,6 +28,7 @@
 from param import param_category
 from param import param_category_common as pcc
 from .utils import core
+from .utils import ctrlexception as exc
 from .ccsds import TMUnPacker
 from .ccsds import param_ccsds
 from . import db
@@ -44,8 +45,7 @@ class Telemetry(object):
         # returns None if id not existing, else (hd, inputs)
         ret = db.get_TM(pkid=pkid, dbid=dbid)
         if ret is None:
-            print("Could not find this TM id")
-            return
+            raise exc.NoSuchTM(pkid=pkid, dbid=dbid)
         else:
             (self._telemetry, self.hd), (self._telemetry_hdx, self.hdx),\
                 (self._telemetry_data, self.data) = ret
@@ -86,6 +86,9 @@ class Telemetry(object):
         elif (int(cls.hd[param_ccsds.PAYLOADFLAG.name]), catnum)\
                                         in param_category.ACKCATEGORIES:
             tcid = db.get_ACK_TCid(pkid=cls.hdx[pcc.PACKETIDMIRROR.name])
+            cls.hdx['telecommand_packet'] = tcid
+        elif param_category.TELECOMMANDANSWERCAT:
+            tcid = db.get_tcanswer_TCid(pkid=cls.hdx[pcc.PACKETIDMIRROR.name])
             cls.hdx['telecommand_packet'] = tcid
         else:
             tcid = None

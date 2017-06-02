@@ -52,9 +52,9 @@ class PatchListSegCCSDSTrousseau(CCSDSTrousseau):
         nums = []
         for idx in range(nlines):
             chunk = data[idx*self.size:(idx+1)*self.size]
-            nums.append(theOnlyKey.unpack(chunk))
+            nums.append({theOnlyKey.name: theOnlyKey.unpack(chunk)})
         # returns a list of the pk_id
-        return {theOnlyKey.name: nums}
+        return nums
 
     def disp(self, vals):
         """
