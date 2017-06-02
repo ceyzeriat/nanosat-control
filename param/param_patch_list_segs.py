@@ -42,14 +42,14 @@ KEYS = [dict(name='packet_id', start=0, l=2, fctunpack=bincore.hex2int, fctpack=
 class PatchListSegCCSDSTrousseau(CCSDSTrousseau):
     def unpack(self, data, **kwargs):
         """
-        Unpacks the data contained in the patch lsit segs packets
+        Unpacks the data contained in the patch list segs packets
 
         Args:
-        * data (byts): the chain of octets to unpack
+          * data (byts): the chain of octets to unpack
         """
         theOnlyKey = self.keys[0]
         nlines = len(data) // self.size
-        nums = [{} for i in range(nlines)]
+        nums = []
         for idx in range(nlines):
             chunk = data[idx*self.size:(idx+1)*self.size]
             nums.append(theOnlyKey.unpack(chunk))
