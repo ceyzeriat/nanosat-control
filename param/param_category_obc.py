@@ -31,7 +31,7 @@ from ctrl.ccsds.ccsdscategory import CCSDSCategory
 from ctrl.utils import bincore
 
 from . import param_category_common as cmn
-
+from .generated.booterrorstruct import BOOTERRORSTRUCT_KEYS
 
 __all__ = []
 
@@ -79,6 +79,7 @@ NSEGS = CCSDSKey(       name='n_segments',
 HEADAUX_RACKCAT = CCSDSTrousseau([], octets=False)  # rec ack
 #HEADAUX_1 = CCSDSTrousseau([], octets=False)  # beacon
 #HEADAUX_2 = CCSDSTrousseau([], octets=False report')  # boot error report ?????
+HEADAUX_2 = CCSDSTrousseau(BOOTERRORSTRUCT_KEYS, octets = False)
 #HEADAUX_3 = CCSDSTrousseau([], octets=False)  # event report ?????
 #HEADAUX_4 = CCSDSTrousseau([], octets=False)  # HK
 HEADAUX_5 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, STARTADDRESS, BYTESNUMBER], octets=False)  # dump answer data
@@ -105,7 +106,7 @@ CATEGORIESOBC = {
 
                2: CCSDSCategory(name='boot error report',
                                 number=2,
-                                aux_trousseau=None,
+                                aux_trousseau=HEADAUX_2,
                                 data_file=None),
 
                3: CCSDSCategory(name='event report',
