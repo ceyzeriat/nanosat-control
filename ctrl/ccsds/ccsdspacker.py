@@ -220,7 +220,7 @@ class CCSDSPacker(object):
         # update the length with data length
         values[param_ccsds.DATALENGTH.name] += int(datalen)
         data, retvals = param_ccsds.HEADER_P_KEYS.pack(allvalues=values,
-                                                    retdbvalues=retdbvalues)
+                                                       retdbvalues=retdbvalues)
         if retvalues:
             return data, retvals
         else:

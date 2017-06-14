@@ -75,6 +75,9 @@ class Telecommand(object):
 
     @property
     def issent(self):
+        """
+        Returns True
+        """
         return (self.time_sent is not None)
     @issent.setter
     def issent(self, value):
@@ -82,6 +85,11 @@ class Telecommand(object):
     
     @property
     def iserror(self):
+        """
+        Returns ``True`` if any of the received ACK contains an error,
+        else ``False``
+        It is the opposite of ``isok`` attribute.
+        """
         return not((self.FACK is None or bool(self.FACK))\
                     and (self.EACK is None or bool(self.EACK)))
     @iserror.setter
@@ -124,6 +132,11 @@ class Telecommand(object):
 
     @property
     def isok(self):
+        """
+        Returns ``True`` if none of the received ACK contains an error
+        or if the ACK were not received, else ``False``.
+        It is the opposite of ``iserror`` attribute.
+        """
         return (self.RACK is None or bool(self.RACK))\
                 and (self.FACK is None or bool(self.FACK))\
                 and (self.EACK is None or bool(self.EACK))

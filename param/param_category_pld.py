@@ -49,7 +49,7 @@ INTEGRATIONTIME = CCSDSKey( name='integration_time',
                             l=16,
                             fctunpack=bincore.bin2int,
                             fctpack=bincore.int2bin,
-                            verbose="Integration time (valid for the entire packet). In ms.",
+                            verbose="Integration time (valid for the entire packet). In ms/10.",
                             disp="itime")
 
 DELAY = CCSDSKey(       name='delay',
@@ -106,7 +106,7 @@ MAINMODE = CCSDSKey(        name='main_mode',
                             l=8,
                             fctunpack=bincore.bin2int,
                             fctpack=bincore.int2bin,
-                             verbose="Main mode of the payload (SBY = 0, IDL = 1, SCI = 2, IMG = 3, TST = 4). Valid for the entire packet.",
+                            verbose="Main mode of the payload (SBY = 0, IDL = 1, SCI = 2, IMG = 3, TST = 4). Valid for the entire packet.",
                             disp="mode")
 
 ACQMODEHK = CCSDSKey(       name='acq_mode',
@@ -114,7 +114,7 @@ ACQMODEHK = CCSDSKey(       name='acq_mode',
                             l=8,
                             fctunpack=bincore.bin2int,
                             fctpack=bincore.int2bin,
-                            verbose="Activates science mode (0=Searching, 1=Tracking, 2=Test). Valid for the entire packet.",
+                            verbose="mode for the acquisition manager. Valid for the entire packet.",
                             disp="acq_mode")
 
 DIODEFLAG = CCSDSKey(       name='diode_flag',
@@ -127,7 +127,7 @@ DIODEFLAG = CCSDSKey(       name='diode_flag',
 
 INTERRUPTFLAG = CCSDSKey(   name='interrupt_flag',
                             start=41,
-                            l=2,
+                            l=1,
                             fctunpack=bincore.bin2int,
                             fctpack=bincore.int2bin,
                             verbose="Is interrupt active?. Valid for the entire packet.",
@@ -197,10 +197,6 @@ HEADAUX_4 = CCSDSTrousseau([HKTICK, BINNING, MAINMODE, ACQMODEHK, DIODEFLAG,
 # science HF
 HEADAUX_5 = CCSDSTrousseau([ACQMODESCIENCE, INTEGRATIONTIME, DELAY, MODULATION, RADIUS,
                                 NPOINTS], octets=False)
-# report
-#HEADAUX_6 = CCSDSTrousseau([], octets=False)
-# beacon
-#HEADAUX_7 = CCSDSTrousseau([], octets=False)
 
 
 # (payloadd, category)
@@ -210,9 +206,9 @@ ACKCATEGORIESPLD = []
 
 CATEGORIESPLD = {
                 4: CCSDSCategory(name='payload HK',
-                                        number=4,
-                                        aux_trousseau=HEADAUX_4,
-                                        data_file='param_payload_hk'),
+                                 number=4,
+                                 aux_trousseau=HEADAUX_4,
+                                 data_file='param_payload_hk'),
 
                 5: CCSDSCategory(name='HF science',
                                  number=5,

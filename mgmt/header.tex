@@ -1,0 +1,68 @@
+\usepackage{amssymb}%
+\usepackage{amsmath}%
+\usepackage{url}%
+\usepackage{titlesec}%
+\usepackage{graphicx}%
+\usepackage{verbatim}%
+\usepackage{listings}%
+\lstset{language=C}%
+%
+\usepackage[T1]{fontenc}%
+\usepackage[utf8]{inputenc}%
+\usepackage{lmodern}%
+\usepackage{textcomp}%
+\usepackage{lastpage}%
+%
+\usepackage{hyperref}%
+\setcounter{tocdepth}{2}%
+%
+\setcounter{secnumdepth}{4}%
+\titleformat{\paragraph}%
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}%
+\titlespacing*{\paragraph}%
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}%
+%
+\usepackage{tabularx}%
+\newcolumntype{Y}{>{\centering\arraybackslash}X}%
+%
+\usepackage{multirow}%
+%
+\usepackage[left=2cm, right=2cm, top=2cm, bottom=6cm, headheight=2\baselineskip, headsep=0\baselineskip]{geometry}%
+\usepackage{lastpage}%
+\usepackage{fancyhdr}%
+\pagestyle{fancy}%
+%
+\newcommand{\shorttitle}{<!SHORTTITLE!>}%
+\newcommand{\version}{<!VERSION!>}%
+\newcommand{\mytitle}{<!STITLE!>}%
+%
+\title{\mytitle}%
+\author{Guillaume Schworer}%
+\date{\today}%
+%
+%
+\fancyhead[C]{%
+\begin{center}%
+\begin{tabularx}{\linewidth}{| c | Y | l | r |}%
+\hline%
+& & & \\%
+\multirow{4}{*}{\includegraphics[width=3cm]{<!PATH!>/logo_PicSat.png}} & \multirow{4}{*}{\shorttitle} &  Ref.: & <!REF!>\\%
+ & &  Issue: & \version \\%
+ & &  Date: & \today{} \\%
+ & &  Page: & \thepage{} of \pageref{LastPage} \\%
+& & & \\%
+\hline%
+\end{tabularx}%
+\end{center}%
+}%
+\rhead{}%
+\lhead{}%
+\rfoot{}%
+\cfoot{}%
+\lfoot{}%
+%
+\renewcommand{\headrulewidth}{0pt}%
+\renewcommand{\footrulewidth}{0pt}%
+%
+\newcommand{\specialcell}[2][l]{%
+  \begin{tabular}[#1]{@{}l@{}}#2\end{tabular}}%

@@ -25,10 +25,10 @@
 ###############################################################################
 
 
+from ctrl.utils import bincore
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.ccsds.ccsdskey import CCSDSKey
 from ctrl.ccsds.ccsdscategory import CCSDSCategory
-from ctrl.utils import bincore
 
 from . import param_category_common as cmn
 from .generated.booterrorstruct import BOOTERRORSTRUCT_KEYS
@@ -76,18 +76,72 @@ NSEGS = CCSDSKey(       name='n_segments',
                         verbose="Total Number of segments received",
                         disp="Nseg")
 
-HEADAUX_RACKCAT = CCSDSTrousseau([], octets=False)  # rec ack
-#HEADAUX_1 = CCSDSTrousseau([], octets=False)  # beacon
-#HEADAUX_2 = CCSDSTrousseau([], octets=False report')  # boot error report ?????
-HEADAUX_2 = CCSDSTrousseau(BOOTERRORSTRUCT_KEYS, octets = False)
-#HEADAUX_3 = CCSDSTrousseau([], octets=False)  # event report ?????
-#HEADAUX_4 = CCSDSTrousseau([], octets=False)  # HK
+
+LOGCOUNTER = CCSDSKey(  name='log_counter',
+                        start=0,
+                        l=16,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin,
+                        verbose='uint16: error counter, analogous to a sequence count / error time ID ',
+                        disp="logCounter")
+FILECRCCODE = CCSDSKey( name='file_crc_code',
+                        start=16,
+                        l=32,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin,
+                        verbose='uint32: identifies the file where the error occurred, = CRC32(string("source_filename.cpp"));',
+                        disp="fileCrcCode")
+LINECODE = CCSDSKey(    name='line_code',
+                        start=48,
+                        l=16,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin,
+                        verbose='uint16: line where the error occurred',
+                        disp="lineCode")
+FUNERRCODE = CCSDSKey(  name='fun_err_code',
+                        start=64,
+                        l=16,
+                        fctunpack=bincore.bin2intSign,
+                        fctpack=bincore.intSign2bin,
+                        verbose='int16: (optional), type of error (from L0AppErrorCode.hpp), or return value of failed function call',
+                        disp="funErrCode")
+SECHEADERTM = CCSDSKey( name='sec_header_tm',
+                        start=80,
+                        l=48,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin,
+                        verbose='time tag',
+                        disp="SecHeaderTm")
+EVENTDATA = CCSDSKey(   name='data',
+                        start=128,
+                        l=32,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin,
+                        verbose='uint8[4]: (optinal) aditional data',
+                        disp="data")
+
+
+PARTSELECT = CCSDSKey(  name='hk_part',
+                        start=32,
+                        len=8,
+                        fctunpack=bincore.bin2int,
+                        fctpack=bincore.int2bin,
+                        verbose='identifies the HK part',
+                        disp='partSelect')
+
+
+
+HEADAUX_2 = CCSDSTrousseau(BOOTERRORSTRUCT_KEYS, octets=False) # boot error report
+HEADAUX_3 = CCSDSTrousseau([LOGCOUNTER, FILECRCCODE, LINECODE,
+                            FUNERRCODE, SECHEADERTM, EVENTDATA], octets=False)  # event report
+HEADAUX_HKOBC = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, PARTSELECT], octets=False)  # HK
 HEADAUX_5 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, STARTADDRESS, BYTESNUMBER], octets=False)  # dump answer data
 HEADAUX_6 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, NSEGS], octets=False)  # patch list segments
 
 
 # acknowledgement of reception
 RACKCAT = 0
+HKOBC = 4
 
 # (payload, category)
 ACKCATEGORIESOBC = [(0, RACKCAT)]
@@ -96,13 +150,13 @@ ACKCATEGORIESOBC = [(0, RACKCAT)]
 CATEGORIESOBC = {
                 RACKCAT: CCSDSCategory(name='recep acknowledgement',
                                         number=RACKCAT,
-                                        aux_trousseau=HEADAUX_RACKCAT,
+                                        aux_trousseau=None,
                                         data_file=None),
 
                1: CCSDSCategory(name='beacon',
                                 number=1,
                                 aux_trousseau=None,
-                                data_file=None),
+                                data_file='param_beacon'),
 
                2: CCSDSCategory(name='boot error report',
                                 number=2,
@@ -111,13 +165,13 @@ CATEGORIESOBC = {
 
                3: CCSDSCategory(name='event report',
                                 number=3,
-                                aux_trousseau=None,
+                                aux_trousseau=HEADAUX_3,
                                 data_file=None),
 
-               4: CCSDSCategory(name='house keeping',
-                                number=4,
-                                aux_trousseau=None,
-                                data_file=None),
+               HKOBC: CCSDSCategory(name='house keeping',
+                                number=HKOBC,
+                                aux_trousseau=HEADAUX_HKOBC,
+                                data_file='param_hk_obc'),
 
                5: CCSDSCategory(name='dump answer data',
                                 number=5,

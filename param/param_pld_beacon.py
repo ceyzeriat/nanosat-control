@@ -32,57 +32,106 @@ from ctrl.utils import bincore
 __all__ = ['TROUSSEAU']
 
 
-LENGTHBEACONMESSAGE = 29  # octets
+LENGTHBEACONMESSAGE = 29*8  # bits
 
 
-KEYS = [    dict(name='message', start=0, l=LENGTHBEACONMESSAGE*8, fctunpack=bincore.bin2txt, fctpack=bincore.txt2bin,
+KEYS = [    dict(   name='message',
+                    start=0,
+                    l=LENGTHBEACONMESSAGE,
+                    fctunpack=bincore.bin2txt,
+                    fctpack=bincore.txt2bin,
                     verbose="A beacon message",
                     disp='text'),
-            dict(name='proc_freq', start=LENGTHBEACONMESSAGE*8+40, l=8, disp="proc_freq",
+
+            dict(   name='proc_freq',
+                    start=LENGTHBEACONMESSAGE+40,
+                    l=8,
+                    disp="proc_freq",
                     verbose="processor frequency",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)                        
-            dict(name='phot', start=LENGTHBEACONMESSAGE*8, l=16, disp="phot",
+                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),
+
+            dict(   name='phot', 
+                    start=LENGTHBEACONMESSAGE, 
+                    l=16, 
+                    disp="phot",
                     verbose="photometry",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
-            dict(name='mode', start=LENGTHBEACONMESSAGE*8+16, l=8, disp="mode",
+                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),
+
+            dict(   name='mode', 
+                    start=LENGTHBEACONMESSAGE+16, 
+                    l=8, 
+                    disp="mode",
                     verbose="mode",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
-            dict(name='acqmode', start=LENGTHBEACONMESSAGE*8+24, l=8, disp="acqmode",
+                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),
+
+            dict(   name='acqmode',
+                    start=LENGTHBEACONMESSAGE+24,
+                    l=8,
+                    disp="acqmode",
                     verbose="acquisition mode",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
-            dict(name='beacon_flag', start=LENGTHBEACONMESSAGE*8+33, l=1, disp="beacon_flag",
+                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),
+
+            dict(   name='beacon_flag',
+                    start=LENGTHBEACONMESSAGE+33,
+                    l=1,
+                    disp="beacon_flag",
                     verbose="beacon flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)                                    
-            dict(name='tec_flag', start=LENGTHBEACONMESSAGE*8+34, l=1, disp="tec_flag",
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+
+            dict(   name='tec_flag',
+                    start=LENGTHBEACONMESSAGE+34,
+                    l=1,
+                    disp="tec_flag",
                     verbose="tec flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)                                    
-            dict(name='sensors_flag', start=LENGTHBEACONMESSAGE*8+35, l=1, disp="sensors_flag",
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+
+            dict(   name='sensors_flag',
+                    start=LENGTHBEACONMESSAGE+35,
+                    l=1,
+                    disp="sensors_flag",
                     verbose="sensors flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
-            dict(name='hv_flag', start=LENGTHBEACONMESSAGE*8+36, l=1, disp="hv_flag",
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+
+            dict(   name='hv_flag',
+                    start=LENGTHBEACONMESSAGE+36,
+                    l=1,
+                    disp="hv_flag",
                     verbose="high voltage flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)            
-            dict(name='dac_flag', start=LENGTHBEACONMESSAGE*8+37, l=1, disp="dac_flag",
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+
+            dict(   name='dac_flag',
+                    start=LENGTHBEACONMESSAGE+37,
+                    l=1,
+                    disp="dac_flag",
                     verbose="dac flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
-            dict(name='interrupt_flag', start=LENGTHBEACONMESSAGE*8+38, l=1, disp="interrupt_flag",
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+
+            dict(   name='interrupt_flag',
+                    start=LENGTHBEACONMESSAGE+38,
+                    l=1,
+                    disp="interrupt_flag",
                     verbose="interrupt flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
-            dict(name='diode_flag', start=LENGTHBEACONMESSAGE*8+39, l=1, disp="diode_flag",
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+
+            dict(   name='diode_flag',
+                    start=LENGTHBEACONMESSAGE+39,
+                    l=1,
+                    disp="diode_flag",
                     verbose="diode flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin)#fctunpack=temp_unpack, fctpack=temp_pack)
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin)
             ]
 
 
 class PLDBeaconCCSDSTrousseau(CCSDSTrousseau):
-    def make_fmt(self):
+    def _make_fmt(self):
         """
         Generates the single-line formatting for later display
         Overriding mother's method
         """
-        self.fmt = "%s:{%s}" % (KEYS[0]['disp'], KEYS[0]['name'])
+        self.fmt = "%s:{%s}" % (self.keys[0].disp, self.keys[0].name)
         self.fmt += '\n'
-        self.fmt += ", ".join(["%s:{%s}" % (key['disp'], key['name']) for key in KEYS[1:]])
+        self.fmt += ", ".join(["%s:{%s}" % (key.disp, key.name)\
+                                                    for key in self.keys[1:]])
 
 
 TROUSSEAU = PLDBeaconCCSDSTrousseau(KEYS, octets=False)

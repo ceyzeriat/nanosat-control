@@ -34,43 +34,13 @@ __all__ = ['TROUSSEAU']
 
 
 # there should be only one key here
-KEYS = [dict(name='seg_id', start=0, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
+KEYS = [dict(   name='seg_id',
+                start=0,
+                l=2,
+                fctunpack=bincore.hex2int,
+                fctpack=bincore.int2hex,
                 verbose="Segment ID currently received by the satellite",
-                disp='seg', octets=True)]
+                disp='seg')]
 
 
-class PatchListSegCCSDSTrousseau(CCSDSTrousseau):
-    def unpack(self, data, **kwargs):
-        """
-        Unpacks the data contained in the patch list segs packets
-
-        Args:
-          * data (byts): the chain of octets to unpack
-        """
-        theOnlyKey = self.keys[0]
-        nlines = len(data) // self.size
-        nums = []
-        for idx in range(nlines):
-            chunk = data[idx*self.size:(idx+1)*self.size]
-            nums.append({theOnlyKey.name: theOnlyKey.unpack(chunk)})
-        # returns a list of the pk_id
-        return nums
-
-    def disp(self, data):
-        """
-        Display the trousseau values
-        Overriding mother's method
-
-        Args:
-          * data (list of dict): a list of dictionaries containing the
-            values to display
-        """
-        res = [super(PatchListSegCCSDSTrousseau, self).disp(line)\
-                    for line in data]
-        return "\n".join(res)
-
-    def pack(self, allvalues, retdbvalues, **kwargs):
-        pass
-
-
-TROUSSEAU = PatchListSegCCSDSTrousseau(KEYS, octets=True, listof=True)
+TROUSSEAU = CCSDSTrousseau(KEYS, octets=True, listof=True)

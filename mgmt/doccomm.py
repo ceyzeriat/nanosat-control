@@ -29,7 +29,9 @@ from pylatex import Document, Section, Subsection, Tabular, NoEscape,\
                         Command, Itemize, MultiColumn, Subsubsection
 from pylatex.basic import NewLine
 from pylatex.utils import italic
+from ctrl.utils import core
 from ctrl.ccsds import param_ccsds
+from ctrl.ccsds import CCSDSMetaTrousseau
 import param
 import os
 import re
@@ -38,8 +40,16 @@ import re
 __all__ = ['DocComm']
 
 
+DOCNAME = "PICSAT-COMM-SPEC-01"
+REPL = {"<!SHORTTITLE!>": 'PicSat Comm. Spec.',
+        "<!VERSION!>": '1.0',
+        "<!STITLE!>": 'PicSat Communication Specifications',
+        "<!PATH!>": core.rel_dir('mgmt'),
+        "<!REF!>": DOCNAME}
+
+
 class DocComm(object):
-    def __init__(self, docname):
+    def __init__(self):
         """
         Generates the pdf for PicSat communication specifications
 
@@ -50,10 +60,7 @@ class DocComm(object):
         Method:
           * generate: use it to generate the document
         """
-        docname = str(docname)
-        if docname.lower().endswith('.tex'):
-            docname = docname[:-4]
-        self.docname = docname
+        self.docname = DOCNAME
 
     def generate(self, clean_tex=True):
         """
@@ -63,14 +70,26 @@ class DocComm(object):
           * clean_tex (bool): whether to delete the .tex file after
             compiling
         """
+        HEADER = open(core.rel_dir('mgmt', 'header.tex'), mode='r').read()
+        HEADER2 = open(core.rel_dir('mgmt', 'header-2.tex'), mode='r').read()
         doc = Document(self.docname)
-        doc.preamble.append(Command('usepackage', 'hyperref'))
-        doc.preamble.append(Command('title',
-                                    'PicSat Communication Specifications'))
-        doc.preamble.append(Command('author', 'Python et al.'))
-        doc.preamble.append(Command('date', NoEscape(r'\today')))
-        doc.append(NoEscape(r'\maketitle'))
-        doc.append(NoEscape(r'\tableofcontents'))
+        for k, v in REPL.items():
+            HEADER = HEADER.replace(k, v)
+            HEADER2 = HEADER2.replace(k, v)
+        doc.preamble.append(NoEscape(HEADER))
+        doc.append(NoEscape(HEADER2))
+        section = Section('Principles')
+        section.append(
+"""The Telecommand (TC) and Telemetry (TM) packets format specifications are based on the CCSDS format: the concatenation of a primary header, secondary header, (optional) auxiliary header, (optional) data field.
+
+TC are composed of a 6 octets primary header and a 18 octets secondary header. There is no auxiliary header. The data field contains values which depend on the command ID, that are treated by the satelite as input parameters.
+
+TM are composed of a 6 octets primary header and a 6 octets secondary header. The TM category defines what type of TM is transmitted (e.g. beacon, house keeping) and how the auxiliary header and data field are encoded.
+
+This document covers the content of headers for TC, and headers and data fields for TM.
+
+This documents does not cover the content of data field for TC, and the content of auxiliary header and data fields for the TM category 'TC Answer'. This information is available in the dedicated TC-TM communication document.""")
+        doc.append(section)
         # Telecommands
         section = Section('Telecommands')
         subsection = self._trousseau2subsection('Primary Header',
@@ -104,16 +123,32 @@ class DocComm(object):
                     '{} ({:d}) - Auxiliary Header'.format(cat.name, catnum),
                     cat.aux_trousseau, catnum=catnum, pldflag=pldflag)
                 section.append(subsection)
-                subsection = self._trousseau2subsection(
-                    '{} ({:d}) - Data'.format(cat.name, catnum),
-                    cat.data_trousseau, catnum=catnum, pldflag=pldflag)
-                section.append(subsection)
+                # case of TC answer, dedicated doc
+                if catnum == param.param_category.TELECOMMANDANSWERCAT:
+                    subsection = Subsection('{} ({:d}) - Data'\
+                                                .format(cat.name, catnum))
+                    subsection.append("Refer to the dedicated TC-TM "\
+                                      "communication document")
+                    section.append(subsection)
+                # case of meta-trousseau
+                elif isinstance(cat.data_trousseau, CCSDSMetaTrousseau):
+                    for mtpart, mtT in cat.data_trousseau.TROUSSEAUDIC.items():
+                        subsection = self._trousseau2subsection(
+                            '{} ({:d}) [part {:d}] - Data'.format(
+                                                cat.name, catnum, mtpart),
+                            mtT, catnum=catnum, pldflag=pldflag)
+                        section.append(subsection)
+                else:  # normal case
+                    subsection = self._trousseau2subsection(
+                        '{} ({:d}) - Data'.format(cat.name, catnum),
+                        cat.data_trousseau, catnum=catnum, pldflag=pldflag)
+                    section.append(subsection)
             doc.append(section)
         self._compile(doc, clean_tex=clean_tex)
 
     def _compile(self, doc, clean_tex=True):
         """
-        Just compile the doc and save to disk
+        Compiles the doc and saves to disk
 
         Args:
           * doc (pylatex Document): the document to compile
@@ -132,7 +167,7 @@ class DocComm(object):
 
     def _TCauxHeader(self):
         """
-        Fills the axu header section for TC
+        Fills the aux header section for TC
         """
         subsection = Subsection('Auxiliary Header and Data')
         subsection.append("No auxiliary header.")
@@ -144,7 +179,7 @@ class DocComm(object):
 
     def _TMauxHeader(self):
         """
-        Fills the axu header section for TM
+        Fills the aux header section for TM
         """
         subsection = Subsection('Auxiliary Header and Data')
         subsection.append("The auxiliary header and data fields definitions "\

@@ -175,60 +175,49 @@ def temp0_pack(v, Vref, pad, **kwargs):
 
 VOLTPELTIER = 'vref'
 
-V_KEYS = [  dict(name='volt5', start=0, l=16, disp="volt5",
+# put VOLTPELTRIER first because you'll need it t unpack other values
+KEYS = [  dict(name=VOLTPELTIER, start=128, l=16, disp=VOLTPELTIER,
+                    verbose="vref",
+                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=volt_peltier_unpack, fctpack=volt_peltier_pack),
+            dict(name='volt5', start=0, l=16, disp="volt5",
                     verbose="Voltage line 5V,",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volt_line_unpack, fctpack=volt_line_pack),
+                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=volt_line_unpack, fctpack=volt_line_pack),
             dict(name='amp5', start=16, l=16, disp="amp5",
                     verbose="amp5",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_line_unpack, fctpack=current_line_pack),
+                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=current_line_unpack, fctpack=current_line_pack),
             dict(name='amp3', start=32, l=16, disp="amp3",
                     verbose="amp3",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_line_unpack, fctpack=current_line_pack),
+                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=current_line_unpack, fctpack=current_line_pack),
             dict(name='volthv', start=48, l=16, disp="volthv",
                     verbose="volthv",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volthv_unpack, fctpack=volthv_pack),
+                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=volthv_unpack, fctpack=volthv_pack),
             dict(name='amphv', start=64, l=16, disp="amphv",
                     verbose="amphv",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name=VOLTPELTIER, start=128, l=16, disp=VOLTPELTIER,
-                    verbose="vref",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=volt_peltier_unpack, fctpack=volt_peltier_pack),
+                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=current_line_unpack, fctpack=current_line_pack),
             dict(name='vitec', start=80, l=16, disp="vitec",
                     verbose="vitec",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=vitec_unpack, fctpack=vitec_pack),
+                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=vitec_unpack, fctpack=vitec_pack),
             dict(name='temp0', start=96, l=16, disp="temp0",
                     verbose="temp0",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=temp0_unpack, fctpack=temp0_pack),
+                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=temp0_unpack, fctpack=temp0_pack),
             dict(name='errortherm', start=112, l=16, disp="errortherm",
                     verbose="errortherm",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),#fctunpack=errortherm_unpack, fctpack=errortherm_pack),
+                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=errortherm_unpack, fctpack=errortherm_pack),
             dict(name='temp1', start=144, l=16, disp="temp1",
                     verbose="temp1",
-                    fctunpack=bincore.bin2intSign, fctpack=bincore.intSign2bin),#fctunpack=temp_unpack, fctpack=temp_pack),
+                    fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex),#fctunpack=temp_unpack, fctpack=temp_pack),
             dict(name='temp2', start=160, l=16, disp="temp2",
                     verbose="temp2",
-                    fctunpack=bincore.bin2intSign, fctpack=bincore.intSign2bin),#fctunpack=temp_unpack, fctpack=temp_pack),
+                    fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex),#fctunpack=temp_unpack, fctpack=temp_pack),
             dict(name='temp3', start=176, l=16, disp="temp3",
                     verbose="temp3",
-                    fctunpack=bincore.bin2intSign, fctpack=bincore.intSign2bin),#fctunpack=temp_unpack, fctpack=temp_pack)
+                    fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex),#fctunpack=temp_unpack, fctpack=temp_pack)
             dict(name='temp4', start=192, l=16, disp="temp4",
                     verbose="temp4",
-                    fctunpack=bincore.bin2intSign, fctpack=bincore.intSign2bin)#fctunpack=temp_unpack, fctpack=temp_pack)            
+                    fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex)#fctunpack=temp_unpack, fctpack=temp_pack)            
             ]
 
 class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
-#    def make_fmt(self):
-#        """
-#        Generates the single-line formatting for later display
-#        Overriding mother's method
-#        """
-#        self.fmt = ", ".join(["%s:({%s}){%s}" % (key['disp'],
-#                                value_to_flag_name(key['name']), key['name'])\
-#                                    for key in V_KEYS])
-#        self.fmt += '\n'
-#        self.fmt += ", ".join(["%s:{%s}" % (key['disp'], key['name']) for key in O_KEYS])
-        
-
     def unpack(self, data, **kwargs):
         """
         Unpacks the data contained in the HK Payload packets
@@ -242,32 +231,13 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         for idx in range(nlines):
             lines[idx][VOLTPELTIER] = 0
             dt = data[idx*self.size:(idx+1)*self.size]
-            # octets is False
-            dt = bincore.hex2bin(dt[:self.size])
-            # if octets were True: dt = dt[:self.size]            
+            # if octets were False:
+            #dt = bincore.hex2bin(dt[:self.size])
             for item in self.keys:
                 lines[idx][item.name] = item.unpack(
                                             dt,
                                             Vref=lines[idx][VOLTPELTIER])
-#            for item in V_KEYS:
-#                v_key = item['name']
-#                f_key = value_to_flag_name(v_key)
-#                if not lines[idx][f_key]:
-#                    lines[idx][v_key] = 0.
         return lines
-
-    def disp(self, data):
-        """
-        Display the data values of the payload hk
-        Overriding mother's method
-
-        Args:
-          * data (list of dict): a list of dictionaries containing the
-            values to display
-        """
-        res = [super(HKPayloadCCSDSTrousseau, self).disp(line)\
-                    for line in data]
-        return "\n".join(res)
 
     def pack(self, allvalues, **kwargs):
         """
@@ -277,9 +247,7 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         Args:
         * allvalues (dict): the values to pack
         """
-        Vref = allvalues[VOLTPELTIER]
-        return super(HKPayloadCCSDSTrousseau, self).\
-                        pack(allvalues, retdbvalues=True, Vref=Vref)
+        pass
 
 
-TROUSSEAU = HKPayloadCCSDSTrousseau(V_KEYS, octets=False, listof=True)
+TROUSSEAU = HKPayloadCCSDSTrousseau(KEYS, octets=True, listof=True)

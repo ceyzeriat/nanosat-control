@@ -12,7 +12,13 @@ else
 fi
 
 
-sphinx-apidoc -o ./ ../ctrl/ ../ctrl/test/ ../ctrl/example*
+#sphinx-apidoc -o ./ ../ctrl/ ../ctrl/test/ ../ctrl/c* ../ctrl/example*
+sphinx-apidoc \
+    -f -e --module-first --no-toc -o ./ ../ctrl/ \
+    $(find ../ctrl/ -maxdepth 1 -mindepth 1 -type d) \
+    $(find ../ctrl/ -maxdepth 1 -regextype posix-egrep \
+        ! -regex ".*/telecommand.py|.*/telemetry.py|.*/__init__.py" -type f)
+
 echo ""
 echo "Created new docs (.rst) files"
 

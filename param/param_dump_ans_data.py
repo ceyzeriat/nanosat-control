@@ -35,12 +35,14 @@ __all__ = ['TROUSSEAU']
 
 MAXLENGTHDATA = 235  # octets
 
-KEYS = [dict(name='data', start=0, l=MAXLENGTHDATA, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex,
-                    verbose="Buffer of bytes containing the dumped data",
-                    disp='data', pad=False, octets=True)]
-
-# the data key is first
-THEDATAKEY = 0
+KEYS = [dict(   name='data',
+                start=0,
+                l=MAXLENGTHDATA,
+                fctunpack=bincore.hex2hex,
+                fctpack=bincore.hex2hex,
+                verbose="Buffer of bytes containing the dumped data",
+                disp='data',
+                pad=False)]
 
 
 class DumpAnswerDataCCSDSTrousseau(CCSDSTrousseau):
@@ -51,7 +53,8 @@ class DumpAnswerDataCCSDSTrousseau(CCSDSTrousseau):
         Args:
         * data (byts): the chain of octets to unpack
         """
-        return {self.keys[THEDATAKEY].name: Byt(data[:MAXLENGTHDATA])}
+        data = Byt(data[:MAXLENGTHDATA])
+        return super(DumpAnswerDataCCSDSTrousseau, self).unpack(data)
 
     def disp(self, vals):
         """
@@ -61,10 +64,7 @@ class DumpAnswerDataCCSDSTrousseau(CCSDSTrousseau):
           * vals (dict): a dictionary containing the values to display
         """
         copyvals = dict(vals)
-        ll = copyvals[self.keys[THEDATAKEY].name].hex()
-        charperline = 60
-        ll = "\n".join([ll[i*charperline:(i+1)*charperline] for i in range(len(ll) // charperline +1)])
-        copyvals[self.keys[THEDATAKEY].name] = ll
+        copyvals[self.keys[0].name] = copyvals[self.keys[0].name].hex()
         return super(DumpAnswerDataCCSDSTrousseau, self).disp(copyvals)
 
     def pack(self, allvalues, retdbvalues, **kwargs):

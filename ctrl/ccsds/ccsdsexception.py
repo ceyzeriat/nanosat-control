@@ -183,3 +183,30 @@ class PIDMissing(CCSDSException):
     def __init__(self, pid, *args, **kwargs):
         self._init(pid, *args, **kwargs)
         self.message = "PID '{}' does not exist".format(pid)
+
+
+class InvalidListOfBits(CCSDSException):
+    """
+    If user required non-octet with listof modes
+    """
+    def __init__(self, *args, **kwargs):
+        self._init(*args, **kwargs)
+        self.message = "Cannot do listof mode with non-octets"
+
+
+class InvalidMetaTrousseauKey(CCSDSException):
+    """
+    If the meta-trousseau key is unknown
+    """
+    def __init__(self, key, *args, **kwargs):
+        self._init(key, *args, **kwargs)
+        self.message = "Meta-Trousseau Key '{}' does not exist".format(key)
+
+class NoMetaTrousseauAttribute(CCSDSException):
+    """
+    If one tries to access a trousseau attribute on a meta-trousseau
+    """
+    def __init__(self, key, *args, **kwargs):
+        self._init(key, *args, **kwargs)
+        self.message = "Attribute '{}' does not exist for meta-trousseau"\
+                        .format(key)

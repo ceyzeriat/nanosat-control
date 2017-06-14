@@ -27,6 +27,7 @@
 
 from param import param_category
 from ctrl.utils import core
+from ctrl.ccsds import CCSDSTrousseau
 
 from . import mgmtexception
 
@@ -55,7 +56,9 @@ class CategoryRegistration(object):
         if self.cat.table_aux_name is not None:
             print("DROP TABLE {} CASCADE;".format(self.cat.table_aux_name))
             theresone = True
-        if self.cat.table_data_name is not None:
+        # if meta-trousseau, skip. It is managed manually
+        if self.cat.table_data_name is not None and\
+                isinstance(self.cat.data_trousseau, CCSDSTrousseau):
             print("DROP TABLE {} CASCADE;".format(self.cat.table_data_name))
             theresone = True
         if not theresone:
@@ -67,7 +70,7 @@ class CategoryRegistration(object):
 
     def show(self):
         """
-        Show the content of the category
+        Shows the content of the category
         """
         # AUX HEADER
         if self.cat.table_aux_name is not None:
@@ -79,7 +82,8 @@ class CategoryRegistration(object):
                 if item.name != item.name.lower():
                     print('!!! uppercase is not allowed in ccsds keys')
         # DATA FIELD
-        if self.cat.table_data_name is not None:
+        if self.cat.table_data_name is not None and\
+                isinstance(self.cat.data_trousseau, CCSDSTrousseau):
             print("\n\nCategory '{}', Data field Table '{}'\n".format(
                                                 self.cat.name,
                                                 self.cat.table_data_name))
@@ -134,7 +138,8 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
                                     unique=" UNIQUE",
                                     fields=fields))
         # DATA FIELD
-        if self.cat.data_trousseau is not None:
+        if self.cat.data_trousseau is not None and\
+                isinstance(self.cat.data_trousseau, CCSDSTrousseau):
             fields = ""
             conv = 8 if self.cat.data_trousseau.octets else 1
             for item in self.cat.data_trousseau.keys:

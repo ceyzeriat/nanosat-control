@@ -62,7 +62,7 @@ class CCSDSUnPacker(object):
         headersx = self.unpack_auxHeader(packet,
                     pldFlag=headers[param_ccsds.PAYLOADFLAG.name],
                     pktCat=headers[param_ccsds.PACKETCATEGORY.name])
-        data = self.unpack_data(packet, hds=headers)
+        data = self.unpack_data(packet, hds=headers, hdx=headersx)
         return headers, headersx, data
 
     def unpack_primHeader(self, packet, retdbvalues=True):
@@ -130,13 +130,14 @@ class CCSDSUnPacker(object):
             start += param_ccsds.HEADER_S_KEYS_TELECOMMAND.size
         return cat.aux_trousseau.unpack(packet[start:])
 
-    def unpack_data(self, packet, hds):
+    def unpack_data(self, packet, hds, hdx):
         """
         Unpacks the data of the packet, returns a dictionary
 
         Args:
-        * packet (byts): the string that contains the full packet
-        * hds (int): the packet headers
+          * packet (byts): the string that contains the full packet
+          * hds (dict): the packet headers
+          * hdx (dict): the packet auxiliary headers
         """
         data = {'all': Byt(), 'unpacked': {}}
         start = param_ccsds.HEADER_P_KEYS.size
@@ -151,5 +152,7 @@ class CCSDSUnPacker(object):
         start += cat.aux_size
         data['all'] = packet[start:]
         if cat.data_trousseau is not None:
-            data['unpacked'] = cat.data_trousseau.unpack(data['all'])
+            # pass tc id in case of tcanswer category
+            data['unpacked'] = cat.data_trousseau.unpack(data=data['all'],
+                                                         hds=hds, hdx=hdx)
         return data

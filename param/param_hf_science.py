@@ -32,47 +32,54 @@ from ctrl.utils import bincore
 __all__ = ['TROUSSEAU']
 
 
-KEYS = [dict(name='step', start=0, l=1, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
-                verbose="step", disp="step"),
-        dict(name='counts', start=1, l=4, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
-                verbose="counts", disp="cts"),
-        dict(name='x_com', start=5, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
-                verbose="x_com", disp="xc"),
-        dict(name='y_com', start=7, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
-                verbose="y_com", disp="yc"),
-        dict(name='x_pos', start=9, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
-                verbose="x_pos", disp="xp"),
-        dict(name='y_pos', start=11, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex,
-                verbose="y_pos", disp="yp")
+KEYS = [dict(   name='step',
+                start=0,
+                l=1,
+                fctunpack=bincore.hex2int,
+                fctpack=bincore.int2hex,
+                verbose="step",
+                disp="step"),
+
+        dict(   name='counts',
+                start=1,
+                l=4,
+                fctunpack=bincore.hex2int,
+                fctpack=bincore.int2hex,
+                verbose="counts",
+                disp="cts"),
+
+        dict(   name='x_com',
+                start=5,
+                l=2,
+                fctunpack=bincore.hex2int,
+                fctpack=bincore.int2hex,
+                verbose="x_com",
+                disp="xc"),
+
+        dict(   name='y_com',
+                start=7,
+                l=2,
+                fctunpack=bincore.hex2int,
+                fctpack=bincore.int2hex,
+                verbose="y_com",
+                disp="yc"),
+
+        dict(   name='x_pos',
+                start=9,
+                l=2,
+                fctunpack=bincore.hex2int,
+                fctpack=bincore.int2hex,
+                verbose="x_pos",
+                disp="xp"),
+
+        dict(   name='y_pos',
+                start=11,
+                l=2,
+                fctunpack=bincore.hex2int,
+                fctpack=bincore.int2hex,
+                verbose="y_pos",
+                disp="yp")
         ]
 
 
-class HFScienceCCSDSTrousseau(CCSDSTrousseau):
-    def unpack(self, data, **kwargs):
-        """
-        Unpacks the data contained in the Science HF packets
-
-        Args:
-        * data (byts): the chain of octets to unpack
-        """
-        nlines = len(data) // self.size
-        lines = [{} for i in range(nlines)]
-        for idx in range(nlines):
-            lines[idx] = super(HFScienceCCSDSTrousseau, self).unpack(
-                                        data[idx*self.size:(idx+1)*self.size])
-        return lines
-
-    def disp(self, data):
-        """
-        Display the data values of the hf science
-
-        Args:
-          * data (list of dict): a list of dictionaries containing the
-            values to display
-        """
-        res = [super(HFScienceCCSDSTrousseau, self).disp(line)\
-                    for line in data]
-        return "\n".join(res)
-
-
-TROUSSEAU = HFScienceCCSDSTrousseau(KEYS, octets=True, listof=True)
+TROUSSEAU = CCSDSTrousseau(KEYS, octets=True, listof=True)
