@@ -74,7 +74,7 @@ def hex2float(h, bits=32, **kwargs):
     litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
     bits = 'd' if bits == 64 else 'f'
     end = '<' if litFucInd else '>'
-    return Byt(struct.unpack(end+bits, v))
+    return (struct.unpack(end+bits, h))
 
 def hex2hex(v, pad=0, **kwargs):
     """
