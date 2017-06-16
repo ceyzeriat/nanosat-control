@@ -49,7 +49,7 @@ class Telecommand(object):
         """
         Reads a TC from the database
         """
-        # returns None if id not existing, else (hd, inputs)
+        # returns None if id not existing
         ret = db.get_TC(pkid=pkid, dbid=dbid)
         if ret is None:
             raise exc.NoSuchTC(pkid=pkid, dbid=dbid)
@@ -156,9 +156,9 @@ class Telecommand(object):
         pkid = self.getattr(param_ccsds.PACKETID.name)
         ansid = db.get_TMid_answer_from_TC(cid=cid, pkid=pkid)
         if ansid is not None:
-            self.TCANS = Telemetry(dbid=ansid)
+            self.TCANS = [Telemetry(dbid=ansid)]
         else:
-            self.TCANS = None
+            self.TCANS = []
 
     @classmethod
     def _fromCommand(cls, name, packet, dbid, hd, hdx, inputs, **kwargs):
