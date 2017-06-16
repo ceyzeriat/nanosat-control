@@ -25,8 +25,19 @@
 ###############################################################################
 
 
-from . import mgmtexception
-from .categoryregistration import *
-from .commandlist import *
-from .doccomm import *
-from .doctctm import *
+from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from ctrl.ccsds.ccsdsmetatrousseau import CCSDSMetaTrousseau
+
+#from . import param_category_obc
+from .generated.l0hkstructpart1 import L0HKSTRUCTPART1_KEYS
+from .generated.l0hkstructpart2 import L0HKSTRUCTPART2_KEYS
+
+
+__all__ = ['TROUSSEAU']
+
+
+TROUSSEAUDICT = {1: CCSDSTrousseau(L0HKSTRUCTPART1_KEYS, octets=False),
+                 2: CCSDSTrousseau(L0HKSTRUCTPART2_KEYS, octets=False)}
+
+
+TROUSSEAU = CCSDSMetaTrousseau(TROUSSEAUDICT, key='hk_part')

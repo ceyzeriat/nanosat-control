@@ -1,9 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 
 from ctrl.utils import bincore
-
 
 L0BEACONSTRUCT_KEYS = [
 dict(
@@ -12,7 +8,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'solarPanel5ErrorFlag'),
 
 dict(
@@ -21,7 +17,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'solarPanel4ErrorFlag'),
 
 dict(
@@ -30,7 +26,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'solarPanel3ErrorFlag'),
 
 dict(
@@ -39,7 +35,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'solarPanel2ErrorFlag'),
 
 dict(
@@ -48,7 +44,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'solarPanel1ErrorFlag'),
 
 dict(
@@ -57,7 +53,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'framEnableErrorFlag'),
 
 dict(
@@ -66,7 +62,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'antsBErrorFlag'),
 
 dict(
@@ -75,7 +71,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'antsAErrorFlag'),
 
 dict(
@@ -84,7 +80,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'trxvuTxErrorFlag'),
 
 dict(
@@ -93,7 +89,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'trxvuRxErrorFlag'),
 
 dict(
@@ -102,7 +98,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'obcSupervisorErrorFlag'),
 
 dict(
@@ -111,7 +107,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'gomEpsErrorFlag'),
 
 dict(
@@ -120,7 +116,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant1UndeployedAntsBStatus'),
 
 dict(
@@ -129,7 +125,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant1TimeoutAntsBStatus'),
 
 dict(
@@ -138,7 +134,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant1DeployingAntsBStatus'),
 
 dict(
@@ -147,7 +143,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant2UndeployedAntsBStatus'),
 
 dict(
@@ -156,7 +152,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant2TimeoutAntsBStatus'),
 
 dict(
@@ -165,7 +161,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant2DeployingAntsBStatus'),
 
 dict(
@@ -174,7 +170,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ignoreFlagAntsBStatus'),
 
 dict(
@@ -183,7 +179,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant3UndeployedAntsBStatus'),
 
 dict(
@@ -192,7 +188,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant3TimeoutAntsBStatus'),
 
 dict(
@@ -201,7 +197,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant3DeployingAntsBStatus'),
 
 dict(
@@ -210,7 +206,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant4UndeployedAntsBStatus'),
 
 dict(
@@ -219,7 +215,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant4TimeoutAntsBStatus'),
 
 dict(
@@ -228,7 +224,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant4DeployingAntsBStatus'),
 
 dict(
@@ -237,7 +233,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'armedAntsBStatus'),
 
 dict(
@@ -246,7 +242,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant1UndeployedAntsAStatus'),
 
 dict(
@@ -255,7 +251,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant1TimeoutAntsAStatus'),
 
 dict(
@@ -264,7 +260,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant1DeployingAntsAStatus'),
 
 dict(
@@ -273,7 +269,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant2UndeployedAntsAStatus'),
 
 dict(
@@ -282,7 +278,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant2TimeoutAntsAStatus'),
 
 dict(
@@ -291,7 +287,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant2DeployingAntsAStatus'),
 
 dict(
@@ -300,7 +296,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ignoreFlagAntsAStatus'),
 
 dict(
@@ -309,7 +305,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant3UndeployedAntsAStatus'),
 
 dict(
@@ -318,7 +314,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant3TimeoutAntsAStatus'),
 
 dict(
@@ -327,7 +323,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant3DeployingAntsAStatus'),
 
 dict(
@@ -336,7 +332,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant4UndeployedAntsAStatus'),
 
 dict(
@@ -345,7 +341,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant4TimeoutAntsAStatus'),
 
 dict(
@@ -354,7 +350,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'ant4DeployingAntsAStatus'),
 
 dict(
@@ -363,7 +359,7 @@ dict(
          l = 1,
          fctunpack = bincore.bin2int,
          fctpack = bincore.int2bin,
-         verbose = '[NO DOC STR. Where is your god now?]',
+         verbose = '[NO DOC STRING], see OBC documentation',
          disp = 'armedAntsAStatus'),
 
 dict(

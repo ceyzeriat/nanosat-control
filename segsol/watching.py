@@ -131,7 +131,7 @@ def process_report(inputs):
             print(cat.aux_trousseau.disp(hdx))
         # print data if any
         if cat.data_trousseau is not None:
-            print(cat.data_trousseau.disp(dd['unpacked']))
+            print(cat.data_trousseau.disp(dd['unpacked'], hds=hd, hdx=hdx))
     else:
         pass
 

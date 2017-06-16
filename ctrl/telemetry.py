@@ -42,7 +42,7 @@ class Telemetry(object):
         """
         Gets a telemetry from the database
         """
-        # returns None if id not existing, else (hd, inputs)
+        # returns None if id not existing
         ret = db.get_TM(pkid=pkid, dbid=dbid)
         if ret is None:
             raise exc.NoSuchTM(pkid=pkid, dbid=dbid)

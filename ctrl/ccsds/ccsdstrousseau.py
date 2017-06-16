@@ -26,6 +26,7 @@
 
 
 import math
+
 from ..utils import core
 from ..utils import bincore
 from . import ccsdsexception
@@ -52,6 +53,8 @@ class CCSDSTrousseau(object):
         self.size = 0
         self.octets = bool(octets)
         self.listof = bool(listof)
+        if self.listof and not self.octets:
+            raise ccsdsexception.InvalidListOfBits()
         pos = 0
         for item in keylist:
             if isinstance(item, CCSDSKey):
@@ -68,20 +71,17 @@ class CCSDSTrousseau(object):
         if not self.octets:
             # size is always in octets
             self.size = int(math.ceil(self.size / 8.))
-        self.make_fmt()
+        self._make_fmt()
 
-    def make_fmt(self):
+    def _make_fmt(self, splt=", "):
         """
         Generates the single-line formatting for later display
-        """
-        self.fmt = ", ".join(["%s:{%s}" % (key.disp, key.name)\
-                                for key in self.keys])
 
-    def get_keys(self):
+        Args:
+          * splt: the split char(s) between each keys
         """
-        Returns a list of all CCSDS key names
-        """
-        return [item.name for item in self.keys]
+        self.fmt = splt.join(["%s:{%s}" % (key.disp, key.name)\
+                                for key in self.keys])
 
     def pack(self, allvalues, retdbvalues, **kwargs):
         """
@@ -132,27 +132,70 @@ class CCSDSTrousseau(object):
         else:
             return bits, retvals
 
-    def unpack(self, data):
+    def unpack(self, data, **kwargs):
         """
         Unpacks the data according to the list of keys
 
         Args:
           * data (byts): the data to unpack, given as chain of bytes
+
+        Kwargs are ignored
         """
-        res = {}
         if not self.octets:
             data = bincore.hex2bin(data[:self.size])
         else:
             data = data[:self.size]
+        if not self.listof:
+            return self._unpack(data)
+        else:
+            nlines = len(data) // self.size
+            res = []
+            for idx in range(nlines):
+                chunk = data[idx*self.size:(idx+1)*self.size]
+                res.append(self._unpack(chunk))
+            # returns a list of the pk_id
+            return res
+
+    def _unpack(self, data):
+        """
+        Basic unpack routine
+        """
+        res = {}
         for item in self.keys:
             res[item.name] = item.unpack(data)
         return res
 
-    def disp(self, vals):
+
+    def disp(self, vals, charwrap=60, **kwargs):
         """
-        Display the trousseau values
+        Displays the trousseau values
 
         Args:
-          * vals (dict): a dictionary containing the values to display
+          * vals (dict or list of dict): a dictionary containing the
+            values to display
+          * charwrap: at how many chars should there be a line wrap,
+            set to -1 to disable
+
+        Kwargs are ignored
         """
-        return self.fmt.format(**vals)
+        if not self.listof:
+            return self._disp(vals, charwrap)
+        else:
+            res = [self._disp(line) for line in list(vals)]
+        return "\n* ".join(res)
+
+    def _disp(self, vals, charwrap):
+        """
+        Basic disp routine
+        """
+        copyvals = dict(vals)
+        charwrap = int(charwrap)
+        if charwrap > 0:
+            newline = "\n    "
+            for k, v in copyvals.items():
+                v = str(v)
+                if len(v) > charwrap:
+                    copyvals[k] = newline +\
+                                   newline.join([v[i*charwrap:(i+1)*charwrap]\
+                                        for i in range(len(v) // charwrap +1)])
+        return self.fmt.format(**copyvals)

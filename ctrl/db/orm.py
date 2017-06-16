@@ -462,7 +462,7 @@ def get_TMid_answer_from_TC(cid=None, pkid=None, dbid=None):
             # an answer must have an aux header to identify the TC
             if cat.aux_trousseau is None:
                 continue
-            # patch to allow partly designed DB
+            # patch to allow partly designed DB and avoid error
             if cat.object_aux_name not in TABLES.keys():
                 continue
             TMAUX = TABLES[cat.object_aux_name]

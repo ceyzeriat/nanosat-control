@@ -29,6 +29,7 @@ from pylatex import Document, Section, Subsection, Tabular, NoEscape,\
                         Command, Itemize, MultiColumn, Subsubsection
 from pylatex.basic import NewLine
 from pylatex.utils import italic
+from ctrl.cmd import allcommand
 from ctrl.utils import core
 from ctrl.ccsds import param_ccsds
 from ctrl.ccsds import CCSDSMetaTrousseau
@@ -37,18 +38,18 @@ import os
 import re
 
 
-__all__ = ['DocComm']
+__all__ = ['DocTCTM']
 
 
-DOCNAME = "PICSAT-COMM-SPEC-01"
+DOCNAME = "PICSAT-TCTM-SPEC-01"
 REPL = {"<!SHORTTITLE!>": 'PicSat Comm. Spec.',
         "<!VERSION!>": '1.0',
-        "<!STITLE!>": 'PicSat Communication Specifications',
+        "<!STITLE!>": 'PicSat TC-TM Specifications',
         "<!PATH!>": core.rel_dir('mgmt'),
         "<!REF!>": DOCNAME}
 
 
-class DocComm(object):
+class DocTCTM(object):
     def __init__(self):
         """
         Generates the pdf for PicSat communication specifications
@@ -86,65 +87,59 @@ TC are composed of a 6 octets primary header and a 18 octets secondary header. T
 
 TM are composed of a 6 octets primary header and a 6 octets secondary header. The TM category defines what type of TM is transmitted (e.g. beacon, house keeping) and how the auxiliary header and data field are encoded.
 
-This document covers the content of headers for TC, and headers and data fields for TM.
+This documents covers the content of data field for TC, and the content of auxiliary header and data fields for the TM category 'TC Answer'.
 
-This documents does not cover the content of data field for TC, and the content of auxiliary header and data fields for the TM category 'TC Answer'. This information is available in the dedicated TC-TM communication document.""")
+This document does not cover the content of headers for TC, and headers and data fields for TM. This information is available in the dedicated communication specifications document.""")
         doc.append(section)
         # Telecommands
-        section = Section('Telecommands')
-        subsection = self._trousseau2subsection('Primary Header',
-                                        param_ccsds.HEADER_P_KEYS)
-        section.append(subsection)
-        subsection = self._trousseau2subsection('Secondary Header',
-                                        param_ccsds.HEADER_S_KEYS_TELECOMMAND)
-        section.append(subsection)
-        subsection = self._TCauxHeader()
-        section.append(subsection)
-        doc.append(section)
-        # Telemetries
-        section = Section('Telemetries')
-        subsection = self._trousseau2subsection('Primary Header',
-                                        param_ccsds.HEADER_P_KEYS)
-        section.append(subsection)
-        subsection = self._trousseau2subsection('Secondary Header',
-                                        param_ccsds.HEADER_S_KEYS_TELEMETRY)
-        section.append(subsection)
-        subsection = self._TMauxHeader()
-        section.append(subsection)
-        doc.append(section)
-        # Packet Categories
-        sectionname = {0: 'Packet Categories for OBC',
-                       1: 'Packet Categories for Payload'}
-        for idx, pldflag in ([0, False], [1, True]):
-            section = Section(sectionname[idx])
-            for catnum, cat in param.param_category.\
-                                    CATEGORIES[idx].items():
-                subsection = self._trousseau2subsection(
-                    '{} ({:d}) - Auxiliary Header'.format(cat.name, catnum),
-                    cat.aux_trousseau, catnum=catnum, pldflag=pldflag)
+        section = Section('Commands for OBC-L0')
+        for item in list(sorted(allcommand.L0CMDS, key=lambda x: x.number)):
+            subsection = Subsection('#{:d}: {}'.format(item.number, item.name))
+            subsection.append(self._print_TC(item))
+            section.append(subsection)
+            # add TM if need be
+            if item.number in param.param_tc_answer.TROUSSEAUDIC.keys():
+                subsection = self._trousseau2subsection("Answer TM to {}".format(item.name),
+                                        param.param_tc_answer.TROUSSEAUDIC[item.number])
                 section.append(subsection)
-                # case of TC answer, dedicated doc
-                if catnum == param.param_category.TELECOMMANDANSWERCAT:
-                    subsection = Subsection('{} ({:d}) - Data'\
-                                                .format(cat.name, catnum))
-                    subsection.append("Refer to the dedicated TC-TM "\
-                                      "communication document")
-                    section.append(subsection)
-                # case of meta-trousseau
-                elif isinstance(cat.data_trousseau, CCSDSMetaTrousseau):
-                    for mtpart, mtT in cat.data_trousseau.TROUSSEAUDIC.items():
-                        subsection = self._trousseau2subsection(
-                            '{} ({:d}) [part {:d}] - Data'.format(
-                                                cat.name, catnum, mtpart),
-                            mtT, catnum=catnum, pldflag=pldflag)
-                        section.append(subsection)
-                else:  # normal case
-                    subsection = self._trousseau2subsection(
-                        '{} ({:d}) - Data'.format(cat.name, catnum),
-                        cat.data_trousseau, catnum=catnum, pldflag=pldflag)
-                    section.append(subsection)
-            doc.append(section)
+        doc.append(section)
+
+        section = Section('Commands for OBC-L1')
+        for item in list(sorted(allcommand.L1OBCCMDS, key=lambda x: x.number)):
+            subsection = Subsection(item.name)
+            subsection.append(self._print_TC(item))
+            section.append(subsection)
+            # add TM if need be
+            if item.number in param.param_tc_answer.TROUSSEAUDIC.keys():
+                subsection = self._trousseau2subsection("Answer TM to {}".format(item.name),
+                                        param.param_tc_answer.TROUSSEAUDIC[item.number])
+                section.append(subsection)
+        doc.append(section)
+
+        section = Section('Commands for PLD-L1')
+        for item in list(sorted(allcommand.L1PLDCMDS, key=lambda x: x.number)):
+            subsection = Subsection(item.name)
+            subsection.append(self._print_TC(item))
+            section.append(subsection)
+            # add TM if need be
+            if item.number in param.param_tc_answer.TROUSSEAUDIC.keys():
+                subsection = self._trousseau2subsection("Answer TM to {}".format(item.name),
+                                        param.param_tc_answer.TROUSSEAUDIC[item.number])
+                section.append(subsection)
+        doc.append(section)
         self._compile(doc, clean_tex=clean_tex)
+
+
+    def _print_TC(self, TC):
+        return "#{} {} (L{}, pid: {})\n {}\n{} params: ({} octet)\n{}".format(
+                            TC.number,
+                            TC.name,
+                            int(TC.level),
+                            TC._pidstr,
+                            TC.desc,
+                            TC.nparam,
+                            TC.lparam if TC.lparam is not None else "*",
+                            "\n".join([str(item) for item in TC._params]))
 
     def _compile(self, doc, clean_tex=True):
         """
@@ -165,30 +160,6 @@ This documents does not cover the content of data field for TC, and the content 
         if os.path.isfile(self.docname + ".toc"):
             os.remove(self.docname + ".toc")
 
-    def _TCauxHeader(self):
-        """
-        Fills the aux header section for TC
-        """
-        subsection = Subsection('Auxiliary Header and Data')
-        subsection.append("No auxiliary header.")
-        subsection.append(NewLine())
-        subsection.append("The data field is the "\
-                          "octet-concatenation of telecommand input "\
-                          "parameters, as per telecommands documentation.")
-        return subsection
-
-    def _TMauxHeader(self):
-        """
-        Fills the aux header section for TM
-        """
-        subsection = Subsection('Auxiliary Header and Data')
-        subsection.append("The auxiliary header and data fields definitions "\
-                          "depend on the payload flag and the packet "\
-                          "category.")
-        subsection.append(NewLine())
-        subsection.append("Refer to Sections Packet Category OBC and Payload")
-        return subsection
-
     def _trousseau2subsection(self, subname, T, catnum=None, pldflag=None):
         """
         Takes a whole trousseau and generates the document latex for it
@@ -201,7 +172,7 @@ This documents does not cover the content of data field for TC, and the content 
           * pldflag (None, bool): None if the trousseau is not a
             category, or bool corresponding to the payload flag
         """
-        subsection = Subsection(str(subname))
+        subsection = Subsection(str(subname), numbering=False)
         if catnum is not None:
             subsection.append('Payload flag: {}'.format(pldflag))
             subsection.append(NewLine())

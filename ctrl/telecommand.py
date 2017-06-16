@@ -49,7 +49,7 @@ class Telecommand(object):
         """
         Reads a TC from the database
         """
-        # returns None if id not existing, else (hd, inputs)
+        # returns None if id not existing
         ret = db.get_TC(pkid=pkid, dbid=dbid)
         if ret is None:
             raise exc.NoSuchTC(pkid=pkid, dbid=dbid)
@@ -75,6 +75,9 @@ class Telecommand(object):
 
     @property
     def issent(self):
+        """
+        Returns True
+        """
         return (self.time_sent is not None)
     @issent.setter
     def issent(self, value):
@@ -82,6 +85,11 @@ class Telecommand(object):
     
     @property
     def iserror(self):
+        """
+        Returns ``True`` if any of the received ACK contains an error,
+        else ``False``
+        It is the opposite of ``isok`` attribute.
+        """
         return not((self.FACK is None or bool(self.FACK))\
                     and (self.EACK is None or bool(self.EACK)))
     @iserror.setter
@@ -124,6 +132,11 @@ class Telecommand(object):
 
     @property
     def isok(self):
+        """
+        Returns ``True`` if none of the received ACK contains an error
+        or if the ACK were not received, else ``False``.
+        It is the opposite of ``iserror`` attribute.
+        """
         return (self.RACK is None or bool(self.RACK))\
                 and (self.FACK is None or bool(self.FACK))\
                 and (self.EACK is None or bool(self.EACK))
@@ -143,9 +156,9 @@ class Telecommand(object):
         pkid = self.getattr(param_ccsds.PACKETID.name)
         ansid = db.get_TMid_answer_from_TC(cid=cid, pkid=pkid)
         if ansid is not None:
-            self.TCANS = Telemetry(dbid=ansid)
+            self.TCANS = [Telemetry(dbid=ansid)]
         else:
-            self.TCANS = None
+            self.TCANS = []
 
     @classmethod
     def _fromCommand(cls, name, packet, dbid, hd, hdx, inputs, **kwargs):

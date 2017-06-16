@@ -25,45 +25,37 @@
 ###############################################################################
 
 
-from byt import Byt
+from ctrl.ccsds.ccsdsmetatrousseau import CCSDSMetaTrousseau
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from ctrl.ccsds.ccsdskey import CCSDSKey
 from ctrl.utils import bincore
 
 
-__all__ = []
+__all__ = ['TROUSSEAU']
 
 
-MAXLENGTHMESSAGE = 235  # octets
+TROUSSEAUDIC = {1: CCSDSTrousseau([CCSDSKey(name='message', start=0, l=10, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='message',)], octets=True),
+                4: CCSDSTrousseau([CCSDSKey(name='time', start=0, l=4, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='time',)], octets=True),
+                5: CCSDSTrousseau([CCSDSKey(name='time', start=0, l=4, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='time',)], octets=True),
+                6: CCSDSTrousseau([CCSDSKey(name='count', start=0, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='count',)], octets=True),
+                7: CCSDSTrousseau([CCSDSKey(name='temp1', start=0, l=2, fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex, verbose='none', disp='temp1',),
+                                   CCSDSKey(name='temp2', start=2, l=2, fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex, verbose='none', disp='temp2',),
+                                   CCSDSKey(name='temp3', start=4, l=2, fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex, verbose='none', disp='temp3',),
+                                   CCSDSKey(name='temp4', start=6, l=2, fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex, verbose='none', disp='temp4',),
+                                   CCSDSKey(name='temp5', start=8, l=2, fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex, verbose='none', disp='temp5',)], octets=True),
+                11: CCSDSTrousseau([CCSDSKey(name='data', start=0, l=255, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='data', pad=False)], octets=True),
+                17: CCSDSTrousseau([CCSDSKey(name='data', start=0, l=255, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='data', pad=False)], octets=True),
+                17: CCSDSTrousseau([CCSDSKey(name='data', start=0, l=255, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='data', pad=False)], octets=True),
+                48: CCSDSTrousseau([CCSDSKey(name='crc', start=0, l=4, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='crc',)], octets=True),
+                49: CCSDSTrousseau([CCSDSKey(name='crc', start=0, l=4, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='crc',)], octets=True),
+                50: CCSDSTrousseau([CCSDSKey(name='crc', start=0, l=4, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='crc',)], octets=True),
+                51: CCSDSTrousseau([CCSDSKey(name='crc', start=0, l=4, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='crc',)], octets=True),
+                52: CCSDSTrousseau([CCSDSKey(name='crc', start=0, l=4, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='crc',)], octets=True),
+                55: CCSDSTrousseau([CCSDSKey(name='crc', start=0, l=4, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='crc',)], octets=True),
+                63: CCSDSTrousseau([CCSDSKey(name='patchState', start=0, l=1, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='patchState',)], octets=True),
+                81: CCSDSTrousseau([CCSDSKey(name='i2cReply', start=0, l=255, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='i2cReply', pad=False)], octets=True),
+                82: CCSDSTrousseau([CCSDSKey(name='adcsMode', start=0, l=4, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='adcsMode',)], octets=True)
+}
 
 
-KEYS = [dict(name='message', start=0, l=MAXLENGTHMESSAGE, fctunpack=bincore.bin2txt,
-                fctpack=bincore.txt2bin,
-                verbose="A report message (ascii string)",
-                disp='text', pad=False)]
-
-
-class TCAnswerCCSDSTrousseau(CCSDSTrousseau):
-    def unpack(self, data, **kwargs):
-        """
-        Unpacks the data contained in the payload report
-
-        Args:
-        * data (byts): the chain of octets to unpack
-        """
-        return {self.keys[0].name: Byt(data[:MAXLENGTHMESSAGE])}
-
-    def pack(self, **kwargs):
-        pass
-
-    def disp(self, vals):
-        """
-        Display the trousseau values
-
-        Args:
-          * vals (dict): a dictionary containing the values to display
-        """
-        return "{}\nhex: {}".format(super(TCAnswerCCSDSTrousseau, self).disp(vals),
-                                    vals[self.keys[0].name].hex())
-
-
-TROUSSEAU = TCAnswerCCSDSTrousseau(KEYS, octets=True)
+TROUSSEAU = CCSDSMetaTrousseau(TROUSSEAUDIC, key='telecommand_id_mirror')
