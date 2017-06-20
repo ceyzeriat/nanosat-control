@@ -65,7 +65,7 @@ class Telecommand(object):
                                                 else Telemetry(dbid=fack)
         self.EACK = getattr(self, 'EACK', None) if eack is None\
                                                 else Telemetry(dbid=eack)
-        self.TCANS = None if ansid is None else Telemetry(dbid=ansid)
+        self._load_answer(ansid)
 
     def show(self, *args, **kwargs):
         """
@@ -151,14 +151,17 @@ class Telecommand(object):
     def istimedout(self, value):
         pass
 
-    def get_answer(self):
-        cid = self.getattr(param_ccsds.TELECOMMANDID.name)
-        pkid = self.getattr(param_ccsds.PACKETID.name)
+    def load_answer(self):
+        """
+        Searches the DB and loads all TMs that answer the current TC
+        """
+        cid = getattr(self, param_ccsds.TELECOMMANDID.name)
+        pkid = getattr(self, param_ccsds.PACKETID.name)
         ansid = db.get_TMid_answer_from_TC(cid=cid, pkid=pkid)
-        if ansid is not None:
-            self.TCANS = [Telemetry(dbid=ansid)]
-        else:
-            self.TCANS = []
+        self._load_answer(ansid)
+
+    def _load_answer(self, ansid):
+        self.TCANS = [Telemetry(dbid=item) for item in ansid]
 
     @classmethod
     def _fromCommand(cls, name, packet, dbid, hd, hdx, inputs, **kwargs):

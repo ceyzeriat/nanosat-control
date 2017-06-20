@@ -37,6 +37,7 @@ if __name__ == "__main__":
     from ctrl import cp1
     from ctrl import cadcs
     from ctrl import db
+    from ctrl import Telemetry
     from segsol import controlling
     from param import param_all
 

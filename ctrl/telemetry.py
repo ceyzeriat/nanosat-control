@@ -90,6 +90,8 @@ class Telemetry(object):
         elif param_category.TELECOMMANDANSWERCAT:
             tcid = db.get_tcanswer_TCid(pkid=cls.hdx[pcc.PACKETIDMIRROR.name])
             cls.hdx['telecommand_packet'] = tcid
+        # some TM are replying but are not registered as ACK or TCANSWER
+        # categories. This is a design flaw which is not covered
         else:
             tcid = None
         cls.tcid = tcid
