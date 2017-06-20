@@ -125,9 +125,9 @@ def process_incoming(t, path, data, **kwargs):
     path = str(path)
     if not os.path.isfile(path):
         raise ctrlexception.PacketFileMissing(path)
-    f = open(path, mode='rb')
-    dd = Byt(f.read())
-    f.close()
+    #f = open(path, mode='rb')
+    #dd = Byt(f.read())
+    #f.close()
     #if not dd == data:
     #    raise ctrlexception.PacketMismatch(path)
     t = core.strISOstamp2datetime(t)

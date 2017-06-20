@@ -87,7 +87,7 @@ class Telemetry(object):
                                         in param_category.ACKCATEGORIES:
             tcid = db.get_ACK_TCid(pkid=cls.hdx[pcc.PACKETIDMIRROR.name])
             cls.hdx['telecommand_packet'] = tcid
-        elif param_category.TELECOMMANDANSWERCAT:
+        elif catnum == param_category.TELECOMMANDANSWERCAT:
             tcid = db.get_tcanswer_TCid(pkid=cls.hdx[pcc.PACKETIDMIRROR.name])
             cls.hdx['telecommand_packet'] = tcid
         # some TM are replying but are not registered as ACK or TCANSWER
