@@ -169,7 +169,7 @@ class Telecommand(object):
         controlling.broadcast_TC(cmdname=name, dbid=dbid, packet=packet,
                         hd=hd, hdx=hdx, inputs=inputs)
         cls._timedout = False
-        self.TCANS = None
+        cls.TCANS = []
         hd = hd
         hd.update(hdx)
         # no wait
