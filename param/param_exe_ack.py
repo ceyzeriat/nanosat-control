@@ -42,7 +42,6 @@ KEYS = [dict(   name='error_message',
                 fctunpack=bincore.bin2hex,
                 fctpack=bincore.hex2bin,
 				verbose="Optional: an error message (ascii string). The message is only put in the frame if errorCode is not 0",
-                pad=False,
                 disp='err')]
 
 
@@ -55,6 +54,8 @@ class EACKCCSDSTrousseau(CCSDSTrousseau):
         * data (byts): the chain of octets to unpack
         """
         data = Byt(data[:MAXLENGTHERRORMESSAGE])
+        if len(data) == 0:
+            return {KEYS[0].name: Byt()}
         return super(EACKCCSDSTrousseau, self).unpack(data)
 
     def disp(self, vals):
