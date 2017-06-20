@@ -49,6 +49,8 @@ REPORTSDATA = [
     ('receivedCallsignTM', "'{who}' (callsign '{source}') received data of "\
         "length '{ll}' from callsign '{destination}' for saving",
         ['who', 'source', 'll', 'destination']),
+    ('junkFromRF', "'{who}' junk data from RFCheckOutBox "\
+        ['who']),
     ('savedTM', "'{who}' saved data under dbid '{dbid}'",
         ['who', 'dbid']),
     ('myPID', "'{who}' has PID '{pid}'",
