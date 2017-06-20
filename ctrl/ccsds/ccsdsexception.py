@@ -93,7 +93,7 @@ class GrabFail(CCSDSException):
     """
     def __init__(self, name, l, *args, **kwargs):
         self._init(name, l, *args, **kwargs)
-        self.message = "Blob too small, could not grab '{}' bits, "\
+        self.message = "Blob too small, could not grab '{}', "\
                        "in '{}'".format(l, name)
 
 class CantApplyOffset(CCSDSException):

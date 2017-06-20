@@ -42,6 +42,7 @@ KEYS = [dict(   name='error_message',
                 fctunpack=bincore.bin2hex,
                 fctpack=bincore.hex2bin,
 				verbose="Optional: an error message (ascii string). The message is only put in the frame if errorCode is not 0",
+                pad=False,
                 disp='err')]
 
 
