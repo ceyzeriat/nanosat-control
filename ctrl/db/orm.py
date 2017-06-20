@@ -475,10 +475,10 @@ def get_TMid_answer_from_TC(cid=None, pkid=None, dbid=None):
                 continue
             res = DB.query(TMAUX.telemetry_packet)\
                     .filter(getattr(TMAUX,
-                                    param_ccsds.PACKETIDMIRROR.name)\
+                                    pcc.PACKETIDMIRROR.name)\
                                 == int(pkid))\
                     .filter(getattr(TMAUX,
-                                    param_ccsds.TELECOMMANDIDMIRROR.name)\
+                                    pcc.TELECOMMANDIDMIRROR.name)\
                                 == int(cid))\
                     .order_by(TMAUX.id.desc())
             ids += [item[0] for item in res.all()]
