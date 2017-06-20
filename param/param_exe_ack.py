@@ -54,6 +54,7 @@ class EACKCCSDSTrousseau(CCSDSTrousseau):
         * data (byts): the chain of octets to unpack
         """
         data = Byt(data[:MAXLENGTHERRORMESSAGE])
+        # optional error_message
         if len(data) == 0:
             return {KEYS[0].name: Byt()}
         return super(EACKCCSDSTrousseau, self).unpack(data)
