@@ -57,6 +57,8 @@ class ShowRec(hein.SocReceiver):
         """
         if key == 'rpt':
             rpt_key = str(data.pop(param_all.REPORTKEY, ''))
+            if rpt_key == '':
+                return
             who = str(data['who'])
             if rpt_key == 'IamDead':
                 if who == param_all.CONTROLLINGNAME:
@@ -72,18 +74,6 @@ class ShowRec(hein.SocReceiver):
                     XDISP.set_listenico(XDISP.ALIVE)
                 elif who == param_all.SAVINGNAME:
                     XDISP.set_saveico(XDISP.ALIVE)
-            elif rpt_key == 'sentTC':
-                data = data['data']
-                # strip AX25 if need be
-                if param_all.AX25ENCAPS:
-                    source, destination, data = Framer.decode_radio(data)
-                    # case of the RFCheckoutBox returning garbage
-                    if len(data) == 0:
-                        return
-                if len(data) == 0:
-                    return
-                res = TCUnPacker.unpack_primHeader(data)
-                XDISP.set_TC_sent(res[param_ccsds.PACKETID.name], XDISP.OK)
             elif rpt_key == 'gotACK':
                 thecat = str(data['thecat'])
                 error = str(data['error'])
@@ -98,10 +88,18 @@ class ShowRec(hein.SocReceiver):
                     XDISP.set_TC_eack(str(data['pkid']),
                                       XDISP.ERROR if error != '0'\
                                                     else XDISP.OK)
-            elif rpt_key == '':
-                pass
             else:
                 XDISP.report(REPORTS[rpt_key].disp(**data))
+                if rpt_key == 'sentTC':
+                    data = data['data']
+                    # strip AX25 if need be
+                    if param_all.AX25ENCAPS:
+                        source, destination, data = Framer.decode_radio(data)
+                        # case of the RFCheckoutBox returning garbage
+                    if len(data) == 0:
+                        return
+                    res = TCUnPacker.unpack_primHeader(data)
+                    XDISP.set_TC_sent(res[param_ccsds.PACKETID.name], XDISP.OK)
         elif key == 'tcf':
             XDISP.add_TC(packet_id=data[param_ccsds.PACKETID.name], infos=data)
         elif key == 'tmf':
