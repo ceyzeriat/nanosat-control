@@ -176,43 +176,43 @@ def temp0_pack(v, Vref, pad, **kwargs):
 VOLTPELTIER = 'vref'
 
 # put VOLTPELTRIER first because you'll need it t unpack other values
-KEYS = [  dict(name=VOLTPELTIER, start=128, l=16, disp=VOLTPELTIER,
+KEYS = [  dict(name=VOLTPELTIER, start=16, l=2, disp=VOLTPELTIER,
                     verbose="vref",
                     fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=volt_peltier_unpack, fctpack=volt_peltier_pack),
-            dict(name='volt5', start=0, l=16, disp="volt5",
+            dict(name='volt5', start=0, l=2, disp="volt5",
                     verbose="Voltage line 5V,",
                     fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=volt_line_unpack, fctpack=volt_line_pack),
-            dict(name='amp5', start=16, l=16, disp="amp5",
+            dict(name='amp5', start=2, l=2, disp="amp5",
                     verbose="amp5",
                     fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='amp3', start=32, l=16, disp="amp3",
+            dict(name='amp3', start=4, l=2, disp="amp3",
                     verbose="amp3",
                     fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='volthv', start=48, l=16, disp="volthv",
+            dict(name='volthv', start=6, l=2, disp="volthv",
                     verbose="volthv",
                     fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=volthv_unpack, fctpack=volthv_pack),
-            dict(name='amphv', start=64, l=16, disp="amphv",
+            dict(name='amphv', start=8, l=2, disp="amphv",
                     verbose="amphv",
                     fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='vitec', start=80, l=16, disp="vitec",
+            dict(name='vitec', start=10, l=2, disp="vitec",
                     verbose="vitec",
                     fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=vitec_unpack, fctpack=vitec_pack),
-            dict(name='temp0', start=96, l=16, disp="temp0",
+            dict(name='temp0', start=12, l=2, disp="temp0",
                     verbose="temp0",
                     fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=temp0_unpack, fctpack=temp0_pack),
-            dict(name='errortherm', start=112, l=16, disp="errortherm",
+            dict(name='errortherm', start=14, l=2, disp="errortherm",
                     verbose="errortherm",
                     fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=errortherm_unpack, fctpack=errortherm_pack),
-            dict(name='temp1', start=144, l=16, disp="temp1",
+            dict(name='temp1', start=18, l=2, disp="temp1",
                     verbose="temp1",
                     fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex),#fctunpack=temp_unpack, fctpack=temp_pack),
-            dict(name='temp2', start=160, l=16, disp="temp2",
+            dict(name='temp2', start=20, l=2, disp="temp2",
                     verbose="temp2",
                     fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex),#fctunpack=temp_unpack, fctpack=temp_pack),
-            dict(name='temp3', start=176, l=16, disp="temp3",
+            dict(name='temp3', start=22, l=2, disp="temp3",
                     verbose="temp3",
                     fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex),#fctunpack=temp_unpack, fctpack=temp_pack)
-            dict(name='temp4', start=192, l=16, disp="temp4",
+            dict(name='temp4', start=24, l=2, disp="temp4",
                     verbose="temp4",
                     fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex)#fctunpack=temp_unpack, fctpack=temp_pack)            
             ]
@@ -226,6 +226,7 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         Args:
         * data (byts): the chain of octets to unpack
         """
+        # size and data in octets
         nlines = len(data) // self.size
         lines = [{} for i in range(nlines)]
         for idx in range(nlines):

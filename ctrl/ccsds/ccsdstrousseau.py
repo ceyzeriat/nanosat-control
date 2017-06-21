@@ -142,9 +142,15 @@ class CCSDSTrousseau(object):
         Kwargs are ignored
         """
         if not self.octets:
-            data = bincore.hex2bin(data[:self.size])
+            if not self.listof:
+                data = bincore.hex2bin(data[:self.size])
+            else:
+                data = bincore.hex2bin(data)
         else:
-            data = data[:self.size]
+            if not self.listof:
+                data = data[:self.size]
+            else:
+                pass
         if not self.listof:
             return self._unpack(data)
         else:
