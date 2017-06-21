@@ -142,7 +142,7 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
                 v = '?TYPE?'
             fields += ',\n    {} {}'.format(item.name,
                                             str(v).format(len=item.len))
-        ret.append(query.format(table_name=selfcat.table_aux_name,
+        ret.append(query.format(table_name=self.cat.table_aux_name,
                                 unique=" UNIQUE",
                                 fields=fields))
     # DATA FIELD
