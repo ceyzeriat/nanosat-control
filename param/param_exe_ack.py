@@ -56,7 +56,7 @@ class EACKCCSDSTrousseau(CCSDSTrousseau):
         data = Byt(data[:MAXLENGTHERRORMESSAGE])
         # optional error_message
         if len(data) == 0:
-            return {KEYS[0].name: Byt()}
+            return {self.keys[0].name: Byt()}
         return super(EACKCCSDSTrousseau, self).unpack(data)
 
     def disp(self, vals):

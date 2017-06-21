@@ -232,7 +232,8 @@ def get_TC(pkid=None, dbid=None):
     # get the DB id of the Answer
     # basic tcanswer category
     if len(getattr(thetc, 'tmcat_tc_answers_collection', [])) > 0:
-        ansid = thetc.tmcat_tc_answers_collection[0].telemetry_packet
+        ansid = [item.telemetry_packet\
+                    for item in thetc.tmcat_tc_answers_collection]
     else:
         pkid = getattr(thetc, param_ccsds.PACKETID.name)
         cid = getattr(thetc, param_ccsds.TELECOMMANDID.name)

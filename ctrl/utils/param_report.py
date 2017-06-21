@@ -46,8 +46,8 @@ REPORTSDATA = [
         ['who', 't', 'data']),
     ('receivedTM', "'{who}' received data for saving",
         ['who']),
-    ('receivedCallsignTM', "'{who}' (callsign '{source}') received data of "\
-        "length '{ll}' from callsign '{destination}' for saving",
+    ('receivedCallsignTM', "'{who}' ({source}) received {ll} octets "\
+        "from callsign {destination}",
         ['who', 'source', 'll', 'destination']),
     ('junkFromRF', "'{who}' junk data from RFCheckOutBox ",
         ['who']),
