@@ -44,6 +44,7 @@ from multiprocessing import current_process
 from byt import Byt
 from . import ctrlexception
 from .prepare_param import *
+from .posixutc import *
 
 
 # make sure that python 3 understands unicode native python 2 function
@@ -238,26 +239,19 @@ def packetfilename2datetime(txt):
     dt = [int(dd[:4]), int(dd[4:6]), int(dd[6:])]
     dt = dt + [int(tt[:2]), int(tt[2:4]), int(tt[4:])]
     dt += [int(ms.split('.')[0]), pytz.utc]
-    return Posix(*dt)
-
-class Posix(datetime.datetime):
-    def totimestamp(self):
-        """
-        Transforms a datetime 'now' with timezone to a posix timestamp
-        """
-        return time.mktime(self.timetuple())
+    return PosixUTC(*dt)
 
 def now():
     """
     Returns the now timestamp as datetime
     """
-    return Posix.now(pytz.utc)
+    return PosixUTC.now()
 
 def now2daystamp():
     """
     Returns a day stamp from the now timestamp
     """
-    return int(time.mktime(time.localtime())/86400.-DATETIME_REF)
+    return int(now().totimestamp()/86400.-DATETIME_REF)
 
 def now2msstamp():
     """
@@ -272,7 +266,7 @@ def stamps2time(daystamp, msstamp):
     Give a day and a milli-sec stamp, return a datetime
     """
     ts = (DATETIME_REF+daystamp)*86400. + msstamp*0.001
-    return Posix.fromtimestamp(ts, tz=pytz.utc)
+    return PosixUTC.fromtimestamp(ts)
 
 def identity(v, *args, **kwargs):
     """
