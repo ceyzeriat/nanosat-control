@@ -238,13 +238,20 @@ def packetfilename2datetime(txt):
     dt = [int(dd[:4]), int(dd[4:6]), int(dd[6:])]
     dt = dt + [int(tt[:2]), int(tt[2:4]), int(tt[4:])]
     dt += [int(ms.split('.')[0]), pytz.utc]
-    return datetime.datetime(*dt)
+    return Posix(*dt)
+
+class Posix(datetime.datetime):
+    def totimestamp(self):
+        """
+        Transforms a datetime 'now' with timezone to a posix timestamp
+        """
+        return time.mktime(self.timetuple())
 
 def now():
     """
     Returns the now timestamp as datetime
     """
-    return datetime.datetime.now(pytz.utc)
+    return Posix.now(pytz.utc)
 
 def now2daystamp():
     """
@@ -265,7 +272,7 @@ def stamps2time(daystamp, msstamp):
     Give a day and a milli-sec stamp, return a datetime
     """
     ts = (DATETIME_REF+daystamp)*86400. + msstamp*0.001
-    return datetime.datetime.fromtimestamp(ts, tz=pytz.utc)
+    return Posix.fromtimestamp(ts, tz=pytz.utc)
 
 def identity(v, *args, **kwargs):
     """
