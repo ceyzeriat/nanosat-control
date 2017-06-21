@@ -58,7 +58,7 @@ class CCSDSMetaTrousseau(object):
           * data (byts): the chain of octets to unpack
           * hds, hdx (dict): packet headers
         """
-        key = hds.get(self.key, hdx.get(self.key))
+        key = int(hds.get(self.key, hdx.get(self.key)))
         if key in self.TROUSSEAUDIC:
             return self.TROUSSEAUDIC[key].unpack(data)
         else:

@@ -55,6 +55,7 @@ class Telecommand(object):
             raise exc.NoSuchTC(pkid=pkid, dbid=dbid)
         (self._telecommand, self.hd), self.inputs, (rack, fack, eack),\
             ansid = ret
+        print(rack, fack, eack)
         # copy fields to object root
         for k, v in self.hd.items():
             setattr(self, k, v)
