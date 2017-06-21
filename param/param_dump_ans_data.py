@@ -56,7 +56,7 @@ class DumpAnswerDataCCSDSTrousseau(CCSDSTrousseau):
         data = Byt(data[:MAXLENGTHDATA])
         return super(DumpAnswerDataCCSDSTrousseau, self).unpack(data)
 
-    def disp(self, vals):
+    def disp(self, vals, **kwargs):
         """
         Display the trousseau values
 
@@ -65,7 +65,7 @@ class DumpAnswerDataCCSDSTrousseau(CCSDSTrousseau):
         """
         copyvals = dict(vals)
         copyvals[self.keys[0].name] = copyvals[self.keys[0].name].hex()
-        return super(DumpAnswerDataCCSDSTrousseau, self).disp(copyvals)
+        return super(DumpAnswerDataCCSDSTrousseau, self).disp(copyvals, **kwargs)
 
     def pack(self, allvalues, retdbvalues, **kwargs):
         pass
