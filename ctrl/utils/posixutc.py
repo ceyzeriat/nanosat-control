@@ -64,4 +64,3 @@ class PosixUTC(datetime.datetime):
         t = super(PosixUTC, cls).now(tz=pytz.utc)
         return cls(t.year, t.month, t.day, t.hour, t.minute, t.second,
                     t.microsecond)
-

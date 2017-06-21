@@ -238,7 +238,7 @@ def packetfilename2datetime(txt):
     dd, tt = dd.split('T')
     dt = [int(dd[:4]), int(dd[4:6]), int(dd[6:])]
     dt = dt + [int(tt[:2]), int(tt[2:4]), int(tt[4:])]
-    dt += [int(ms.split('.')[0]), pytz.utc]
+    dt += [int(ms.split('.')[0])]
     return PosixUTC(*dt)
 
 def now():

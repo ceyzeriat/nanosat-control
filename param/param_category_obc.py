@@ -131,6 +131,7 @@ PARTSELECT = CCSDSKey(  name='hk_part',
 
 
 
+HEADAUX_0 = CCSDSTrousseau([], octets=False) # recep ack
 HEADAUX_2 = CCSDSTrousseau(BOOTERRORSTRUCT_KEYS, octets=False) # boot error report
 HEADAUX_3 = CCSDSTrousseau([LOGCOUNTER, FILECRCCODE, LINECODE,
                             FUNERRCODE, SECHEADERTM, EVENTDATA], octets=False)  # event report
@@ -148,9 +149,9 @@ ACKCATEGORIESOBC = [(0, RACKCAT)]
 
 
 CATEGORIESOBC = {
-                RACKCAT: CCSDSCategory(name='recep acknowledgement',
+                RACKCAT: CCSDSCategory(name='rec acknowledgement',
                                         number=RACKCAT,
-                                        aux_trousseau=None,
+                                        aux_trousseau=HEADAUX_0,
                                         data_file=None),
 
                1: CCSDSCategory(name='beacon',
