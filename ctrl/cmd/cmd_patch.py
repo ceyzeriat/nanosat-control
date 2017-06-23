@@ -27,6 +27,9 @@
 
 from datetime import datetime
 
+from ..utils import bincore
+from ..utils import core
+from ..ccsds import param_ccsds
 from .commandpatch import CommandPatch
 
 
