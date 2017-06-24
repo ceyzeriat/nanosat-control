@@ -64,9 +64,8 @@ for key, cmdfile in allcmds.items():
             c = setDatetime(**item)
         elif item['name'] in ['flash_read', 'flash_erase', 'flash_write', 'echo_bld', 'configure_rtc', 'launch_application_A', 'launch_application_B', 'soft_reboot']:
             c = genericCrcPatch(**item)
-        elif item['name'] == 'my_other_function_to_patch':
-            pass
-            # c = classPatchName(**item)
+        elif item['name'] == 'configure_rtc':
+            c = configureRTC(**item)
         else:
             c = Command(**item)
             # dirty dirt to make auto-completion on commands
