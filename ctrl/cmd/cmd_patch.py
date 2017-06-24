@@ -26,9 +26,12 @@
 
 
 from datetime import datetime
-
+from ..utils import core
+from ..ccsds import param_ccsds
 from .commandpatch import CommandPatch
 
+def compute_crc(packet):
+    print('salut')
 
 # function set_datetime of PLD, aim is to allow the input of a
 # datetime or date-tuple instead of a dirty integer timestamp
@@ -56,3 +59,30 @@ class setDatetime(CommandPatch):
         newkwargs['minutes'] = stamp.minute                
         newkwargs['seconds'] = stamp.second
         return super(setDatetime, self).generate_data(*args, **newkwargs)
+
+
+# auto compute CRC
+class genericCrcPatch(CommandPatch):
+    _crcParamName = 'crc'
+
+    def generate_data(self, *args, **kwargs):
+        # force 0 sur le crc
+        kwargs[self._crcParamName] = 0
+        return super(genericCrcPatch, self).generate_data(*args, **kwargs)
+
+    def _generate_packet(self, *args, **kwargs):
+        # appel méthode mère
+        packet, hd, hdx, inputs = super(genericCrcPatch, self)\
+                                  ._generate_packet(*args, **kwargs)
+        # on calc le CRC sur le header sec et les data
+        bytesForCrc = packet[param_ccsds.HEADER_P_KEYS.size:-4]
+        crc = core.payload_crc32(bytesForCrc)
+        # on remplace le crc dans les inputs, parce que voilà
+        inputs[self._crcParamName] = crc
+        # on ré-encode les param de la command avec la méthode mère
+        data, inputs = super(genericCrcPatch, self).generate_data(*args,
+                                                            **inputs)
+        # on remplace les data dans le packet encodé
+        packet = packet[:param_ccsds.HEADER_P_KEYS.size+\
+                        param_ccsds.HEADER_S_KEYS_TELECOMMAND.size] + data
+        return packet, hd, hdx, inputs

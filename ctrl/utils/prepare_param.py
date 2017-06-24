@@ -153,3 +153,14 @@ if not JUSTALIB:
                 print(ctrlexception.InvalidMask())
             else:
                 raise ctrlexception.InvalidMask()
+
+
+# lookup table for cimputing payload crc
+payload_crc_table = {}
+poly = 0x04C11DB7
+
+for i in range(256):
+    c = i << 24
+    for j in range(8):
+        c = (c << 1) ^ poly if (c & 0x80000000) else c << 1
+    payload_crc_table[i] = c & 0xffffffff
