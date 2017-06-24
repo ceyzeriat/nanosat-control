@@ -24,9 +24,10 @@
 #
 ###############################################################################
 
-import pytz
+
 import datetime
 import time
+import pytz
 
 
 __all__ = ['PosixUTC']

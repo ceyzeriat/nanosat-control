@@ -36,6 +36,20 @@ from . import ctrlexception
 TWINKLETWINKLELITTLEINDIA = False
 
 
+def hex2str(v, **kwargs):
+    """
+    verbose = "hexadecimal -> message"
+    """
+    return v.hex()
+
+
+def str2hex(txt, **kwargs):
+    """
+    verbose = "message -> hexadecimal"
+    """
+    return Byt.fromHex(txt)
+
+
 def bin2txt(v, **kwargs):
     """
     type = message

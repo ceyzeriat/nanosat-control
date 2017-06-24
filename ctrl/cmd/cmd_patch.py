@@ -26,12 +26,10 @@
 
 
 from datetime import datetime
+from ..utils import bincore
 from ..utils import core
 from ..ccsds import param_ccsds
 from .commandpatch import CommandPatch
-
-def compute_crc(packet):
-    print('salut')
 
 # function set_datetime of PLD, aim is to allow the input of a
 # datetime or date-tuple instead of a dirty integer timestamp
