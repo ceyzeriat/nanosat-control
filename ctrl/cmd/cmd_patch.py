@@ -113,12 +113,12 @@ class configureRTC(CommandPatch):
         newkwargs['hours'] = stamp.hour
         newkwargs['minutes'] = stamp.minute                
         newkwargs['seconds'] = stamp.second
-        kwargs[self._crcParamName] = 0
+        newkwargs[self._crcParamName] = 0
         return super(configureRTC, self).generate_data(*args, **newkwargs)
     
     def _generate_packet(self, *args, **kwargs):
         # appel méthode mère
-        packet, hd, hdx, inputs = super(genericCrcPatch, self)\
+        packet, hd, hdx, inputs = super(configureRTC, self)\
                                   ._generate_packet(*args, **kwargs)
         # on calc le CRC sur le header sec et les data
         bytesForCrc = packet[param_ccsds.HEADER_P_KEYS.size:-4]
@@ -126,7 +126,7 @@ class configureRTC(CommandPatch):
         # on remplace le crc dans les inputs, parce que voilà
         inputs[self._crcParamName] = crc
         # on ré-encode les param de la command avec la méthode mère
-        data, inputs = super(genericCrcPatch, self).generate_data(*args,
+        data, inputs = super(configureRTC, self).generate_data(*args,
                                                             **inputs)
         # on remplace les data dans le packet encodé
         packet = packet[:param_ccsds.HEADER_P_KEYS.size+\

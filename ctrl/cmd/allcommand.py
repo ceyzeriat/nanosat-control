@@ -62,7 +62,7 @@ for key, cmdfile in allcmds.items():
     for item in cmdfile:
         if item['name'] == 'set_datetime':
             c = setDatetime(**item)
-        elif item['name'] in ['flash_read', 'flash_erase', 'flash_write', 'echo_bld', 'configure_rtc', 'launch_application_A', 'launch_application_B', 'soft_reboot']:
+        elif item['name'] in ['flash_read', 'flash_erase', 'flash_write', 'echo_bld', 'launch_application_A', 'launch_application_B', 'soft_reboot']:
             c = genericCrcPatch(**item)
         elif item['name'] == 'configure_rtc':
             c = configureRTC(**item)
