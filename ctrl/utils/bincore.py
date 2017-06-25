@@ -38,6 +38,7 @@ TWINKLETWINKLELITTLEINDIA = False
 
 def hex2str(v, **kwargs):
     """
+    type = hexa string
     verbose = "hexadecimal -> message"
     """
     return v.hex()
@@ -45,6 +46,7 @@ def hex2str(v, **kwargs):
 
 def str2hex(txt, **kwargs):
     """
+    type = hexadecimal
     verbose = "message -> hexadecimal"
     """
     return Byt.fromHex(txt)
