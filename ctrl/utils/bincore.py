@@ -57,7 +57,7 @@ def hex2txt(v, **kwargs):
     type = hexa string
     verbose = "hexadecimal -> message"
     """
-    return str(v)
+    return ''.join([chr(i) for i in v.ints() if i >= 32 and i <= 126])
 
 
 def txt2hex(txt, **kwargs):
@@ -65,7 +65,7 @@ def txt2hex(txt, **kwargs):
     type = hexadecimal
     verbose = "message -> hexadecimal"
     """
-    return Byt(txt)
+    return ''.join([Byt(i) for i in Byt(txt).ints() if i >= 32 and i <= 126])
 
 
 def bin2txt(v, **kwargs):
@@ -73,16 +73,15 @@ def bin2txt(v, **kwargs):
     type = message
     verbose = binary -> message
     """
-    return ''.join([chr(i) for i in bin2hex(v).ints()\
-                                                if i >= 32 and i <= 126])
+    return hex2txt(bin2hex(v))
 
 def txt2bin(txt, **kwargs):
     """
     type = binary
     verbose = message -> binary
     """
-    return ''.join([int2bin(i, pad=8) for i in Byt(txt).ints()\
-                                                if i >= 32 and i <= 126])
+    return hex2bin(txt2hex(txt), pad=True)
+
 
 def float2hex(v, bits=32, pad=0, **kwargs):
     """
