@@ -53,7 +53,7 @@ class PosixUTC(datetime.datetime):
         """
         Initializes a datetime object from timestamp with UTC timezone
         """
-        t = super(PosixUTC, cls).fromtimestamp(ts, tz=pytz.utc)
+        t = datetime.datetime.fromtimestamp(ts, tz=pytz.utc)
         return cls(t.year, t.month, t.day, t.hour, t.minute, t.second,
                     t.microsecond)
 
@@ -62,6 +62,6 @@ class PosixUTC(datetime.datetime):
         """
         Initializes a datetime object with UTC timezone
         """
-        t = super(PosixUTC, cls).now(tz=pytz.utc)
+        t = datetime.datetime.now(tz=pytz.utc)
         return cls(t.year, t.month, t.day, t.hour, t.minute, t.second,
                     t.microsecond)
