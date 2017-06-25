@@ -59,6 +59,7 @@ TROUSSEAUDIC = {1: CCSDSTrousseau([CCSDSKey(name='message', start=0, l=10, fctun
 
 
 #PAYLOAD BOOTLOADER
+                245: CCSDSTrousseau([CCSDSKey(name='version', start=0, l=255, fctunpack=bincore.hex2txt, fctpack=bincore.txt2hex, verbose='none', disp='version', pad = False)], octets=True),
                 246: CCSDSTrousseau([CCSDSKey(name='values', start=0, l=255, fctunpack=bincore.hex2str, fctpack=bincore.str2hex, verbose='none', disp='values', pad = False)], octets=True),
                 248: CCSDSTrousseau([CCSDSKey(name='message', start=0, l=255, fctunpack=bincore.hex2str, fctpack=bincore.str2hex, verbose='none', disp='msg', pad = False)], octets=True),
                 250: CCSDSTrousseau([CCSDSKey(name='flashBytes', start=0, l=255, fctunpack=bincore.hex2str, fctpack=bincore.str2hex, verbose='none', disp='flashBytes', pad = False)], octets=True)
