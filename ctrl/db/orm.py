@@ -297,13 +297,13 @@ def get_TM(pkid=None, dbid=None):
         if len(thedata) > 0:
             for dataline in thedata:
                 thedicline = {}
-                for key in get_column_keys(TMDATA):
-                    if cat.number != param_category.TELECOMMANDANSWERCAT:
+                if cat.number != param_category.TELECOMMANDANSWERCAT:
+                    for key in get_column_keys(TMDATA):
                         thedicline[key] = getattr(dataline, key, None)
-                    else:
-                        # eval the column
-                        thedicline[key] = eval(getattr(dataline, key, None))
-                    dicdata.append(thedicline)
+                else:
+                    # eval the column
+                    thedicline[str(dataline.param_key)] = eval(dataline.value)
+                dicdata.append(thedicline)
         else:
             thedata = None
     return (thetm, dictm), (thehdx, dichdx), (thedata, dicdata)
