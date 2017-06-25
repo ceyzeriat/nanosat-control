@@ -39,7 +39,7 @@ class PosixUTC(datetime.datetime):
         """
         Initializes a posix timestamp with UTC timezone
         """
-        super(PosixUTC, self).__init__(self, year, month, day,
+        super(PosixUTC, self).__init__(year, month, day,
                         hour, minute, second, microsecond, tzinfo=pytz.utc)
 
     def totimestamp(self):

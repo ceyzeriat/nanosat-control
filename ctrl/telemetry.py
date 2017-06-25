@@ -69,13 +69,14 @@ class Telemetry(object):
         Args:
           * packet (str): the raw packet to unpack
           * time_received (datetime+tz): the reception time of the packet
+          * user_id (int): the user id
         """
         cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet, retdbvalues=True)
         cls.hd['raw_file'] = core.RAWPACKETFOLDER
         cls.hd['user_id'] = core.RECEIVERID if user_id is None\
                                     else int(user_id)
         cls.hd['time_received'] = time_received\
-                if isinstance(time_received, core.datetime.datetime)\
+                if isinstance(time_received, core.PosixUTC)\
                 else core.now()
         catnum = int(cls.hd[param_ccsds.PACKETCATEGORY.name])
         # if it is a RACK, update the TM after checking the TC

@@ -36,8 +36,8 @@ from .generated.l0hkstructpart2 import L0HKSTRUCTPART2_KEYS
 __all__ = ['TROUSSEAU']
 
 
-TROUSSEAUDICT = {1: CCSDSTrousseau(L0HKSTRUCTPART1_KEYS, octets=False),
-                 2: CCSDSTrousseau(L0HKSTRUCTPART2_KEYS, octets=False)}
+TROUSSEAUDICT = {0: CCSDSTrousseau(L0HKSTRUCTPART1_KEYS, octets=False),
+                 1: CCSDSTrousseau(L0HKSTRUCTPART2_KEYS, octets=False)}
 
 
 TROUSSEAU = CCSDSMetaTrousseau(TROUSSEAUDICT, key='hk_part')
