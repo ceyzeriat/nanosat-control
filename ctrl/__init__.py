@@ -26,7 +26,7 @@
 
 
 import param
-from . import utils
+#from . import utils
 from . import ccsds
 if not param.param_all.JUSTALIB:
     from . import cmd

@@ -329,3 +329,15 @@ def crc32(message, crc=None):
     for byte in Byt(message).iterInts():
         crc = (crc >> 8) ^ CRC32TABLE[(crc ^ byte) & 0xFF]
     return two_comp_uint(crc, 32)
+
+
+def payload_crc32(message):
+    """
+    code to compute fucking stm32 non-standard crc with standard polynomial
+    """
+    crc = 0xffffffff
+    for i in Byt(message).iterInts():
+        b = [(i >> 24) & 0xFF, (i >> 16) & 0xFF, (i >> 8) & 0xFF, i & 0xFF]
+        for byte in b:
+            crc = ((crc << 8) & 0xffffffff) ^ payload_crc_table[(crc >> 24) ^ byte]
+    return crc
