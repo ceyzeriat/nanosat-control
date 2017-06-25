@@ -52,6 +52,22 @@ def str2hex(txt, **kwargs):
     return Byt.fromHex(txt)
 
 
+def hex2txt(v, **kwargs):
+    """
+    type = hexa string
+    verbose = "hexadecimal -> message"
+    """
+    return str(v)
+
+
+def txt2hex(txt, **kwargs):
+    """
+    type = hexadecimal
+    verbose = "message -> hexadecimal"
+    """
+    return Byt(txt)
+
+
 def bin2txt(v, **kwargs):
     """
     type = message
