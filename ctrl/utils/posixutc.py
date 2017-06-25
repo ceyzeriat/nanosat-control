@@ -26,8 +26,8 @@
 
 
 import datetime
-import time
 import pytz
+import calendar
 
 
 __all__ = ['PosixUTC']
@@ -46,7 +46,7 @@ class PosixUTC(datetime.datetime):
         """
         Transforms a datetime 'now' with timezone to a posix timestamp
         """
-        return time.mktime(self.timetuple())
+        return calendar.timegm(self.timetuple()) + self.microsecond/1.0e6
 
     @classmethod
     def fromtimestamp(cls, ts):
