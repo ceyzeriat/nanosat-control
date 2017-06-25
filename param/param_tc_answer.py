@@ -31,6 +31,7 @@ from ctrl.ccsds.ccsdskey import CCSDSKey
 from ctrl.utils import bincore
 
 
+
 __all__ = ['TROUSSEAU']
 
 
@@ -54,7 +55,13 @@ TROUSSEAUDIC = {1: CCSDSTrousseau([CCSDSKey(name='message', start=0, l=10, fctun
                 55: CCSDSTrousseau([CCSDSKey(name='crc', start=0, l=4, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='crc',)], octets=True),
                 63: CCSDSTrousseau([CCSDSKey(name='patchState', start=0, l=1, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='patchState',)], octets=True),
                 81: CCSDSTrousseau([CCSDSKey(name='i2cReply', start=0, l=255, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='i2cReply', pad=False)], octets=True),
-                82: CCSDSTrousseau([CCSDSKey(name='adcsMode', start=0, l=4, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='adcsMode',)], octets=True)
+                82: CCSDSTrousseau([CCSDSKey(name='adcsMode', start=0, l=4, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='adcsMode',)], octets=True),
+
+
+#PAYLOAD BOOTLOADER
+                246: CCSDSTrousseau([CCSDSKey(name='values', start=0, l=4, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='values', pad = False)], octets=True, listof = True)
+                248: CCSDSTrousseau([CCSDSKey(name='message', start=0, l=255, fctunpack=bincore.hex2str, fctpack=bincore.str2hex, verbose='none', disp='msg', pad = False)], octets=True)
+                250: CCSDSTrousseau([CCSDSKey(name='flashBytes', start=0, l=255, fctunpack=bincore.hex2str, fctpack=bincore.str2hex, verbose='none', disp='flashBytes', pad = False)], octets=True)
 }
 
 
