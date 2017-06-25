@@ -99,8 +99,8 @@ class Telecommand(object):
     @property
     def isRACK(self):
         rack = bool(getattr(self, param_ccsds.REQACKRECEPTIONTELECOMMAND.name))
-        return (self.RACK is None and rack is False)\
-                or (bool(self.RACK) and rack is True)
+        return (self.RACK is None and not rack)\
+                or (bool(self.RACK) and rack)
     @isRACK.setter
     def isRACK(self, value):
         pass
@@ -108,8 +108,8 @@ class Telecommand(object):
     @property
     def isFACK(self):
         fack = bool(getattr(self, param_ccsds.REQACKFORMATTELECOMMAND.name))
-        return (self.FACK is None and fack is False)\
-                or (bool(self.FACK) and fack is True)
+        return (self.FACK is None and not fack)\
+                or (bool(self.FACK) and fack)
     @isFACK.setter
     def isFACK(self, value):
         pass
@@ -117,8 +117,8 @@ class Telecommand(object):
     @property
     def isEACK(self):
         eack = bool(getattr(self, param_ccsds.REQACKEXECUTIONTELECOMMAND.name))
-        return (self.EACK is None and eack is False)\
-                or (bool(self.EACK) and eack is True)
+        return (self.EACK is None and not eack)\
+                or (bool(self.EACK) and eack)
     @isEACK.setter
     def isEACK(self, value):
         pass
@@ -195,8 +195,7 @@ class Telecommand(object):
         # check format first since it may prevent eack from being sent
         while time.time() < doneat:
             # if no ACK is False (waiting for ACK), then break
-            if cls.EACK is True or\
-                cls.EACK is False or\
+            if cls.EACK is not None or\
                 cls.FACK is False or\
                 (eack is False and cls.FACK is not None) or\
                 (eack is False and fack is False\

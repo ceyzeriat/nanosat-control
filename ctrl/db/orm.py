@@ -298,8 +298,12 @@ def get_TM(pkid=None, dbid=None):
             for dataline in thedata:
                 thedicline = {}
                 for key in get_column_keys(TMDATA):
-                    thedicline[key] = getattr(dataline, key, None)
-                dicdata.append(thedicline)
+                    if cat.number != param_category.TELECOMMANDANSWERCAT:
+                        thedicline[key] = getattr(dataline, key, None)
+                    else:
+                        # eval the column
+                        thedicline[key] = eval(getattr(dataline, key, None))
+                    dicdata.append(thedicline)
         else:
             thedata = None
     return (thetm, dictm), (thehdx, dichdx), (thedata, dicdata)
@@ -343,7 +347,7 @@ def save_TM_to_DB(hd, hdx, data):
             for k, v in data['unpacked'].items():
                 DB.add(TABLES[tbl](telemetry_packet=TM.id,
                                    param_key=k,
-                                   value=v))
+                                   value=repr(v)))
         # if dealing with list of dict, e.g. science or payload hk
         elif isinstance(data['unpacked'], (list, tuple)):
             for item in data['unpacked']:
