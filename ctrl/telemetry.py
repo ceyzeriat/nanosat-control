@@ -76,7 +76,7 @@ class Telemetry(object):
         cls.hd['user_id'] = core.RECEIVERID if user_id is None\
                                     else int(user_id)
         cls.hd['time_received'] = time_received\
-                if isinstance(time_received, core.PosixUTC)\
+                if isinstance(time_received, core.datetime.datetime)\
                 else core.now()
         catnum = int(cls.hd[param_ccsds.PACKETCATEGORY.name])
         # if it is a RACK, update the TM after checking the TC
