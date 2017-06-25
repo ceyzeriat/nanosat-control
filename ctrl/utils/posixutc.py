@@ -34,12 +34,12 @@ __all__ = ['PosixUTC']
 
 
 class PosixUTC(datetime.datetime):
-    def __init__(self, year, month, day, hour, minute, second, microsecond,
+    def __new__(cls, year, month, day, hour, minute, second, microsecond,
                     *args, **kwargs):
         """
         Initializes a posix timestamp with UTC timezone
         """
-        datetime.datetime.__init__(self, year, month, day,
+        return datetime.datetime.__new__(cls, year, month, day,
                         hour, minute, second, microsecond, tzinfo=pytz.utc)
 
     def totimestamp(self):
