@@ -54,7 +54,7 @@ class PosixUTC(datetime.datetime):
         Initializes a PosixUTC object from UTC timestamp
         """
         t = datetime.datetime.fromtimestamp(ts, tz=pytz.utc)
-        return self.fromdatetime(t)
+        return cls.fromdatetime(t)
 
     @classmethod
     def fromdatetime(cls, t):
@@ -70,4 +70,4 @@ class PosixUTC(datetime.datetime):
         Initializes a PosixUTC object with UTC timezone
         """
         t = datetime.datetime.now(tz=pytz.utc)
-        return self.fromdatetime(t)
+        return cls.fromdatetime(t)

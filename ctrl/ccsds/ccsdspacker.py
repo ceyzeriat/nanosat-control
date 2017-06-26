@@ -109,15 +109,15 @@ class CCSDSPacker(object):
             at = kwargs.pop('at', None)
             if at is not None:
                 if isinstance(at, (tuple, list)):
-                    at = core.PosixUTC(*at[:6]).totimestamp()
+                    at = core.PosixUTC(*at[:6])
                 elif isinstance(at, datetime.datetime):
-                    at = core.PosixUTC.fromdatetime(at).totimestamp()
+                    at = core.PosixUTC.fromdatetime(at)
                 elif isinstance(at, PosixUTC):
-                    at = at.totimestamp()
+                    pass
                 else:
                     raise ccsdsexception.wrongAt(at)
                 # time in past: remove
-                if core.PosixUTC.now().totimestamp() > at:
+                if core.PosixUTC.now().totimestamp() > at.totimestamp():
                     at = None
         else:
             hd[param_ccsds.PACKETCATEGORY.name] = int(pktCat)
