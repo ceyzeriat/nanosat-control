@@ -52,6 +52,8 @@ class Command(Cm):
           * wait (bool): ``True`` to make a blocking telecommand, until
             the acknowledgement is received, or ``timetout`` is elapsed
           * timeout (int): the time in second to wait for acknowledgements
+          * at (datetime, timetuple): the time at which the TC shall be
+            executed. Leave empty for immediate execution.
         """
         # sole purpose of this __init__ is overwrite the docstring
         super(Command, self).__init__(*args, **kwargs)
@@ -86,13 +88,15 @@ class Command(Cm):
           * wait (bool): ``True`` to make a blocking telecommand, until
             the acknowledgement is received, or ``timetout`` is elapsed
           * timeout (int): the time in second to wait for acknowledgements
+          * at (datetime, timetuple): the time at which the TC shall be
+            executed. Leave empty for immediate execution.
         """
         # generates the packet
         packet, hd, hdx, inputs = self._generate_packet(**kwargs)
         hd['raw_file'] = param_all.RAWPACKETFOLDER
+        hd['time_given'] = core.now()
         # left None until confirmation sent by antenna
         hd['time_sent'] = None
-        hd['time_given'] = core.now()
         # save in database
         if param_all.SAVETC:
             dbid = db.save_TC_to_DB(hd=hd, hdx=hdx, inputs=inputs)

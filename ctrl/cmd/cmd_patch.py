@@ -130,6 +130,5 @@ class configureRTC(CommandPatch):
                                                             **inputs)
         # on remplace les data dans le packet encodé
         packet = packet[:param_ccsds.HEADER_P_KEYS.size+\
-                        param_ccsds.HEADER_S_KEYS_TELECOMMAND.size] + data
+                         param_ccsds.HEADER_S_KEYS_TELECOMMAND.size] + data
         return packet, hd, hdx, inputs    
-
