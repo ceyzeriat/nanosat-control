@@ -43,7 +43,7 @@ from ..ccsds import param_ccsds
 
 __all__ = ['init_DB', 'get_column_keys', 'save_TC_to_DB', 'close_DB',
             'save_TM_to_DB', 'update_sent_TC_time', 'get_TC_dbid_from_pkid',
-            'get_TC', 'get_RACK_TCid', 'get_TM_dbid_from_pkid', 'get_TM',
+            'get_TC', 'get_RACK_TCid', 'get_TM',
             'get_ACK_TCid', 'get_TMid_answer_from_TC', 'get_tcanswer_TCid']
 
 
@@ -157,23 +157,6 @@ def get_TC_dbid_from_pkid(pkid):
     return [(item.id, item.time_sent) for item in res]
 
 
-def get_TM_dbid_from_pkid(pkid):
-    """
-    Gives list of (id, timestamp) where id is the database id and
-    timestamp is the time_sent
-
-    Args:
-      * pkid (int): the packet counter id to investigate
-    """
-    if not running:
-        raise ctrlexception.NoDBConnection()
-    TM = TABLES['Telemetry']
-    res = DB.query(TM)\
-            .filter(getattr(TM, param_ccsds.PACKETID.name) == int(pkid))\
-            .order_by(TM.time_sent.desc())
-    return [(item.id, item.time_sent) for item in res]
-
-
 def get_TC(pkid=None, dbid=None):
     """
     Gives a full TC object
@@ -242,24 +225,17 @@ def get_TC(pkid=None, dbid=None):
     return (thetc, dictc), params, (rackid, fackid, eackid), ansid
 
 
-def get_TM(pkid=None, dbid=None):
+def get_TM(dbid):
     """
     Gives a full TM object
 
     Args:
-      * pkid (int): the packet counter id of the TM to output (will only
-        return the most recent one)
       * dbid (int) [alternative]: the DB id of the TM to output
     """
     if not running:
         raise ctrlexception.NoDBConnection()
     TM = TABLES['Telemetry']
-    thetm = DB.query(TM)
-    if dbid is None:
-        thetm = thetm.filter(
-                    getattr(TM, param_ccsds.PACKETID.name) == int(pkid))
-    else:
-        thetm = thetm.filter(TM.id == int(dbid))
+    thetm = DB.query(TM).filter(TM.id == int(dbid))
     thetm = thetm.order_by(TM.time_sent.desc()).limit(1).first()
     DB.commit()
     if thetm is None:

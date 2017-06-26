@@ -211,7 +211,7 @@ class NoMetaTrousseauAttribute(CCSDSException):
         self.message = "Attribute '{}' does not exist for meta-trousseau"\
                         .format(key)
 
-class wrongAt(CCSDSException):
+class WrongAt(CCSDSException):
     """
     If the delay parameter at is not understood
     """

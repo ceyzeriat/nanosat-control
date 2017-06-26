@@ -115,7 +115,7 @@ class CCSDSPacker(object):
                 elif isinstance(at, PosixUTC):
                     pass
                 else:
-                    raise ccsdsexception.wrongAt(at)
+                    raise ccsdsexception.WrongAt(at)
                 # time in past: remove
                 if core.PosixUTC.now().totimestamp() > at.totimestamp():
                     at = None
