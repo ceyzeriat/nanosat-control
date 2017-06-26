@@ -52,7 +52,7 @@ class CCSDSPacker(object):
         self.mode = 'telemetry' if str(mode).lower()[1] == 'm'\
                         else 'telecommand'
 
-    def pack(self, pid, TCdata='', TCid='', pktCat=None, retvalues=True,
+    def pack(self, pid, TCdata=Byt(), TCid='', pktCat=None, retvalues=True,
                 retdbvalues=True, withPacketID=True, **kwargs):
         """
         Creates a packet, returns the packet string and optionally
@@ -60,7 +60,7 @@ class CCSDSPacker(object):
 
         Args:
           * pid (str): the process string-id related to the packet
-          * TCdata (byts): only for TC-mode, the data to include in the
+          * TCdata (Byt): only for TC-mode, the data to include in the
             packet
           * TCid (int): only for TC-mode, the id of the telecommand
           * pktCat (int): only for TM-mode, the packet category
@@ -157,14 +157,22 @@ class CCSDSPacker(object):
             retprim = self.increment_data_length(
                                     datalen=len(data),
                                     primaryHDpacket=retprim[0],
-                                    primaryHDdict=(retprim[1:]+(None,))[1])
+                                    primaryHDdict=retprim[1])
+            hds.update(retprim[1])
         else:
-            # append 6 octets timestamp before data
+            # append timestamp before data
             if at is not None:
                 msstamp, daystamp = core.time2stamps(at)
-                TCdata = bincore.int2hex(daystamp, pad=2)\
-                            + bincore.int2hex(msstamp, pad=4)\
-                            + TCdata
+
+                bits = param_ccsds.MSECSINCEREF_TELEMETRY.pack(daystamp)\
+                        + param_ccsds.DAYSINCEREF_TELEMETRY.pack(msstamp)
+                padLen = len(bits) // 8
+                TCdata = bincore.bin2hex(bits, pad=padLen) + TCdata
+                retprim = self.increment_data_length(
+                                        datalen=padLen,
+                                        primaryHDpacket=retprim[0],
+                                        primaryHDdict=retprim[1])
+                hds.update(retprim[1])
             data = TCdata
         theFullPacket = retprim[0] + retsec[0] + maybeAux + data
         if kwargs.pop('signit', param_all.USESIGGY)\
