@@ -34,7 +34,7 @@ __all__ = ['PosixUTC']
 
 
 class PosixUTC(datetime.datetime):
-    def __new__(cls, year, month, day, hour, minute, second, microsecond,
+    def __new__(cls, year, month, day, hour, minute, second, microsecond=0,
                     *args, **kwargs):
         """
         Initializes a posix timestamp with UTC timezone
@@ -46,22 +46,28 @@ class PosixUTC(datetime.datetime):
         """
         Transforms a datetime 'now' with timezone to a posix timestamp
         """
-        return calendar.timegm(self.timetuple()) + self.microsecond/1.0e6
+        return calendar.timegm(self.timetuple()) + self.microsecond*0.000001
 
     @classmethod
     def fromtimestamp(cls, ts):
         """
-        Initializes a datetime object from timestamp with UTC timezone
+        Initializes a PosixUTC object from UTC timestamp
         """
         t = datetime.datetime.fromtimestamp(ts, tz=pytz.utc)
+        return cls.fromdatetime(t)
+
+    @classmethod
+    def fromdatetime(cls, t):
+        """
+        Initializes a PosixUTC object from UTC datetime object
+        """
         return cls(t.year, t.month, t.day, t.hour, t.minute, t.second,
                     t.microsecond)
 
     @classmethod
     def now(cls):
         """
-        Initializes a datetime object with UTC timezone
+        Initializes a PosixUTC object with UTC timezone
         """
         t = datetime.datetime.now(tz=pytz.utc)
-        return cls(t.year, t.month, t.day, t.hour, t.minute, t.second,
-                    t.microsecond)
+        return cls.fromdatetime(t)

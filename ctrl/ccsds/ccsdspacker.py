@@ -25,6 +25,7 @@
 ###############################################################################
 
 
+import datetime
 from byt import Byt
 from param import param_category
 from param import param_apid
@@ -51,7 +52,7 @@ class CCSDSPacker(object):
         self.mode = 'telemetry' if str(mode).lower()[1] == 'm'\
                         else 'telecommand'
 
-    def pack(self, pid, TCdata='', TCid='', pktCat=None, retvalues=True,
+    def pack(self, pid, TCdata=Byt(), TCid='', pktCat=None, retvalues=True,
                 retdbvalues=True, withPacketID=True, **kwargs):
         """
         Creates a packet, returns the packet string and optionally
@@ -59,7 +60,7 @@ class CCSDSPacker(object):
 
         Args:
           * pid (str): the process string-id related to the packet
-          * TCdata (byts): only for TC-mode, the data to include in the
+          * TCdata (Byt): only for TC-mode, the data to include in the
             packet
           * TCid (int): only for TC-mode, the id of the telecommand
           * pktCat (int): only for TM-mode, the packet category
@@ -78,6 +79,11 @@ class CCSDSPacker(object):
             acknowledgement of execution
           * emitter (int) [default: EMITTERID]: the id of the emitter
           * signit (bool) [default: USESIGGY]: sign the packet or not
+          * wait (bool): ``True`` to make a blocking telecommand, until
+            the acknowledgement is received, or ``timetout`` is elapsed
+          * timeout (int): the time in second to wait for acknowledgements
+          * at (datetime or timetuple): the time at which the TC shall be
+            executed. Leave empty for immediate execution
 
         Kwargs for TM-mode:
           * auxiliary header and data keys-values
@@ -99,17 +105,35 @@ class CCSDSPacker(object):
             # priority on short-names, then on long-names then default
             for (key, sht, defa) in morevalues:
                 hd[key] = int(kwargs.pop(sht, hd.get(key, defa)))
+            # process the "at" optional parameter
+            at = kwargs.pop('at', None)
+            if at is not None:
+                if isinstance(at, (tuple, list)):
+                    at = core.PosixUTC(*at[:6])
+                elif isinstance(at, datetime.datetime):
+                    at = core.PosixUTC.fromdatetime(at)
+                elif isinstance(at, PosixUTC):
+                    pass
+                else:
+                    raise ccsdsexception.WrongAt(at)
+                # time in past: remove
+                if core.PosixUTC.now().totimestamp() > at.totimestamp():
+                    at = None
         else:
             hd[param_ccsds.PACKETCATEGORY.name] = int(pktCat)
+            at = None
         # header prim
         retprim = self.pack_primHeader(values=hd, datalen=len(TCdata),
                                         retvalues=True,
-                                        retdbvalues=retdbvalues)
+                                        retdbvalues=retdbvalues, at=at)
         # header sec
         retsec = self.pack_secHeader(values=hd, retvalues=True,
                                         retdbvalues=retdbvalues)
         # make header return values
         hds = {}
+        # if TC, add the time_delay parameter
+        if not self.mode == 'telemetry':
+            hds['time_delay'] = at
         hds.update(retprim[1])
         hds.update(retsec[1])
         maybeAux = Byt()
@@ -133,8 +157,22 @@ class CCSDSPacker(object):
             retprim = self.increment_data_length(
                                     datalen=len(data),
                                     primaryHDpacket=retprim[0],
-                                    primaryHDdict=(retprim[1:]+(None,))[1])
+                                    primaryHDdict=retprim[1])
+            hds.update(retprim[1])
         else:
+            # append timestamp before data
+            if at is not None:
+                msstamp, daystamp = core.time2stamps(at)
+
+                bits = param_ccsds.MSECSINCEREF_TELEMETRY.pack(daystamp)\
+                        + param_ccsds.DAYSINCEREF_TELEMETRY.pack(msstamp)
+                padLen = len(bits) // 8
+                TCdata = bincore.bin2hex(bits, pad=padLen) + TCdata
+                retprim = self.increment_data_length(
+                                        datalen=padLen,
+                                        primaryHDpacket=retprim[0],
+                                        primaryHDdict=retprim[1])
+                hds.update(retprim[1])
             data = TCdata
         theFullPacket = retprim[0] + retsec[0] + maybeAux + data
         if kwargs.pop('signit', param_all.USESIGGY)\
@@ -162,7 +200,7 @@ class CCSDSPacker(object):
                 fullPacket[startSiggy + param_ccsds.SIGNATURE.len//8:]
 
     def pack_primHeader(self, values, datalen=0, retvalues=False,
-                        retdbvalues=True, withPacketID=True):
+                        retdbvalues=True, withPacketID=True, at=None):
         """
         Encodes the values into a CCSDS primary header, returns hex
         string and encoded values
@@ -177,6 +215,8 @@ class CCSDSPacker(object):
             in a format directly compatible with the database
           * withPacketID (bool): set to ``False`` to deactivate the
             packet id determination
+          * at (datetime or timetuple): the time at which the TC shall be
+            executed. Leave empty for immediate execution.
         """
         # Preparation of the content of values dictionary
         values[param_ccsds.PACKETTYPE.name] = self.mode
@@ -185,8 +225,11 @@ class CCSDSPacker(object):
         if self.mode == 'telecommand':
             values[param_ccsds.DATALENGTH.name] +=\
                 param_ccsds.HEADER_S_KEYS_TELECOMMAND.size
-            # force packet category to 0
-            values[param_ccsds.PACKETCATEGORY.name] = '0'
+            # force packet category to 0 if no at, else 1
+            if at is None or at is False:
+                values[param_ccsds.PACKETCATEGORY.name] = '0'
+            else:
+                values[param_ccsds.PACKETCATEGORY.name] = '1'
             # want to increment packet id?
             if withPacketID:
                 values[param_ccsds.PACKETID.name] =\

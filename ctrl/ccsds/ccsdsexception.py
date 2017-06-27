@@ -210,3 +210,11 @@ class NoMetaTrousseauAttribute(CCSDSException):
         self._init(key, *args, **kwargs)
         self.message = "Attribute '{}' does not exist for meta-trousseau"\
                         .format(key)
+
+class WrongAt(CCSDSException):
+    """
+    If the delay parameter at is not understood
+    """
+    def __init__(self, at, *args, **kwargs):
+        self._init(at, *args, **kwargs)
+        self.message = "Delay paramter at '{}' is not valid".format(at)

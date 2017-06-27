@@ -38,6 +38,8 @@ if __name__ == "__main__":
     from ctrl import cadcs
     from ctrl import db
     from ctrl import Telemetry
+    from ctrl import Telecommand
+    from ctrl.utils.core import PosixUTC
     from segsol import controlling
     from param import param_all
 

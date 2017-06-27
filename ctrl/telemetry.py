@@ -38,14 +38,14 @@ __all__ = ['Telemetry']
 
 
 class Telemetry(object):
-    def __init__(self, pkid=None, dbid=None):
+    def __init__(self, dbid=None):
         """
         Gets a telemetry from the database
         """
         # returns None if id not existing
-        ret = db.get_TM(pkid=pkid, dbid=dbid)
+        ret = db.get_TM(dbid=dbid)
         if ret is None:
-            raise exc.NoSuchTM(pkid=pkid, dbid=dbid)
+            raise exc.NoSuchTM(dbid=dbid)
         else:
             (self._telemetry, self.hd), (self._telemetry_hdx, self.hdx),\
                 (self._telemetry_data, self.data) = ret
