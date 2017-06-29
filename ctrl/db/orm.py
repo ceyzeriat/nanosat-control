@@ -111,7 +111,7 @@ def save_TC_to_DB(hd, hdx, inputs):
     for k, v in inputs.items():
         DB.add(TABLES['TelecommandDatum'](telecommand_id=TC.id,
                                           param_key=k, 
-                                          value=repr(v)))
+                                          value=Byt(repr(v))))
     DB.commit()
     return TC.id
 
@@ -323,7 +323,7 @@ def save_TM_to_DB(hd, hdx, data):
             for k, v in data['unpacked'].items():
                 DB.add(TABLES[tbl](telemetry_packet=TM.id,
                                    param_key=k,
-                                   value=repr(v)))
+                                   value=Byt(repr(v))))
         # if dealing with list of dict, e.g. science or payload hk
         elif isinstance(data['unpacked'], (list, tuple)):
             for item in data['unpacked']:
