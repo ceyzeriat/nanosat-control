@@ -98,7 +98,7 @@ PACKETCATEGORY = CCSDSKey(      name='packet_category',
                                 l=5,
                                 fctunpack=bincore.bin2int,
                                 fctpack=bincore.int2bin,
-                                verbose="Defines the auxiliary header structure for telemetry packets (see external table 'packetCategoryDescription'). Unused for telecommands (set at 0b0000)",
+                                verbose="Defines the auxiliary header structure for telemetry packets (see external table 'packetCategoryDescription'). For Telecommands, set at 0 or 1",
                                 disp="cat")
 
 SEQUENCEFLAG = CCSDSKey(        name='sequence_flag',

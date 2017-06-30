@@ -249,17 +249,34 @@ def now():
 
 def now2daystamp():
     """
-    Returns a day stamp from the now timestamp
+    Returns a day stamp for datetime t
     """
-    return int(now().totimestamp()/86400.-DATETIME_REF)
+    return time2daystamp(now())
 
 def now2msstamp():
     """
-    Returns a milli-sec stamp from the now timestamp
+    Returns a milli-sec stamp for now
     """
-    g = now()
-    return int(g.hour * 36e5 + g.minute * 6e4 + g.second * 1e3
-                + g.microsecond//1000)
+    return time2msstamp(now())
+
+def time2msstamp(t):
+    """
+    Returns a milli-sec stamp for datetime t
+    """
+    return int(t.hour * 36e5 + t.minute * 6e4 + t.second * 1e3
+                + t.microsecond//1000)
+
+def time2daystamp(t):
+    """
+    Returns a day stamp for now, or from t (PosixUTC)
+    """
+    return int(t.totimestamp()/86400.-DATETIME_REF)
+
+def time2stamps(dt):
+    """
+    Give a PosixUTC, get ms and day stamps
+    """
+    return (time2msstamp(dt), time2daystamp(dt))
 
 def stamps2time(daystamp, msstamp):
     """
