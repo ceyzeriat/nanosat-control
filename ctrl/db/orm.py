@@ -278,7 +278,7 @@ def get_TM(dbid):
                         thedicline[key] = getattr(dataline, key, None)
                 else:
                     # eval the column
-                    thedicline[str(dataline.param_key)] = eval(dataline.value)
+                    thedicline[str(dataline.param_key)] = eval(dataline.value.decode())
                 dicdata.append(thedicline)
         else:
             thedata = None
@@ -323,7 +323,7 @@ def save_TM_to_DB(hd, hdx, data):
             for k, v in data['unpacked'].items():
                 DB.add(TABLES[tbl](telemetry_packet=TM.id,
                                    param_key=k,
-                                   value=Byt(repr(v))))
+                                   value=repr(v).encode()))
         # if dealing with list of dict, e.g. science or payload hk
         elif isinstance(data['unpacked'], (list, tuple)):
             for item in data['unpacked']:
