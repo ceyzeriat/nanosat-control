@@ -119,7 +119,10 @@ class Cm(object):
         for param in self._params:
             if param.name not in kwargs.keys():
                 raise cmdexception.MissingCommandInput(self.name, param.name)
-            inputs[param.name] = kwargs.pop(param.name)
+            if param.typ.typ.lower() == 'str':
+                inputs[param.name] = Byt(kwargs.pop(param.name))
+            else:    
+                inputs[param.name] = kwargs.pop(param.name)
             rep += param.tohex(inputs[param.name])
         if len(rep) != self.lparam and self.lparam is not None:
             raise cmdexception.WrongCommandLength(self.name, len(rep),
