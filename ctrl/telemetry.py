@@ -31,6 +31,7 @@ from .utils import core
 from .utils import ctrlexception as exc
 from .ccsds import TMUnPacker
 from .ccsds import param_ccsds
+from .kiss.frame import Framer
 from . import db
 
 
@@ -61,7 +62,7 @@ class Telemetry(object):
     __nonzero__ = __bool__
 
     @classmethod
-    def _fromPacket(cls, packet, time_received=None, user_id=None, **kwargs):
+    def _fromPacket(cls, packet, time_received=None, user_id=None, isKiss=False, **kwargs):
         """
         Unpacks and stores the telemetry. Feeds ``hd``, ``hdx`` and
         ``data`` attributes
@@ -71,6 +72,8 @@ class Telemetry(object):
           * time_received (datetime+tz): the reception time of the packet
           * user_id (int): the user id
         """
+        if isKiss: 
+            s1, s2, packet = Framer.decode_radio(packet) # unpack kiss
         cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet, retdbvalues=True)
         cls.hd['raw_file'] = core.RAWPACKETFOLDER
         cls.hd['user_id'] = core.RECEIVERID if user_id is None\
