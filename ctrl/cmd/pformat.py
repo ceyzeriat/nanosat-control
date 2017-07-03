@@ -32,6 +32,7 @@ if version_info > (3,):
 
 from . import cmdexception
 from ..utils import bincore
+from ..utils import core
 
 
 __all__ = ['PFormat']
@@ -105,7 +106,7 @@ class PFormat(object):
             if len(value) > 1:
                 return False
         if self.typ == 'str':
-            if not isinstance(value, str):
+            if not core.isStr(value):
                 return False
             if len(value) > 1:
                 return False
