@@ -251,10 +251,9 @@ class NoSuchTM(CTRLException):
     """
     Cannot find the TM requested
     """
-    def __init__(self, pkid, dbid, *args, **kwargs):
-        self._init(pkid, dbid, *args, **kwargs)
-        self.message = "No such TM, pkid: '{}' or dbid: '{}'"\
-                       .format(pkid, dbid)
+    def __init__(self, dbid, *args, **kwargs):
+        self._init(dbid, *args, **kwargs)
+        self.message = "No such TM, dbid: '{}'".format(dbid)
 
 
 class NoSuchTC(CTRLException):
