@@ -187,7 +187,7 @@ class CCSDSTrousseau(object):
         if not self.listof:
             return self._disp(vals, charwrap)
         else:
-            res = [self._disp(line) for line in list(vals)]
+            res = [self._disp(line, charwrap) for line in list(vals)]
         return "\n* ".join(res)
 
     def _disp(self, vals, charwrap):
