@@ -39,7 +39,7 @@ TWINKLETWINKLELITTLEINDIA = False
 def hex2str(v, **kwargs):
     """
     type = hexa string
-    verbose = "hexadecimal -> message"
+    verbose = hexadecimal -> message
     """
     return v.hex()
 
@@ -47,7 +47,7 @@ def hex2str(v, **kwargs):
 def str2hex(txt, **kwargs):
     """
     type = hexadecimal
-    verbose = "message -> hexadecimal"
+    verbose = message -> hexadecimal
     """
     return Byt.fromHex(txt)
 
@@ -55,7 +55,7 @@ def str2hex(txt, **kwargs):
 def hex2txt(v, **kwargs):
     """
     type = hexa string
-    verbose = "hexadecimal -> message"
+    verbose = hexadecimal -> message
     """
     return ''.join([chr(i) for i in v.ints() if i >= 32 and i <= 126])
 
@@ -63,7 +63,7 @@ def hex2txt(v, **kwargs):
 def txt2hex(txt, **kwargs):
     """
     type = hexadecimal
-    verbose = "message -> hexadecimal"
+    verbose = message -> hexadecimal
     """
     return ''.join([Byt(i) for i in Byt(txt).ints() if i >= 32 and i <= 126])
 
