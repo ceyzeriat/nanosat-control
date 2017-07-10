@@ -112,7 +112,7 @@ class CCSDSKey(object):
         self.end = self.start + self.len
         self._hex_slice = slice(self.start//8, int(math.ceil(self.end/8.)))
         self.octets = (self.start%8 == 0 and self.end%8 == 0)
-        if self.octets:
+        if not self.octets:
             self._bin_sub_slice = slice(self.start%8, self.start%8+self.len)
         if self.isdic:
             if typ is not None:
