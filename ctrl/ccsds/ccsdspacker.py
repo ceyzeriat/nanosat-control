@@ -157,13 +157,17 @@ class CCSDSPacker(object):
             # append timestamp before data
             if at is not None:
                 msstamp, daystamp = core.time2stamps(at)
-
-                bits = param_ccsds.MSECSINCEREF_TELEMETRY.pack(daystamp)\
-                        + param_ccsds.DAYSINCEREF_TELEMETRY.pack(msstamp)
-                padLen = len(bits) // 8
-                TCdata = bincore.bin2hex(bits, pad=padLen) + TCdata
+                octets = param_ccsds.MSECSINCEREF_TELEMETRY.octets\
+                            and param_ccsds.DAYSINCEREF_TELEMETRY.octets
+                TS = param_ccsds.MSECSINCEREF_TELEMETRY.pack(daystamp,
+                                                                octets=octets)\
+                        + param_ccsds.DAYSINCEREF_TELEMETRY.pack(msstamp,
+                                                                 octets=octets)
+                if not octets:
+                    TS = bincore.bin2hex(TS, pad=len(TS)//8)
+                TCdata = TS + TCdata
                 retprim = self.increment_data_length(
-                                        datalen=padLen,
+                                        datalen=len(TS),
                                         primaryHDpacket=retprim[0],
                                         primaryHDdict=retprim[1])
                 hds.update(retprim[1])
