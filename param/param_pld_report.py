@@ -27,6 +27,8 @@
 
 from byt import Byt
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from ctrl.utils import b
+from ctrl.utils import O
 
 
 __all__ = ['TROUSSEAU']
@@ -35,24 +37,9 @@ __all__ = ['TROUSSEAU']
 MAXLENGTHMESSAGE = 235  # octets
 
 
-def hex2txt(v, **kwargs):
-    """
-    verbose = "hexadecimal -> message"
-    """
-    return ''.join([chr(i) for i in v.ints() if i >= 32 and i <= 126])
-
-
-def txt2hex(txt, pad, **kwargs):
-    """
-    verbose = "message -> hexadecimal"
-    """
-    return Byt([i for i in Byt(txt).ints() if i >= 32 and i <= 126])
-
-
-KEYS = [dict(name='message', start=0, l=MAXLENGTHMESSAGE, fctunpack=hex2txt,
-                fctpack=txt2hex,
-                verbose="A report message (ascii string)",
-                disp='text', pad=False, octets=True)]
+KEYS = [dict(name='message', start=0*O, l=MAXLENGTHMESSAGE*O,
+                typ='byt', verbose="A report message (ascii string)",
+                disp='text', hard_l=False)]
 
 
 class PLDRepCCSDSTrousseau(CCSDSTrousseau):
@@ -65,9 +52,9 @@ class PLDRepCCSDSTrousseau(CCSDSTrousseau):
         """
         return {self.keys[0].name: str(data[:MAXLENGTHMESSAGE])}
 
-    def pack(self, allvalues, retdbvalues, **kwargs):
+    def pack(self, allvalues, **kwargs):
         pass
 
 
 
-TROUSSEAU = PLDRepCCSDSTrousseau(KEYS, octets=True)
+TROUSSEAU = PLDRepCCSDSTrousseau(KEYS)

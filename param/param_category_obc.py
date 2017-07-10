@@ -29,115 +29,107 @@ from ctrl.utils import bincore
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.ccsds.ccsdskey import CCSDSKey
 from ctrl.ccsds.ccsdscategory import CCSDSCategory
+from ctrl.utils import b
+from ctrl.utils import O
+
 
 from . import param_category_common as cmn
 from .generated.booterrorstruct import BOOTERRORSTRUCT_KEYS
+
 
 __all__ = []
 
 
 TELECOMMANDIDMIRROR = CCSDSKey( name='telecommand_id_mirror',
-                                start=0,
-                                l=16,
-                                fctunpack=bincore.bin2int,
-                                fctpack=bincore.int2bin,
+                                start=0*O,
+                                l=2*O,
+                                typ='uint',
                                 verbose="telecommand id of the corresponding tc command being ackowledged or answered",
                                 disp="tcid")
 
 PACKETIDMIRROR = CCSDSKey(  name='packet_id_mirror',
-                            start=16,
-                            l=16,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=2*O,
+                            l=2*O,
+                            typ='uint',
                             verbose="corresponding packet id count of the command being ackowledged or answered",
                             disp="pkid")
 
 STARTADDRESS = CCSDSKey(name='start_address',
-                        start=32,
-                        l=32,
-                        fctunpack=bincore.bin2hex,
-                        fctpack=bincore.hex2bin,
+                        start=4*O,
+                        l=4*O,
+                        typ='byt',
                         verbose="Start Adress of Dump",
                         disp='Addr')
 
 BYTESNUMBER = CCSDSKey( name='bytes_number',
-                        start=64,
-                        l=8,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
+                        start=8*O,
+                        l=1*O,
+                        typ='uint',
                         verbose="Length of data in dump packet",
                         disp='len')
 
 NSEGS = CCSDSKey(       name='n_segments',
-                        start=32,
-                        l=16,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
+                        start=4*O,
+                        l=2*O,
+                        typ='uint',
                         verbose="Total Number of segments received",
                         disp="Nseg")
 
 
 LOGCOUNTER = CCSDSKey(  name='log_counter',
-                        start=0,
-                        l=16,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
+                        start=0*O,
+                        l=2*O,
+                        typ='uint',
                         verbose='uint16: error counter, analogous to a sequence count / error time ID ',
                         disp="logCounter")
 FILECRCCODE = CCSDSKey( name='file_crc_code',
-                        start=16,
-                        l=32,
-                        fctunpack=bincore.bin2hex,
-                        fctpack=bincore.hex2bin,
+                        start=2*O,
+                        l=4*O,
+                        typ='byt',
                         verbose='identifies the file where the error occurred, = CRC32(string("source_filename.cpp"));',
                         disp="fileCrcCode")
 LINECODE = CCSDSKey(    name='line_code',
-                        start=48,
-                        l=16,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
+                        start=6*O,
+                        l=2*O,
+                        typ='uint',
                         verbose='uint16: line where the error occurred',
                         disp="lineCode")
 FUNERRCODE = CCSDSKey(  name='fun_err_code',
-                        start=64,
-                        l=16,
-                        fctunpack=bincore.bin2intSign,
-                        fctpack=bincore.intSign2bin,
+                        start=8*O,
+                        l=2*O,
+                        typ='sint',
                         verbose='int16: (optional), type of error (from L0AppErrorCode.hpp), or return value of failed function call',
                         disp="funErrCode")
 SECHEADERTM = CCSDSKey( name='sec_header_tm',
-                        start=80,
-                        l=48,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
+                        start=10*O,
+                        l=6*O,
+                        typ='uint',
                         verbose='time tag',
                         disp="SecHeaderTm")
 EVENTDATA = CCSDSKey(   name='data',
-                        start=128,
-                        l=32,
-                        fctunpack=bincore.bin2hex,
-                        fctpack=bincore.hex2bin,
+                        start=16*O,
+                        l=4*O,
+                        typ='byt',
                         verbose='uint8[4]: (optinal) aditional data',
                         disp="data")
 
 
 PARTSELECT = CCSDSKey(  name='hk_part',
-                        start=32,
-                        len=8,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
+                        start=4*O,
+                        l=1*O,
+                        typ='uint',
                         verbose='identifies the HK part',
                         disp='partSelect')
 
 
 
-HEADAUX_0 = CCSDSTrousseau([], octets=False) # recep ack
-HEADAUX_2 = CCSDSTrousseau(BOOTERRORSTRUCT_KEYS, octets=False) # boot error report
+HEADAUX_0 = CCSDSTrousseau([]) # recep ack
+HEADAUX_2 = CCSDSTrousseau(BOOTERRORSTRUCT_KEYS) # boot error report
 HEADAUX_3 = CCSDSTrousseau([LOGCOUNTER, FILECRCCODE, LINECODE,
-                            FUNERRCODE, SECHEADERTM, EVENTDATA], octets=False)  # event report
-HEADAUX_HKOBC = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, PARTSELECT], octets=False)  # HK
-HEADAUX_5 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, STARTADDRESS, BYTESNUMBER], octets=False)  # dump answer data
-HEADAUX_6 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, NSEGS], octets=False)  # patch list segments
+                            FUNERRCODE, SECHEADERTM, EVENTDATA])  # event report
+HEADAUX_HKOBC = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, PARTSELECT])  # HK
+HEADAUX_5 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, STARTADDRESS, BYTESNUMBER])  # dump answer data
+HEADAUX_6 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, NSEGS])  # patch list segments
 
 
 # acknowledgement of reception

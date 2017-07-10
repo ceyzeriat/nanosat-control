@@ -109,7 +109,7 @@ def process_report(inputs):
             if len(blobish) == 0:
                 print("Can't unpack empty packet")
                 return
-            hd, hdx, dd = TMUnPacker.unpack(blobish, retdbvalues=True)
+            hd, hdx, dd = TMUnPacker.unpack(blobish)
         except:
             print('Tried to unpack.. but an error occurred: {}'\
                     .format(sys.exc_info()[0]))

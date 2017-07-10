@@ -28,97 +28,99 @@
 from byt import Byt
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.utils import bincore
+from ctrl.utils import b
+from ctrl.utils import O
+
 
 __all__ = ['TROUSSEAU']
 
 
-LENGTHBEACONMESSAGE = 29*8  # bits
+LENGTHBEACONMESSAGE = 29*O
 
 
 KEYS = [    dict(   name='message',
-                    start=0,
+                    start=0*O,
                     l=LENGTHBEACONMESSAGE,
-                    fctunpack=bincore.bin2txt,
-                    fctpack=bincore.txt2bin,
+                    typ='text',
                     verbose="A beacon message",
                     disp='text'),
 
-            dict(   name='proc_freq',
-                    start=LENGTHBEACONMESSAGE+40,
-                    l=8,
-                    disp="proc_freq",
-                    verbose="processor frequency",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),
-
             dict(   name='phot', 
                     start=LENGTHBEACONMESSAGE, 
-                    l=16, 
+                    l=2*O, 
                     disp="phot",
                     verbose="photometry",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),
+                    typ='uint'),
 
             dict(   name='mode', 
-                    start=LENGTHBEACONMESSAGE+16, 
-                    l=8, 
+                    start=LENGTHBEACONMESSAGE+2*O,
+                    l=1*O, 
                     disp="mode",
                     verbose="mode",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),
+                    typ='uint'),
 
             dict(   name='acqmode',
-                    start=LENGTHBEACONMESSAGE+24,
-                    l=8,
+                    start=LENGTHBEACONMESSAGE+3*O,
+                    l=1*O,
                     disp="acqmode",
                     verbose="acquisition mode",
-                    fctunpack=bincore.bin2int, fctpack=bincore.int2bin),
+                    typ='uint'),
+
+            dict(   name='proc_freq',
+                    start=LENGTHBEACONMESSAGE+5*O,
+                    l=1*O,
+                    disp="proc_freq",
+                    verbose="processor frequency",
+                    typ='uint'),
 
             dict(   name='beacon_flag',
-                    start=LENGTHBEACONMESSAGE+33,
-                    l=1,
+                    start=LENGTHBEACONMESSAGE+4*O+1*b,
+                    l=1*b,
                     disp="beacon_flag",
                     verbose="beacon flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+                    typ='bool'),
 
             dict(   name='tec_flag',
-                    start=LENGTHBEACONMESSAGE+34,
-                    l=1,
+                    start=LENGTHBEACONMESSAGE+4*O+2*b,
+                    l=1*b,
                     disp="tec_flag",
                     verbose="tec flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+                    typ='bool'),
 
             dict(   name='sensors_flag',
-                    start=LENGTHBEACONMESSAGE+35,
-                    l=1,
+                    start=LENGTHBEACONMESSAGE+4*O+3*b,
+                    l=1*b,
                     disp="sensors_flag",
                     verbose="sensors flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+                    typ='bool'),
 
             dict(   name='hv_flag',
-                    start=LENGTHBEACONMESSAGE+36,
-                    l=1,
+                    start=LENGTHBEACONMESSAGE+4*O+4*b,
+                    l=1*b,
                     disp="hv_flag",
                     verbose="high voltage flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+                    typ='bool'),
 
             dict(   name='dac_flag',
-                    start=LENGTHBEACONMESSAGE+37,
-                    l=1,
+                    start=LENGTHBEACONMESSAGE+4*O+5*b,
+                    l=1*b,
                     disp="dac_flag",
                     verbose="dac flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+                    typ='bool'),
 
             dict(   name='interrupt_flag',
-                    start=LENGTHBEACONMESSAGE+38,
-                    l=1,
+                    start=LENGTHBEACONMESSAGE+4*O+6*b,
+                    l=1*b,
                     disp="interrupt_flag",
                     verbose="interrupt flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+                    typ='bool'),
 
             dict(   name='diode_flag',
-                    start=LENGTHBEACONMESSAGE+39,
-                    l=1,
+                    start=LENGTHBEACONMESSAGE+4*O+7*b,
+                    l=1*b,
                     disp="diode_flag",
                     verbose="diode flag",
-                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin)
+                    typ='bool')
             ]
 
 
@@ -134,4 +136,4 @@ class PLDBeaconCCSDSTrousseau(CCSDSTrousseau):
                                                     for key in self.keys[1:]])
 
 
-TROUSSEAU = PLDBeaconCCSDSTrousseau(KEYS, octets=False)
+TROUSSEAU = PLDBeaconCCSDSTrousseau(KEYS)

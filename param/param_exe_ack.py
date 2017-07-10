@@ -28,6 +28,8 @@
 from byt import Byt
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.utils import bincore
+from ctrl.utils import b
+from ctrl.utils import O
 
 
 __all__ = ['TROUSSEAU']
@@ -37,10 +39,9 @@ MAXLENGTHERRORMESSAGE = 100
 
 
 KEYS = [dict(   name='error_message',
-                start=0,
-                l=MAXLENGTHERRORMESSAGE,
-                fctunpack=bincore.bin2hex,
-                fctpack=bincore.hex2bin,
+                start=0*O,
+                l=MAXLENGTHERRORMESSAGE*O,
+                typ='hex',
 				verbose="Optional: an error message (ascii string). The message is only put in the frame if errorCode is not 0",
                 disp='err')]
 
@@ -71,4 +72,4 @@ class EACKCCSDSTrousseau(CCSDSTrousseau):
                         vals[self.keys[0].name].hex())
 
 
-TROUSSEAU = EACKCCSDSTrousseau(KEYS, octets=True)
+TROUSSEAU = EACKCCSDSTrousseau(KEYS)

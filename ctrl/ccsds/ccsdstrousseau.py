@@ -37,40 +37,27 @@ __all__ = ['CCSDSTrousseau']
 
 
 class CCSDSTrousseau(object):
-    def __init__(self, keylist, octets, listof=False):
+    def __init__(self, keylist, listof=False):
         """
         A collection of CCSDS keys
 
         Args:
           * keylist (list of dict): the list of input parameter to
             generate the list of CCSDSKey
-          * octets (bool): whether the packet should be treated as binary
-            or hexadecimal
           * listof (bool): if the trousseau corresponds to a data-structure
             repeated n-times in the packet
         """
         self.keys = []
         self.size = 0
-        self.octets = bool(octets)
         self.listof = bool(listof)
-        if self.listof and not self.octets:
-            raise ccsdsexception.InvalidListOfBits()
-        pos = 0
+        self.octets = True
         for item in keylist:
-            if isinstance(item, CCSDSKey):
-                new_key = item
-            else:
-                new_key = CCSDSKey(**item)
-            if new_key.relative_only:
-                pos += new_key.len
-            else:
-                pos = new_key.start + new_key.len
-            if pos > self.size:
-                self.size = pos
-            self.keys.append(new_key)
-        if not self.octets:
-            # size is always in octets
-            self.size = int(math.ceil(self.size / 8.))
+            if not isinstance(item, CCSDSKey):
+                item = CCSDSKey(**item)
+            self.octets = self.octets and item.octets
+            self.size = max(self.size, item.end)
+            self.keys.append(item)
+        self.size /= 8
         self._make_fmt()
 
     def _make_fmt(self, splt=", "):
@@ -83,15 +70,13 @@ class CCSDSTrousseau(object):
         self.fmt = splt.join(["%s:{%s}" % (key.disp, key.name)\
                                 for key in self.keys])
 
-    def pack(self, allvalues, retdbvalues, **kwargs):
+    def pack(self, allvalues, **kwargs):
         """
         Does the packing loop for the list of CCSDS keys
         Returns the bytes chain and the values encoded
 
         Args:
           * allvalues (dict): the values to pack
-          * retdbvalues (bool): if ``True``, returns the encoded values
-            in a format directly compatible with the database
 
         Kwargs:
           * passed on to the pack method of each key
@@ -99,38 +84,26 @@ class CCSDSTrousseau(object):
         values = dict(allvalues)
         retvals = {}
         if not self.octets:
-            bits = '0' * (self.size * 8)
+            chunk = '0' * (self.size * 8)
         else:
-            bits = '\x00' * self.size
-        pos = 0
+            chunk = '\x00' * self.size
         for item in self.keys:
             if item.name not in values.keys() and item.dic_force is None:
                 # got no values for this key, wtf
                 raise ccsdsexception.PacketValueMissing(item.name)
             thevalue = values.pop(item.name, '')
             retvals[item.name] = thevalue
-            if item.relative_only:
-                bits = core.setstr( bits,
-                                    item.cut_offset(pos),
-                                    item.pack(thevalue, **kwargs))
-                pos += item.len
-            else:
-                bits = core.setstr( bits,
-                                    item.cut,
-                                    item.pack(thevalue, **kwargs))
-                pos = item.start + item.len
+            chunk = core.setstr(chunk,
+                                item.cut,
+                                item.pack(thevalue, octets=self.octets,
+                                          **kwargs))
             # filling in the forced values not given as input
             if item.dic_force is not None:
                 retvals[item.name] = item.dic_force
-            # these are special cases that we want to fill manually because the
-            # forced values are not numbers but dictionary keys that still
-            # gotta be valid values for the database
-            if retdbvalues and item.non_db_dic:
-                retvals[item.name] = bincore.bin2int(item.pack(thevalue))
         if not self.octets:
-            return bincore.bin2hex(bits, pad=self.size), retvals
+            return bincore.bin2hex(chunk, pad=self.size), retvals
         else:
-            return bits, retvals
+            return chunk, retvals
 
     def unpack(self, data, **kwargs):
         """
@@ -141,17 +114,8 @@ class CCSDSTrousseau(object):
 
         Kwargs are ignored
         """
-        if not self.octets:
-            if not self.listof:
-                data = bincore.hex2bin(data[:self.size])
-            else:
-                data = bincore.hex2bin(data)
-        else:
-            if not self.listof:
-                data = data[:self.size]
-            else:
-                pass
         if not self.listof:
+            data = data[:self.size]
             return self._unpack(data)
         else:
             nlines = len(data) // self.size

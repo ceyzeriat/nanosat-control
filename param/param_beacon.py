@@ -33,4 +33,4 @@ from .generated.l0beaconstruct import L0BEACONSTRUCT_KEYS
 __all__ = ['TROUSSEAU']
 
 
-TROUSSEAU = CCSDSTrousseau(L0BEACONSTRUCT_KEYS, octets=False)
+TROUSSEAU = CCSDSTrousseau(L0BEACONSTRUCT_KEYS)

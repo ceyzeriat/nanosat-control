@@ -64,7 +64,7 @@ class CCSDSBlob(object):
             vals[param_ccsds.PID.name] = item
             possible_head = bincore.hex2bin(
                                 pk.pack_primHeader(values=vals, datalen=0,
-                                        retvalues=False, retdbvalues=False,
+                                        retvalues=False,
                                         withPacketID=False)[:self.octcut])[\
                                     :param_ccsds.AUTHPACKETLENGTH]
             self.auth_bits.append(possible_head)

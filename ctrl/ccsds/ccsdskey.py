@@ -26,6 +26,7 @@
 
 
 import math
+import re
 
 from . import ccsdsexception
 from ..utils import bincore
@@ -40,18 +41,20 @@ __all__ = ['CCSDSKey']
 TYP = { 'sint': 'intSign',
         'uint': 'int',
         'byt': 'hex',
-        'hexa': 'str',
+        'hex': 'hex',
+        'hexstr': 'str',
         'text': 'txt',
         'real': 'float',
+        'float': 'float',
         'double': 'double',
         'bool': 'bool'
       }
 
 
 class CCSDSKey(object):
-    def __init__(self, name, start, l, dic=None, typ=None,
-                 disp=None, verbose="", fctunram=None,
-                 dic_force=None, non_db_dic=False, hard_l=True, **kwargs):
+    def __init__(self, name, start, l, dic=None, typ=None, fctfix=None,
+                 disp=None, verbose="", fctunram=None, fctram=None,
+                 dic_force=None, hard_l=True, **kwargs):
         """
         CCSDS keys to perform value extraction from a sequence of bits
         (or octets if Trousseau is in octet).
@@ -64,22 +67,24 @@ class CCSDSKey(object):
             is in octet).
           * dic (dict): dictionary of possible values
           * typ (str): expected type of the unpacked key
+            [not for dic mode]
+          * fctfix (callable): [optional] a function to apply to the
+            output of the unpacking, in order to apply min-max treatment
+            to raw data or cast to custom subtypes
           * disp (string): short alias for human-reading display
           * verbose (string): Human-readable meaning of this key
           * fctunram (callable): [optional] a function to convert the
             raw-unpacked value to a physical value. This function shall
             contain a docstring with the symbolic conversion using x as
             input parameter: e.g. "verbose = 3*x/16."
+            [not for dic mode]
           * fctram (callable): [optional] a function to convert the
             physical value to a raw-integer raedy for packing. If ``None``,
             this reverse function will be automatically determined from
             fctunram
+            [not for dic mode]
           * dic_force (bool): whether to force a certain dictionary value
             when (un)packing, no matter the user input
-          * non_db_dic (bool): ``True`` if the dictionary keys are non-
-            compliant with the corresponding database column. This will
-            make sure that the unpacked values are integers instead of
-            the non-compliant dictionary keys
           * hard_l (bool): if ``True``: pad the data up to the key length
             ``l``, else leave the data as it is and ``l`` represent the
             maximum length
@@ -91,28 +96,28 @@ class CCSDSKey(object):
         self.disp = self.name[:3] if disp is None else str(disp)
         self.hard_l = bool(hard_l)
         self.unram = fctunram if callable(fctunram) else None
-        self.ram = None
-        e = re.search(r'verbose *= *([\S ]+)',
-                      getattr(self.unram, 'func_doc', ''))
-        if e is not None:
-            try:
-                self.ram = eval('lambda x: {}'.format(core.inverse_eqn(e)))
-            except:
-                pass
+        self.ram = fctram if callable(fctram) else None
+        self.fctfix = fctfix if callable(fctfix) else None
+        if self.ram:
+            e = re.search(r'verbose *= *([\S ]+)',
+                          getattr(self.unram, 'func_doc', ''))
+            if e is not None:
+                try:
+                    self.ram = eval('lambda x: '+str(core.inverse_eqn(e)))
+                except:
+                    pass
         self.isdic = (dic is not None)
         self.start = start//8*O + start%8*b
         self.len = l//8*O + l%8*b
         self.end = self.start + self.len
         self._hex_slice = slice(self.start//8, int(math.ceil(self.end/8.)))
-        self.octets = (self.start%8 == 0 and self.end%8 ==0)
+        self.octets = (self.start%8 == 0 and self.end%8 == 0)
         if self.octets:
             self._bin_sub_slice = slice(self.start%8, self.start%8+self.len)
-        self.typ = typ.lower()
-        if self.typ not in TYP.keys():
-            raise ccsdsexception.BadDefinition(name=self.name)
         if self.isdic:
             if typ is not None:
                 raise ccsdsexception.BadDefinition(name=self.name)
+            self.typ = None
             self.dic = {}
             self._fctunpack = None
             self._fctpack = None
@@ -123,6 +128,9 @@ class CCSDSKey(object):
         else:
             if typ is None:
                 raise ccsdsexception.BadDefinition(name=self.name)
+            self.typ = str(typ).lower()
+            if self.typ not in TYP.keys():
+                raise ccsdsexception.BadTypeDefinition(typ=self.typ, name=self.name)
             self.dic = None
             conv = 'hex' if self.octets else 'bin'
             self._fctunpack = getattr(bincore,
@@ -130,32 +138,16 @@ class CCSDSKey(object):
             self._fctpack = getattr(bincore,
                                       '{}2{}'.format(TYP[self.typ], conv))
         self.dic_force = bool(dic_force)
-        self.non_db_dic = bool(non_db_dic)
 
     def __repr__(self):
         return "{}: <{}-->{}>[{}]".format(
                     self.name,
                     self.start//8 if self.octets else int(self.start),
                     self.end//8 if self.octets else int(self.end),
-                    'O' is self.octets else 'b')
+                    'O' if self.octets else 'b')
 
     __str__ = __repr__
 
-    def cut_offset(self, offset):
-        """
-        Returns the slice with an offset in position
-
-        Args:
-          * offset (int): the offset
-        """
-        offset = int(offset)
-        if self.start + offset < 0:
-            raise ccsdsexception.CantApplyOffset(name=self.name,
-                                                    start=self.start,
-                                                    offset=offset)
-        else:
-            return slice(self.start + offset, self.end + offset)
-    
     def __getitem__(self, key):
         if not self.isdic:
             raise ccsdsexception.NoDic(name=self.name)
@@ -196,6 +188,8 @@ class CCSDSKey(object):
             res = self._dic_rev(bincore.reverse_if_little_endian(chunk))
         else:
             res = self._fctunpack(chunk, **kwargs)
+        if self.fctfix is not None:
+            res = self.fctfix(res, **kwargs)
         if unram and self.unram is not None:
             return self.unram(res, **kwargs)
         else:
@@ -219,8 +213,11 @@ class CCSDSKey(object):
         if self._fctpack is None:
             res = bincore.reverse_if_little_endian(self[value])
         else:
-            pad = self.len if self.hard_l else None
-            res = self._fctpack(value, pad=pad, **kwargs)
+            if self.hard_l:
+                kwargs['pad'] = self.len
+                if self.octets:
+                    kwargs['pad'] /= 8
+            res = self._fctpack(round(value), **kwargs)
         # we have octets but forcing to bin
         if self.octets and octets is False:
             return bincore.hex2bin(res, pad=True)

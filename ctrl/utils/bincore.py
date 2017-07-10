@@ -44,12 +44,14 @@ def hex2str(v, **kwargs):
     return v.hex()
 
 
-def str2hex(txt, **kwargs):
+def str2hex(txt, pad=0, **kwargs):
     """
+    A hexa-text '2F 3C A8' to bytes
+    pad in hex chars
     type = hexadecimal
     verbose = hexa string -> hexadecimal
     """
-    return Byt.fromHex(txt)
+    return padit(txt=Byt.fromHex(txt), l=pad, ch=Byt(0))
 
 
 def bin2str(v, **kwargs):
@@ -60,12 +62,14 @@ def bin2str(v, **kwargs):
     return bin2hex(v).hex()
 
 
-def str2bin(txt, **kwargs):
+def str2bin(txt, pad=True, **kwargs):
     """
+    A hexa-text '2F 3C A8' to bytes
+    pad in bits
     type = binary
     verbose = hexa string -> binary
     """
-    return hex2bin(Byt.fromHex(txt), pad=True))
+    return hex2bin(Byt.fromHex(txt), pad=pad)
 
 
 def hex2txt(v, **kwargs):
@@ -76,12 +80,16 @@ def hex2txt(v, **kwargs):
     return ''.join([chr(i) for i in v.ints() if i >= 32 and i <= 126])
 
 
-def txt2hex(txt, **kwargs):
+def txt2hex(txt, pad=0, **kwargs):
     """
+    A display-text [32--126] to bytes
+    pad in hex chars
     type = hexadecimal
     verbose = message -> hexadecimal
     """
-    return ''.join([Byt(i) for i in Byt(txt).ints() if i >= 32 and i <= 126])
+    txt = ''.join(Byt(i) for i in Byt(txt).ints()\
+                                if i >= 32 and i <= 126)
+    return padit(txt=txt, l=pad, ch=Byt(0))
 
 
 def bin2txt(v, **kwargs):

@@ -277,7 +277,7 @@ class Xdisp(object):
         pld = int(infos[param_ccsds.PAYLOADFLAG.name])
         lvl = int(infos[param_ccsds.LEVELFLAG.name])
         pid = int(infos[param_ccsds.PID.name])
-        pidstr = str(PIDREGISTRATION_REV[pid][pld][lvl]\
+        pidstr = str(PIDREGISTRATION_REV[pid][pld][lvl])\
                         if pid in PIDREGISTRATION_REV.keys() else "?????"
         self._disp(self.TC,
                    PrintOut(TCFMT.format(

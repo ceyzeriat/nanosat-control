@@ -28,6 +28,8 @@
 from byt import Byt
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.utils import bincore
+from ctrl.utils import b
+from ctrl.utils import O
 
 
 __all__ = ['TROUSSEAU']
@@ -35,12 +37,11 @@ __all__ = ['TROUSSEAU']
 
 # there should be only one key here
 KEYS = [dict(   name='seg_id',
-                start=0,
-                l=2,
-                fctunpack=bincore.hex2int,
-                fctpack=bincore.int2hex,
+                start=0*O,
+                l=2*O,
+                typ='uint',
                 verbose="Segment ID currently received by the satellite",
                 disp='seg')]
 
 
-TROUSSEAU = CCSDSTrousseau(KEYS, octets=True, listof=True)
+TROUSSEAU = CCSDSTrousseau(KEYS, listof=True)

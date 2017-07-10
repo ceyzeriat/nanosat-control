@@ -27,59 +27,55 @@
 
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.utils import bincore
+from ctrl.utils import b
+from ctrl.utils import O
 
 
 __all__ = ['TROUSSEAU']
 
 
 KEYS = [dict(   name='step',
-                start=0,
-                l=1,
-                fctunpack=bincore.hex2int,
-                fctpack=bincore.int2hex,
+                start=0*O,
+                l=1*O,
+                typ='uint',
                 verbose="step",
                 disp="step"),
 
         dict(   name='counts',
-                start=1,
-                l=4,
-                fctunpack=bincore.hex2int,
-                fctpack=bincore.int2hex,
+                start=1*O,
+                l=4*O,
+                typ='uint',
                 verbose="counts",
                 disp="cts"),
 
         dict(   name='x_com',
-                start=5,
-                l=2,
-                fctunpack=bincore.hex2int,
-                fctpack=bincore.int2hex,
+                start=5*O,
+                l=2*O,
+                typ='uint',
                 verbose="x_com",
                 disp="xc"),
 
         dict(   name='y_com',
-                start=7,
-                l=2,
-                fctunpack=bincore.hex2int,
-                fctpack=bincore.int2hex,
+                start=7*O,
+                l=2*O,
+                typ='uint',
                 verbose="y_com",
                 disp="yc"),
 
         dict(   name='x_pos',
-                start=9,
-                l=2,
-                fctunpack=bincore.hex2int,
-                fctpack=bincore.int2hex,
+                start=9*O,
+                l=2*O,
+                typ='uint',
                 verbose="x_pos",
                 disp="xp"),
 
         dict(   name='y_pos',
-                start=11,
-                l=2,
-                fctunpack=bincore.hex2int,
-                fctpack=bincore.int2hex,
+                start=11*O,
+                l=2*O,
+                typ='uint',
                 verbose="y_pos",
                 disp="yp")
         ]
 
 
-TROUSSEAU = CCSDSTrousseau(KEYS, octets=True, listof=True)
+TROUSSEAU = CCSDSTrousseau(KEYS, listof=True)
