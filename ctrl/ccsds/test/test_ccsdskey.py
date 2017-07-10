@@ -38,8 +38,6 @@ def test_ccsdskey_base():
     assert p.dic != None
     assert p._fctunpack == None
     assert p._fctpack == None
-    assert p.can_unpack == True
-    assert p.can_pack == True
     assert p.relative_only == False
     assert p.len == 1
     assert p.start == 3
@@ -57,8 +55,6 @@ def test_unpack():
     assert p.unpack('111011') == 'aa'
     assert p.unpack('111101', offset=1) == 'aa'
     p = CCSDSKey('pt', start=3, l=1, fctunpack=int)
-    assert p.can_unpack == True
-    assert p.can_pack == False
     assert p.unpack('11101') is 0
     p = CCSDSKey('pt', l=1, fctunpack=int)
     assert p.unpack('0', rel=True) is 0
@@ -78,7 +74,6 @@ def test_unpack():
 
 def test_pack():
     p = CCSDSKey('pt', dic={'aa': '01', 'bb': '10'}, start=3, l=1)
-    assert p.can_pack == True
     bincore.TWINKLETWINKLELITTLEINDIA = True
     assert p.pack('aa') == '10'
     assert p.pack('bb') == '01'
@@ -124,8 +119,6 @@ def test_ccsdskey_BadDefinition3():
 @raises(ccsdsexception.NoDic)
 def test_ccsdskey_NoDic():
     p = CCSDSKey('pt', start=3, l=1, fctpack=int)
-    assert p.can_unpack == False
-    assert p.can_pack == True
     dum = p['hop']
 
 @raises(ccsdsexception.NoSuchValue)

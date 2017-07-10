@@ -41,6 +41,8 @@ class Unit(int):
     def __repr__(self):
         return "{}*{}".format(self.v, self.name)
 
+    __str__ = __repr__
+
     def __mul__(self, other):
         return type(self)(int(other), self.m, self.name)
 
