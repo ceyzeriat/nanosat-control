@@ -58,7 +58,7 @@ class Unit(int):
             if self.m > other.m:
                 return type(self)(self.v//other.m + other.v//self.m, self.m, self.name)
             else:
-                return type(self)(int(self) + int(other), other.m, other.name)
+                return type(self)(self.v//other.m + other.v//self.m, other.m, other.name)
         return type(self)(int(self) + int(other), b.m, b.name)
 
     def __radd__(self, other):

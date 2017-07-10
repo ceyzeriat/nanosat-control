@@ -56,23 +56,20 @@ class CCSDSKey(object):
                  disp=None, verbose="", fctunram=None, fctram=None,
                  dic_force=None, hard_l=True, **kwargs):
         """
-        CCSDS keys to perform value extraction from a sequence of bits
-        (or octets if Trousseau is in octet).
+        CCSDS keys to perform value extraction from a sequence of bytes
         
         Args:
           * name (str): the name of the dictionary, for referencing
-          * start (int): start-position in bits (or octets if Trousseau
-            is in octet).
-          * l (int): length of the strip in bits (or octets if Trousseau
-            is in octet).
+          * start (int): start-position in bits
+          * l (int): length of the strip in bits
           * dic (dict): dictionary of possible values
           * typ (str): expected type of the unpacked key
             [not for dic mode]
           * fctfix (callable): [optional] a function to apply to the
-            output of the unpacking, in order to apply min-max treatment
+            output of the unpacking, in order to perform min-max treatment
             to raw data or cast to custom subtypes
           * disp (string): short alias for human-reading display
-          * verbose (string): Human-readable meaning of this key
+          * verbose (string): human-readable meaning of this key
           * fctunram (callable): [optional] a function to convert the
             raw-unpacked value to a physical value. This function shall
             contain a docstring with the symbolic conversion using x as
@@ -85,6 +82,7 @@ class CCSDSKey(object):
             [not for dic mode]
           * dic_force (bool): whether to force a certain dictionary value
             when (un)packing, no matter the user input
+            [dic mode only]
           * hard_l (bool): if ``True``: pad the data up to the key length
             ``l``, else leave the data as it is and ``l`` represent the
             maximum length
@@ -167,7 +165,7 @@ class CCSDSKey(object):
         the corresponding key or applies the unpack function
 
         Args:_hex_slice
-          * packet (byt): the packet as hex
+          * packet (byt): the packet as bytes
           * raw (bool): whether to return raw values
           * unram (bool): whether to proceed with value-conversion
 
