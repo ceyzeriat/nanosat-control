@@ -71,7 +71,7 @@ class CCSDSUnPacker(object):
         * packet (byts): the string that contains the full packet
         """
         header_p = {}
-        bits = bincore.hex2bin(packet[:param_ccsds.HEADER_P_KEYS.size])
+        bits = packet[:param_ccsds.HEADER_P_KEYS.size]
         # prepare optionnal inputs
         header_p[param_ccsds.PAYLOADFLAG.name] = ''
         header_p[param_ccsds.LEVELFLAG.name] = ''
