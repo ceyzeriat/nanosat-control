@@ -57,7 +57,7 @@ class CCSDSTrousseau(object):
             self.octets = self.octets and item.octets
             self.size = max(self.size, item.end)
             self.keys.append(item)
-        self.size /= 8
+        self.size = int(self.size/8)
         self._make_fmt()
 
     def _make_fmt(self, splt=", "):
