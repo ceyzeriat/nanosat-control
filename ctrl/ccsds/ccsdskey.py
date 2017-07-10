@@ -96,14 +96,17 @@ class CCSDSKey(object):
         self.unram = fctunram if callable(fctunram) else None
         self.ram = fctram if callable(fctram) else None
         self.fctfix = fctfix if callable(fctfix) else None
-        if self.ram:
+        if self.ram is None:
             e = re.search(r'verbose *= *([\S ]+)',
                           getattr(self.unram, 'func_doc', ''))
             if e is not None:
-                try:
-                    self.ram = eval('lambda x: '+str(core.inverse_eqn(e)))
-                except:
-                    pass
+                e = e.group(1)
+                if 'x' in e:
+                    try:
+                        self.ram = eval('lambda x, **kw: {}'\
+                                        .format(core.inverse_eqn(e)))
+                    except:
+                        pass
         self.isdic = (dic is not None)
         self.start = start//8*O + start%8*b
         self.len = l//8*O + l%8*b
