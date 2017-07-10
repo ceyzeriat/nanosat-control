@@ -162,14 +162,13 @@ class CCSDSKey(object):
             except:
                 raise ccsdsexception.NoSuchKey(name=self.name, key=key)
 
-    def unpack(self, packet, raw=False, unram=False, **kwargs):
+    def unpack(self, packet, unram=False, **kwargs):
         """
         Grabs the slice of relevant bits in the packet and returns
         the corresponding key or applies the unpack function
 
         Args:_hex_slice
           * packet (byt): the packet as bytes
-          * raw (bool): whether to return raw values
           * unram (bool): whether to proceed with value-conversion
 
         Kwargs:
@@ -183,8 +182,6 @@ class CCSDSKey(object):
             chunk = bincore.hex2bin(chunk)[self._bin_sub_slice]
             if len(chunk) != self.len and self.hard_l:
                 raise ccsdsexception.GrabFail(name=self.name, l=self.len)
-        if raw:
-            return chunk
         if self._fctunpack is None:
             res = self._dic_rev(bincore.reverse_if_little_endian(chunk))
         else:
