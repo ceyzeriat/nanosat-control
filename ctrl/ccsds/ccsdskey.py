@@ -138,7 +138,7 @@ class CCSDSKey(object):
                                       '{}2{}'.format(conv, TYP[self.typ]))
             self._fctpack = getattr(bincore,
                                       '{}2{}'.format(TYP[self.typ], conv))
-        self.dic_force = bool(dic_force)
+        self.dic_force = dic_force
 
     def __repr__(self):
         return "{}: <{}-->{}>[{}]".format(
