@@ -215,7 +215,7 @@ class CCSDSKey(object):
                 kwargs['pad'] = int(self.len)
                 if self.octets:
                     kwargs['pad'] = kwargs['pad']//8
-            res = self._fctpack(round(value), **kwargs)
+            res = self._fctpack(value, **kwargs)
         # we have octets but forcing to bin
         if self.octets and octets is False:
             return bincore.hex2bin(res, pad=True)
