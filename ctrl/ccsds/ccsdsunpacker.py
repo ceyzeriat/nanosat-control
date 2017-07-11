@@ -71,12 +71,12 @@ class CCSDSUnPacker(object):
         * packet (byts): the string that contains the full packet
         """
         header_p = {}
-        bits = packet[:param_ccsds.HEADER_P_KEYS.size]
+        chunck = packet[:param_ccsds.HEADER_P_KEYS.size]
         # prepare optionnal inputs
         header_p[param_ccsds.PAYLOADFLAG.name] = ''
         header_p[param_ccsds.LEVELFLAG.name] = ''
         for item in param_ccsds.HEADER_P_KEYS.keys:
-            header_p[item.name] = item.unpack(bits,
+            header_p[item.name] = item.unpack(chunck,
                             pld=header_p[param_ccsds.PAYLOADFLAG.name],
                             lvl=header_p[param_ccsds.LEVELFLAG.name])
         return header_p
