@@ -201,6 +201,7 @@ def int2bin(i, pad=True, **kwargs):
         b = b.zfill(((len(b)-1)//8+1)*8)
     # padding to pad int value
     elif pad not in ['False', 0, '0', None] and isinstance(pad, int):
+        print("int2bin", b, pad)
         b = "{:0>{pad}}".format(b, pad=pad)
     if litFucInd:
         return b[::-1]
