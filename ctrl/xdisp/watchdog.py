@@ -52,7 +52,7 @@ MAXDISPLAYRP = 10
 
 TIMEUPDFREQ = 3.
 PRINTFREQ = 5.
-TIMESTAMPFMT = '%Y-%m-%d %H:%M:%S.%f'
+TIMESTAMPFMT = '%Y-%m-%d %H:%M:%S'
 
 
 TCFMT = '{timestamp} {pld} {lvl} {pid:<15.15} #{pkid:<5.5} {cmd_name:<27.27}'
