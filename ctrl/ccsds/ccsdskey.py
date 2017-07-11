@@ -108,13 +108,15 @@ class CCSDSKey(object):
                     except:
                         pass
         self.isdic = (dic is not None)
-        self.start = (start//8)*O + int(start%8)*b
-        self.len = (l//8)*O + int(l%8)*b
+        self.start = int(start//8)*O + int(start%8)*b
+        self.len = int(l//8)*O + int(l%8)*b
         self.end = self.start + self.len
-        self._hex_slice = slice(self.start//8, int(math.ceil(self.end/8.)))
+        self._hex_slice = slice(int(self.start//8),
+                                int(math.ceil(self.end/8.)))
         self.octets = (self.start%8 == 0 and self.end%8 == 0)
         if not self.octets:
-            self._bin_sub_slice = slice(int(self.start%8), int(self.start%8+self.len))
+            self._bin_sub_slice = slice(int(self.start%8),
+                                        int(self.start%8+self.len))
         if self.isdic:
             if typ is not None:
                 raise ccsdsexception.BadDefinition(name=self.name)
@@ -131,7 +133,8 @@ class CCSDSKey(object):
                 raise ccsdsexception.BadDefinition(name=self.name)
             self.typ = str(typ).lower()
             if self.typ not in TYP.keys():
-                raise ccsdsexception.BadTypeDefinition(typ=self.typ, name=self.name)
+                raise ccsdsexception.BadTypeDefinition(typ=self.typ,
+                                                       name=self.name)
             self.dic = None
             conv = 'hex' if self.octets else 'bin'
             self._fctunpack = getattr(bincore,
@@ -143,8 +146,8 @@ class CCSDSKey(object):
     def __repr__(self):
         return "{}: <{}-->{}>[{}]".format(
                     self.name,
-                    self.start//8 if self.octets else int(self.start),
-                    self.end//8 if self.octets else int(self.end),
+                    int(self.start//8) if self.octets else int(self.start),
+                    int(self.end//8) if self.octets else int(self.end),
                     'O' if self.octets else 'b')
 
     __str__ = __repr__
