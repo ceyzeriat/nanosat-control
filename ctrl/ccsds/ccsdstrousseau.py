@@ -93,8 +93,9 @@ class CCSDSTrousseau(object):
                 raise ccsdsexception.PacketValueMissing(item.name)
             thevalue = values.pop(item.name, '')
             retvals[item.name] = thevalue
+            conv = 8 if self.octets else 1
             chunk = core.setstr(chunk,
-                                item.cut,
+                                slice(item.start//conv, item.end//conv),
                                 item.pack(thevalue, octets=self.octets,
                                           **kwargs))
             # filling in the forced values not given as input
