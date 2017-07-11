@@ -95,10 +95,11 @@ class CCSDSTrousseau(object):
                 raise ccsdsexception.PacketValueMissing(item.name)
             retvals[item.name] = values[item.name] if item.dic_force is None\
                                                             else item.dic_force
+            print(item.name, values[item.name], item.dic_force)
+            v = item.pack(retvals[item.name], octets=self.octets, **kwargs)
             chunk = core.setstr(chunk,
                                 slice(item.start//conv, item.end//conv),
-                                item.pack(retvals[item.name],
-                                          octets=self.octets, **kwargs))
+                                v)
         if not self.octets:
             return bincore.bin2hex(chunk, pad=self.size), retvals
         else:
