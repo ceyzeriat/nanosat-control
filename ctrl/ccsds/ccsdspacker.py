@@ -261,6 +261,7 @@ class CCSDSPacker(object):
                     int(values[param_ccsds.PACKETCATEGORY.name])].aux_size
         # update the length with data length
         values[param_ccsds.DATALENGTH.name] += int(datalen)
+        print(values)
         data, retvals = param_ccsds.HEADER_P_KEYS.pack(allvalues=values)
         if retvalues:
             return data, retvals

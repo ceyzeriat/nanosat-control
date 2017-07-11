@@ -108,8 +108,8 @@ class CCSDSKey(object):
                     except:
                         pass
         self.isdic = (dic is not None)
-        self.start = start//8*O + start%8*b
-        self.len = l//8*O + l%8*b
+        self.start = (start//8)*O + (start%8)*b
+        self.len = (l//8)*O + (l%8)*b
         self.end = self.start + self.len
         self._hex_slice = slice(self.start//8, int(math.ceil(self.end/8.)))
         self.octets = (self.start%8 == 0 and self.end%8 == 0)
