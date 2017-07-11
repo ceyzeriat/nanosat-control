@@ -31,6 +31,8 @@ from ctrl.ccsds.ccsdskey import CCSDSKey
 from ctrl.ccsds.ccsdscategory import CCSDSCategory
 from ctrl.utils import b
 from ctrl.utils import O
+from ctrl.utils.day import Day
+from ctrl.utils.ms import Ms
 
 
 from . import param_category_common as cmn
