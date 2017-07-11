@@ -212,9 +212,9 @@ class CCSDSKey(object):
             res = bincore.reverse_if_little_endian(self[value])
         else:
             if self.hard_l:
-                kwargs['pad'] = self.len
+                kwargs['pad'] = int(self.len)
                 if self.octets:
-                    kwargs['pad'] /= 8
+                    kwargs['pad'] = kwargs['pad']//8
             res = self._fctpack(round(value), **kwargs)
         # we have octets but forcing to bin
         if self.octets and octets is False:
