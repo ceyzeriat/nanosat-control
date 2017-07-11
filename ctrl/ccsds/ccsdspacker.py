@@ -220,7 +220,7 @@ class CCSDSPacker(object):
         # CCSDS length has a modifier versus real packet length
         values[param_ccsds.DATALENGTH.name] = param_ccsds.LENGTHMODIFIER
         if self.mode == 'telecommand':
-            values[param_ccsds.PACKETTYPE.name] = param_ccsds.TELECOMMANDID
+            values[param_ccsds.PACKETTYPE.name] = param_ccsds.TELECOMMANDTYPEID
             values[param_ccsds.DATALENGTH.name] +=\
                 param_ccsds.HEADER_S_KEYS_TELECOMMAND.size
             # force packet category to 0 if no 'at', else 1
@@ -235,7 +235,7 @@ class CCSDSPacker(object):
             else:
                 values[param_ccsds.PACKETID.name] = '0'
         else:
-            values[param_ccsds.PACKETTYPE.name] = param_ccsds.TELEMETRYID
+            values[param_ccsds.PACKETTYPE.name] = param_ccsds.TELEMETRYTYPEID
             values[param_ccsds.DATALENGTH.name] +=\
                 param_ccsds.HEADER_S_KEYS_TELEMETRY.size
             # don't bother about packet id, not supported
@@ -261,7 +261,6 @@ class CCSDSPacker(object):
                     int(values[param_ccsds.PACKETCATEGORY.name])].aux_size
         # update the length with data length
         values[param_ccsds.DATALENGTH.name] += int(datalen)
-        print(values)
         data, retvals = param_ccsds.HEADER_P_KEYS.pack(allvalues=values)
         if retvalues:
             return data, retvals

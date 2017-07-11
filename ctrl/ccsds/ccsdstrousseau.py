@@ -85,22 +85,20 @@ class CCSDSTrousseau(object):
         retvals = {}
         if not self.octets:
             chunk = '0' * (self.size * 8)
+            conv = 1
         else:
             chunk = '\x00' * self.size
+            conv = 8
         for item in self.keys:
             if item.name not in values.keys() and item.dic_force is None:
                 # got no values for this key, wtf
                 raise ccsdsexception.PacketValueMissing(item.name)
-            thevalue = values.pop(item.name, '')
-            retvals[item.name] = thevalue
-            conv = 8 if self.octets else 1
+            retvals[item.name] = values[item.name] if item.dic_force is None\
+                                                            else item.dic_force
             chunk = core.setstr(chunk,
                                 slice(item.start//conv, item.end//conv),
-                                item.pack(thevalue, octets=self.octets,
-                                          **kwargs))
-            # filling in the forced values not given as input
-            if item.dic_force is not None:
-                retvals[item.name] = item.dic_force
+                                item.pack(retvals[item.name],
+                                          octets=self.octets, **kwargs))
         if not self.octets:
             return bincore.bin2hex(chunk, pad=self.size), retvals
         else:

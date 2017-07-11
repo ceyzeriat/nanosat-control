@@ -48,8 +48,8 @@ LENGTHMODIFIER = 0
 # origin of start/end is start of packet
 # start/end units is bits
 
-TELEMETRYID = 0
-TELECOMMANDID = 1
+TELEMETRYTYPEID = 0
+TELECOMMANDTYPEID = 1
 SEQSEGMENT = 0
 SEQSTART = 1
 SEQEND = 2
@@ -65,7 +65,7 @@ PACKETVERSION = CCSDSKey(       name='ccsds_version',
                                 disp="v")
 
 PACKETTYPE = CCSDSKey(          name='packet_type',
-                                dic={TELEMETRYID: '0', TELECOMMANDID: '1'},
+                                dic={TELEMETRYTYPEID: '0', TELECOMMANDTYPEID: '1'},
                                 start=3*b,
                                 l=1*b,
                                 verbose="Whether telecommand packet or telemetry packet. Shall be 0b0 for telemetry or 0b1 for telecommand",
