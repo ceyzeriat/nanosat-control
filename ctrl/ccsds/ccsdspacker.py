@@ -187,15 +187,17 @@ class CCSDSPacker(object):
         # apply mask
         siggy = Byt([s for idx, s in enumerate(siggy.ints())\
                         if core.KEYMASK[idx] == '1'])
-        # fuck indians
+        # fuck endians
         if bincore.TWINKLETWINKLELITTLEINDIA:
             siggy = siggy[::-1]
         # grab the bounds of the siggy location, to chunk it into the packet
         startSiggy = param_ccsds.HEADER_P_KEYS.size +\
                                 param_ccsds.SIGNATURE.start//8
         # return concatenated turd
-        return fullPacket[:startSiggy] + siggy +\
-                fullPacket[startSiggy + param_ccsds.SIGNATURE.len//8:]
+        return core.setstr(fullPacket,
+                           slice(startSiggy,
+                                 startSiggy + param_ccsds.SIGNATURE.len//8),
+                           siggy)
 
     def pack_primHeader(self, values, datalen=0, retvalues=False,
                         withPacketID=True, at=None):
@@ -215,14 +217,14 @@ class CCSDSPacker(object):
             executed. Leave empty for immediate execution.
         """
         # Preparation of the content of values dictionary
-        values[param_ccsds.PACKETTYPE.name] = self.mode
         # CCSDS length has a modifier versus real packet length
         values[param_ccsds.DATALENGTH.name] = param_ccsds.LENGTHMODIFIER
         if self.mode == 'telecommand':
+            values[param_ccsds.PACKETTYPE.name] = param_ccsds.TELECOMMANDID
             values[param_ccsds.DATALENGTH.name] +=\
                 param_ccsds.HEADER_S_KEYS_TELECOMMAND.size
-            # force packet category to 0 if no at, else 1
-            if at is None or at is False:
+            # force packet category to 0 if no 'at', else 1
+            if at in [None, False]:
                 values[param_ccsds.PACKETCATEGORY.name] = '0'
             else:
                 values[param_ccsds.PACKETCATEGORY.name] = '1'
@@ -233,6 +235,7 @@ class CCSDSPacker(object):
             else:
                 values[param_ccsds.PACKETID.name] = '0'
         else:
+            values[param_ccsds.PACKETTYPE.name] = param_ccsds.TELEMETRYID
             values[param_ccsds.DATALENGTH.name] +=\
                 param_ccsds.HEADER_S_KEYS_TELEMETRY.size
             # don't bother about packet id, not supported
@@ -279,10 +282,17 @@ class CCSDSPacker(object):
             be returned instead of the dictionary
         """
         lenkey = param_ccsds.DATALENGTH
-        bits = bincore.hex2bin(primaryHDpacket)
-        ll = lenkey.unpack(bits) + datalen
-        bits = core.setstr(bits, lenkey.cut, lenkey.pack(ll))
-        primaryHDpacket = bincore.bin2hex(bits, pad=len(primaryHDpacket))
+        # this will give hex if CCSDSKey.octets is True, else bits
+        ll = lenkey.pack(lenkey.unpack(primaryHDpacket) + datalen)
+        # if CCSDSKey packet length is not octets compatible
+        if not lenkey.octets:
+            # grab a hex chunck to edit for length update
+            bits = bincore.hex2bin(primaryHDpacket[lenkey._hex_slice], pad=True)
+            # replace the corresponding bits
+            bits = core.setstr(bits, lenkey._bin_sub_slice, ll)
+            # get the hex chunk back to hex
+            ll = bincore.bin2hex(bits, pad=len(bits)//8)
+        primaryHDpacket = core.setstr(primaryHDpacket, lenkey._hex_slice, ll)
         if primaryHDdict is not None:
             primaryHDdict[param_ccsds.DATALENGTH.name] += datalen
         return primaryHDpacket, primaryHDdict
