@@ -182,7 +182,7 @@ class CCSDSKey(object):
             if len(chunk) != self.len//8 and self.hard_l:
                 raise ccsdsexception.GrabFail(name=self.name, l=self.len)
         else:
-            chunk = bincore.hex2bin(chunk)[self._bin_sub_slice]
+            chunk = bincore.hex2bin(chunk, pad=True)[self._bin_sub_slice]
             if len(chunk) != self.len and self.hard_l:
                 raise ccsdsexception.GrabFail(name=self.name, l=self.len)
         if self._fctunpack is None:
