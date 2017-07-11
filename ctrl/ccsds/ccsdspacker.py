@@ -312,6 +312,7 @@ class CCSDSPacker(object):
             hdk = param_ccsds.HEADER_S_KEYS_TELEMETRY
             values[param_ccsds.DAYSINCEREF_TELEMETRY.name] = core.now2daystamp()
             values[param_ccsds.MSECSINCEREF_TELEMETRY.name] = core.now2msstamp()
+        print(values)
         data, retvals = hdk.pack(allvalues=values)
         if retvalues:
             return data, retvals
