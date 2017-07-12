@@ -103,28 +103,12 @@ FUNERRCODE = CCSDSKey(  name='fun_err_code',
                         verbose='int16: (optional), type of error (from L0AppErrorCode.hpp), or return value of failed function call',
                         disp="funErrCode")
 
-def days_unpack(v):
-    """
-    type = unsigned integer
-    verbose = binary -> unsigned integer
-    """
-    # apply a maximum to the rounded number of days from 1970 to the
-    # maximum of gmtime
-    return Day(min(24001, v))
-
-
-def msec_unpack(v):
-    """
-    type = unsigned integer
-    verbose = binary -> unsigned integer
-    """
-    # apply a maximum to the possible number of msec per day
-    return Ms(min(86399999, v))
 
 DATE = CCSDSKey( name='date',
                         start=10*O,
                         l=4*O,
                         typ='uint',
+                        fctfix=Day,
                         verbose='Time tag field 1: number of days since reference',
                         disp="date")
 
@@ -132,7 +116,7 @@ MSCOUNT = CCSDSKey( name='mscount',
                         start=14*O,
                         l=2*O,
                         typ='uint',
-                        fctfix=days_unpack,
+                        fctfix=Ms,
                         verbose='Time tag field 2: number of miliseconds since start of day',
                         disp="ms")
 
@@ -140,7 +124,6 @@ EVENTDATA = CCSDSKey(   name='data',
                         start=16*O,
                         l=4*O,
                         typ='byt',
-                        fctfix=msec_unpack,
                         verbose='uint8[4]: (optinal) aditional data',
                         disp="data")
 
