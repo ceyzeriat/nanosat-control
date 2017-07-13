@@ -140,7 +140,7 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
                             v = v[0]
                         else:
                             if len(v) == 5:
-                                if item.len <= v[4]:
+                                if item.len <= v[3]:
                                     v = v[2]
                                 else:
                                     v = v[4]
@@ -167,7 +167,7 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
                             v = v[0]
                         else:
                             if len(v) == 5:
-                                if item.len <= v[4]:
+                                if item.len <= v[3]:
                                     v = v[2]
                                 else:
                                     v = v[4]
