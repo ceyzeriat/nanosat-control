@@ -44,11 +44,9 @@ class Unit(int):
     __str__ = __repr__
 
     def __mul__(self, other):
-        print "mul", other, type(other)
         return type(self)(int(other)*self.v, self.m, self.name)
 
     def __rmul__(self, other):
-        print "rmul", other, type(other)
         return type(self)(int(other)*self.v, self.m, self.name)
 
     def __add__(self, other):
