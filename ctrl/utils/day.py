@@ -34,6 +34,9 @@ __all__ = ['Day']
 
 
 class Day(int):
+    def __new__(cls, v): 
+        return int(min(24001, max(0, v)))
+
     def __init__(self, v):
         super(int, self).__init__()
         d = time.gmtime((DATETIME_REF + self) * 86400)        

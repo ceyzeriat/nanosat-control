@@ -149,30 +149,11 @@ HEADER_P_KEYS = CCSDSTrousseau(HEADER_P_KEYS)
 AUTHPACKETLENGTH = 11
 
 
-def days_unpack(v):
-    """
-    type = unsigned integer
-    verbose = binary -> unsigned integer
-    """
-    # apply a maximum to the rounded number of days from 1970 to the
-    # maximum of gmtime
-    return Day(min(24001, v))
-
-
-def msec_unpack(v):
-    """
-    type = unsigned integer
-    verbose = binary -> unsigned integer
-    """
-    # apply a maximum to the possible number of msec per day
-    return Ms(min(86399999, v))
-
-
 DAYSINCEREF_TELEMETRY = CCSDSKey(   name='days_since_ref',
                                     start=0*O,
                                     l=2*O,
                                     typ='uint',
-                                    fctfix=days_unpack,
+                                    fctfix=Day,
                                     verbose="The integer number of fully elapsed days since the epoch reference",
                                     disp="days")
 
@@ -180,7 +161,7 @@ MSECSINCEREF_TELEMETRY = CCSDSKey(  name='ms_since_today',
                                     start=2*O,
                                     l=4*O,
                                     typ='uint',
-                                    fctfix=msec_unpack,
+                                    fctfix=Ms,
                                     verbose="The integer number of milli-seconds elapsed since previous midnight (UTC)",
                                     disp="ms")
 
