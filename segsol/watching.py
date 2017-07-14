@@ -122,16 +122,16 @@ def process_report(inputs):
         pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
         catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
         # print Header Prim
-        print(param_ccsds.HEADER_P_KEYS.disp(hd))
+        print(param_ccsds.HEADER_P_KEYS.disp(dict(hd)))
         # print Header Sec TM
-        print(param_ccsds.HEADER_S_KEYS_TELEMETRY.disp(hd))
+        print(param_ccsds.HEADER_S_KEYS_TELEMETRY.disp(dict(hd)))
         # print Header Aux if any
         cat = param_category.CATEGORIES[pldflag][catnum]
         if cat.aux_size > 0:
-            print(cat.aux_trousseau.disp(hdx))
+            print(cat.aux_trousseau.disp(dict(hdx)))
         # print data if any
         if cat.data_trousseau is not None:
-            print(cat.data_trousseau.disp(dd['unpacked'], hds=hd, hdx=hdx))
+            print(cat.data_trousseau.disp(dict(dd['unpacked']), hds=hd, hdx=hdx))
     else:
         pass
 
