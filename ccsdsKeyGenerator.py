@@ -125,6 +125,7 @@ for cFileName in cFileNames:
 
 			if fieldName.lower() == 'padding':
 				printf("fieldName: %s on %d bits\r\n", fieldName, typeLen)
+				printf("------------------------------\r\n")
 				start += typeLen
 				continue
 
@@ -195,23 +196,24 @@ for cFileName in cFileNames:
 
 			printf("------------------------------\r\n")
 
-			pyFile.write("{fs:}dict(\n".format(fs='\x20\x20\x20\x20'))
-			pyFile.write("{fs:}{fs:}name = '{}',\n".format(snake_name, fs='\x20\x20\x20\x20'))
-			pyFile.write("{fs:}{fs:}start = {:d}*b,\n".format(start, fs='\x20\x20\x20\x20'))
-			pyFile.write("{fs:}{fs:}l = {:d}*b,\n".format(typeLen, fs='\x20\x20\x20\x20'))
-			pyFile.write("{fs:}{fs:}typ = '{}',\n".format(typ, fs='\x20\x20\x20\x20'))
+            fs = \x20\x20\x20\x20'
+            tq = '\x22\x22\x22'
+			pyFile.write("{fs:}dict(name = '{}',\n".format(snake_name, fs=fs))
+			pyFile.write("{fs:}{fs:}start = {:d}*b,\n".format(start, fs=fs))
+			pyFile.write("{fs:}{fs:}l = {:d}*b,\n".format(typeLen, fs=fs))
+			pyFile.write("{fs:}{fs:}typ = '{}',\n".format(typ, fs=fs))
 			if len(docString) == 0:
-				pyFile.write("{fs:}{fs:}verbose = '[NO DOC STRING]',\n", fs='\x20\x20\x20\x20')
+				pyFile.write("{fs:}{fs:}verbose = '[NO DOC STRING]',\n", fs=fs)
 			else:
-				pyFile.write("{fs:}{fs:}verbose = '{}',\n".format(docString, fs='\x20\x20\x20\x20'))
+				pyFile.write("{fs:}{fs:}verbose = '{}',\n".format(docString, fs=fs))
 			if unit is not None:
-				pyFile.write("{fs:}{fs:}unit = '{}',\n".format(unit, fs='\x20\x20\x20\x20'))
+				pyFile.write("{fs:}{fs:}unit = '{}',\n".format(unit, fs=fs))
 			if formula is not None:
 				unramName = 'unram_{}'.format(snake_name).replace(" ", "")
-				pyFileFormulae += 'def {}(x, **kwargs):\n{fs:}\x22\x22\x22\n{fs:}verbose = {}\n{fs:}\x22\x22\x22\n{fs:}return {}\n\n'\
-									.format(unramName, formula, formula, fs='\x20\x20\x20\x20')
-				pyFile.write("{fs:}{fs:}fctunram = {},\n".format(unramName, fs='\x20\x20\x20\x20'))
-			pyFile.write("{fs:}{fs:}disp = '{}'),\n\n".format(dispName, fs='\x20\x20\x20\x20'))
+				pyFileFormulae += 'def {}(x, **kwargs):\n{fs:}{tq:}\n{fs:}verbose = {}\n{fs:}{tq:}\n{fs:}return {}\n\n'\
+									.format(unramName, formula, formula, fs=fs, tq=tq)
+				pyFile.write("{fs:}{fs:}fctunram = {},\n".format(unramName, fs=fs))
+			pyFile.write("{fs:}{fs:}disp = '{}'),\n\n".format(dispName, fs=fs))
 
 			# finally, increase start counter for next round
 			start += typeLen
