@@ -213,9 +213,20 @@ class Cm(object):
     def ex(self):
         params = []
         for p in self._params:
+            params.append("{}= ".format(p.name))
+        print("c.{}({})".format(self.name, ', '.join(params)))
+
+    @ex.setter
+    def ex(self, value):
+        raise cmdexception.ReadOnly('ex')
+    
+    @property
+    def exval(self):
+        params = []
+        for p in self._params:
             v = p.rng[0]
             if p.typ.typ == 'str':
-                # transform into char if string expected and quote it
+                # transform into char if string expected and quote it
                 v = "'{}'".format(chr(v)*p.size)
             else:
                 v = str(v)
@@ -226,5 +237,5 @@ class Cm(object):
         print("c.{}({})".format(self.name, ', '.join(params)))
 
     @ex.setter
-    def ex(self, value):
-        raise cmdexception.ReadOnly('ex')
+    def exval(self, value):
+        raise cmdexception.ReadOnly('exval')
