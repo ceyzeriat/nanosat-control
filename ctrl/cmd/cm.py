@@ -224,15 +224,18 @@ class Cm(object):
     def exval(self):
         params = []
         for p in self._params:
-            v = p.rng[0]
-            if p.typ.typ == 'str':
-                # transform into char if string expected and quote it
-                v = "'{}'".format(chr(v)*p.size)
+            if p.exval is not None:
+                v = p.exval
             else:
-                v = str(v)
-            sz = p.size if p.size is not None else 5
-            if sz > 1 and p.typ.typ != 'str':
-                v = "[{}]".format(','.join([v for i in range(sz)]))
+                v = p.rng[0]
+                if p.typ.typ == 'str':
+                    # transform into char if string expected and quote it
+                    v = "'{}'".format(chr(v)*p.size)
+                else:
+                    v = str(v)
+                sz = p.size if p.size is not None else 5
+                if sz > 1 and p.typ.typ != 'str':
+                    v = "[{}]".format(','.join([v for i in range(sz)]))
             params.append("{}={}".format(p.name, v))
         print("c.{}({})".format(self.name, ', '.join(params)))
 
