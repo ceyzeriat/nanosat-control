@@ -36,7 +36,7 @@ __all__ = ['Param']
 
 
 class Parameter(object):
-    def __init__(self, name, desc, rng, typ=None, size=1, unit=None):
+    def __init__(self, name, desc, rng, typ=None, size=1, unit=None, exval=None):
         """
         Creates a self-checking parameter used in a command
 
@@ -53,11 +53,13 @@ class Parameter(object):
         * size (min-max str or int): the min and max acceptable length of the
           expected input (bounds inclusive), or if 'int' the exact length
         * unit (str or None): the unit of the parameter
+        * exval (srt): an example value for the parameter
         """
         self._name = core.clean_name(name)[:param_commands.LENPARAMNAME]
         self._desc = str(desc)
         self._unit = str(unit) if unit is not None else ""
         self._isdict = isinstance(rng, dict)
+        self.exval = str(exval) if exval is not None else None
         if self._isdict:
             self._typ = "<dict>"
             self._rng = rng
