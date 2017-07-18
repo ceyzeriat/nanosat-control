@@ -59,7 +59,10 @@ class Parameter(object):
         self._desc = str(desc)
         self._unit = str(unit) if unit is not None else ""
         self._isdict = isinstance(rng, dict)
-        self.exval = str(exval) if exval is not None else None
+        if exval is None or len(str(exval)) == 0:
+            self.exval = None
+        else:
+            self.exval = repr(exval)
         if self._isdict:
             self._typ = "<dict>"
             self._rng = rng
