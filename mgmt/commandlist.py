@@ -167,7 +167,8 @@ class CommandList(object):
                     'n_nparam':\
                         int(line[param_commands.CSVNPARAM]\
                         if line[param_commands.CSVNPARAM].strip() != ""\
-                                else 0)}
+                                else 0),
+                    'exval': line[param_commands.CSVPARAMEX].strip()}
                 # adcs specific stuff
                 if self._cmds == 'adcs':
                     cm.update({
