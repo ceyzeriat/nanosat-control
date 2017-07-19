@@ -68,20 +68,3 @@ LOGENTRY_KEYS = [
 
 ]
 
-= 'file_crc_code',
-        start = 112*b,
-        l = 32*b,
-        typ = 'hex',
-        verbose = 'Identifies the file where the event was thrown',
-        disp = 'fileCrcCode'),
-
-    dict(
-        name = 'log_counter',
-        start = 144*b,
-        l = 16*b,
-        typ = 'uint',
-        verbose = '[NO DOC STRING]',
-        disp = 'logCounter'),
-
-]
-

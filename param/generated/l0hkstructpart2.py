@@ -95,31 +95,28 @@ L0HKSTRUCTPART2_KEYS = [
         disp = 'iAdcsGetStatusRegisterError'),
 
     dict(
-        name = 'angular_rate_z',
+        name = 'quaternion1',
         start = 8*b,
         l = 32*b,
         typ = 'float',
-        verbose = 'angular rotation speed (X axis) from ADCS',
-        unit = 'rad/s',
-        disp = 'angularRateZ'),
+        verbose = 'attitude quaternion 1 from ADCS',
+        disp = 'quaternion1'),
 
     dict(
-        name = 'angular_rate_y',
+        name = 'quaternion2',
         start = 40*b,
         l = 32*b,
         typ = 'float',
-        verbose = 'angular rotation speed (X axis) from ADCS',
-        unit = 'rad/s',
-        disp = 'angularRateY'),
+        verbose = 'attitude quaternion 2 from ADCS',
+        disp = 'quaternion2'),
 
     dict(
-        name = 'angular_rate_x',
+        name = 'quaternion3',
         start = 72*b,
         l = 32*b,
         typ = 'float',
-        verbose = 'angular rotation speed (X axis) from ADCS',
-        unit = 'rad/s',
-        disp = 'angularRateX'),
+        verbose = 'attitude quaternion 3 from ADCS',
+        disp = 'quaternion3'),
 
     dict(
         name = 'quaternion4',
@@ -130,32 +127,35 @@ L0HKSTRUCTPART2_KEYS = [
         disp = 'quaternion4'),
 
     dict(
-        name = 'quaternion3',
+        name = 'angular_rate_x',
         start = 136*b,
         l = 32*b,
         typ = 'float',
-        verbose = 'attitude quaternion 3 from ADCS',
-        disp = 'quaternion3'),
+        verbose = 'angular rotation speed (X axis) from ADCS',
+        unit = 'rad/s',
+        disp = 'angularRateX'),
 
     dict(
-        name = 'quaternion2',
+        name = 'angular_rate_y',
         start = 168*b,
         l = 32*b,
         typ = 'float',
-        verbose = 'attitude quaternion 2 from ADCS',
-        disp = 'quaternion2'),
+        verbose = 'angular rotation speed (X axis) from ADCS',
+        unit = 'rad/s',
+        disp = 'angularRateY'),
 
     dict(
-        name = 'quaternion1',
+        name = 'angular_rate_z',
         start = 200*b,
         l = 32*b,
         typ = 'float',
-        verbose = 'attitude quaternion 1 from ADCS',
-        disp = 'quaternion1'),
+        verbose = 'angular rotation speed (X axis) from ADCS',
+        unit = 'rad/s',
+        disp = 'angularRateZ'),
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_cap',
-        start = 245*b,
+        start = 244*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -163,7 +163,7 @@ L0HKSTRUCTPART2_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_track_fix_wgs84',
-        start = 246*b,
+        start = 245*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -171,7 +171,7 @@ L0HKSTRUCTPART2_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_track_nadir',
-        start = 247*b,
+        start = 246*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -179,7 +179,7 @@ L0HKSTRUCTPART2_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_track',
-        start = 248*b,
+        start = 247*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -187,7 +187,7 @@ L0HKSTRUCTPART2_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_track_const_v',
-        start = 249*b,
+        start = 248*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -195,7 +195,7 @@ L0HKSTRUCTPART2_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_spin',
-        start = 250*b,
+        start = 249*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -204,14 +204,14 @@ L0HKSTRUCTPART2_KEYS = [
     dict(
         name = 'adcs_stat_flag_hl_op_sunp',
         start = 251*b,
-        l = 2*b,
-        typ = 'uint',
+        l = 1*b,
+        typ = 'bool',
         verbose = '[NO DOC STRING]',
         disp = 'ADCS_STAT_FLAG_HL_OP_SUNP'),
 
     dict(
         name = 'adcs_stat_flag_hl_op_detumbling',
-        start = 253*b,
+        start = 252*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -219,7 +219,7 @@ L0HKSTRUCTPART2_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_measure',
-        start = 254*b,
+        start = 253*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -227,23 +227,23 @@ L0HKSTRUCTPART2_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_datetime_valid',
-        start = 255*b,
-        l = 6*b,
-        typ = 'uint',
+        start = 259*b,
+        l = 1*b,
+        typ = 'bool',
         verbose = '[NO DOC STRING]',
         disp = 'ADCS_STAT_FLAG_DATETIME_VALID'),
 
     dict(
         name = 'adcs_stat_flag_hl_op_safe',
         start = 261*b,
-        l = 2*b,
-        typ = 'uint',
+        l = 1*b,
+        typ = 'bool',
         verbose = '[NO DOC STRING]',
         disp = 'ADCS_STAT_FLAG_HL_OP_SAFE'),
 
     dict(
         name = 'adcs_stat_flag_hl_op_idle',
-        start = 263*b,
+        start = 262*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
