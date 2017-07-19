@@ -33,4 +33,22 @@ from .generated.l0beaconstruct import L0BEACONSTRUCT_KEYS
 __all__ = ['TROUSSEAU']
 
 
-TROUSSEAU = CCSDSTrousseau(L0BEACONSTRUCT_KEYS)
+class CCSDSTrousseauBEAC(CCSDSTrousseau):
+    def unpack(self, data, **kwargs):
+        # appel méthode mère
+        res = super(CCSDSMetaTrousseau, self).unpack(data, **kwargs)
+        # pour chaque clé
+        for item in self.keys:
+            # est-ce qu'il y a un convertion
+            if item.unram is not None:
+                # on ajoute dans le dictionnaire de résultat
+                res[item.name+'_phys'] = self.unram(res[item.name], **kwargs)
+        return res
+
+    def _make_fmt(self, splt=''):
+        self.fmt = splt.join(["%s:{%s} ({%s})" %\
+                                (key.disp, key.name, key.name+'_phys')\
+                                    for key in self.keys])
+
+
+TROUSSEAU = CCSDSTrousseauBEAC(L0BEACONSTRUCT_KEYS)

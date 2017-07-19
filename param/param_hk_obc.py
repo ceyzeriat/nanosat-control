@@ -36,8 +36,26 @@ from .generated.l0hkstructpart2 import L0HKSTRUCTPART2_KEYS
 __all__ = ['TROUSSEAU']
 
 
-TROUSSEAUDICT = {0: CCSDSTrousseau(L0HKSTRUCTPART1_KEYS),
-                 1: CCSDSTrousseau(L0HKSTRUCTPART2_KEYS)}
+class CCSDSTrousseauHKOBC(CCSDSTrousseau):
+    def unpack(self, data, **kwargs):
+        # appel méthode mère
+        res = super(CCSDSMetaTrousseau, self).unpack(data, **kwargs)
+        # pour chaque clé
+        for item in self.keys:
+            # est-ce qu'il y a un convertion
+            if item.unram is not None:
+                # on ajoute dans le dictionnaire de résultat
+                res[item.name+'_phys'] = self.unram(res[item.name], **kwargs)
+        return res
+
+    def _make_fmt(self, splt=''):
+        self.fmt = splt.join(["%s:{%s} ({%s})" %\
+                                (key.disp, key.name, key.name+'_phys')\
+                                    for key in self.keys])
+
+
+TROUSSEAUDICT = {0: CCSDSTrousseauHKOBC(L0HKSTRUCTPART1_KEYS),
+                 1: CCSDSTrousseauHKOBC(L0HKSTRUCTPART2_KEYS)}
 
 
 TROUSSEAU = CCSDSMetaTrousseau(TROUSSEAUDICT, key='hk_part')
