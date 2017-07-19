@@ -564,31 +564,28 @@ L0BEACONSTRUCT_KEYS = [
         disp = 'nRebootsObc'),
 
     dict(
-        name = 'angular_rate_z',
+        name = 'quaternion1',
         start = 360*b,
         l = 32*b,
         typ = 'float',
-        verbose = 'angular rotation speed (X axis) from ADCS',
-        unit = 'rad/s',
-        disp = 'angularRateZ'),
+        verbose = 'attitude quaternion 1 from ADCS',
+        disp = 'quaternion1'),
 
     dict(
-        name = 'angular_rate_y',
+        name = 'quaternion2',
         start = 392*b,
         l = 32*b,
         typ = 'float',
-        verbose = 'angular rotation speed (X axis) from ADCS',
-        unit = 'rad/s',
-        disp = 'angularRateY'),
+        verbose = 'attitude quaternion 2 from ADCS',
+        disp = 'quaternion2'),
 
     dict(
-        name = 'angular_rate_x',
+        name = 'quaternion3',
         start = 424*b,
         l = 32*b,
         typ = 'float',
-        verbose = 'angular rotation speed (X axis) from ADCS',
-        unit = 'rad/s',
-        disp = 'angularRateX'),
+        verbose = 'attitude quaternion 3 from ADCS',
+        disp = 'quaternion3'),
 
     dict(
         name = 'quaternion4',
@@ -599,32 +596,35 @@ L0BEACONSTRUCT_KEYS = [
         disp = 'quaternion4'),
 
     dict(
-        name = 'quaternion3',
+        name = 'angular_rate_x',
         start = 488*b,
         l = 32*b,
         typ = 'float',
-        verbose = 'attitude quaternion 3 from ADCS',
-        disp = 'quaternion3'),
+        verbose = 'angular rotation speed (X axis) from ADCS',
+        unit = 'rad/s',
+        disp = 'angularRateX'),
 
     dict(
-        name = 'quaternion2',
+        name = 'angular_rate_y',
         start = 520*b,
         l = 32*b,
         typ = 'float',
-        verbose = 'attitude quaternion 2 from ADCS',
-        disp = 'quaternion2'),
+        verbose = 'angular rotation speed (X axis) from ADCS',
+        unit = 'rad/s',
+        disp = 'angularRateY'),
 
     dict(
-        name = 'quaternion1',
+        name = 'angular_rate_z',
         start = 552*b,
         l = 32*b,
         typ = 'float',
-        verbose = 'attitude quaternion 1 from ADCS',
-        disp = 'quaternion1'),
+        verbose = 'angular rotation speed (X axis) from ADCS',
+        unit = 'rad/s',
+        disp = 'angularRateZ'),
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_cap',
-        start = 597*b,
+        start = 596*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -632,7 +632,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_track_fix_wgs84',
-        start = 598*b,
+        start = 597*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -640,7 +640,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_track_nadir',
-        start = 599*b,
+        start = 598*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -648,7 +648,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_track',
-        start = 600*b,
+        start = 599*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -656,7 +656,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_track_const_v',
-        start = 601*b,
+        start = 600*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -664,7 +664,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_spin',
-        start = 602*b,
+        start = 601*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -673,14 +673,14 @@ L0BEACONSTRUCT_KEYS = [
     dict(
         name = 'adcs_stat_flag_hl_op_sunp',
         start = 603*b,
-        l = 2*b,
-        typ = 'uint',
+        l = 1*b,
+        typ = 'bool',
         verbose = '[NO DOC STRING]',
         disp = 'ADCS_STAT_FLAG_HL_OP_SUNP'),
 
     dict(
         name = 'adcs_stat_flag_hl_op_detumbling',
-        start = 605*b,
+        start = 604*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -688,7 +688,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_measure',
-        start = 606*b,
+        start = 605*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -696,23 +696,23 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_datetime_valid',
-        start = 607*b,
-        l = 6*b,
-        typ = 'uint',
+        start = 611*b,
+        l = 1*b,
+        typ = 'bool',
         verbose = '[NO DOC STRING]',
         disp = 'ADCS_STAT_FLAG_DATETIME_VALID'),
 
     dict(
         name = 'adcs_stat_flag_hl_op_safe',
         start = 613*b,
-        l = 2*b,
-        typ = 'uint',
+        l = 1*b,
+        typ = 'bool',
         verbose = '[NO DOC STRING]',
         disp = 'ADCS_STAT_FLAG_HL_OP_SAFE'),
 
     dict(
         name = 'adcs_stat_flag_hl_op_idle',
-        start = 615*b,
+        start = 614*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
