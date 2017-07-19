@@ -45,7 +45,7 @@ class CCSDSTrousseauHKOBC(CCSDSTrousseau):
             # est-ce qu'il y a un convertion
             if item.unram is not None:
                 # on ajoute dans le dictionnaire de résultat
-                res[item.name+'_phys'] = self.unram(res[item.name], **kwargs)
+                res[item.name+'_phys'] = item.unram(res[item.name], **kwargs)
         return res
 
     def _make_fmt(self, splt=''):
