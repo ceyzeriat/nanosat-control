@@ -36,7 +36,7 @@ __all__ = ['TROUSSEAU']
 class CCSDSTrousseauBEAC(CCSDSTrousseau):
     def unpack(self, data, **kwargs):
         # appel méthode mère
-        res = super(CCSDSMetaTrousseau, self).unpack(data, **kwargs)
+        res = super(CCSDSTrousseau, self).unpack(data, **kwargs)
         # pour chaque clé
         for item in self.keys:
             # est-ce qu'il y a un convertion
