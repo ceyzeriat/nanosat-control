@@ -62,7 +62,7 @@ class Parameter(object):
         if exval is None or len(str(exval)) == 0:
             self.exval = None
         else:
-            self.exval = repr(exval)
+            self.exval = exval
         if self._isdict:
             self._typ = "<dict>"
             self._rng = rng
@@ -125,6 +125,8 @@ class Parameter(object):
             self._sizedisp = "[{}]".format(self.size)
         else:
             raise cmdexception.WrongParameterDefinition(self.name, 'size')
+        if self.typ.typ == 'str' and self.exval is not None:
+            self.exval = "'{}'".format(self.exval)
 
     def __str__(self):        
         return " {}{} {}{}: {}\n  {}".format(
