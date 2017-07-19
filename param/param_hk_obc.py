@@ -39,7 +39,7 @@ __all__ = ['TROUSSEAU']
 class CCSDSTrousseauHKOBC(CCSDSTrousseau):
     def unpack(self, data, **kwargs):
         # appel méthode mère
-        res = super(CCSDSTrousseau, self).unpack(data, **kwargs)
+        res = super(CCSDSTrousseauHKOBC, self).unpack(data, **kwargs)
         # pour chaque clé
         for item in self.keys:
             # est-ce qu'il y a un convertion
