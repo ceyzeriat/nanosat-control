@@ -30,46 +30,56 @@ from nose.tools import raises
 from ctrl.ccsds.ccsdskey import CCSDSKey
 from ctrl.ccsds import ccsdsexception
 from ctrl.utils import bincore
+from ctrl.utils.unit import b, O
 
 
-def test_ccsdskey_base():
-    p = CCSDSKey('pt', dic={'aa': '0', 'bb': '1'}, start=3, l=1)
+def test_ccsdskey_dic_base():
+    p = CCSDSKey('pt', dic={'aa': '0', 'bb': '1'}, start=3*b, l=1*b)
     assert p.name == "pt"
     assert p.dic != None
+    assert p.isdic == True
     assert p._fctunpack == None
     assert p._fctpack == None
-    assert p.can_unpack == True
-    assert p.can_pack == True
-    assert p.relative_only == False
+    assert p._fctunram == None
+    assert p._fctram == None
+    assert p._fctfix == None
     assert p.len == 1
     assert p.start == 3
-    assert p.cut_offset(1) == slice(4, 5)
-    assert p.cut_offset(-1) == slice(2, 3)
+    assert p.end == 4
+    assert p.octets == False
+    assert p.hard_l == False
+    assert p.typ == None
+    assert p.dic_force == False
+    assert p._hex_slice == slice(0, 1)
+    assert p._bin_sub_slice == slice(3, 4)
+    assert p['aa'] == '0'
+    assert p['bB'] == '1'
     assert p._dic_rev('0') == 'aa'
     assert p._dic_rev(1) == 'bb'
-    p = CCSDSKey('pt', dic={'aa': 0, 'bb': 1}, start=3, l=1)
+    p = CCSDSKey('pt', dic={'aa': 0, 'bb': 1}, start=3*b, l=1*b)
+    assert p['Aa'] == 0
+    assert p['bb'] == 1
     assert p._dic_rev('0') == 'aa'
     assert p._dic_rev(1) == 'bb'
 
+###############
 def test_unpack():
-    p = CCSDSKey('pt', dic={'aa': '0', 'bb': '1'}, start=3, l=1)
+    p = CCSDSKey('pt', dic={'aa': '0', 'bb': '1'}, start=3*b, l=1*b)
     assert p.unpack('111011', raw=True) == '0'
     assert p.unpack('111011') == 'aa'
     assert p.unpack('111101', offset=1) == 'aa'
-    p = CCSDSKey('pt', start=3, l=1, fctunpack=int)
-    assert p.can_unpack == True
-    assert p.can_pack == False
+    p = CCSDSKey('pt', start=3*b, l=1*b, fctunpack=int)
     assert p.unpack('11101') is 0
     p = CCSDSKey('pt', l=1, fctunpack=int)
     assert p.unpack('0', rel=True) is 0
     p = CCSDSKey('pt', l=1, fctpack=bool)
     assert p.unpack('0', rel=True, raw=True) == '0'
-    p = CCSDSKey('pt', start=0, l=4, fctunpack=bincore.bin2int)
+    p = CCSDSKey('pt', start=0*b, l=4*b, fctunpack=bincore.bin2int)
     bincore.TWINKLETWINKLELITTLEINDIA = True
     assert p.unpack('0011') == 12
     bincore.TWINKLETWINKLELITTLEINDIA = False
     assert p.unpack('0011') == 3
-    p = CCSDSKey('pt', dic={'aa': '01', 'bb': '10'}, start=0, l=2)
+    p = CCSDSKey('pt', dic={'aa': '01', 'bb': '10'}, start=0*b, l=2*b)
     bincore.TWINKLETWINKLELITTLEINDIA = True
     assert p.unpack('01') == 'bb'
     bincore.TWINKLETWINKLELITTLEINDIA = False
@@ -77,8 +87,7 @@ def test_unpack():
 
 
 def test_pack():
-    p = CCSDSKey('pt', dic={'aa': '01', 'bb': '10'}, start=3, l=1)
-    assert p.can_pack == True
+    p = CCSDSKey('pt', dic={'aa': '01', 'bb': '10'}, start=3*b, l=1*b)
     bincore.TWINKLETWINKLELITTLEINDIA = True
     assert p.pack('aa') == '10'
     assert p.pack('bb') == '01'
@@ -124,8 +133,6 @@ def test_ccsdskey_BadDefinition3():
 @raises(ccsdsexception.NoDic)
 def test_ccsdskey_NoDic():
     p = CCSDSKey('pt', start=3, l=1, fctpack=int)
-    assert p.can_unpack == False
-    assert p.can_pack == True
     dum = p['hop']
 
 @raises(ccsdsexception.NoSuchValue)

@@ -67,7 +67,7 @@ class Command(Cm):
         data, inputs = self.generate_data(**kwargs)
         packet, hd, hdx, dat = TCPacker.pack(pid=self._pidstr, TCdata=data,
                                              TCid=self.number, retvalues=True,
-                                             retdbvalues=True, **kwargs)
+                                             **kwargs)
         return packet, hd, hdx, inputs
 
     def __call__(self, *args, **kwargs):

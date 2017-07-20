@@ -122,24 +122,34 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
     #                             'sql type if len <= than len limit',
     #                             'sql type if len > than len limit']
     types_conv = {'2bool': 'boolean',
-                  '2intSign': [16, 'smallint', 'integer'],
-                  '2int': [15, 'smallint', 'integer'],
+                  '2intSign': ['smallint', 16, 'integer', 32, 'bigint'],
+                  '2int': ['smallint', 15, 'integer', 31, 'bigint'],
                   '2hex': 'bytea',
-                  '2txt': [125, 'varchar({len})', 'text'],
-                  '2float': [32, 'real', 'double precision']}
+                  '2txt': ['varchar({len})', 125, 'text'],
+                  '2float': 'real',
+                  '2double': 'double precision'}
     ret = []
     # HEADER AUX
     if aux_trousseau is not None:
         fields = ""
-        conv = 8 if aux_trousseau.octets else 1
         for item in aux_trousseau.keys:
             for k, v in types_conv.items():
                 if item._fctunpack.__name__.endswith(k):
                     if isinstance(v, list):
-                        v = v[1] if item.len*conv <= v[0] else v[2]
+                        if item.len <= v[1]:
+                            v = v[0]
+                        else:
+                            if len(v) == 5:
+                                if item.len <= v[3]:
+                                    v = v[2]
+                                else:
+                                    v = v[4]
+                            else:
+                                v = v[2]
                     break
             else:
-                v = '?TYPE?'
+                raise Exception("unknown unpack function: {}"\
+                                    .format(item._fctunpack.__name__))
             fields += ',\n    {} {}'.format(item.name,
                                             str(v).format(len=item.len))
         ret.append(query.format(table_name=table_aux_name,
@@ -149,12 +159,20 @@ GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
     if data_trousseau is not None and\
             isinstance(data_trousseau, CCSDSTrousseau):
         fields = ""
-        conv = 8 if data_trousseau.octets else 1
         for item in data_trousseau.keys:
             for k, v in types_conv.items():
                 if item._fctunpack.__name__.endswith(k):
                     if isinstance(v, list):
-                        v = v[1] if item.len*conv <= v[0] else v[2]
+                        if item.len <= v[1]:
+                            v = v[0]
+                        else:
+                            if len(v) == 5:
+                                if item.len <= v[3]:
+                                    v = v[2]
+                                else:
+                                    v = v[4]
+                            else:
+                                v = v[2]
                     break
             else:
                 v = '?TYPE?'

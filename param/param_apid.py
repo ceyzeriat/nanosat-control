@@ -25,11 +25,6 @@
 ###############################################################################
 
 
-# taken from https://nubes-lesia.obspm.fr/index.php/apps/files?dir=%2FPicSat%2FProjet%2FtrxDoc
-
-# the PID that sends the packets eventually, useful to know for the
-
-
 PIDREGISTRATION_OBC_L0 = {  'L0ComManager': 0,
                             'L0MemoryManager': 1,
                             'L0Housekeeper': 2,
@@ -51,6 +46,9 @@ PIDREGISTRATION_PLD = {     'Bootloader': 0,
                             'PacketsManager': 4,
                             'ObcInterfaceManager': 5,
                             'BeaconManager': 6}
+
+
+###############################################################################
 
 
 # pid string as key, int as value

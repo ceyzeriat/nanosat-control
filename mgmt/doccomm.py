@@ -260,8 +260,7 @@ This documents does not cover the content of data field for TC, and the content 
         table.add_hline()
         start_bit = 0
         for cle in subK:
-            if not cle.relative_only:
-                start_bit = cle.start
+            start_bit = cle.start
             # if no padding, allows flexible len of the ccsdskey
             the_len = cle.len if cle.pad else "[0..{:d}]".format(cle.len)
             if cle.isdic:
@@ -277,7 +276,6 @@ This documents does not cover the content of data field for TC, and the content 
                 else:
                     the_type = the_type.group(1)
             table.add_row((cle.name, start_bit, the_len, the_type))
-            start_bit += cle.len
         table.add_row((MultiColumn(len(titles), align='c',
                                    data='"Start" and "Len" are given in {}'\
                                         .format(unit)),))

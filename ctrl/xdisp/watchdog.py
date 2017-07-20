@@ -52,6 +52,7 @@ MAXDISPLAYRP = 10
 
 TIMEUPDFREQ = 3.
 PRINTFREQ = 5.
+TIMESTAMPFMT = '%Y-%m-%d %H:%M:%S'
 
 
 TCFMT = '{timestamp} {pld} {lvl} {pid:<15.15} #{pkid:<5.5} {cmd_name:<27.27}'
@@ -273,18 +274,19 @@ class Xdisp(object):
         if not self.running:
             return
         self.TClist = [infos] + self.TClist[:MAXSTORETC-1]
-        cmdname = str(infos.get('cmdname'))
         pld = int(infos[param_ccsds.PAYLOADFLAG.name])
         lvl = int(infos[param_ccsds.LEVELFLAG.name])
         pid = int(infos[param_ccsds.PID.name])
+        pidstr = str(PIDREGISTRATION_REV[pid][pld][lvl])\
+                        if pid in PIDREGISTRATION_REV.keys() else "?????"
         self._disp(self.TC,
                    PrintOut(TCFMT.format(
-                                timestamp=core.now().strftime("%F %T"),
+                                timestamp=core.now().strftime(TIMESTAMPFMT),
                                 pld=PAYLOADICO if pld == 1 else OBCICO,
                                 lvl=L1ICO if lvl == 1 else L0ICO,
-                                pid=str(PIDREGISTRATION_REV[pid][pld][lvl]),
+                                pid=pidstr,
                                 pkid=str(packet_id),
-                                cmd_name=cmdname),
+                                cmd_name=str(infos.get('cmdname'))),
                             (0, 0), opts=self.WHITE, newline=True))
         self.set_TC_sent(packet_id, self.WAIT)
         self.set_TC_rack(packet_id,
@@ -315,7 +317,7 @@ class Xdisp(object):
         cat = param_category.CATEGORIES[pld][catnum]
         self._disp(self.TM,
                    PrintOut(TMFMT.format(
-                                timestamp=core.now().strftime("%F %T"),
+                                timestamp=core.now().strftime(TIMESTAMPFMT),
                                 pld=PAYLOADICO if pld == 1 else OBCICO,
                                 lvl=L1ICO if lvl == 1 else L0ICO,
                                 pid=str(PIDREGISTRATION_REV[pid][pld][lvl]),

@@ -29,6 +29,8 @@ import math
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.ccsds import ccsdsexception
 from ctrl.utils import bincore
+from ctrl.utils import b
+from ctrl.utils import O
 
 
 __all__ = ['TROUSSEAU']
@@ -37,76 +39,41 @@ __all__ = ['TROUSSEAU']
 def volt_line_unpack(v, **kwargs):
     """
     type = unsigned integer
-    verbose = (binary -> unsigned integer) * 0.00459
+    verbose = x * 0.00459
     """
-    return bincore.bin2int(v) * 0.00459
-
-
-def volt_line_pack(v, pad, **kwargs):
-    """
-    verbose = UnsignedInt(float / 0.00459) -> binary
-    """
-    return bincore.int2bin(round(v / 0.00459), pad=pad)
+    return v * 0.00459
 
 
 def current_line_unpack(v, **kwargs):
     """
     type = unsigned integer
-    verbose = (binary -> unsigned integer) * 0.00161
+    verbose = x * 0.00161
     """
-    return bincore.bin2int(v) * 0.00161
-
-
-def current_line_pack(v, pad, **kwargs):
-    """
-    verbose = UnsignedInt(float / 0.00161) -> binary
-    """
-    return bincore.int2bin(round(v / 0.00161), pad=pad)
+    return v * 0.00161
 
 
 def volthv_unpack(v, **kwargs):
     """
     type = unsigned integer
-    verbose = (binary -> unsigned integer) * 3.3 / 4096 * 213.77
+    verbose = x * 3.3 / 4096 * 213.77
     """
-    return bincore.bin2int(v) * 3.3 / 4096.0 * 213.77
-
-
-def volthv_pack(v, pad, **kwargs):
-    """
-    verbose = UnsignedInt(float / 3.3 * 4096 / 213.77) -> binary
-    """
-    return bincore.int2bin(round(v / 3.3 * 4096.0 / 213.77), pad=pad)
+    return v * 3.3 / 4096.0 * 213.77
 
 
 def temp_unpack(v, **kwargs):
     """
     type = signed integer
-    verbose = (binary -> signed integer) * 0.0625
+    verbose = x * 0.0625
     """
-    return bincore.bin2intSign(v) * 0.0625
-
-
-def temp_pack(v, pad, **kwargs):
-    """
-    verbose = SignedInt(float / 0.0625) -> binary
-    """
-    return bincore.intSign2bin(round(v / 0.0625), pad=pad)
+    return v * 0.0625
 
 
 def volt_peltier_unpack(v, **kwargs):
     """
     type = unsigned integer
-    verbose = (binary -> unsigned integer) * 3.3 / 4096
+    verbose = x * 3.3 / 4096
     """
-    return bincore.bin2int(v) * 3.3 / 4096.0
-
-
-def volt_peltier_pack(v, pad, **kwargs):
-    """
-    verbose = UnsignedInt(float / 3.3 * 4096.0) -> binary
-    """
-    return bincore.int2bin(round(v / 3.3 * 4096), pad=pad)
+    return v * 3.3 / 4096.0
 
 
 def vitec_unpack(v, Vref, **kwargs):
@@ -116,7 +83,7 @@ def vitec_unpack(v, Vref, **kwargs):
     """
     if Vref == 0:
         Vref = 1
-    return (bincore.bin2int(v) * 3.3 / 4096.0 - Vref) / 0.00016
+    return (v * 3.3 / 4096.0 - Vref) / 0.00016
 
 
 def vitec_pack(v, Vref, pad, **kwargs):
@@ -125,7 +92,7 @@ def vitec_pack(v, Vref, pad, **kwargs):
     """
     if Vref == 0:
         Vref = 1
-    return bincore.int2bin(round((v * 0.00016 + Vref) * 4096 / 3.3), pad=pad)
+    return (v * 0.00016 + Vref) * 4096 / 3.3
 
 
 def errortherm_unpack(v, Vref, **kwargs):
@@ -135,7 +102,7 @@ def errortherm_unpack(v, Vref, **kwargs):
     """
     if Vref == 0:
         Vref = 1
-    return (bincore.bin2int(v) * 3.3 / 4096.0 - Vref) / 25
+    return (v * 3.3 / 4096.0 - Vref) / 25
 
 
 def errortherm_pack(v, Vref, pad, **kwargs):
@@ -144,7 +111,7 @@ def errortherm_pack(v, Vref, pad, **kwargs):
     """
     if Vref == 0:
         Vref = 1
-    return bincore.int2bin(round((v * 25 + Vref) * 4096 / 3.3), pad=pad)
+    return (v * 25 + Vref) * 4096 / 3.3
 
 
 def temp0_unpack(v, Vref, **kwargs):
@@ -154,7 +121,7 @@ def temp0_unpack(v, Vref, **kwargs):
     """
     if Vref == 0:
         Vref = 1
-    X = bincore.bin2int(v)
+    X = v
     return 293 / (293 / 2918.9\
                     * math.log(50 / 11.0 * X / (Vref / 3.3 * 4096 - X)) + 1) - 273
 
@@ -165,56 +132,108 @@ def temp0_pack(v, Vref, pad, **kwargs):
     """
     if Vref == 0:
         Vref = 1
-    return bincore.int2bin(round(
-                            (Vref / 3.3 * 4096) /\
-                            (1 + 50 /\
-                                (11 * math.exp(2918.9 / 293.0 *\
-                                                (293 / (v + 273.0) - 1))))),
-                           pad=pad)
+    return (Vref / 3.3 * 4096) / (1 + 50 /\
+                    (11 * math.exp(2918.9 / 293.0 *\
+                                    (293 / (v + 273.0) - 1))))
 
 
 VOLTPELTIER = 'vref'
 
 # put VOLTPELTRIER first because you'll need it t unpack other values
-KEYS = [  dict(name=VOLTPELTIER, start=16, l=2, disp=VOLTPELTIER,
-                    verbose="vref",
-                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=volt_peltier_unpack, fctpack=volt_peltier_pack),
-            dict(name='volt5', start=0, l=2, disp="volt5",
-                    verbose="Voltage line 5V,",
-                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=volt_line_unpack, fctpack=volt_line_pack),
-            dict(name='amp5', start=2, l=2, disp="amp5",
-                    verbose="amp5",
-                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='amp3', start=4, l=2, disp="amp3",
-                    verbose="amp3",
-                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='volthv', start=6, l=2, disp="volthv",
-                    verbose="volthv",
-                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=volthv_unpack, fctpack=volthv_pack),
-            dict(name='amphv', start=8, l=2, disp="amphv",
-                    verbose="amphv",
-                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=current_line_unpack, fctpack=current_line_pack),
-            dict(name='vitec', start=10, l=2, disp="vitec",
-                    verbose="vitec",
-                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=vitec_unpack, fctpack=vitec_pack),
-            dict(name='temp0', start=12, l=2, disp="temp0",
-                    verbose="temp0",
-                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=temp0_unpack, fctpack=temp0_pack),
-            dict(name='errortherm', start=14, l=2, disp="errortherm",
-                    verbose="errortherm",
-                    fctunpack=bincore.hex2int, fctpack=bincore.int2hex),#fctunpack=errortherm_unpack, fctpack=errortherm_pack),
-            dict(name='temp1', start=18, l=2, disp="temp1",
-                    verbose="temp1",
-                    fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex),#fctunpack=temp_unpack, fctpack=temp_pack),
-            dict(name='temp2', start=20, l=2, disp="temp2",
-                    verbose="temp2",
-                    fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex),#fctunpack=temp_unpack, fctpack=temp_pack),
-            dict(name='temp3', start=22, l=2, disp="temp3",
-                    verbose="temp3",
-                    fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex),#fctunpack=temp_unpack, fctpack=temp_pack)
-            dict(name='temp4', start=24, l=2, disp="temp4",
-                    verbose="temp4",
-                    fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex)#fctunpack=temp_unpack, fctpack=temp_pack)            
+KEYS = [  dict(name=VOLTPELTIER,
+                start=16*O,
+                l=2*O,
+                disp=VOLTPELTIER,
+                verbose="vref",
+                typ='uint',
+                fctunram=volt_peltier_unpack),
+            dict(name='volt5',
+                start=0*O,
+                l=2*O,
+                disp="volt5",
+                verbose="Voltage line 5V,",
+                typ='uint',
+                fctunram=volt_line_unpack),
+            dict(name='amp5',
+                start=2*O,
+                l=2*O,
+                disp="amp5",
+                verbose="amp5",
+                typ='uint',
+                fctunram=current_line_unpack),
+            dict(name='amp3',
+                start=4*O,
+                l=2*O,
+                disp="amp3",
+                verbose="amp3",
+                typ='uint',
+                fctunram=current_line_unpack),
+            dict(name='volthv',
+                start=6*O,
+                l=2*O,
+                disp="volthv",
+                verbose="volthv",
+                typ='uint',
+                fctunram=volthv_unpack),
+            dict(name='amphv',
+                start=8*O,
+                l=2*O,
+                disp="amphv",
+                verbose="amphv",
+                typ='uint',
+                fctunram=current_line_unpack),
+            dict(name='vitec',
+                start=10*O,
+                l=2*O,
+                disp="vitec",
+                verbose="vitec",
+                typ='uint',
+                fctunram=vitec_unpack,
+                fctram=vitec_pack),
+            dict(name='temp0',
+                start=12*O,
+                l=2*O,
+                disp="temp0",
+                verbose="temp0",
+                typ='uint',
+                fctunram=temp0_unpack,
+                fctram=temp0_pack),
+            dict(name='errortherm',
+                start=14*O,
+                l=2*O,
+                disp="errortherm",
+                verbose="errortherm",
+                typ='uint',
+                fctunram=errortherm_unpack,
+                fctram=errortherm_pack),
+            dict(name='temp1',
+                start=18*O,
+                l=2*O,
+                disp="temp1",
+                verbose="temp1",
+                typ='sint',
+                fctunram=temp_unpack),
+            dict(name='temp2',
+                start=20*O,
+                l=2*O,
+                disp="temp2",
+                verbose="temp2",
+                typ='sint',
+                fctunram=temp_unpack),
+            dict(name='temp3',
+                start=22*O,
+                l=2*O,
+                disp="temp3",
+                verbose="temp3",
+                typ='sint',
+                fctunram=temp_unpack),
+            dict(name='temp4',
+                start=24*O,
+                l=2*O,
+                disp="temp4",
+                verbose="temp4",
+                typ='sint',
+                fctunram=temp_unpack)
             ]
 
 class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
@@ -232,8 +251,6 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         for idx in range(nlines):
             lines[idx][VOLTPELTIER] = 0
             dt = data[idx*self.size:(idx+1)*self.size]
-            # if octets were False:
-            #dt = bincore.hex2bin(dt[:self.size])
             for item in self.keys:
                 lines[idx][item.name] = item.unpack(
                                             dt,
@@ -251,4 +268,4 @@ class HKPayloadCCSDSTrousseau(CCSDSTrousseau):
         pass
 
 
-TROUSSEAU = HKPayloadCCSDSTrousseau(KEYS, octets=True, listof=True)
+TROUSSEAU = HKPayloadCCSDSTrousseau(KEYS, listof=True)

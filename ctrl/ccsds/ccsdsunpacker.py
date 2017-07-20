@@ -47,17 +47,14 @@ class CCSDSUnPacker(object):
         self.mode = 'telecommand' if str(mode).lower()[1] == 'c'\
                         else 'telemetry'
 
-    def unpack(self, packet, retdbvalues=True):
+    def unpack(self, packet):
         """
         Unpacks the packet, returns a dictionary
 
         Args:
         * packet (str): the string that contains the full packet
-        * retdbvalues (bool): if ``True``, returns the encoded values
-          in a format directly compatible with the database
         """
-        headers = {}
-        headers.update(self.unpack_primHeader(packet, retdbvalues=retdbvalues))
+        headers = self.unpack_primHeader(packet)
         headers.update(self.unpack_secHeader(packet))
         headersx = self.unpack_auxHeader(packet,
                     pldFlag=headers[param_ccsds.PAYLOADFLAG.name],
@@ -65,29 +62,23 @@ class CCSDSUnPacker(object):
         data = self.unpack_data(packet, hds=headers, hdx=headersx)
         return headers, headersx, data
 
-    def unpack_primHeader(self, packet, retdbvalues=True):
+    def unpack_primHeader(self, packet):
         """
         Unpacks the primary header of the packet, returns a
         dictionary
 
         Args:
         * packet (byts): the string that contains the full packet
-        * retdbvalues (bool): if ``True``, returns the encoded values
-          in a format directly compatible with the database
         """
         header_p = {}
-        bits = bincore.hex2bin(packet[:param_ccsds.HEADER_P_KEYS.size])
+        chunck = packet[:param_ccsds.HEADER_P_KEYS.size]
         # prepare optionnal inputs
         header_p[param_ccsds.PAYLOADFLAG.name] = ''
         header_p[param_ccsds.LEVELFLAG.name] = ''
         for item in param_ccsds.HEADER_P_KEYS.keys:
-            if retdbvalues and item.non_db_dic:
-                header_p[item.name] = bincore.bin2int(item.unpack(bits,
-                                                                  raw=True))
-            else:
-                header_p[item.name] = item.unpack(bits,
-                                pld=header_p[param_ccsds.PAYLOADFLAG.name],
-                                lvl=header_p[param_ccsds.LEVELFLAG.name])
+            header_p[item.name] = item.unpack(chunck,
+                            pld=header_p[param_ccsds.PAYLOADFLAG.name],
+                            lvl=header_p[param_ccsds.LEVELFLAG.name])
         return header_p
 
     def unpack_secHeader(self, packet):

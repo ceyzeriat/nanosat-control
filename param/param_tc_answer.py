@@ -29,40 +29,41 @@ from ctrl.ccsds.ccsdsmetatrousseau import CCSDSMetaTrousseau
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.ccsds.ccsdskey import CCSDSKey
 from ctrl.utils import bincore
-
+from ctrl.utils import b
+from ctrl.utils import O
 
 
 __all__ = ['TROUSSEAU']
 
 
-TROUSSEAUDIC = {1: CCSDSTrousseau([CCSDSKey(name='message', start=0, l=10, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='message',)], octets=True),
-                4: CCSDSTrousseau([CCSDSKey(name='time', start=0, l=4, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='time',)], octets=True),
-                5: CCSDSTrousseau([CCSDSKey(name='time', start=0, l=4, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='time',)], octets=True),
-                6: CCSDSTrousseau([CCSDSKey(name='count', start=0, l=2, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='count',)], octets=True),
-                7: CCSDSTrousseau([CCSDSKey(name='temp1', start=0, l=2, fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex, verbose='none', disp='temp1',),
-                                   CCSDSKey(name='temp2', start=2, l=2, fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex, verbose='none', disp='temp2',),
-                                   CCSDSKey(name='temp3', start=4, l=2, fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex, verbose='none', disp='temp3',),
-                                   CCSDSKey(name='temp4', start=6, l=2, fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex, verbose='none', disp='temp4',),
-                                   CCSDSKey(name='temp5', start=8, l=2, fctunpack=bincore.hex2intSign, fctpack=bincore.intSign2hex, verbose='none', disp='temp5',)], octets=True),
-                11: CCSDSTrousseau([CCSDSKey(name='data', start=0, l=255, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='data', pad=False)], octets=True),
-                17: CCSDSTrousseau([CCSDSKey(name='data', start=0, l=255, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='data', pad=False)], octets=True),
-                17: CCSDSTrousseau([CCSDSKey(name='data', start=0, l=255, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='data', pad=False)], octets=True),
-                48: CCSDSTrousseau([CCSDSKey(name='crc', start=0, l=4, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='crc',)], octets=True),
-                49: CCSDSTrousseau([CCSDSKey(name='crc', start=0, l=4, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='crc',)], octets=True),
-                50: CCSDSTrousseau([CCSDSKey(name='crc', start=0, l=4, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='crc',)], octets=True),
-                51: CCSDSTrousseau([CCSDSKey(name='crc', start=0, l=4, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='crc',)], octets=True),
-                52: CCSDSTrousseau([CCSDSKey(name='crc', start=0, l=4, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='crc',)], octets=True),
-                55: CCSDSTrousseau([CCSDSKey(name='crc', start=0, l=4, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='crc',)], octets=True),
-                63: CCSDSTrousseau([CCSDSKey(name='patchState', start=0, l=1, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='patchState',)], octets=True),
-                81: CCSDSTrousseau([CCSDSKey(name='i2cReply', start=0, l=255, fctunpack=bincore.hex2hex, fctpack=bincore.hex2hex, verbose='none', disp='i2cReply', pad=False)], octets=True),
-                82: CCSDSTrousseau([CCSDSKey(name='adcsMode', start=0, l=4, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='adcsMode',)], octets=True),
+TROUSSEAUDIC = {1: CCSDSTrousseau([CCSDSKey(name='message', start=0*O, l=10*O, typ='byt', verbose='none', disp='message',)]),
+                4: CCSDSTrousseau([CCSDSKey(name='time', start=0*O, l=4*O, typ='uint', verbose='none', disp='time',)]),
+                5: CCSDSTrousseau([CCSDSKey(name='time', start=0*O, l=4*O, typ='uint', verbose='none', disp='time',)]),
+                6: CCSDSTrousseau([CCSDSKey(name='count', start=0*O, l=2*O, typ='uint', verbose='none', disp='count',)]),
+                7: CCSDSTrousseau([CCSDSKey(name='temp1', start=0*O, l=2*O, typ='sint', verbose='none', disp='temp1',),
+                                   CCSDSKey(name='temp2', start=2*O, l=2*O, typ='sint', verbose='none', disp='temp2',),
+                                   CCSDSKey(name='temp3', start=4*O, l=2*O, typ='sint', verbose='none', disp='temp3',),
+                                   CCSDSKey(name='temp4', start=6*O, l=2*O, typ='sint', verbose='none', disp='temp4',),
+                                   CCSDSKey(name='temp5', start=8*O, l=2*O, typ='sint', verbose='none', disp='temp5',)]),
+                11: CCSDSTrousseau([CCSDSKey(name='data', start=0*O, l=255*O, typ='byt', verbose='none', disp='data', hard_l=False)]),
+                17: CCSDSTrousseau([CCSDSKey(name='data', start=0*O, l=255*O, typ='byt', verbose='none', disp='data', hard_l=False)]),
+                17: CCSDSTrousseau([CCSDSKey(name='data', start=0*O, l=255*O, typ='byt', verbose='none', disp='data', hard_l=False)]),
+                48: CCSDSTrousseau([CCSDSKey(name='crc', start=0*O, l=4*O, typ='byt', verbose='none', disp='crc',)]),
+                49: CCSDSTrousseau([CCSDSKey(name='crc', start=0*O, l=4*O, typ='byt', verbose='none', disp='crc',)]),
+                50: CCSDSTrousseau([CCSDSKey(name='crc', start=0*O, l=4*O, typ='byt', verbose='none', disp='crc',)]),
+                51: CCSDSTrousseau([CCSDSKey(name='crc', start=0*O, l=4*O, typ='byt', verbose='none', disp='crc',)]),
+                52: CCSDSTrousseau([CCSDSKey(name='crc', start=0*O, l=4*O, typ='byt', verbose='none', disp='crc',)]),
+                55: CCSDSTrousseau([CCSDSKey(name='crc', start=0*O, l=4*O, typ='byt', verbose='none', disp='crc',)]),
+                63: CCSDSTrousseau([CCSDSKey(name='patchState', start=0*O, l=1*O, typ='uint', verbose='none', disp='patchState',)]),
+                81: CCSDSTrousseau([CCSDSKey(name='i2cReply', start=0*O, l=255*O, typ='byt', verbose='none', disp='i2cReply', hard_l=False)]),
+                82: CCSDSTrousseau([CCSDSKey(name='adcsMode', start=0*O, l=4*O, typ='uint', verbose='none', disp='adcsMode',)]),
 
 
 #PAYLOAD BOOTLOADER
-                200: CCSDSTrousseau([CCSDSKey(name='version', start=0, l=255, fctunpack=bincore.hex2txt, fctpack=bincore.txt2hex, verbose='none', disp='version', pad = False)], octets=True),
-                246: CCSDSTrousseau([CCSDSKey(name='values', start=0, l=255, fctunpack=bincore.hex2str, fctpack=bincore.str2hex, verbose='none', disp='values', pad = False)], octets=True),
-                248: CCSDSTrousseau([CCSDSKey(name='message', start=0, l=255, fctunpack=bincore.hex2str, fctpack=bincore.str2hex, verbose='none', disp='msg', pad = False)], octets=True),
-                250: CCSDSTrousseau([CCSDSKey(name='flashBytes', start=0, l=255, fctunpack=bincore.hex2str, fctpack=bincore.str2hex, verbose='none', disp='flashBytes', pad = False)], octets=True)
+                200: CCSDSTrousseau([CCSDSKey(name='version', start=0*O, l=255*O, typ='text', verbose='none', disp='version', hard_l=False)]),
+                246: CCSDSTrousseau([CCSDSKey(name='values', start=0*O, l=255*O, typ='hexstr', verbose='none', disp='values', hard_l=False)]),
+                248: CCSDSTrousseau([CCSDSKey(name='message', start=0*O, l=255*O, typ='hexstr', verbose='none', disp='msg', hard_l=False)]),
+                250: CCSDSTrousseau([CCSDSKey(name='flashBytes', start=0*O, l=255*O, typ='hexstr', verbose='none', disp='flashBytes', hard_l=False)])
 }
 
 

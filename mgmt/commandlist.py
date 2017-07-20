@@ -190,7 +190,8 @@ class CommandList(object):
                                             .replace('_t', ''),
                         core.ustr(line[param_commands.CSVPARAMSIZE]),
                         core.ustr(line[param_commands.CSVPARAMUNIT])\
-                                            .replace(' ', '_')])
+                                            .replace(' ', '_'),
+                        core.ustr(line[param_commands.CSVPARAMEX])])
         ll.append(cm)
         return ll
 
