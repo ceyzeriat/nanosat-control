@@ -26,10 +26,14 @@
 
 
 import param
+from param import param_category
 import inflect
+
+
 from . import ccsdsexception as exc
 from ..utils import bincore
 from ..utils import core
+from ..ccsds.ccsdsmetatrousseau import CCSDSMetaTrousseau
 
 
 __all__ = ['CCSDSCategory']
@@ -72,18 +76,69 @@ class CCSDSCategory(object):
         self.aux_size = getattr(self.aux_trousseau, 'size', 0)
         if self.aux_trousseau is None:
             self.table_aux_name = None
-            self.object_aux_name = None
         else:
             self.table_aux_name = "tmcat_" + self.table_name
-            self.object_aux_name = core.camelize_singular(self.table_aux_name)
         # DATA FIELD STUFF
         self.data_file = None if data_file is None else str(data_file)
         if self.data_file is None:
-            self.table_data_name = None
-            self.object_data_name = None
+            self._table_data_name = None
+            self._table_data_conv_name = None
             self.data_trousseau = None
+            self.is_data_metatr = False
         else:
-            self.table_data_name = "data_" + self.table_name
-            self.object_data_name = core.camelize_singular(\
-                                                self.table_data_name)
             self.data_trousseau = getattr(param, self.data_file).TROUSSEAU
+            self.is_data_metatr = isinstance(self.data_trousseau,
+                                             CCSDSMetaTrousseau)
+            # if not metatrousseau
+            if not self.is_data_metatr:
+                self._table_data_name = "data_" + self.table_name
+                # if no conversion
+                if not self.data_trousseau.unram_any:
+                    self._table_data_conv_name = None
+                else:  # if at least 1 conversion
+                    self._table_data_conv_name =\
+                        self._table_data_name + '_values'
+            else:  # if metatrousseau
+                self._table_data_name = {}
+                self._table_data_conv_name = {}
+                for trkey, tr in self.data_trousseau.TROUSSEAUDIC.items():
+                    self._table_data_name[trkey] = "data_p{}_{}"\
+                                        .format(trkey, self.table_name)
+                    if not tr.unram_any:
+                        self._table_data_conv_name[trkey] = None
+                    else:  # if at least 1 conversion
+                        self._table_data_conv_name[trkey] =\
+                                    self._table_data_name[trkey] + '_values'
+
+    def get_table_data_name(self, hdx, *args, **kwargs):
+        if self._table_data_name is None:
+            return None
+        elif not self.is_data_metatr:
+            return self._table_data_name
+        elif hdx.get(self.data_trousseau.key) in\
+                                    self._table_data_name.keys():
+            return self._table_data_name[hdx.get(self.data_trousseau.key)]
+        else:
+            raise exc.InvalidMetaTrousseauKey(hdx.get(self.data_trousseau.key))
+
+    def get_table_data_conv_name(self, hdx, *args, **kwargs):
+        if self._table_data_conv_name is None:
+            return None
+        elif not self.is_data_metatr:
+            return self._table_data_conv_name
+        elif hdx.get(self.data_trousseau.key) in\
+                                    self._table_data_conv_name.keys():
+            return self._table_data_conv_name[hdx.get(self.data_trousseau.key)]
+        else:
+            raise exc.InvalidMetaTrousseauKey(hdx.get(self.data_trousseau.key))
+
+    def get_trousseau_keys(self, hdx, *args, **kwargs):
+        if self.data_trousseau is None:
+            return []
+        elif not self.is_data_metatr:
+            return self.data_trousseau.keys
+        elif hdx.get(self.data_trousseau.key) in\
+                                    self._table_data_conv_name.keys():
+            return self.data_trousseau[hdx.get(self.data_trousseau.key)].keys
+        else:
+            raise exc.InvalidMetaTrousseauKey(hdx.get(self.data_trousseau.key))

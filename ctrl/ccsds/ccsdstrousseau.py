@@ -25,12 +25,11 @@
 ###############################################################################
 
 
-import math
-
 from ..utils import core
 from ..utils import bincore
 from . import ccsdsexception
 from .ccsdskey import CCSDSKey
+from param import param_all
 
 
 __all__ = ['CCSDSTrousseau']
@@ -51,11 +50,13 @@ class CCSDSTrousseau(object):
         self.size = 0
         self.listof = bool(listof)
         self.octets = True
+        self.unram_any = False
         for item in keylist:
             if not isinstance(item, CCSDSKey):
                 item = CCSDSKey(**item)
-            self.octets = self.octets and item.octets
+            self.octets = (self.octets and item.octets)
             self.size = max(self.size, item.end)
+            self.unram_any = (self.unram_any or (item.unram is not None))
             self.keys.append(item)
         self.size = int(self.size/8)
         self._make_fmt()
@@ -67,8 +68,15 @@ class CCSDSTrousseau(object):
         Args:
           * splt: the split char(s) between each keys
         """
-        self.fmt = splt.join(["%s:{%s}" % (key.disp, key.name)\
-                                for key in self.keys])
+        l = []
+        for key in self.keys:
+            txt = "%s:{%s}" % (key.disp, key.name)
+            if key.unram is not None:
+                txt += " ({%s}%s)" %\
+                        (key.name+param_all.SUFIXCONVERSION,
+                         ' '+key.unit if key.unit is not None else '')
+            l.append(txt)
+        self.fmt = splt.join(l)
 
     def pack(self, allvalues, **kwargs):
         """
@@ -111,7 +119,7 @@ class CCSDSTrousseau(object):
         Args:
           * data (byts): the data to unpack, given as chain of bytes
 
-        Kwargs are ignored
+        Kwargs are passed to the CCSDSKey unpack method
         """
         if not self.listof:
             data = data[:self.size]
@@ -121,17 +129,22 @@ class CCSDSTrousseau(object):
             res = []
             for idx in range(nlines):
                 chunk = data[idx*self.size:(idx+1)*self.size]
-                res.append(self._unpack(chunk))
+                res.append(self._unpack(chunk, **kwargs))
             # returns a list of the pk_id
             return res
 
-    def _unpack(self, data):
+    def _unpack(self, data, **kwargs):
         """
         Basic unpack routine
         """
         res = {}
         for item in self.keys:
-            res[item.name] = item.unpack(data)
+            res[item.name] = item.unpack(data, **kwargs)
+            # check if conversion available
+            if item.unram is not None:
+                # add to result dict
+                res[item.name+param_all.SUFIXCONVERSION] =\
+                                    item.unram(res[item.name], **kwargs)
         return res
 
 

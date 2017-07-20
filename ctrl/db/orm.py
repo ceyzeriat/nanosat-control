@@ -32,10 +32,13 @@ from sqlalchemy import create_engine
 from sqlalchemy import update
 from sqlalchemy import and_
 #from sqlalchemy import or_
+from param import param_all
 from param import param_category
 from param import param_category_common as pcc
 from param import param_apid
 from byt import Byt
+
+
 from ..utils import core
 from ..utils import ctrlexception
 from ..ccsds import param_ccsds
@@ -67,12 +70,12 @@ def init_DB():
     Base.prepare(engine, reflect=True)
     TABLES = {}
     for k in Base.classes.keys():
-        nk = core.camelize_singular(k)
-        if nk is False:
-            print("The table '{}' was given a name without plurals. "\
-                  "This is wrong and it will probably crash".format(k))
-        TABLES[nk] = Base.classes[k]
-        globals()[nk] = Base.classes[k]
+        #nk = core.camelize_singular(k)
+        #if nk is False:
+        #    print("The table '{}' was given a name without plurals. "\
+        #          "This is wrong and it will probably crash".format(k))
+        TABLES[k] = Base.classes[k]
+        #globals()[nk] = Base.classes[k]
     DB = Session(engine)
     running = True
 
@@ -106,11 +109,11 @@ def save_TC_to_DB(hd, hdx, inputs):
     if not running:
         raise ctrlexception.NoDBConnection()
     hd.pop('signature', '')
-    TC = TABLES['Telecommand'](**hd)
+    TC = TABLES['telecommands'](**hd)
     DB.add(TC)
     DB.flush()
     for k, v in inputs.items():
-        DB.add(TABLES['TelecommandDatum'](telecommand_id=TC.id,
+        DB.add(TABLES['telecommand_data'](telecommand_id=TC.id,
                                           param_key=k, 
                                           value=repr(v)))
     DB.commit()
@@ -130,7 +133,7 @@ def update_sent_TC_time(pkid, t):
     if not running:
         raise ctrlexception.NoDBConnection()
     t = str(t)
-    TC = TABLES['Telecommand']
+    TC = TABLES['telecommands']
     idx = DB.query(TC.id)\
             .filter(getattr(TC, param_ccsds.PACKETID.name) == int(pkid))\
             .order_by(TC.time_sent.desc()).limit(1).first()
@@ -151,7 +154,7 @@ def get_TC_dbid_from_pkid(pkid):
     """
     if not running:
         raise ctrlexception.NoDBConnection()
-    TC = TABLES['Telecommand']
+    TC = TABLES['telecommands']
     res = DB.query(TC)\
             .filter(getattr(TC, param_ccsds.PACKETID.name) == int(pkid))\
             .order_by(TC.time_sent.desc())
@@ -169,7 +172,7 @@ def get_TM_dbid_from_pkid_and_pid(pkid, pid):
     """
     if not running:
         raise ctrlexception.NoDBConnection()
-    TM = TABLES['Telemetry']
+    TM = TABLES['telemetries']
     res = DB.query(TM)\
             .filter(getattr(TM, param_ccsds.PACKETID.name) == int(pkid))\
             .order_by(TM.time_sent.desc())
@@ -195,7 +198,7 @@ def get_TC(pkid=None, dbid=None):
     """
     if not running:
         raise ctrlexception.NoDBConnection()
-    TC = TABLES['Telecommand']
+    TC = TABLES['telecommands']
     thetc = DB.query(TC)
     if dbid is None:
         thetc = thetc.filter(
@@ -255,7 +258,7 @@ def get_TM(dbid=None, pkid=None, pid=None):
     """
     if not running:
         raise ctrlexception.NoDBConnection()
-    TM = TABLES['Telemetry']
+    TM = TABLES['telemetries']
     thetm = DB.query(TM).filter(TM.id == int(dbid))
     thetm = thetm.order_by(TM.time_sent.desc()).limit(1).first()
     DB.commit()
@@ -271,10 +274,10 @@ def get_TM(dbid=None, pkid=None, pid=None):
     # table name for hdx
     cat = param_category.CATEGORIES[pldflag][catnum]
     dichdx = {}
-    if cat.object_aux_name is None:
+    if cat.table_aux_name is None:
         thehdx = None
     else:
-        TMHDX = TABLES[cat.object_aux_name]
+        TMHDX = TABLES[cat.table_aux_name]
         thehdx = getattr(thetm, cat.table_aux_name + '_collection', [])
         if len(thehdx) > 0:
             # there can be only one
@@ -286,11 +289,13 @@ def get_TM(dbid=None, pkid=None, pid=None):
     # deal with data
     # table name for data
     dicdata = []
-    if cat.object_data_name is None:
+    tblnm = cat.get_table_data_name(hdx=dichdx)
+    if tblnm is None:
         thedata = None
     else:
-        TMDATA = TABLES[cat.object_data_name]
-        thedata = getattr(thetm, cat.table_data_name + '_collection', [])
+        # RAW DATA
+        TMDATA = TABLES[tblnm]
+        thedata = getattr(thetm, tblnm + '_collection', [])
         if len(thedata) > 0:
             for dataline in thedata:
                 thedicline = {}
@@ -303,6 +308,21 @@ def get_TM(dbid=None, pkid=None, pid=None):
                 dicdata.append(thedicline)
         else:
             thedata = None
+        """# CONV DATA
+        add _cv
+        tblnmcv = cat.get_table_data_conv_name(hdx=hdx)
+        TMDATACONV = TABLES[tblnmcv]
+        thedataconv = getattr(thetm, tblnmcv + '_collection', [])
+        if len(thedataconv) > 0:
+            for dataline in thedataconv:
+                thedicline = {}
+                if cat.number != param_category.TELECOMMANDANSWERCAT:
+                    for key in get_column_keys(TMDATA):
+                        thedicline[key] = getattr(dataline, key, None)
+                else:
+                    # eval the column
+                    thedicline[str(dataline.param_key)] = eval(dataline.value)
+                dicdata.append(thedicline)"""
     return (thetm, dictm), (thehdx, dichdx), (thedata, dicdata)
 
 
@@ -324,41 +344,69 @@ def save_TM_to_DB(hd, hdx, data):
                                         hd['ms_since_today'])
     # force default to now
     hd['time_saved'] = core.now()
-    TM = TABLES['Telemetry'](**hd)
+    TM = TABLES['telemetries'](**hd)
     DB.add(TM)
     DB.commit()
     catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
     pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
     # saving the aux header
     cat = param_category.CATEGORIES[pldflag][catnum]
-    if cat.object_aux_name is not None:
+    if cat.table_aux_name is not None:
         hdx = dict(hdx)
         hdx['telemetry_packet'] = TM.id
-        DB.add(TABLES[cat.object_aux_name](**hdx))
+        DB.add(TABLES[cat.table_aux_name](**hdx))
         DB.commit()
     # saving the data
-    tbl = cat.object_data_name
-    if tbl is not None:
+    tblnm = cat.get_table_data_name(hdx=hdx)
+    trkeys = cat.get_trousseau_keys(hdx=hdx)
+    if tblnm is not None:
         # if saving the data from TC answer
         if catnum == param_category.TELECOMMANDANSWERCAT:
             for k, v in data['unpacked'].items():
-                DB.add(TABLES[tbl](telemetry_packet=TM.id,
-                                   param_key=k,
-                                   value=repr(v)))
+                DB.add(TABLES[tblnm](telemetry_packet=TM.id,
+                                     param_key=k,
+                                     value=repr(v)))
         # if dealing with list of dict, e.g. science or payload hk
         elif isinstance(data['unpacked'], (list, tuple)):
             for item in data['unpacked']:
-                item = dict(item)
-                item['telemetry_packet'] = TM.id
-                DB.add(TABLES[tbl](**item))
+                raw, conv = split_data_by_keys_conv(item, trkeys)
+                raw['telemetry_packet'] = TM.id
+                DATA = TABLES[tblnm](**raw)
+                DB.add(DATA)
+                tblnmcv = cat.get_table_data_conv_name(hdx=hdx)
+                if tblnmcv is not None:
+                    DB.commit()
+                    conv['rawdata_id'] = DATA.id
+                    DB.add(TABLES[tblnmcv](**conv))
         # standard case
         else:
-            dt = dict(data['unpacked'])
-            dt['telemetry_packet'] = TM.id
-            DB.add(TABLES[tbl](**dt))
+            raw, conv = split_data_by_keys_conv(data['unpacked'], trkeys)
+            raw['telemetry_packet'] = TM.id
+            DATA = TABLES[tblnm](**raw)
+            DB.add(DATA)
+            tblnmcv = cat.get_table_data_conv_name(hdx=hdx)
+            if tblnmcv is not None:
+                DB.commit()
+                conv['rawdata_id'] = DATA.id
+                DB.add(TABLES[tblnmcv](**conv))
     # save changes
     DB.commit()
     return TM.id
+
+
+def split_data_by_keys_conv(data, trkeys):
+    """
+    Give a dictionary data containing potential additional converted
+    values, and a list of CCSDSKey,
+    Splits the data dictionary into 2, first is raw, second is conv
+    """
+    rawdata = {}
+    convdata = {}
+    for item in trkeys:
+        rawdata[item.name] = data[item.name]
+        if item.unram is not None:
+            convdata[item.name] = data[item.name+param_all.SUFIXCONVERSION]
+    return rawdata, convdata
 
 
 def get_RACK_TCid():
@@ -368,7 +416,7 @@ def get_RACK_TCid():
     """
     if not running:
         raise ctrlexception.NoDBConnection()
-    TC = TABLES['Telecommand']
+    TC = TABLES['telecommands']
     # just grab the latest TC that was actually sent
     idx = DB.query(TC.id)\
             .filter(TC.time_sent != None)\
@@ -392,7 +440,7 @@ def get_ACK_TCid(pkid):
     """
     if not running:
         raise ctrlexception.NoDBConnection()
-    TC = TABLES['Telecommand']
+    TC = TABLES['telecommands']
     # grab the TC that was sent and to which we're replying
     idx = DB.query(TC.id)\
             .filter(getattr(TC, param_ccsds.PACKETID.name) == int(pkid))\
@@ -416,7 +464,7 @@ def get_tcanswer_TCid(pkid=None, dbid=None):
     """
     if not running:
         raise ctrlexception.NoDBConnection()
-    TC = TABLES['Telecommand']
+    TC = TABLES['telecommands']
     thetc = DB.query(TC.id)
     if dbid is None:
         thetc = thetc.filter(getattr(TC, param_ccsds.PACKETID.name) == int(pkid))
@@ -444,7 +492,7 @@ def get_TMid_answer_from_TC(cid=None, pkid=None, dbid=None):
         raise ctrlexception.NoDBConnection()
     # need command id and packet id for later, so grab it if not given
     if cid is None or pkid is None:
-        TC = TABLES['Telecommand']
+        TC = TABLES['telecommands']
         thetc = DB.query(TC)
         if dbid is None:
             thetc = thetc.filter(
@@ -467,9 +515,9 @@ def get_TMid_answer_from_TC(cid=None, pkid=None, dbid=None):
             if cat.aux_trousseau is None:
                 continue
             # patch to allow partly designed DB and avoid error
-            if cat.object_aux_name not in TABLES.keys():
+            if cat.table_aux_name not in TABLES.keys():
                 continue
-            TMAUX = TABLES[cat.object_aux_name]
+            TMAUX = TABLES[cat.table_aux_name]
             cols = get_column_keys(TMAUX)
             # can only be answer if there is packet id mirror + tc id mirror
             if pcc.PACKETIDMIRROR.name not in cols or\
