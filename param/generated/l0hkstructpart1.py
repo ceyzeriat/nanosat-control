@@ -735,29 +735,29 @@ L0HKSTRUCTPART1_KEYS = [
         disp = 'epsHkBootCause'),
 
     dict(
-        name = 'eps_hk_temp6',
+        name = 'eps_hk_temp_batt1',
         start = 648*b,
         l = 16*b,
         typ = 'sint',
-        verbose = 'Temperature sensor 6 (BP4b, BATT1)',
+        verbose = 'EPS temperature sensor 6 (BP4b, BATT1)',
         unit = 'degC',
-        disp = 'epsHkTemp6'),
+        disp = 'epsHkTempBatt1'),
 
     dict(
-        name = 'eps_hk_temp5',
+        name = 'eps_hk_temp_batt0',
         start = 664*b,
         l = 16*b,
         typ = 'sint',
-        verbose = 'Temperature sensor 5 (BP4a, BATT0)',
+        verbose = 'EPS temperature sensor 5 (BP4a, BATT0)',
         unit = 'degC',
-        disp = 'epsHkTemp5'),
+        disp = 'epsHkTempBatt0'),
 
     dict(
         name = 'eps_hk_temp4',
         start = 680*b,
         l = 16*b,
         typ = 'sint',
-        verbose = 'Temperature sensor 4 (TEMP4)',
+        verbose = 'EPS temperature sensor 4 (TEMP4)',
         unit = 'degC',
         disp = 'epsHkTemp4'),
 
@@ -766,7 +766,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 696*b,
         l = 16*b,
         typ = 'sint',
-        verbose = 'Temperature sensor 3 (TEMP3)',
+        verbose = 'EPS temperature sensor 3 (TEMP3)',
         unit = 'degC',
         disp = 'epsHkTemp3'),
 
@@ -775,7 +775,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 712*b,
         l = 16*b,
         typ = 'sint',
-        verbose = 'Temperature sensor 2 (TEMP2)',
+        verbose = 'EPS temperature sensor 2 (TEMP2)',
         unit = 'degC',
         disp = 'epsHkTemp2'),
 
@@ -784,7 +784,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 728*b,
         l = 16*b,
         typ = 'sint',
-        verbose = 'Temperature sensor 1 (TEMP1)',
+        verbose = 'EPS temperature sensor 1 (TEMP1)',
         unit = 'degC',
         disp = 'epsHkTemp1'),
 
@@ -793,7 +793,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 744*b,
         l = 32*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Number of EPS reboots',
         disp = 'epsHkCounterBoot'),
 
     dict(
@@ -801,7 +801,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 776*b,
         l = 32*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Number of watchdog CSP reboots 2',
         disp = 'epsHkCounterWdtCsp2'),
 
     dict(
@@ -809,7 +809,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 808*b,
         l = 32*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Number of watchdog CSP reboots 1',
         disp = 'epsHkCounterWdtCsp1'),
 
     dict(
@@ -817,7 +817,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 840*b,
         l = 32*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Number of watchdog GND reboots',
         disp = 'epsHkCounterWdtGnd'),
 
     dict(
@@ -825,7 +825,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 872*b,
         l = 32*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Number of watchdog I2C reboots',
         disp = 'epsHkCounterWdtI2c'),
 
     dict(
@@ -833,7 +833,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 904*b,
         l = 8*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Pings left on CSP watchdog 2',
         disp = 'epsHkWdtCspPingsLeft2'),
 
     dict(
@@ -841,7 +841,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 912*b,
         l = 8*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Pings left on CSP watchdog 1',
         disp = 'epsHkWdtCspPingsLeft1'),
 
     dict(
@@ -867,7 +867,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 984*b,
         l = 16*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Number of latch-ups for channel 6 (3.3V - #3)',
         disp = 'epsHkLatchup6'),
 
     dict(
@@ -875,7 +875,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 1000*b,
         l = 16*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Number of latch-ups for channel 5 (3.3V - #2)',
         disp = 'epsHkLatchup5'),
 
     dict(
@@ -883,7 +883,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 1016*b,
         l = 16*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Number of latch-ups for channel 4 (3.3V - #1)',
         disp = 'epsHkLatchup4'),
 
     dict(
@@ -891,7 +891,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 1032*b,
         l = 16*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Number of latch-ups for channel 3 (5V - #3)',
         disp = 'epsHkLatchup3'),
 
     dict(
@@ -899,7 +899,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 1048*b,
         l = 16*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Number of latch-ups for channel 2 (5V - #2)',
         disp = 'epsHkLatchup2'),
 
     dict(
@@ -907,7 +907,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 1064*b,
         l = 16*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Number of latch-ups for channel 1 (5V - #1)',
         disp = 'epsHkLatchup1'),
 
     dict(
@@ -1059,7 +1059,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 1336*b,
         l = 8*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Status of output 8 (BP4 switch)',
         disp = 'epsHkOutput8'),
 
     dict(
@@ -1067,7 +1067,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 1344*b,
         l = 8*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Status of output 7 (BP4 heater)',
         disp = 'epsHkOutput7'),
 
     dict(
@@ -1075,7 +1075,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 1352*b,
         l = 8*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Status of output 6',
         disp = 'epsHkOutput6'),
 
     dict(
@@ -1083,7 +1083,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 1360*b,
         l = 8*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Status of output 5',
         disp = 'epsHkOutput5'),
 
     dict(
@@ -1091,7 +1091,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 1368*b,
         l = 8*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Status of output 4',
         disp = 'epsHkOutput4'),
 
     dict(
@@ -1099,7 +1099,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 1376*b,
         l = 8*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Status of output 3',
         disp = 'epsHkOutput3'),
 
     dict(
@@ -1107,7 +1107,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 1384*b,
         l = 8*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Status of output 2',
         disp = 'epsHkOutput2'),
 
     dict(
@@ -1115,7 +1115,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 1392*b,
         l = 8*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Status of output 1',
         disp = 'epsHkOutput1'),
 
     dict(
@@ -1266,7 +1266,7 @@ L0HKSTRUCTPART1_KEYS = [
         start = 1656*b,
         l = 16*b,
         typ = 'uint',
-        verbose = '[NO DOC STRING]',
+        verbose = 'Reply of the last command to EPS',
         disp = 'epsHkCommandReply'),
 
 ]

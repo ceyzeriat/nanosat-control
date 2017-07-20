@@ -7,61 +7,79 @@ from ctrl.utils import b
 from ctrl.utils import O
 
 
-def unram_solar_panel_temp5(x, **kwargs):
+def unram_solar_panel_temp5_zp(x, **kwargs):
     """
-    verbose = 16*x
+    verbose = x/64
     """
-    return 16*x
+    return x/64
 
-def unram_solar_panel_temp4(x, **kwargs):
+def unram_solar_panel_temp4_ym(x, **kwargs):
     """
-    verbose = 16*x
+    verbose = x/64
     """
-    return 16*x
+    return x/64
 
-def unram_solar_panel_temp3(x, **kwargs):
+def unram_solar_panel_temp3_yp(x, **kwargs):
     """
-    verbose = 16*x
+    verbose = x/64
     """
-    return 16*x
+    return x/64
 
-def unram_solar_panel_temp2(x, **kwargs):
+def unram_solar_panel_temp2_xm(x, **kwargs):
     """
-    verbose = 16*x
+    verbose = x/64
     """
-    return 16*x
+    return x/64
 
-def unram_solar_panel_temp1(x, **kwargs):
+def unram_solar_panel_temp1_xp(x, **kwargs):
     """
-    verbose = 16*x
+    verbose = x/64
     """
-    return 16*x
+    return x/64
 
-def unram_ants_b_temp(x, **kwargs):
+def unram_ants_temperature_side_b(x, **kwargs):
     """
     verbose = -0.2922*x+190.65
     """
     return -0.2922*x+190.65
 
-def unram_ants_a_temp(x, **kwargs):
+def unram_ants_temperature_side_a(x, **kwargs):
     """
     verbose = -0.2922*x+190.65
     """
     return -0.2922*x+190.65
 
-def unram_trxvu_tx_pa_temp(x, **kwargs):
+def unram_tx_trxvu_hk_current(x, **kwargs):
+    """
+    verbose = 0.16643964*x#??
+    """
+    return 0.16643964*x#??
+
+def unram_tx_trxvu_hk_forwardpower(x, **kwargs):
+    """
+    verbose = 0.00005887*x*x#??
+    """
+    return 0.00005887*x*x#??
+
+def unram_tx_trxvu_hk_tx_reflectedpower(x, **kwargs):
+    """
+    verbose = 0.00005887*x*x#??
+    """
+    return 0.00005887*x*x#??
+
+def unram_tx_trxvu_hk_pa_temp(x, **kwargs):
     """
     verbose = -0.07669*x+195.6037#??
     """
     return -0.07669*x+195.6037#??
 
-def unram_trxvu_rx_pa_temp(x, **kwargs):
+def unram_rx_trxvu_hk_pa_temp(x, **kwargs):
     """
     verbose = -0.07669*x+195.6037#??
     """
     return -0.07669*x+195.6037#??
 
-def unram_trxvu_rx_board_temp(x, **kwargs):
+def unram_rx_trxvu_hk_board_temp(x, **kwargs):
     """
     verbose = -0.07669*x+195.6037#??
     """
@@ -405,151 +423,181 @@ L0BEACONSTRUCT_KEYS = [
         disp = 'armedAntsAStatus'),
 
     dict(
-        name = 'solar_panel_temp5',
+        name = 'solar_panel_temp5_zp',
         start = 48*b,
         l = 16*b,
-        typ = 'sint',
-        verbose = 'Temperature of solar panel 5',
+        typ = 'uint',
+        verbose = 'Temperature of solar panel 5 (Z)',
         unit = 'degC',
-        fctunram = unram_solar_panel_temp5,
-        disp = 'solarPanelTemp5'),
+        fctunram = unram_solar_panel_temp5_zp,
+        disp = 'solarPanelTemp5Zp'),
 
     dict(
-        name = 'solar_panel_temp4',
+        name = 'solar_panel_temp4_ym',
         start = 64*b,
         l = 16*b,
-        typ = 'sint',
-        verbose = 'Temperature of solar panel 4',
+        typ = 'uint',
+        verbose = 'Temperature of solar panel 4 (Y-)',
         unit = 'degC',
-        fctunram = unram_solar_panel_temp4,
-        disp = 'solarPanelTemp4'),
+        fctunram = unram_solar_panel_temp4_ym,
+        disp = 'solarPanelTemp4Ym'),
 
     dict(
-        name = 'solar_panel_temp3',
+        name = 'solar_panel_temp3_yp',
         start = 80*b,
         l = 16*b,
-        typ = 'sint',
-        verbose = 'Temperature of solar panel 3',
+        typ = 'uint',
+        verbose = 'Temperature of solar panel 3 (Y+)',
         unit = 'degC',
-        fctunram = unram_solar_panel_temp3,
-        disp = 'solarPanelTemp3'),
+        fctunram = unram_solar_panel_temp3_yp,
+        disp = 'solarPanelTemp3Yp'),
 
     dict(
-        name = 'solar_panel_temp2',
+        name = 'solar_panel_temp2_xm',
         start = 96*b,
         l = 16*b,
-        typ = 'sint',
-        verbose = 'Temperature of solar panel 2',
+        typ = 'uint',
+        verbose = 'Temperature of solar panel 2 (X-)',
         unit = 'degC',
-        fctunram = unram_solar_panel_temp2,
-        disp = 'solarPanelTemp2'),
+        fctunram = unram_solar_panel_temp2_xm,
+        disp = 'solarPanelTemp2Xm'),
 
     dict(
-        name = 'solar_panel_temp1',
+        name = 'solar_panel_temp1_xp',
         start = 112*b,
         l = 16*b,
-        typ = 'sint',
-        verbose = 'Temperature of solar panel 1',
+        typ = 'uint',
+        verbose = 'Temperature of solar panel 1 (X+)',
         unit = 'degC',
-        fctunram = unram_solar_panel_temp1,
-        disp = 'solarPanelTemp1'),
+        fctunram = unram_solar_panel_temp1_xp,
+        disp = 'solarPanelTemp1Xp'),
 
     dict(
-        name = 'ants_b_temp',
+        name = 'ants_temperature_side_b',
         start = 128*b,
         l = 16*b,
         typ = 'uint',
         verbose = 'Temperature of antenna system (side B)',
         unit = 'degC',
-        fctunram = unram_ants_b_temp,
-        disp = 'antsBTemp'),
+        fctunram = unram_ants_temperature_side_b,
+        disp = 'antsTemperatureSideB'),
 
     dict(
-        name = 'ants_a_temp',
+        name = 'ants_temperature_side_a',
         start = 144*b,
         l = 16*b,
         typ = 'uint',
         verbose = 'Temperature of antenna system (side A)',
         unit = 'degC',
-        fctunram = unram_ants_a_temp,
-        disp = 'antsATemp'),
+        fctunram = unram_ants_temperature_side_a,
+        disp = 'antsTemperatureSideA'),
 
     dict(
-        name = 'trxvu_tx_pa_temp',
+        name = 'tx_trxvu_hk_current',
         start = 160*b,
+        l = 16*b,
+        typ = 'uint',
+        verbose = 'Trxvu Tx board transmitter current',
+        unit = 'mA',
+        fctunram = unram_tx_trxvu_hk_current,
+        disp = 'txTrxvuHkCurrent'),
+
+    dict(
+        name = 'tx_trxvu_hk_forwardpower',
+        start = 176*b,
+        l = 16*b,
+        typ = 'uint',
+        verbose = 'Trxvu Tx board forward power',
+        unit = 'mW',
+        fctunram = unram_tx_trxvu_hk_forwardpower,
+        disp = 'txTrxvuHkForwardpower'),
+
+    dict(
+        name = 'tx_trxvu_hk_tx_reflectedpower',
+        start = 192*b,
+        l = 16*b,
+        typ = 'uint',
+        verbose = 'Trxvu Tx board reflected power',
+        unit = 'mW',
+        fctunram = unram_tx_trxvu_hk_tx_reflectedpower,
+        disp = 'txTrxvuHkTxReflectedpower'),
+
+    dict(
+        name = 'tx_trxvu_hk_pa_temp',
+        start = 208*b,
         l = 16*b,
         typ = 'uint',
         verbose = 'Trxvu Tx board power amplifier temperature',
         unit = 'degC',
-        fctunram = unram_trxvu_tx_pa_temp,
-        disp = 'TrxvuTxPaTemp'),
+        fctunram = unram_tx_trxvu_hk_pa_temp,
+        disp = 'txTrxvuHkPaTemp'),
 
     dict(
-        name = 'trxvu_rx_pa_temp',
-        start = 176*b,
+        name = 'rx_trxvu_hk_pa_temp',
+        start = 224*b,
         l = 16*b,
         typ = 'uint',
         verbose = 'Trxvu Rx power amplifier temperature',
         unit = 'degC',
-        fctunram = unram_trxvu_rx_pa_temp,
-        disp = 'TrxvuRxPaTemp'),
+        fctunram = unram_rx_trxvu_hk_pa_temp,
+        disp = 'rxTrxvuHkPaTemp'),
 
     dict(
-        name = 'trxvu_rx_board_temp',
-        start = 192*b,
+        name = 'rx_trxvu_hk_board_temp',
+        start = 240*b,
         l = 16*b,
         typ = 'uint',
         verbose = 'Trxvu Rx board temperature',
         unit = 'degC',
-        fctunram = unram_trxvu_rx_board_temp,
-        disp = 'TrxvuRxBoardTemp'),
+        fctunram = unram_rx_trxvu_hk_board_temp,
+        disp = 'rxTrxvuHkBoardTemp'),
 
     dict(
-        name = 'temp_bat2',
-        start = 208*b,
+        name = 'eps_hk_temp_batt1',
+        start = 256*b,
         l = 16*b,
         typ = 'sint',
         verbose = 'Battery temperature 2',
         unit = 'degC',
-        disp = 'tempBat2'),
+        disp = 'epsHkTempBatt1'),
 
     dict(
-        name = 'temp_bat1',
-        start = 224*b,
+        name = 'eps_hk_temp_batt0',
+        start = 272*b,
         l = 16*b,
         typ = 'sint',
         verbose = 'Battery temperature 1',
         unit = 'degC',
-        disp = 'tempBat1'),
+        disp = 'epsHkTempBatt0'),
 
     dict(
-        name = 'bat_mode',
-        start = 240*b,
+        name = 'eps_hk_batt_mode',
+        start = 288*b,
         l = 8*b,
         typ = 'uint',
         verbose = '[NO DOC STRING]',
-        disp = 'batMode'),
+        disp = 'epsHkBattMode'),
 
     dict(
-        name = 'v_bat',
-        start = 248*b,
+        name = 'eps_h_kv_batt',
+        start = 296*b,
         l = 16*b,
         typ = 'uint',
-        verbose = 'Battery charge voltage',
+        verbose = 'Voltage of battery',
         unit = 'mV',
-        disp = 'vBat'),
+        disp = 'epsHKvBatt'),
 
     dict(
-        name = 'reboot_cause_eps',
-        start = 264*b,
+        name = 'eps_hk_boot_cause',
+        start = 312*b,
         l = 32*b,
         typ = 'uint',
         verbose = '[NO DOC STRING]',
-        disp = 'rebootCauseEps'),
+        disp = 'epsHkBootCause'),
 
     dict(
         name = 'n_reboots_eps',
-        start = 296*b,
+        start = 344*b,
         l = 32*b,
         typ = 'uint',
         verbose = '[NO DOC STRING]',
@@ -557,7 +605,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'n_reboots_obc',
-        start = 328*b,
+        start = 376*b,
         l = 32*b,
         typ = 'uint',
         verbose = '[NO DOC STRING]',
@@ -565,7 +613,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'quaternion1',
-        start = 360*b,
+        start = 408*b,
         l = 32*b,
         typ = 'float',
         verbose = 'attitude quaternion 1 from ADCS',
@@ -573,7 +621,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'quaternion2',
-        start = 392*b,
+        start = 440*b,
         l = 32*b,
         typ = 'float',
         verbose = 'attitude quaternion 2 from ADCS',
@@ -581,7 +629,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'quaternion3',
-        start = 424*b,
+        start = 472*b,
         l = 32*b,
         typ = 'float',
         verbose = 'attitude quaternion 3 from ADCS',
@@ -589,7 +637,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'quaternion4',
-        start = 456*b,
+        start = 504*b,
         l = 32*b,
         typ = 'float',
         verbose = 'attitude quaternion 4 from ADCS',
@@ -597,7 +645,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'angular_rate_x',
-        start = 488*b,
+        start = 536*b,
         l = 32*b,
         typ = 'float',
         verbose = 'angular rotation speed (X axis) from ADCS',
@@ -606,7 +654,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'angular_rate_y',
-        start = 520*b,
+        start = 568*b,
         l = 32*b,
         typ = 'float',
         verbose = 'angular rotation speed (X axis) from ADCS',
@@ -615,7 +663,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'angular_rate_z',
-        start = 552*b,
+        start = 600*b,
         l = 32*b,
         typ = 'float',
         verbose = 'angular rotation speed (X axis) from ADCS',
@@ -624,7 +672,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_cap',
-        start = 596*b,
+        start = 644*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -632,7 +680,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_track_fix_wgs84',
-        start = 597*b,
+        start = 645*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -640,7 +688,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_track_nadir',
-        start = 598*b,
+        start = 646*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -648,7 +696,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_track',
-        start = 599*b,
+        start = 647*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -656,7 +704,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_tgt_track_const_v',
-        start = 600*b,
+        start = 648*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -664,7 +712,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_spin',
-        start = 601*b,
+        start = 649*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -672,7 +720,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_sunp',
-        start = 603*b,
+        start = 651*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -680,7 +728,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_detumbling',
-        start = 604*b,
+        start = 652*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -688,7 +736,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_measure',
-        start = 605*b,
+        start = 653*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -696,7 +744,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_datetime_valid',
-        start = 611*b,
+        start = 659*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -704,7 +752,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_safe',
-        start = 613*b,
+        start = 661*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -712,7 +760,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'adcs_stat_flag_hl_op_idle',
-        start = 614*b,
+        start = 662*b,
         l = 1*b,
         typ = 'bool',
         verbose = '[NO DOC STRING]',
@@ -720,7 +768,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'up_time',
-        start = 616*b,
+        start = 664*b,
         l = 32*b,
         typ = 'uint',
         verbose = 'OBC uptime',
@@ -729,7 +777,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'last_fram_log_fun_err_code',
-        start = 648*b,
+        start = 696*b,
         l = 16*b,
         typ = 'sint',
         verbose = '[NO DOC STRING]',
@@ -737,7 +785,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'last_fram_log_line_code',
-        start = 664*b,
+        start = 712*b,
         l = 16*b,
         typ = 'uint',
         verbose = '[NO DOC STRING]',
@@ -745,7 +793,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'last_fram_log_file_crc_code',
-        start = 680*b,
+        start = 728*b,
         l = 32*b,
         typ = 'uint',
         verbose = '[NO DOC STRING]',
@@ -753,7 +801,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'last_fram_log_counter',
-        start = 712*b,
+        start = 760*b,
         l = 16*b,
         typ = 'uint',
         verbose = '[NO DOC STRING]',
@@ -761,7 +809,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'average_photon_count',
-        start = 728*b,
+        start = 776*b,
         l = 16*b,
         typ = 'uint',
         verbose = '[NO DOC STRING]',
@@ -769,7 +817,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'sat_mode',
-        start = 744*b,
+        start = 792*b,
         l = 8*b,
         typ = 'uint',
         verbose = '[NO DOC STRING]',
@@ -777,7 +825,7 @@ L0BEACONSTRUCT_KEYS = [
 
     dict(
         name = 'tc_sequence_count',
-        start = 752*b,
+        start = 800*b,
         l = 16*b,
         typ = 'uint',
         verbose = '[NO DOC STRING]',

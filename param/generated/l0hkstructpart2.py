@@ -7,35 +7,35 @@ from ctrl.utils import b
 from ctrl.utils import O
 
 
-def unram_solar_panel_temp5(x, **kwargs):
+def unram_solar_panel_temp5_zp(x, **kwargs):
     """
-    verbose = 16*x
+    verbose = x/64
     """
-    return 16*x
+    return x/64
 
-def unram_solar_panel_temp4(x, **kwargs):
+def unram_solar_panel_temp4_ym(x, **kwargs):
     """
-    verbose = 16*x
+    verbose = x/64
     """
-    return 16*x
+    return x/64
 
-def unram_solar_panel_temp3(x, **kwargs):
+def unram_solar_panel_temp3_yp(x, **kwargs):
     """
-    verbose = 16*x
+    verbose = x/64
     """
-    return 16*x
+    return x/64
 
-def unram_solar_panel_temp2(x, **kwargs):
+def unram_solar_panel_temp2_xm(x, **kwargs):
     """
-    verbose = 16*x
+    verbose = x/64
     """
-    return 16*x
+    return x/64
 
-def unram_solar_panel_temp1(x, **kwargs):
+def unram_solar_panel_temp1_xp(x, **kwargs):
     """
-    verbose = 16*x
+    verbose = x/64
     """
-    return 16*x
+    return x/64
 
 L0HKSTRUCTPART2_KEYS = [
     dict(
@@ -250,54 +250,54 @@ L0HKSTRUCTPART2_KEYS = [
         disp = 'ADCS_STAT_FLAG_HL_OP_IDLE'),
 
     dict(
-        name = 'solar_panel_temp5',
+        name = 'solar_panel_temp5_zp',
         start = 264*b,
         l = 16*b,
         typ = 'uint',
-        verbose = 'Temperature of solar panel 5',
+        verbose = 'Temperature of solar panel 5 (Z)',
         unit = 'degC',
-        fctunram = unram_solar_panel_temp5,
-        disp = 'solarPanelTemp5'),
+        fctunram = unram_solar_panel_temp5_zp,
+        disp = 'solarPanelTemp5Zp'),
 
     dict(
-        name = 'solar_panel_temp4',
+        name = 'solar_panel_temp4_ym',
         start = 280*b,
         l = 16*b,
         typ = 'uint',
-        verbose = 'Temperature of solar panel 4',
+        verbose = 'Temperature of solar panel 4 (Y-)',
         unit = 'degC',
-        fctunram = unram_solar_panel_temp4,
-        disp = 'solarPanelTemp4'),
+        fctunram = unram_solar_panel_temp4_ym,
+        disp = 'solarPanelTemp4Ym'),
 
     dict(
-        name = 'solar_panel_temp3',
+        name = 'solar_panel_temp3_yp',
         start = 296*b,
         l = 16*b,
         typ = 'uint',
-        verbose = 'Temperature of solar panel 3',
+        verbose = 'Temperature of solar panel 3 (Y+)',
         unit = 'degC',
-        fctunram = unram_solar_panel_temp3,
-        disp = 'solarPanelTemp3'),
+        fctunram = unram_solar_panel_temp3_yp,
+        disp = 'solarPanelTemp3Yp'),
 
     dict(
-        name = 'solar_panel_temp2',
+        name = 'solar_panel_temp2_xm',
         start = 312*b,
         l = 16*b,
         typ = 'uint',
-        verbose = 'Temperature of solar panel 2',
+        verbose = 'Temperature of solar panel 2 (X-)',
         unit = 'degC',
-        fctunram = unram_solar_panel_temp2,
-        disp = 'solarPanelTemp2'),
+        fctunram = unram_solar_panel_temp2_xm,
+        disp = 'solarPanelTemp2Xm'),
 
     dict(
-        name = 'solar_panel_temp1',
+        name = 'solar_panel_temp1_xp',
         start = 328*b,
         l = 16*b,
         typ = 'uint',
-        verbose = 'Temperature of solar panel 1',
+        verbose = 'Temperature of solar panel 1 (X+)',
         unit = 'degC',
-        fctunram = unram_solar_panel_temp1,
-        disp = 'solarPanelTemp1'),
+        fctunram = unram_solar_panel_temp1_xp,
+        disp = 'solarPanelTemp1Xp'),
 
 ]
 
