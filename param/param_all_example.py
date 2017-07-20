@@ -205,3 +205,6 @@ KEYMASK = '1'*16+'0'*16  # mask of 1 and 0, 1 == takeit
 # default behavior of commands
 DEFAULTWAITCMD = True
 DEFAULTTIMEOUTCMD = 5  # sec
+
+# the sufix to be added to the converted keys
+SUFIXCONVERSION = '_cv'
