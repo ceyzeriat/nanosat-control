@@ -201,7 +201,7 @@ for cFileName in cFileNames:
 
             printf("------------------------------\r\n")
 
-            fs = \x20\x20\x20\x20'
+            fs = '\x20\x20\x20\x20'
             tq = '\x22\x22\x22'
             addit("{fs:}dict(name = '{}',\n".format(snake_name, fs=fs))
             addit("{fs:}{fs:}start = {:d}*b,\n".format(start, fs=fs))
