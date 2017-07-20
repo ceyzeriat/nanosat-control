@@ -48,7 +48,7 @@ class CCSDSTrousseauHKOBC(CCSDSTrousseau):
                 res[item.name+'_phys'] = item.unram(res[item.name], **kwargs)
         return res
 
-    def _make_fmt(self, splt=''):
+    def _make_fmt(self, splt=', '):
         l = []
         for key in self.keys:
             txt = "%s:{%s}" % (key.disp, key.name)
