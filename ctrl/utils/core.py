@@ -369,4 +369,4 @@ def inverse_eqn(eqn):
     'y = x/2'
     """
     e = sympify('-x + ' + eqn.replace('x', 'y'))
-    return str(solve(e, 'y')[0]).replace('x', '(x*1.)')
+    return str(solve(e, 'y')[0]).replace('x', 'float(x)')
