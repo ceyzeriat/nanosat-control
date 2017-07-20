@@ -49,9 +49,13 @@ class CCSDSTrousseauHKOBC(CCSDSTrousseau):
         return res
 
     def _make_fmt(self, splt=''):
-        self.fmt = splt.join(["%s:{%s} ({%s})" %\
-                                (key.disp, key.name, key.name+'_phys')\
-                                    for key in self.keys])
+        l = []
+        for key in self.keys:
+            txt = "%s:{%s}" % (key.disp, key.name)
+            if key.unram is not None:
+                txt += " ({%s})" % (key.name+'_phys')
+            l.append(txt)
+        self.fmt = splt.join(l)
 
 
 TROUSSEAUDICT = {0: CCSDSTrousseauHKOBC(L0HKSTRUCTPART1_KEYS),
