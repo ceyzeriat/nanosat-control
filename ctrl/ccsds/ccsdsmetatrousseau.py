@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-from . import ccsdsexception
+from . import ccsdsexception as exc
 
 
 __all__ = ['CCSDSMetaTrousseau']
@@ -62,7 +62,7 @@ class CCSDSMetaTrousseau(object):
         if key in self.TROUSSEAUDIC:
             return self.TROUSSEAUDIC[key].unpack(data)
         else:
-            raise ccsdsexception.InvalidMetaTrousseauKey(key)
+            raise exc.InvalidMetaTrousseauKey(key)
 
     def disp(self, vals, hds, hdx):
         """
@@ -77,7 +77,7 @@ class CCSDSMetaTrousseau(object):
         if key in self.TROUSSEAUDIC:
             return self.TROUSSEAUDIC[key].disp(vals)
         else:
-            raise ccsdsexception.InvalidMetaTrousseauKey(key)
+            raise exc.InvalidMetaTrousseauKey(key)
 
     def pack(self, allvalues, hds, hdx, **kwargs):
         """
@@ -95,4 +95,4 @@ class CCSDSMetaTrousseau(object):
         if key in self.TROUSSEAUDIC:
             return self.TROUSSEAUDIC[key].pack(allvalues, **kwargs)
         else:
-            raise ccsdsexception.InvalidMetaTrousseauKey(key)
+            raise exc.InvalidMetaTrousseauKey(key)

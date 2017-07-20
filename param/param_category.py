@@ -25,9 +25,6 @@
 ###############################################################################
 
 
-from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
-from ctrl.utils import bincore
-
 from . import param_category_obc as obc
 from . import param_category_pld as pld
 
@@ -36,7 +33,6 @@ from . import param_category_pld as pld
 # DICTIONNARY[payload_flag(int)][packet_category(int)]
 
 CATEGORIES = [obc.CATEGORIESOBC, pld.CATEGORIESPLD]
-
 
 ACKCATEGORIES = list(set(pld.ACKCATEGORIESPLD + obc.ACKCATEGORIESOBC))
 
@@ -48,6 +44,6 @@ TELECOMMANDIDMIRROR = obc.cmn.TELECOMMANDIDMIRROR
 HKOBC = obc.HKOBC
 
 # pldflag, catnum
-MANUALSQLCATS = [(0, RACKCAT), (0, FACKCAT), (0, EACKCAT), (0, HKOBC),
+MANUALSQLCATS = [(0, RACKCAT), (0, FACKCAT), (0, EACKCAT),
 				 (0, TELECOMMANDANSWERCAT), (1, FACKCAT), (1, EACKCAT),
 				 (1, TELECOMMANDANSWERCAT)]
