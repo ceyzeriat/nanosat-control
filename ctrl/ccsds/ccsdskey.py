@@ -54,7 +54,7 @@ TYP = { 'sint': 'intSign',
 class CCSDSKey(object):
     def __init__(self, name, start, l, dic=None, typ=None, fctfix=None,
                  disp=None, verbose="", fctunram=None, fctram=None,
-                 dic_force=None, hard_l=True, **kwargs):
+                 dic_force=None, hard_l=True, unit='', **kwargs):
         """
         CCSDS keys to perform value extraction from a sequence of bytes
         
@@ -86,10 +86,12 @@ class CCSDSKey(object):
           * hard_l (bool): if ``True``: pad the data up to the key length
             ``l``, else leave the data as it is and ``l`` represent the
             maximum length
+          * unit (str): the unit of the value, for display
 
         Kwargs are unused
         """
         self.name = str(name)
+        self.unit = str(unit)
         self.verbose = str(verbose)
         self.disp = self.name[:3] if disp is None else str(disp)
         self.hard_l = bool(hard_l)

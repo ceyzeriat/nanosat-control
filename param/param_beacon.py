@@ -50,7 +50,9 @@ class CCSDSTrousseauBEAC(CCSDSTrousseau):
         for key in self.keys:
             txt = "%s:{%s}" % (key.disp, key.name)
             if key.unram is not None:
-                txt += " ({%s})" % (key.name+'_phys')
+                txt += " ({%s}%s)" % (key.name+'_phys',
+                					  ' '+key.unit if key.unit is not None\
+                					  					else '')
             l.append(txt)
         self.fmt = splt.join(l)
 
