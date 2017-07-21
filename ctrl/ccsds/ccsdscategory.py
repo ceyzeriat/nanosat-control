@@ -139,6 +139,7 @@ class CCSDSCategory(object):
             return self.data_trousseau.keys
         elif hdx.get(self.data_trousseau.key) in\
                                     self._table_data_conv_name.keys():
-            return self.data_trousseau[hdx.get(self.data_trousseau.key)].keys
+            return self.data_trousseau.TROUSSEAUDIC[\
+                                        hdx.get(self.data_trousseau.key)].keys
         else:
             raise exc.InvalidMetaTrousseauKey(hdx.get(self.data_trousseau.key))
