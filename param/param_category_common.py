@@ -85,7 +85,8 @@ CATEGORIESCOMMON = {
            TELECOMMANDANSWERCAT: CCSDSCategory(name='tc answer',
                                                 number=TELECOMMANDANSWERCAT,
                                                 aux_trousseau=HEADAUX_TELECOMMANDANSWERCAT,
-                                                data_file='param_tc_answer')
+                                                data_file='param_tc_answer',
+                                                thatsTCANS=True)
                     }
 
 # (payload, category)

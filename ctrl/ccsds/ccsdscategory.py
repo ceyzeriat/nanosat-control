@@ -41,7 +41,7 @@ __all__ = ['CCSDSCategory']
 
 class CCSDSCategory(object):
     def __init__(self, name, number, aux_trousseau=None,
-                    data_file=None):
+                    data_file=None, thatsTCANS=False):
         """
         Defines a packet category
 
@@ -57,6 +57,7 @@ class CCSDSCategory(object):
         """
         # deal with name checking
         self.name = str(name)
+        self._thatsTCANS = bool(thatsTCANS)
         self.table_name = core.clean_name(self.name.replace(' ', '_')).lower()
         inf = inflect.engine()
         if inf.singular_noun(self.table_name) is False:
@@ -98,6 +99,9 @@ class CCSDSCategory(object):
                 else:  # if at least 1 conversion
                     self._table_data_conv_name =\
                         self._table_data_name + '_values'
+            elif self._thatsTCANS:  # TC ANS special case
+                self._table_data_name = "data_" + self.table_name
+                self._table_data_conv_name = None
             else:  # if metatrousseau
                 self._table_data_name = {}
                 self._table_data_conv_name = {}
@@ -113,7 +117,7 @@ class CCSDSCategory(object):
     def get_table_data_name(self, hdx, *args, **kwargs):
         if self._table_data_name is None:
             return None
-        elif not self.is_data_metatr:
+        elif not self.is_data_metatr or self._thatsTCANS:
             return self._table_data_name
         elif hdx.get(self.data_trousseau.key) in\
                                     self._table_data_name.keys():
