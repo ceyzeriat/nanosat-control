@@ -208,3 +208,4 @@ DEFAULTTIMEOUTCMD = 5  # sec
 
 # ending of dictionary keys for converted values
 SUFIXCONVERSION = '_cv'
+
