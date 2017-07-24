@@ -232,7 +232,7 @@ class Cm(object):
                     # transform into char if string
                     v = chr(v) * p.size
                 else:
-                    sz = p.size if p.size is not None else 5
+                    sz = p.size if isinstance(p.size, int) else 5
                     if sz > 1:
                         v = [v] * sz
                 v = repr(v)

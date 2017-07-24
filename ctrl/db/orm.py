@@ -358,7 +358,6 @@ def save_TM_to_DB(hd, hdx, data):
         DB.commit()
     # saving the data
     tblnm = cat.get_table_data_name(hdx=hdx)
-    trkeys = cat.get_trousseau_keys(hdx=hdx)
     if tblnm is not None:
         # if saving the data from TC answer
         if catnum == param_category.TELECOMMANDANSWERCAT:
@@ -368,6 +367,7 @@ def save_TM_to_DB(hd, hdx, data):
                                      value=repr(v)))
         # if dealing with list of dict, e.g. science or payload hk
         elif isinstance(data['unpacked'], (list, tuple)):
+            trkeys = cat.get_trousseau_keys(hdx=hdx)
             for item in data['unpacked']:
                 raw, conv = split_data_by_keys_conv(item, trkeys)
                 raw['telemetry_packet'] = TM.id
@@ -380,6 +380,7 @@ def save_TM_to_DB(hd, hdx, data):
                     DB.add(TABLES[tblnmcv](**conv))
         # standard case
         else:
+            trkeys = cat.get_trousseau_keys(hdx=hdx)
             raw, conv = split_data_by_keys_conv(data['unpacked'], trkeys)
             raw['telemetry_packet'] = TM.id
             DATA = TABLES[tblnm](**raw)

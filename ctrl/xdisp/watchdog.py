@@ -24,8 +24,10 @@
 #
 ###############################################################################
 
-
+import os
+os.environ.setdefault('ESCDELAY', '25')
 import curses
+import curses.panel
 import locale
 import time
 from threading import Thread
@@ -127,23 +129,31 @@ class Xdisp(object):
     def init(self, stdscr):
         self.stdscr = stdscr
         curses.curs_set(0)
+        self.stdscr.keypad(1)
         self.height, self.width = stdscr.getmaxyx()
         curses.start_color()
         curses.use_default_colors()
-        curses.echo()
+        #curses.echo()
         self._init_colors()
         self.bar = curses.newwin(1, self.width, 0, 0)
-        self.TC = newlinebox(MAXDISPLAYTC, self.width,
-                                2, 0, "Telecommands")
+        self.bar.keypad(True)
+        self.barpan = curses.panel.new_panel(self.bar)
+        self.TC, self.TCpan, self._TC, self._TCpan =\
+                            newlinebox(MAXDISPLAYTC, self.width,
+                                       2, 0, "Telecommands")
         self.TC.refresh()
-        self.TM = newlinebox(MAXDISPLAYTM, self.width,
-                                MAXDISPLAYTC+3, 0, "Telemetries")
+        self.TM, self.TMpan, self._TM, self._TMpan =\
+                            newlinebox(MAXDISPLAYTM, self.width,
+                                       MAXDISPLAYTC+3, 0, "Telemetries")
         self.TM.refresh()
-        self.RP = newlinebox(MAXDISPLAYRP, self.width,
-                                MAXDISPLAYTM+MAXDISPLAYTC+4, 0, "Reporting")
+        self.RP, self.RPpan, self._RP, self._RPpan =\
+                            newlinebox(MAXDISPLAYRP, self.width,
+                                       MAXDISPLAYTM+MAXDISPLAYTC+4, 0, "Reporting")
         self.RP.refresh()
-        time.sleep(0.1)  # give it a bit of air
+        self.updpan()
+        time.sleep(0.2)  # give it a bit of air
         self.running = True
+        #self.bar.erase()
         self._disp(self.bar, PrintOut(' '*(self.width-1), (0, 0)))
         self.set_listenico(status=self.NOSTARTED)
         self.set_controlico(status=self.NOSTARTED)
@@ -156,6 +166,10 @@ class Xdisp(object):
         loopy.start()
         self._key_catch()
         return
+
+    def updpan(self):
+        curses.panel.update_panels()
+        self.stdscr.refresh()
 
     def _disp(self, win, txt):
         self.printbuff.append((win, txt))
@@ -194,7 +208,7 @@ class Xdisp(object):
         if not self.running:
             return
         self._disp(self.bar,
-                   PrintOut(core.now().strftime('%T'), (0, 0), opts=self.BLUE))
+                   PrintOut(core.now().strftime('%T'), (0, 0), opts=self.CYAN))
 
     def report(self, message):
         """
@@ -328,8 +342,10 @@ class Xdisp(object):
                             (0, 0), opts=self.WHITE, newline=True))
 
     def _init_colors(self):
-        for i in range(0, curses.COLORS):
+        for i in range(curses.COLORS):
             curses.init_pair(i + 1, i, -1)
+        for i in range(curses.COLORS):
+            curses.init_pair(i + curses.COLORS, i, 0)
         self.WHITE = curses.color_pair(0)
         self.BLACK = curses.color_pair(1)
         self.RED = curses.color_pair(2)
@@ -345,19 +361,41 @@ class Xdisp(object):
         self.OK = self.GREEN
         self.ERROR = self.RED
         self.WAIT = self.YELLOW
+        curses.init_pair(8, 7, 0)
+        self.WHITE_BG = curses.color_pair(8)
+        self.RED_BG = curses.color_pair(9)
+        self.GREEN_BG = curses.color_pair(10)
+        self.YELLOW_BG = curses.color_pair(11)
+        self.BLUE_BG = curses.color_pair(12)
+        self.PURPLE_BG = curses.color_pair(13)
+        self.CYAN_BG = curses.color_pair(14)
         
     def _key_catch(self):
+        self.poped = False
         while self.running:
             self.RP.move(0, 0)
             #self.RP.addstr(0, 0, ">")
             self.RP.clrtoeol()
-            s = Byt(self.RP.getstr())
-            self.report('got: {}'.format(s))
-            if str(s) == "q":
-                self.popup = curses.newwin(5, 60, 10, 3)
-                self.popup.bkgdset(' ', self.RED)
-                #self.popup = newlinebox(5, 60, 10, 3, "Preview")
-                self._disp(self.popup, PrintOut('hahaha', (0,0)))
+            inp = self.RP.getch()
+            #self.report('got: {}'.format(inp))
+            if inp == ord('q') and not self.poped:
+                self.poped = True
+                self.popup, self.popuppan, self._popup, self._popuppan =\
+                        newlinebox(5, 60, 10, 3, "Preview", opts=self.CYAN_BG)
+                self.popup.bkgd(" ", self.CYAN_BG)
+                #self.stdscr.wbkgd(self.popup, self.RED)
+                self.popuppan.top()
+                self._disp(self.popup, PrintOut('hahaha', (0,0), self.CYAN_BG))
+                self.updpan()
+            if inp == 27 and self.poped:
+                self.poped = False
+                #self.popuppan.bottom()
+                del self.popuppan
+                del self.popup
+                del self._popup
+                del self._popuppan
+                self.updpan()
+                #self.popup.bkgdset(' ', self.RED)
 
                 #self.running = False
             #self.RP.insertln()
@@ -371,25 +409,27 @@ def update_it(self):
             if item.newline:
                 win.move(item.line, 0)
                 win.insertln()
-            if item.opts is None:
-                win.addstr(item.line, item.col, item.text)
-            else:
-                win.addstr(item.line, item.col, item.text, item.opts)
+            win.addstr(item.line, item.col, item.text,
+                            0 if item.opts is None else item.opts)
             win.refresh()
             self.printbuff.pop(0)
+        curses.panel.update_panels();
         time.sleep(1./PRINTFREQ)
 
 
-def newlinebox(h, w, y, x, title=None, frame=False):
-    if not frame:
-        wb = curses.newwin(2, w, y-1, x)
-        wb.addstr(0, 0, e(HORLINE)*w)
-    else:
-        wb = curses.newwin(2, w, y-1, x)
+def newlinebox(h, w, y, x, title=None, line=True, opts=None):
+    wb = curses.newwin(2, w, y-1, x)
+    wb.keypad(True)
+    if line:
+        wb.addstr(0, 0, e(HORLINE)*w, 0 if opts is None else opts)
     if title is not None:
-        wb.addstr(0, 2, e(title))
+        wb.addstr(0, 2, e(title),  0 if opts is None else opts)
+    pn = curses.panel.new_panel(wb)
     wb.refresh()
-    return curses.newwin(h, w, y, x)
+    win = curses.newwin(h, w, y, x)
+    win.keypad(True)
+    panel = curses.panel.new_panel(win)
+    return win, panel, wb, pn
 
 
 def loop_time(self):
