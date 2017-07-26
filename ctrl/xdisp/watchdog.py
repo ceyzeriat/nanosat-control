@@ -226,13 +226,14 @@ class Xdisp(object):
             return
         self.disp(self.bar,
                    PrintOut(core.now().strftime('%T'), opts=self.CYAN))
-        ts = core.now().totimestamp()
+        """ts = core.now().totimestamp()
         if int(ts%3) == 0 and getattr(self, 'last_ts', 0) != ts//3:
             self.last_ts = ts//3
             DEL = PrintOut("{}: here is a new line mate".format(len(self.TClist)),
                            opts=self.RED, newline=True)
             self.TClist = [(DEL, {})] + self.TClist[:MAXSTORETC-1]
             self.disp(0, DEL)
+        """
 
     def report(self, message):
         """
