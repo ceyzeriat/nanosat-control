@@ -25,6 +25,9 @@
 ###############################################################################
 
 
+from byt import Byt
+
+
 from ..utils import core
 from ..utils import bincore
 from . import ccsdsexception
@@ -95,7 +98,7 @@ class CCSDSTrousseau(object):
             chunk = '0' * (self.size * 8)
             conv = 1
         else:
-            chunk = '\x00' * self.size
+            chunk = Byt('\x00' * self.size)
             conv = 8
         for item in self.keys:
             if item.name not in values.keys() and item.dic_force is None:

@@ -104,17 +104,17 @@ FUNERRCODE = CCSDSKey(  name='fun_err_code',
                         disp="funErrCode")
 
 
-DATE = CCSDSKey( name='date',
+DATE = CCSDSKey(        name='date',
                         start=10*O,
-                        l=4*O,
+                        l=2*O,
                         typ='uint',
                         fctfix=Day,
                         verbose='Time tag field 1: number of days since reference',
                         disp="date")
 
-MSCOUNT = CCSDSKey( name='mscount',
+MSCOUNT = CCSDSKey(     name='mscount',
                         start=14*O,
-                        l=2*O,
+                        l=4*O,
                         typ='uint',
                         fctfix=Ms,
                         verbose='Time tag field 2: number of miliseconds since start of day',

@@ -303,7 +303,7 @@ class Xdisp(object):
     def add_TC(self, packet_id, infos):
         packet_id = int(packet_id)
         if packet_id in [item[param_ccsds.PACKETID.name]\
-                                    for (txt, item) in self.TClist]:
+                                for (txt, item) in self.TClist]:
             return
         if not self.running:
             return
