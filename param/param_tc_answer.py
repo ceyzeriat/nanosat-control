@@ -63,7 +63,21 @@ TROUSSEAUDIC = {1: CCSDSTrousseau([CCSDSKey(name='message', start=0*O, l=10*O, t
                 200: CCSDSTrousseau([CCSDSKey(name='version', start=0*O, l=255*O, typ='text', verbose='none', disp='version', hard_l=False)]),
                 246: CCSDSTrousseau([CCSDSKey(name='values', start=0*O, l=255*O, typ='hexstr', verbose='none', disp='values', hard_l=False)]),
                 248: CCSDSTrousseau([CCSDSKey(name='message', start=0*O, l=255*O, typ='hexstr', verbose='none', disp='msg', hard_l=False)]),
-                250: CCSDSTrousseau([CCSDSKey(name='flashBytes', start=0*O, l=255*O, typ='hexstr', verbose='none', disp='flashBytes', hard_l=False)])
+                250: CCSDSTrousseau([CCSDSKey(name='flashBytes', start=0*O, l=255*O, typ='hexstr', verbose='none', disp='flashBytes', hard_l=False)]),
+
+#L1 OBC
+                300: CCSDSTrousseau([CCSDSKey(name='messa', start=0*O, l=10*O, typ='byt', verbose='none', disp='message',)]),
+                305: CCSDSTrousseau([CCSDSKey(name='TimerProc', start=0*O, l=1*O,  typ='uint', verbose='Timer for data processing', disp='TimerProc',unit='s'),
+                                     CCSDSKey(name='TimerHk', start=1*O, l=1*O,  typ='uint', verbose='Timer for hkL1 retrieval', disp='TimerHk',unit='s'),
+                                     CCSDSKey(name='hkStandardPeriod', start=2*O, l=1*O,  typ='uint', verbose='Period of ADCS fetch of standard Hk', disp='standard',unit='ticks'),
+                                     CCSDSKey(name='hkActuatorPeriod', start=3*O, l=1*O,  typ='uint', verbose='Period of ADCS fetch of actuator Hk', disp='actuator',unit='ticks'),
+                                     CCSDSKey(name='hkSensorPeriod', start=4*O, l=1*O,  typ='uint', verbose='Period of ADCS fetch of sensor Hk', disp='sensor',unit='ticks'),
+                                     CCSDSKey(name='hkAttitudePeriod', start=5*O, l=1*O,  typ='uint', verbose='Period of ADCS fetch of attitude Hk', disp='attitude',unit='ticks'),
+                                     CCSDSKey(name='hkL1OBCPeriod', start=6*O, l=1*O,  typ='uint', verbose='Period of fetch of L1 Hk', disp='l1Hk',unit='ticks')]),
+                307: CCSDSTrousseau([CCSDSKey(name='sstateProc', start=0*O, l=1*O,  typ='uint', verbose='SubState for Data Processing', disp='sstateProc',),
+                                     CCSDSKey(name='sstatePldCom', start=1*O, l=1*O,  typ='uint', verbose='SubState for UART Payload Communication', disp='sstatePldCom',),
+                                     CCSDSKey(name='sstateDataMgm', start=2*O, l=1*O,  typ='uint', verbose='SubState for Data Management', disp='sstateDataMgm',),
+                                     CCSDSKey(name='sstateSdCard', start=3*O, l=1*O,  typ='uint', verbose='SubState for SD Card use', disp='sstateSdCard',)])
 }
 
 

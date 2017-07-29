@@ -34,10 +34,10 @@ PIDREGISTRATION_OBC_L0 = {  'L0ComManager': 0,
                             'AdcsManager': 9}
 
 PIDREGISTRATION_OBC_L1 = {  'L1ComManager': 0,
-                            'L1EventManager': 1,
-                            'L1AdcsManager': 2,
-                            'ModeManager': 3,
-                            'EventManager': 4}
+                            'L1DataManager': 1,
+                            'L1HkManager': 2,
+                            'L1PayloadManager': 3,
+                            'L1ProcessManager': 4}
 
 PIDREGISTRATION_PLD = {     'Bootloader': 0,
                             'BoardDirector': 1,
