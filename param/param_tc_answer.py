@@ -68,7 +68,7 @@ TROUSSEAUDIC = {1: CCSDSTrousseau([CCSDSKey(name='message', start=0*O, l=10*O, t
 #L1 OBC
                 300: CCSDSTrousseau([CCSDSKey(name='messa', start=0*O, l=10*O, typ='byt', verbose='none', disp='message',)]),
                 305: CCSDSTrousseau([CCSDSKey(name='TimerProc', start=0*O, l=1*O,  typ='uint', verbose='Timer for data processing', disp='TimerProc',unit='s'),
-                                     CCSDSKey(name='TimerHk', start=1*O, l=1*O,  typ='uint', verbose='Timer for hkL1 retrieval', disp='TimerHk',unit='s'),
+                                     CCSDSKey(name='TimerL1Hk', start=1*O, l=1*O,  typ='uint', verbose='Timer for hkL1 retrieval', disp='TimerHk',unit='s'),
                                      CCSDSKey(name='hkStandardPeriod', start=2*O, l=1*O,  typ='uint', verbose='Period of ADCS fetch of standard Hk', disp='standard',unit='ticks'),
                                      CCSDSKey(name='hkActuatorPeriod', start=3*O, l=1*O,  typ='uint', verbose='Period of ADCS fetch of actuator Hk', disp='actuator',unit='ticks'),
                                      CCSDSKey(name='hkSensorPeriod', start=4*O, l=1*O,  typ='uint', verbose='Period of ADCS fetch of sensor Hk', disp='sensor',unit='ticks'),
