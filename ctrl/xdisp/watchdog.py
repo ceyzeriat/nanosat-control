@@ -354,7 +354,7 @@ class Xdisp(object):
                                    pkid=str(packet_id),
                                    cat=str(cat.name),
                                    catnum=str(catnum),
-                                   sz=str(infos['sz'])),
+                                   sz=str(infos['_sz_blobish'])),
                       opts=self.WHITE, newline=True)
         self.TMlist = [(TM, infos)] + self.TMlist[:MAXSTORETM-1]
         self.disp(1, TM)
