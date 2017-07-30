@@ -26,7 +26,7 @@
 
 if __name__ == "__main__":
     
-    from ctrl.utils import core
+    from nanoctrl.utils import core
     from segsol import watching
 
     core.prepare_terminal('Watch')

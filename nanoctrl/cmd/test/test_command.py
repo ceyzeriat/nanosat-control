@@ -27,8 +27,8 @@
 
 from byt import Byt
 from nose.tools import raises
-from ctrl.cmd.cm import Cm
-from ctrl.cmd import cmdexception
+from nanoctrl.cmd.cm import Cm
+from nanoctrl.cmd import cmdexception
 import copy
 from param.param_commands import RANGESEPARATOR
 

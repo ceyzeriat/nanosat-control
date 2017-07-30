@@ -202,7 +202,7 @@ if [ "$doserver" ==  1  ];then
 
 
     echo "Compiling hmac library"
-    cd $WHERESEGSOL/ctrl/utils/hmac/
+    cd $WHERESEGSOL/nanoctrl/utils/hmac/
     gcc -shared -o hmaclib.so -fPIC L0AppHmac.c L0AppSha256.c
     
 

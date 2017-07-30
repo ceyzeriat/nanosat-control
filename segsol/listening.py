@@ -31,13 +31,13 @@ import glob
 import hein
 from byt import Byt
 from threading import Thread
-from ctrl.utils.report import REPORTS
-from ctrl.utils import core
+from nanoctrl.utils.report import REPORTS
+from nanoctrl.utils import core
 from param import param_all
-from ctrl.utils import ctrlexception
-from ctrl.rfcheckoutbox import RFCheckoutbox
-from ctrl.serialusb import SerialUSB
-from ctrl.tncrfbox import TNCRFBox
+from nanoctrl.utils import ctrlexception
+from nanoctrl.rfcheckoutbox import RFCheckoutbox
+from nanoctrl.serialusb import SerialUSB
+from nanoctrl.tncrfbox import TNCRFBox
 
 
 __all__ = ['process_data', 'init', 'close', 'report', 'theloop']

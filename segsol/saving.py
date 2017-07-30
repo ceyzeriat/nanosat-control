@@ -30,13 +30,13 @@ import os
 import hein
 import paramiko
 from byt import Byt
-from ctrl.utils import core
+from nanoctrl.utils import core
 from param import param_all
-from ctrl.utils import ctrlexception
-from ctrl.utils.report import REPORTS
-from ctrl.telemetry import Telemetry
-from ctrl.ccsds import CCSDSBlob
-from ctrl.kiss import Framer
+from nanoctrl.utils import ctrlexception
+from nanoctrl.utils.report import REPORTS
+from nanoctrl.telemetry import Telemetry
+from nanoctrl.ccsds import CCSDSBlob
+from nanoctrl.kiss import Framer
 from param import param_all
 
 

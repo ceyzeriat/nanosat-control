@@ -29,15 +29,15 @@ import time
 import hein
 from byt import Byt
 from multiprocessing import Manager
-from ctrl.utils import core
-from ctrl.utils import ctrlexception
-from ctrl.utils.report import REPORTS, EXTRADISPKEY
-from ctrl.ccsds import CCSDSBlob
-from ctrl.kiss import Framer
-from ctrl.ccsds import TMUnPacker
-from ctrl.ccsds import TCUnPacker
-from ctrl.ccsds import param_ccsds
-from ctrl import db
+from nanoctrl.utils import core
+from nanoctrl.utils import ctrlexception
+from nanoctrl.utils.report import REPORTS, EXTRADISPKEY
+from nanoctrl.ccsds import CCSDSBlob
+from nanoctrl.kiss import Framer
+from nanoctrl.ccsds import TMUnPacker
+from nanoctrl.ccsds import TCUnPacker
+from nanoctrl.ccsds import param_ccsds
+from nanoctrl import db
 from param import param_all
 from param import param_category
 from param import param_category_common

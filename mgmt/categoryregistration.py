@@ -26,8 +26,8 @@
 
 
 from param import param_category
-from ctrl.utils import core
-from ctrl.ccsds import CCSDSTrousseau
+from nanoctrl.utils import core
+from nanoctrl.ccsds import CCSDSTrousseau
 
 from . import mgmtexception
 

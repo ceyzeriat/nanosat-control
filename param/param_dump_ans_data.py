@@ -26,10 +26,10 @@
 
 
 from byt import Byt
-from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
-from ctrl.utils import bincore
-from ctrl.utils import b
-from ctrl.utils import O
+from nanoctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from nanoctrl.utils import bincore
+from nanoctrl.utils import b
+from nanoctrl.utils import O
 
 
 __all__ = ['TROUSSEAU']

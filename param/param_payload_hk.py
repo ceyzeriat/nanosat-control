@@ -26,11 +26,11 @@
 
 
 import math
-from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
-from ctrl.ccsds import ccsdsexception
-from ctrl.utils import bincore
-from ctrl.utils import b
-from ctrl.utils import O
+from nanoctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from nanoctrl.ccsds import ccsdsexception
+from nanoctrl.utils import bincore
+from nanoctrl.utils import b
+from nanoctrl.utils import O
 
 
 __all__ = ['TROUSSEAU']

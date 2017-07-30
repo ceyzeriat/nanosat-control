@@ -28,11 +28,11 @@
 import hein
 import param
 from param import param_all
-from ctrl.kiss import Framer
-from ctrl.ccsds import TCUnPacker
-from ctrl.ccsds import param_ccsds
-from ctrl.xdisp import watchdog as wt
-from ctrl.utils.report import REPORTS
+from nanoctrl.kiss import Framer
+from nanoctrl.ccsds import TCUnPacker
+from nanoctrl.ccsds import param_ccsds
+from nanoctrl.xdisp import watchdog as wt
+from nanoctrl.utils.report import REPORTS
 
 
 __all__ = ['init', 'close']

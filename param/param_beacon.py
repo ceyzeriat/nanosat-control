@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from nanoctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 
 from .generated.l0beaconstruct import L0BEACONSTRUCT_KEYS
 from byt import Byt

@@ -27,7 +27,7 @@
 if __name__ == "__main__":
     
     from threading import Thread
-    from ctrl.utils import core
+    from nanoctrl.utils import core
     from segsol import listening
     from param import param_all
 

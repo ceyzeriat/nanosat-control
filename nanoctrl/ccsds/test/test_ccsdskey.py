@@ -27,10 +27,10 @@
 
 from byt import Byt
 from nose.tools import raises
-from ctrl.ccsds.ccsdskey import CCSDSKey
-from ctrl.ccsds import ccsdsexception
-from ctrl.utils import bincore
-from ctrl.utils.unit import b, O
+from nanoctrl.ccsds.ccsdskey import CCSDSKey
+from nanoctrl.ccsds import ccsdsexception
+from nanoctrl.utils import bincore
+from nanoctrl.utils.unit import b, O
 
 
 def test_ccsdskey_dic_base():

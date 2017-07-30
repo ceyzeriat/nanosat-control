@@ -25,8 +25,8 @@
 ###############################################################################
 
 
-from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
-from ctrl.ccsds.ccsdsmetatrousseau import CCSDSMetaTrousseau
+from nanoctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from nanoctrl.ccsds.ccsdsmetatrousseau import CCSDSMetaTrousseau
 
 from .generated.l0hkstructpart1 import L0HKSTRUCTPART1_KEYS
 from .generated.l0hkstructpart2 import L0HKSTRUCTPART2_KEYS

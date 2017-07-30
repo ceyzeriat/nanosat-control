@@ -27,8 +27,8 @@
 
 from byt import Byt
 from nose.tools import raises
-from ctrl.cmd.pformat import PFormat
-from ctrl.cmd import cmdexception
+from nanoctrl.cmd.pformat import PFormat
+from nanoctrl.cmd import cmdexception
 
 
 def test_pformat_parse():

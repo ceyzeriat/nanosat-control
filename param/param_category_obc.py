@@ -25,14 +25,14 @@
 ###############################################################################
 
 
-from ctrl.utils import bincore
-from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
-from ctrl.ccsds.ccsdskey import CCSDSKey
-from ctrl.ccsds.ccsdscategory import CCSDSCategory
-from ctrl.utils import b
-from ctrl.utils import O
-from ctrl.utils.day import Day
-from ctrl.utils.ms import Ms
+from nanoctrl.utils import bincore
+from nanoctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from nanoctrl.ccsds.ccsdskey import CCSDSKey
+from nanoctrl.ccsds.ccsdscategory import CCSDSCategory
+from nanoctrl.utils import b
+from nanoctrl.utils import O
+from nanoctrl.utils.day import Day
+from nanoctrl.utils.ms import Ms
 
 
 from . import param_category_common as cmn

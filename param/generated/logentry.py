@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 
-from ctrl.utils import bincore
-from ctrl.utils import b
-from ctrl.utils import O
+from nanoctrl.utils import bincore
+from nanoctrl.utils import b
+from nanoctrl.utils import O
 
 
 LOGENTRY_KEYS = [

@@ -28,12 +28,12 @@
 import hein
 import sys
 from byt import Byt
-from ctrl.utils import core
-from ctrl.utils.report import REPORTS, EXTRADISPKEY
-from ctrl.utils import PIDWatchDog
-from ctrl.ccsds import TMUnPacker
-from ctrl.ccsds import param_ccsds
-from ctrl.kiss import Framer
+from nanoctrl.utils import core
+from nanoctrl.utils.report import REPORTS, EXTRADISPKEY
+from nanoctrl.utils import PIDWatchDog
+from nanoctrl.ccsds import TMUnPacker
+from nanoctrl.ccsds import param_ccsds
+from nanoctrl.kiss import Framer
 import param
 from param import param_category
 from param import param_all

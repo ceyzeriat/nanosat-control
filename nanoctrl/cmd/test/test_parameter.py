@@ -27,10 +27,10 @@
 
 from byt import Byt
 from nose.tools import raises
-from ctrl.cmd.parameter import Parameter
-from ctrl.cmd import cmdexception
+from nanoctrl.cmd.parameter import Parameter
+from nanoctrl.cmd import cmdexception
 from param.param_commands import RANGESEPARATOR
-from ctrl.utils import bincore
+from nanoctrl.utils import bincore
 
 
 def ftup(x, y):

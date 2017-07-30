@@ -27,9 +27,9 @@
 
 import os
 import hein
-from ctrl.utils import core
+from nanoctrl.utils import core
 from param import param_all
-from ctrl.utils import ctrlexception
+from nanoctrl.utils import ctrlexception
 
 __all__ = ['process_data', 'init', 'close']
 
