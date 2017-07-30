@@ -106,15 +106,15 @@ FUNERRCODE = CCSDSKey(  name='fun_err_code',
 
 DATE = CCSDSKey( name='date',
                         start=10*O,
-                        l=4*O,
+                        l=2*O,
                         typ='uint',
                         fctfix=Day,
                         verbose='Time tag field 1: number of days since reference',
                         disp="date")
 
 MSCOUNT = CCSDSKey( name='mscount',
-                        start=14*O,
-                        l=2*O,
+                        start=12*O,
+                        l=4*O,
                         typ='uint',
                         fctfix=Ms,
                         verbose='Time tag field 2: number of miliseconds since start of day',
@@ -144,7 +144,8 @@ HEADAUX_3 = CCSDSTrousseau([LOGCOUNTER, FILECRCCODE, LINECODE,
 HEADAUX_HKOBC = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, PARTSELECT])  # HK
 HEADAUX_5 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, STARTADDRESS, BYTESNUMBER])  # dump answer data
 HEADAUX_6 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, NSEGS])  # patch list segments
-
+# tc answer
+HEADAUX_TELECOMMANDANSWERCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR])
 
 # acknowledgement of reception
 RACKCAT = 0
@@ -188,7 +189,13 @@ CATEGORIESOBC = {
                6: CCSDSCategory(name='patch list segment',
                                 number=6,
                                 aux_trousseau=HEADAUX_6,
-                                data_file='param_patch_list_segs')
+                                data_file='param_patch_list_segs'),
+
+
+               20: CCSDSCategory(name='list in scheduler',
+                                number=20,
+                                aux_trousseau=HEADAUX_TELECOMMANDANSWERCAT,
+                                data_file='param_l1Scheduler')
                 }
 
 
