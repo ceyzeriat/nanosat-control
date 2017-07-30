@@ -303,7 +303,7 @@ class Xdisp(object):
     def add_TC(self, packet_id, infos):
         packet_id = int(packet_id)
         if packet_id in [item[param_ccsds.PACKETID.name]\
-                                    for (txt, item) in self.TClist]:
+                                for (txt, item) in self.TClist]:
             return
         if not self.running:
             return
@@ -354,7 +354,7 @@ class Xdisp(object):
                                    pkid=str(packet_id),
                                    cat=str(cat.name),
                                    catnum=str(catnum),
-                                   sz=str(infos['sz'])),
+                                   sz=str(infos['_sz_blobish'])),
                       opts=self.WHITE, newline=True)
         self.TMlist = [(TM, infos)] + self.TMlist[:MAXSTORETM-1]
         self.disp(1, TM)

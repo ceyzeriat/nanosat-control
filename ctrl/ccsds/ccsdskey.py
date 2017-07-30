@@ -219,7 +219,7 @@ class CCSDSKey(object):
             if self.hard_l:
                 kwargs['pad'] = int(self.len)
                 if self.octets:
-                    kwargs['pad'] = kwargs['pad']//8
+                    kwargs['pad'] //= 8
             res = self._fctpack(value, **kwargs)
         # we have octets but forcing to bin
         if self.octets and octets is False:
