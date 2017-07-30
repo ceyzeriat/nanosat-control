@@ -77,7 +77,12 @@ TROUSSEAUDIC = {1: CCSDSTrousseau([CCSDSKey(name='message', start=0*O, l=10*O, t
                 307: CCSDSTrousseau([CCSDSKey(name='sstateProc', start=0*O, l=1*O,  typ='uint', verbose='SubState for Data Processing', disp='sstateProc',),
                                      CCSDSKey(name='sstatePldCom', start=1*O, l=1*O,  typ='uint', verbose='SubState for UART Payload Communication', disp='sstatePldCom',),
                                      CCSDSKey(name='sstateDataMgm', start=2*O, l=1*O,  typ='uint', verbose='SubState for Data Management', disp='sstateDataMgm',),
-                                     CCSDSKey(name='sstateSdCard', start=3*O, l=1*O,  typ='uint', verbose='SubState for SD Card use', disp='sstateSdCard',)])
+                                     CCSDSKey(name='sstateSdCard', start=3*O, l=1*O,  typ='uint', verbose='SubState for SD Card use', disp='sstateSdCard',)]),
+                319: CCSDSTrousseau([CCSDSKey(name='mfnHkPld', start=0*O, l=4*O,  typ='uint', verbose='Number of files that will be stored on SD card', disp='HkPld',),
+                                     CCSDSKey(name='mfnLowFreq', start=4*O, l=4*O,  typ='uint', verbose='Number of files that will be stored on SD card', disp='LowFreq',),
+                                     CCSDSKey(name='mfnHighFreq', start=8*O, l=4*O,  typ='uint', verbose='Number of files that will be stored on SD card', disp='HighFreq',),
+                                     CCSDSKey(name='mfnTechno', start=12*O, l=4*O,  typ='uint', verbose='Number of files that will be stored on SD card', disp='Techno',),
+                                     CCSDSKey(name='mfnHkL1', start=16*O, l=4*O,  typ='uint', verbose='Number of files that will be stored on SD card', disp='HkL1',)])
 }
 
 

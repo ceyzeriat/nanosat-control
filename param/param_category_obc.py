@@ -191,6 +191,15 @@ CATEGORIESOBC = {
                                 aux_trousseau=HEADAUX_6,
                                 data_file='param_patch_list_segs'),
 
+               12: CCSDSCategory(name='list of files on sd card',
+                                number=12,
+                                aux_trousseau=HEADAUX_TELECOMMANDANSWERCAT,
+                                data_file='param_lsSdCard'),
+
+               13: CCSDSCategory(name='Data Counters of files in memory (SD card or Ram)',
+                                number=13,
+                                aux_trousseau=HEADAUX_TELECOMMANDANSWERCAT,
+                                data_file='param_dataCounters'),
 
                20: CCSDSCategory(name='list in scheduler',
                                 number=20,
