@@ -24,20 +24,35 @@
 #
 ###############################################################################
 
-if __name__ == "__main__":
-    
-    from threading import Thread
-    from nanoctrl.utils import core
-    from nanoapps import listening
-    from param import param_all
+
+import os
+from .param_all import *
 
 
-    core.prepare_terminal('Listen')
-    print("Initialization...")
-    listening.init(antenna=param_all.ANTENNALISTENED)
+# can't have KISS without AX25
+AX25ENCAPS = AX25ENCAPS or KISSENCAPS
 
-    print("Listening...")
+MAXPACKETID = 2**14
 
-    listenLoop = Thread(target=listening.theloop)
-    listenLoop.daemon = True
-    listenLoop.start()
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+HOME = os.path.expanduser("~")
+
+def concat_dir(*args):
+    """
+    Concatenates the path in ``args`` into a string-path
+    """
+    return os.path.join(*args)
+
+def home_dir(*args):
+    """
+    Concatenates the path in ``args`` into a string-path
+    """
+    return concat_dir(HOME, *args)
+
+def rel_dir(*args):
+    """
+    Concatenates the path in ``args`` into a relative
+    string-path from the package directory
+    """
+    return concat_dir(ROOT, *args)

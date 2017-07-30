@@ -3,8 +3,8 @@
 
 if __name__ == "__main__":
 
-    from ctrl.utils import core
-    from segsol import spying
+    from nanoctrl.utils import core
+    from nanoapps import spying
 
     dir_name = raw_input('Name of the directory where to save TM_DATA: ')
 

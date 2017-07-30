@@ -28,19 +28,19 @@ if __name__ == "__main__":
         
     import time
     from byt import Byt
-    from ctrl.utils import core
-    from ctrl.utils import bincore
-    from ctrl import c
-    from ctrl import c0
-    from ctrl import c1
-    from ctrl import co1
-    from ctrl import cp1
-    from ctrl import cadcs
-    from ctrl import db
-    from ctrl import Telemetry
-    from ctrl import Telecommand
-    from ctrl.utils.core import PosixUTC
-    from segsol import controlling
+    from nanoctrl.utils import core
+    from nanoctrl.utils import bincore
+    from nanoctrl import c
+    from nanoctrl import c0
+    from nanoctrl import c1
+    from nanoctrl import co1
+    from nanoctrl import cp1
+    from nanoctrl import cadcs
+    from nanoctrl import db
+    from nanoctrl import Telemetry
+    from nanoctrl import Telecommand
+    from nanoctrl.utils.core import PosixUTC
+    from nanoapps import controlling
     from param import param_all
 
 

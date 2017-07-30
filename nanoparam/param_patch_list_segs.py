@@ -24,20 +24,24 @@
 #
 ###############################################################################
 
-if __name__ == "__main__":
-    
-    from threading import Thread
-    from nanoctrl.utils import core
-    from nanoapps import listening
-    from param import param_all
+
+from byt import Byt
+from nanoctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from nanoctrl.utils import bincore
+from nanoctrl.utils import b
+from nanoctrl.utils import O
 
 
-    core.prepare_terminal('Listen')
-    print("Initialization...")
-    listening.init(antenna=param_all.ANTENNALISTENED)
+__all__ = ['TROUSSEAU']
 
-    print("Listening...")
 
-    listenLoop = Thread(target=listening.theloop)
-    listenLoop.daemon = True
-    listenLoop.start()
+# there should be only one key here
+KEYS = [dict(   name='seg_id',
+                start=0*O,
+                l=2*O,
+                typ='uint',
+                verbose="Segment ID currently received by the satellite",
+                disp='seg')]
+
+
+TROUSSEAU = CCSDSTrousseau(KEYS, listof=True)

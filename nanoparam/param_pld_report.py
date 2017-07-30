@@ -24,20 +24,38 @@
 #
 ###############################################################################
 
-if __name__ == "__main__":
-    
-    from threading import Thread
-    from nanoctrl.utils import core
-    from nanoapps import listening
-    from param import param_all
+
+from byt import Byt
+from nanoctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from nanoctrl.utils import bincore
+from nanoctrl.utils import b
+from nanoctrl.utils import O
 
 
-    core.prepare_terminal('Listen')
-    print("Initialization...")
-    listening.init(antenna=param_all.ANTENNALISTENED)
+__all__ = ['TROUSSEAU']
 
-    print("Listening...")
 
-    listenLoop = Thread(target=listening.theloop)
-    listenLoop.daemon = True
-    listenLoop.start()
+MAXLENGTHMESSAGE = 235  # octets
+
+
+KEYS = [dict(name='message', start=0*O, l=MAXLENGTHMESSAGE*O,
+                typ='byt', verbose="A report message (ascii string)",
+                disp='text', hard_l=False)]
+
+
+class PLDRepCCSDSTrousseau(CCSDSTrousseau):
+    def unpack(self, data, **kwargs):
+        """
+        Unpacks the data contained in the payload report
+
+        Args:
+        * data (byts): the chain of octets to unpack
+        """
+        return {self.keys[0].name: str(data[:MAXLENGTHMESSAGE])}
+
+    def pack(self, allvalues, **kwargs):
+        pass
+
+
+
+TROUSSEAU = PLDRepCCSDSTrousseau(KEYS)

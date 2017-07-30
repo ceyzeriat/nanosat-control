@@ -24,20 +24,39 @@
 #
 ###############################################################################
 
-if __name__ == "__main__":
-    
-    from threading import Thread
-    from nanoctrl.utils import core
-    from nanoapps import listening
-    from param import param_all
+
+from nanoctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+
+from .generated.l0beaconstruct import L0BEACONSTRUCT_KEYS
+from byt import Byt
 
 
-    core.prepare_terminal('Listen')
-    print("Initialization...")
-    listening.init(antenna=param_all.ANTENNALISTENED)
+__all__ = ['TROUSSEAU']
 
-    print("Listening...")
 
-    listenLoop = Thread(target=listening.theloop)
-    listenLoop.daemon = True
-    listenLoop.start()
+class CCSDSBeaconTrousseau(CCSDSTrousseau):
+    def unpack(self, data, **kwargs):
+        """
+        Unpacks the data contained in the execution acknowledgment
+
+        Args:
+        * data (byts): the chain of octets to unpack
+        """
+        # replace data
+        data = Byt(0) * self.size
+        return super(CCSDSBeaconTrousseau, self).unpack(data)
+
+    def disp(self, vals, **kwargs):
+        """
+        Display the trousseau values
+
+        Args:
+          * vals (dict): a dictionary containing the values to display
+        """
+        return "empty beacon"
+
+
+TROUSSEAU = CCSDSBeaconTrousseau(L0BEACONSTRUCT_KEYS)
+
+
+#TROUSSEAU = CCSDSTrousseau(L0BEACONSTRUCT_KEYS)

@@ -26,8 +26,8 @@
 
 if __name__ == "__main__":
     
-    from ctrl.utils import core
-    from segsol import watching
+    from nanoctrl.utils import core
+    from nanoapps import watching
 
     core.prepare_terminal('Watch')
     print("Initialization...")

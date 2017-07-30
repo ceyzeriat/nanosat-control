@@ -24,20 +24,19 @@
 #
 ###############################################################################
 
-if __name__ == "__main__":
-    
-    from threading import Thread
-    from nanoctrl.utils import core
-    from nanoapps import listening
-    from param import param_all
+
+from nanoctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from nanoctrl.ccsds.ccsdsmetatrousseau import CCSDSMetaTrousseau
+
+from .generated.l0hkstructpart1 import L0HKSTRUCTPART1_KEYS
+from .generated.l0hkstructpart2 import L0HKSTRUCTPART2_KEYS
 
 
-    core.prepare_terminal('Listen')
-    print("Initialization...")
-    listening.init(antenna=param_all.ANTENNALISTENED)
+__all__ = ['TROUSSEAU']
 
-    print("Listening...")
 
-    listenLoop = Thread(target=listening.theloop)
-    listenLoop.daemon = True
-    listenLoop.start()
+TROUSSEAUDICT = {1: CCSDSTrousseau(L0HKSTRUCTPART1_KEYS),
+                 2: CCSDSTrousseau(L0HKSTRUCTPART2_KEYS)}
+
+
+TROUSSEAU = CCSDSMetaTrousseau(TROUSSEAUDICT, key='hk_part')
