@@ -9,9 +9,9 @@ WHERESEGSOL="$DOCS/lib/$REPONAME"
 WHEREBDD="$DOCS/lib/bdd"
 WHERESCRIPTS="$DOCS/$SCRIPTNAME"
 WHEREBINS="$DOCS/bin"
-WHEREPARAM="$HOME/.segsol"
-WHEREDATA="$HOME/tm_data"
-WHEREPYENV="$HOME/pythonsegsol"
+WHEREPARAM="$HOME/.nanoctrl"
+WHEREDATA="$HOME/nanoctrl/tm_data"
+WHEREPYENV="$HOME/pynanoctrl"
 
 
 ######################################################
@@ -154,7 +154,7 @@ if [ "$doserver" ==  1  ];then
     # git user initialization
     if [ ! -f $HOME/.gitconfig ]; then
         echo "Git user initialization"
-        git config --global user.name "segsol"
+        git config --global user.name "nanoctrl"
         git config --global user.email "picsat.office@obspm.fr"
     fi
 
@@ -162,7 +162,7 @@ if [ "$doserver" ==  1  ];then
     echo "Update paths"
     echo '' >> $HOME/.bashrc
     echo '' >> $HOME/.bashrc
-    echo '# segsol append' >> $HOME/.bashrc
+    echo '# nanoctrl append' >> $HOME/.bashrc
     if [ "$prepend" == "Y" ] || [ "$prepend" == "y" ]; then
         echo "export PATH=$WHEREPYENV/venv/bin:"'$PATH' >> $HOME/.bashrc
     fi
@@ -334,7 +334,7 @@ if [ "$dodesk" ==  1  ];then
     echo 'Name=PicControl' >> PicControl.desktop
     echo 'Comment=' >> PicControl.desktop
     echo 'Exec='"$WHEREBINS"'/piccontrol gui' >> PicControl.desktop
-    echo 'Icon='"$WHERESEGSOL"'/img/control.gif' >> PicControl.desktop
+    echo 'Icon='"$WHERESEGSOL"'/img/control.ico' >> PicControl.desktop
     echo 'Path='"$HOME" >> PicControl.desktop
     echo 'Terminal=false' >> PicControl.desktop
     echo 'StartupNotify=false' >> PicControl.desktop
@@ -342,7 +342,7 @@ if [ "$dodesk" ==  1  ];then
     echo 'Name=PicListen' >> PicListen.desktop
     echo 'Comment=' >> PicListen.desktop
     echo 'Exec='"$WHEREBINS"'/piclisten gui' >> PicListen.desktop
-    echo 'Icon='"$WHERESEGSOL"'/img/listen.gif' >> PicListen.desktop
+    echo 'Icon='"$WHERESEGSOL"'/img/listen.ico' >> PicListen.desktop
     echo 'Path='"$HOME" >> PicListen.desktop
     echo 'Terminal=false' >> PicListen.desktop
     echo 'StartupNotify=false' >> PicListen.desktop
@@ -350,7 +350,7 @@ if [ "$dodesk" ==  1  ];then
     echo 'Name=PicSave' >> PicSave.desktop
     echo 'Comment=' >> PicSave.desktop
     echo 'Exec='"$WHEREBINS"'/picsave gui' >> PicSave.desktop
-    echo 'Icon='"$WHERESEGSOL"'/img/save.gif' >> PicSave.desktop
+    echo 'Icon='"$WHERESEGSOL"'/img/save.ico' >> PicSave.desktop
     echo 'Path='"$HOME" >> PicSave.desktop
     echo 'Terminal=false' >> PicSave.desktop
     echo 'StartupNotify=false' >> PicSave.desktop
@@ -358,7 +358,7 @@ if [ "$dodesk" ==  1  ];then
     echo 'Name=PicWatch' >> PicWatch.desktop
     echo 'Comment=' >> PicWatch.desktop
     echo 'Exec='"$WHEREBINS"'/picwatch gui' >> PicWatch.desktop
-    echo 'Icon='"$WHERESEGSOL"'/img/watch.gif' >> PicWatch.desktop
+    echo 'Icon='"$WHERESEGSOL"'/img/watch.ico' >> PicWatch.desktop
     echo 'Path='"$HOME" >> PicWatch.desktop
     echo 'Terminal=false' >> PicWatch.desktop
     echo 'StartupNotify=false' >> PicWatch.desktop
@@ -366,7 +366,7 @@ if [ "$dodesk" ==  1  ];then
     echo 'Name=PicShow' >> PicShow.desktop
     echo 'Comment=' >> PicShow.desktop
     echo 'Exec='"$WHEREBINS"'/picshow gui' >> PicShow.desktop
-    echo 'Icon='"$WHERESEGSOL"'/img/show.gif' >> PicShow.desktop
+    echo 'Icon='"$WHERESEGSOL"'/img/show.ico' >> PicShow.desktop
     echo 'Path='"$HOME" >> PicShow.desktop
     echo 'Terminal=false' >> PicShow.desktop
     echo 'StartupNotify=false' >> PicShow.desktop
@@ -374,7 +374,7 @@ if [ "$dodesk" ==  1  ];then
     echo 'Name=PicSpy' >> PicSpy.desktop
     echo 'Comment=' >> PicSpy.desktop
     echo 'Exec='"$WHEREBINS"'/picspy gui' >> PicSpy.desktop
-    echo 'Icon='"$WHERESEGSOL"'/img/spy.gif' >> PicSpy.desktop
+    echo 'Icon='"$WHERESEGSOL"'/img/spy.ico' >> PicSpy.desktop
     echo 'Path='"$HOME" >> PicSpy.desktop
     echo 'Terminal=false' >> PicSpy.desktop
     echo 'StartupNotify=false' >> PicSpy.desktop    
@@ -382,7 +382,7 @@ if [ "$dodesk" ==  1  ];then
     echo 'Name=PicChat' >> PicChat.desktop
     echo 'Comment=' >> PicChat.desktop
     echo 'Exec='"$WHEREBINS"'/picchat' >> PicChat.desktop
-    echo 'Icon='"$WHERESEGSOL"'/img/chat.gif' >> PicChat.desktop
+    echo 'Icon='"$WHERESEGSOL"'/img/chat.ico' >> PicChat.desktop
     echo 'Path='"$HOME" >> PicChat.desktop
     echo 'Terminal=false' >> PicChat.desktop
     echo 'StartupNotify=false' >> PicChat.desktop

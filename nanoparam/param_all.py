@@ -57,26 +57,26 @@ ENABLESHOW = True
 ANTENNALISTENED = 'tncrfbox'  # or 'checkoutbox' or 'serial' or 'tncrfbox'
 
 # the path to the file containing the packet id counter
-PACKETIDFILE = ['.segsol', 'tc_packet_id']
+PACKETIDFILE = ['.nanoctrl', 'tc_packet_id']
 
 # the path to the parameter file containing the DB connection settings
-DBFILE = ['.segsol', 'db_server']
-PASSTAGS = {'<pass>': ['.segsol', 'artichaut']}
+DBFILE = ['.nanoctrl', 'db_server']
+PASSTAGS = {'<pass>': ['.nanoctrl', 'artichaut']}
 
 
 # the log file
-LOGFILE = ['watch.log']
+LOGFILE = ['nanoctrl', 'watch.log']
 
 
 # the callsign files
-CSSOURCEFILE = ['.segsol', 'callsign_source']
-CSDESTFILE = ['.segsol', 'callsign_destination']
+CSSOURCEFILE = ['.nanoctrl', 'callsign_source']
+CSDESTFILE = ['.nanoctrl', 'callsign_destination']
 
 # who is the emitter
-EMITTERID = 1  # ['.segsol', 'radio_id']
+EMITTERID = 1  # ['.nanoctrl', 'radio_id']
 
 # who is the receiver
-RECEIVERID = 1  # ['.segsol', 'callsign_source']
+RECEIVERID = 1  # ['.nanoctrl', 'callsign_source']
 
 # day-reference from unix time
 DATETIME_REF = 0  #16801  # 2016,1,1,0,0,0
@@ -152,7 +152,7 @@ GPREDICTPORT = 4532
 
 
 # where the raw telemetry are dumped (locally), relative to HOME
-TELEMETRYDUMPFOLDER = ['tm_data']
+TELEMETRYDUMPFOLDER = ['nanoctrl', 'tm_data']
 # the format of the name for the raw telemetry dumps
 TELEMETRYNAMEFORMAT = 'TM_%Y%m%dT%H%M%S_%f.packet'
 
@@ -161,7 +161,7 @@ REMOVERAWFILEAFTERSAVE = True
 SAVERAWFILE = True
 TELEMETRYSAVESERVER = 'vmpicsat.obspm.fr'
 TELEMETRYSAVEUSER = 'picsatdata'
-TELEMETRYSAVEPASSFILE = ['.segsol', 'godsavesthequeen']
+TELEMETRYSAVEPASSFILE = ['.nanoctrl', 'godsavesthequeen']
 TELEMETRYSAVEFOLDER = '/volumes/hra/picsat/data/user_{user_id}/%Y%m%d'
 
 
@@ -201,7 +201,7 @@ SAVETC = True
 KEYLENGTH = 32  # in octets
 KEYLENGTHCCSDS = 16  # in octets
 # file of the key
-KEYFILE = ['.segsol', 'perefouras']
+KEYFILE = ['.nanoctrl', 'perefouras']
 USESIGGY = True
 KEYMASK = '1'*16+'0'*16  # mask of 1 and 0, 1 == takeit
 
