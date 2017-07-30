@@ -48,7 +48,7 @@ def home_dir(*args):
     """
     Concatenates the path in ``args`` into a string-path
     """
-    return os.path.join(HOME, *args)
+    return concat_dir(HOME, *args)
 
 def rel_dir(*args):
     """

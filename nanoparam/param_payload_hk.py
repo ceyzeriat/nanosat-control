@@ -27,7 +27,6 @@
 
 import math
 from nanoctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
-from nanoctrl.ccsds import ccsdsexception
 from nanoctrl.utils import bincore
 from nanoctrl.utils import b
 from nanoctrl.utils import O

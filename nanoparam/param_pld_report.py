@@ -27,6 +27,7 @@
 
 from byt import Byt
 from nanoctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from nanoctrl.utils import bincore
 from nanoctrl.utils import b
 from nanoctrl.utils import O
 

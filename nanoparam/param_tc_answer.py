@@ -36,7 +36,10 @@ from nanoctrl.utils import O
 __all__ = ['TROUSSEAU']
 
 
-TROUSSEAUDIC = {1: CCSDSTrousseau([CCSDSKey(name='message', start=0*O, l=10*O, typ='byt', verbose='none', disp='message',)]),
+TROUSSEAUDIC = {
+
+#L0 OBC
+                1: CCSDSTrousseau([CCSDSKey(name='message', start=0*O, l=10*O, typ='byt', verbose='none', disp='message',)]),
                 4: CCSDSTrousseau([CCSDSKey(name='time', start=0*O, l=4*O, typ='uint', verbose='none', disp='time',)]),
                 5: CCSDSTrousseau([CCSDSKey(name='time', start=0*O, l=4*O, typ='uint', verbose='none', disp='time',)]),
                 6: CCSDSTrousseau([CCSDSKey(name='count', start=0*O, l=2*O, typ='uint', verbose='none', disp='count',)]),
