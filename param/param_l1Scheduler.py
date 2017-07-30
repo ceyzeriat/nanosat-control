@@ -50,20 +50,20 @@ KEYS = [dict( name='telecommand_id_toexecute',
                             verbose="corresponding packet id count of the command to be executed",
                             disp="pkid"),
 
-        dict( name='date',
+        dict( name='date_ofexecution',
                         start=4*O,
                         l=2*O,
                         typ='uint',
 #                        fctfix=Day,
-                        verbose='planned date for execution',
+                        verbose='planned date of execution',
                         disp="date"),
 
-        dict( name='mscount',
+        dict( name='mscount_ofexecution',
                         start=6*O,
                         l=4*O,
                         typ='uint',
 #                        fctfix=Ms,
-                        verbose='planned ms for execution',
+                        verbose='planned ms of execution',
                         disp="ms")
 
         ]
