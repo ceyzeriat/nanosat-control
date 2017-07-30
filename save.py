@@ -29,7 +29,7 @@ if __name__ == "__main__":
     import time
     from nanoctrl.utils import core
     from nanoctrl import db
-    from segsol import saving
+    from nanoapps import saving
 
 
     core.prepare_terminal('Save')

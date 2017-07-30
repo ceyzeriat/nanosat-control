@@ -40,7 +40,7 @@ if __name__ == "__main__":
     from nanoctrl import Telemetry
     from nanoctrl import Telecommand
     from nanoctrl.utils.core import PosixUTC
-    from segsol import controlling
+    from nanoapps import controlling
     from param import param_all
 
 
