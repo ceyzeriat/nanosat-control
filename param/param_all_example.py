@@ -144,6 +144,8 @@ TNCPATHOLOGICCMDREPLACE = TNCPATHOLOGICCMD + TNCPATHOLOGICESC
 # Gpredict sniffing
 GPREDICTPORT = 4532
 
+# max TC len that can be sent over radio
+MAXTCLEN = 235
 
 
 # where the raw telemetry are dumped (locally), relative to HOME
