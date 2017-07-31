@@ -266,6 +266,13 @@ class NoSuchTC(CTRLException):
                        .format(pkid, dbid)
 
 
+class TCTooLong(CTRLException):
+    """
+    If TC is too long
+    """
+    def __init__(self, l, *args, **kwargs):
+        self._init(l, *args, **kwargs)
+        self.message = "TC of len '{}' is too long".format(l)
 
 # not used
 class NoSuchKey(CTRLException):
