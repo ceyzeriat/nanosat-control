@@ -76,6 +76,8 @@ class ListenRec(hein.SocReceiver):
             return
         elif key == 'raw':
             report('sendingTC')
+            if len(data) > param_all.MAXTCLEN:
+                raise ctrlexception.TCTooLong(len(data))
             ANTENNA.write(data)
             now = core.now()
             # this report is caught by control, which updates the
