@@ -28,35 +28,9 @@
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 
 from .generated.l0beaconstruct import L0BEACONSTRUCT_KEYS
-from byt import Byt
 
 
 __all__ = ['TROUSSEAU']
 
 
-class CCSDSBeaconTrousseau(CCSDSTrousseau):
-    def unpack(self, data, **kwargs):
-        """
-        Unpacks the data contained in the execution acknowledgment
-
-        Args:
-        * data (byts): the chain of octets to unpack
-        """
-        # replace data
-        data = Byt(0) * self.size
-        return super(CCSDSBeaconTrousseau, self).unpack(data)
-
-    def disp(self, vals, **kwargs):
-        """
-        Display the trousseau values
-
-        Args:
-          * vals (dict): a dictionary containing the values to display
-        """
-        return "empty beacon"
-
-
-TROUSSEAU = CCSDSBeaconTrousseau(L0BEACONSTRUCT_KEYS)
-
-
-#TROUSSEAU = CCSDSTrousseau(L0BEACONSTRUCT_KEYS)
+TROUSSEAU = CCSDSTrousseau(L0BEACONSTRUCT_KEYS)
