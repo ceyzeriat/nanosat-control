@@ -272,7 +272,8 @@ class TCTooLong(CTRLException):
     """
     def __init__(self, l, *args, **kwargs):
         self._init(l, *args, **kwargs)
-        self.message = "TC of len '{}' is too long".format(l)
+        self.message = "TC is too long of '{}' octets".format(l)
+
 
 # not used
 class NoSuchKey(CTRLException):
