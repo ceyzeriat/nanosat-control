@@ -63,6 +63,8 @@ class RFCheckoutbox(object):
         if data is not None:
             data = Byt(data)
             if len(data) > 0:
+                data = data.replace(param_all.TNCPATHOLOGICCMD,
+                                    param_all.TNCPATHOLOGICCMDREPLACE)
                 self.port.sendall(data)
 
     def close(self):
