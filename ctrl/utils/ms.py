@@ -32,17 +32,16 @@ __all__ = ['Ms']
 
 
 class Ms(int):
-    def __new__(cls, v): 
-        return int(min(86399999, max(0, v)))
-
-    def __init__(self, v):
-        super(int, self).__init__()
-        self._hour = self // 3600000
-        self._min = (self % 3600000) // 60000
-        self._sec = (self % 60000) // 1000
-        self._msec = self % 1000
-        self._time = datetime.time(self._hour, self._min, self._sec,
-                                   self._sec*1000)
+    def __new__(cls, v):
+        v = int(min(86399999, max(0, v)))
+        ans = super(Ms, cls).__new__(cls, v) 
+        ans._hour = ans // 3600000
+        ans._min = (ans % 3600000) // 60000
+        ans._sec = (ans % 60000) // 1000
+        ans._msec = ans % 1000
+        ans._time = datetime.time(ans._hour, ans._min, ans._sec,
+                                   ans._sec*1000)
+        return ans
 
     def strf(self, fmt='%H:%M:%S'):
         """
