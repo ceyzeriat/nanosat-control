@@ -29,45 +29,41 @@ from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.ccsds.ccsdskey import CCSDSKey
 from ctrl.ccsds.ccsdscategory import CCSDSCategory
 from ctrl.utils import bincore
+from ctrl.utils import b
+from ctrl.utils import O
 
 
 __all__ = []
 
 
 TELECOMMANDIDMIRROR = CCSDSKey( name='telecommand_id_mirror',
-                                start=0,
-                                l=16,
-                                fctunpack=bincore.bin2int,
-                                fctpack=bincore.int2bin,
+                                start=0*O,
+                                l=2*O,
+                                typ='uint',
                                 verbose="telecommand id of the corresponding tc command being ackowledged or answered",
                                 disp="tcid")
 
-PACKETIDMIRROR = CCSDSKey(  name='packet_id_mirror',
-                            start=16,
-                            l=16,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
-                            verbose="corresponding packet id count of the command being ackowledged or answered",
-                            disp="pkid")
+PACKETIDMIRROR = CCSDSKey(      name='packet_id_mirror',
+                                start=2*O,
+                                l=2*O,
+                                typ='uint',
+                                verbose="corresponding packet id count of the command being ackowledged or answered",
+                                disp="pkid")
 
-ERRORCODE = CCSDSKey(       name='error_code',
-                            start=32,
-                            l=16,
-                            fctunpack=bincore.bin2intSign,
-                            fctpack=bincore.intSign2bin,
-                            verbose="error code: 0 if successful, else error codes",
-                            disp="errcode")
+ERRORCODE = CCSDSKey(           name='error_code',
+                                start=4*O,
+                                l=2*O,
+                                typ='sint',
+                                verbose="error code: 0 if successful, else error codes",
+                                disp="errcode")
 
 
 # exec ack
-HEADAUX_EACKCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
-                                octets=False)
+HEADAUX_EACKCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE])
 # fmt ack
-HEADAUX_FACKCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE],
-                                octets=False)
+HEADAUX_FACKCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, ERRORCODE])
 # tc answer
-HEADAUX_TELECOMMANDANSWERCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR],
-                                octets=False)
+HEADAUX_TELECOMMANDANSWERCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR])
 
 
 EACKCAT = 31
@@ -89,7 +85,8 @@ CATEGORIESCOMMON = {
            TELECOMMANDANSWERCAT: CCSDSCategory(name='tc answer',
                                                 number=TELECOMMANDANSWERCAT,
                                                 aux_trousseau=HEADAUX_TELECOMMANDANSWERCAT,
-                                                data_file='param_tc_answer')
+                                                data_file='param_tc_answer',
+                                                thatsTCANS=True)
                     }
 
 # (payload, category)

@@ -53,7 +53,7 @@ class CCSDSPacker(object):
                         else 'telecommand'
 
     def pack(self, pid, TCdata=Byt(), TCid='', pktCat=None, retvalues=True,
-                retdbvalues=True, withPacketID=True, **kwargs):
+                withPacketID=True, **kwargs):
         """
         Creates a packet, returns the packet string and optionally
         the dictionnaries of primary/secondary and auxiliary headers
@@ -65,8 +65,6 @@ class CCSDSPacker(object):
           * TCid (int): only for TC-mode, the id of the telecommand
           * pktCat (int): only for TM-mode, the packet category
           * retvalues (bool): if ``True``, returns the encoded values
-          * retdbvalues (bool): if ``True``, returns the encoded values
-            in a format directly compatible with the database
           * withPacketID (bool): set to ``False`` to deactivate the
             packet id determination
 
@@ -124,11 +122,9 @@ class CCSDSPacker(object):
             at = None
         # header prim
         retprim = self.pack_primHeader(values=hd, datalen=len(TCdata),
-                                        retvalues=True,
-                                        retdbvalues=retdbvalues, at=at)
+                                        retvalues=True, at=at)
         # header sec
-        retsec = self.pack_secHeader(values=hd, retvalues=True,
-                                        retdbvalues=retdbvalues)
+        retsec = self.pack_secHeader(values=hd, retvalues=True)
         # make header return values
         hds = {}
         # if TC, add the time_delay parameter
@@ -142,16 +138,14 @@ class CCSDSPacker(object):
         # header aux
         retaux = self.pack_auxHeader(values=kwargs,
                             pldFlag=hds[param_ccsds.PAYLOADFLAG.name],
-                            pktCat=pktCat, retvalues=True,
-                            retdbvalues=retdbvalues)
+                            pktCat=pktCat, retvalues=True)
         maybeAux = retaux[0]
         hdx.update(retaux[1])
         # only if telemetry
         if self.mode == 'telemetry':
             # data
             retdata = self.pack_data(values=kwargs, header=hds,
-                                        retvalues=True,
-                                        retdbvalues=retdbvalues)
+                                        retvalues=True)
             data = retdata[0]
             retd.update(retdata[1])
             retprim = self.increment_data_length(
@@ -163,13 +157,12 @@ class CCSDSPacker(object):
             # append timestamp before data
             if at is not None:
                 msstamp, daystamp = core.time2stamps(at)
-
-                bits = param_ccsds.MSECSINCEREF_TELEMETRY.pack(daystamp)\
-                        + param_ccsds.DAYSINCEREF_TELEMETRY.pack(msstamp)
-                padLen = len(bits) // 8
-                TCdata = bincore.bin2hex(bits, pad=padLen) + TCdata
+                TS = param_ccsds.EXTRATS_TELECOMMAND.pack(
+                        {param_ccsds.MSECSINCEREF_TELEMETRY.name: msstamp,
+                         param_ccsds.DAYSINCEREF_TELEMETRY.name: daystamp})[0]
+                TCdata = TS + TCdata
                 retprim = self.increment_data_length(
-                                        datalen=padLen,
+                                        datalen=len(TS),
                                         primaryHDpacket=retprim[0],
                                         primaryHDdict=retprim[1])
                 hds.update(retprim[1])
@@ -189,18 +182,20 @@ class CCSDSPacker(object):
         # apply mask
         siggy = Byt([s for idx, s in enumerate(siggy.ints())\
                         if core.KEYMASK[idx] == '1'])
-        # fuck indians
+        # fuck endians
         if bincore.TWINKLETWINKLELITTLEINDIA:
             siggy = siggy[::-1]
         # grab the bounds of the siggy location, to chunk it into the packet
         startSiggy = param_ccsds.HEADER_P_KEYS.size +\
                                 param_ccsds.SIGNATURE.start//8
         # return concatenated turd
-        return fullPacket[:startSiggy] + siggy +\
-                fullPacket[startSiggy + param_ccsds.SIGNATURE.len//8:]
+        return core.setstr(fullPacket,
+                           slice(startSiggy,
+                                 startSiggy + param_ccsds.SIGNATURE.len//8),
+                           siggy)
 
     def pack_primHeader(self, values, datalen=0, retvalues=False,
-                        retdbvalues=True, withPacketID=True, at=None):
+                        withPacketID=True, at=None):
         """
         Encodes the values into a CCSDS primary header, returns hex
         string and encoded values
@@ -211,22 +206,20 @@ class CCSDSPacker(object):
             can be be 'manually' updated using ``increment_data_length``
             method
           * retvalues (bool): if ``True``, returns the encoded values
-          * retdbvalues (bool): if ``True``, returns the encoded values
-            in a format directly compatible with the database
           * withPacketID (bool): set to ``False`` to deactivate the
             packet id determination
           * at (datetime or timetuple): the time at which the TC shall be
             executed. Leave empty for immediate execution.
         """
         # Preparation of the content of values dictionary
-        values[param_ccsds.PACKETTYPE.name] = self.mode
         # CCSDS length has a modifier versus real packet length
         values[param_ccsds.DATALENGTH.name] = param_ccsds.LENGTHMODIFIER
         if self.mode == 'telecommand':
+            values[param_ccsds.PACKETTYPE.name] = param_ccsds.TELECOMMANDTYPEID
             values[param_ccsds.DATALENGTH.name] +=\
                 param_ccsds.HEADER_S_KEYS_TELECOMMAND.size
-            # force packet category to 0 if no at, else 1
-            if at is None or at is False:
+            # force packet category to 0 if no 'at', else 1
+            if at in [None, False]:
                 values[param_ccsds.PACKETCATEGORY.name] = '0'
             else:
                 values[param_ccsds.PACKETCATEGORY.name] = '1'
@@ -237,6 +230,7 @@ class CCSDSPacker(object):
             else:
                 values[param_ccsds.PACKETID.name] = '0'
         else:
+            values[param_ccsds.PACKETTYPE.name] = param_ccsds.TELEMETRYTYPEID
             values[param_ccsds.DATALENGTH.name] +=\
                 param_ccsds.HEADER_S_KEYS_TELEMETRY.size
             # don't bother about packet id, not supported
@@ -262,8 +256,7 @@ class CCSDSPacker(object):
                     int(values[param_ccsds.PACKETCATEGORY.name])].aux_size
         # update the length with data length
         values[param_ccsds.DATALENGTH.name] += int(datalen)
-        data, retvals = param_ccsds.HEADER_P_KEYS.pack(allvalues=values,
-                                                       retdbvalues=retdbvalues)
+        data, retvals = param_ccsds.HEADER_P_KEYS.pack(allvalues=values)
         if retvalues:
             return data, retvals
         else:
@@ -284,15 +277,22 @@ class CCSDSPacker(object):
             be returned instead of the dictionary
         """
         lenkey = param_ccsds.DATALENGTH
-        bits = bincore.hex2bin(primaryHDpacket)
-        ll = lenkey.unpack(bits) + datalen
-        bits = core.setstr(bits, lenkey.cut, lenkey.pack(ll))
-        primaryHDpacket = bincore.bin2hex(bits, pad=len(primaryHDpacket))
+        # this will give hex if CCSDSKey.octets is True, else bits
+        ll = lenkey.pack(lenkey.unpack(primaryHDpacket) + datalen)
+        # if CCSDSKey packet length is not octets compatible
+        if not lenkey.octets:
+            # grab a hex chunck to edit for length update
+            bits = bincore.hex2bin(primaryHDpacket[lenkey._hex_slice], pad=True)
+            # replace the corresponding bits
+            bits = core.setstr(bits, lenkey._bin_sub_slice, ll)
+            # get the hex chunk back to hex
+            ll = bincore.bin2hex(bits, pad=len(bits)//8)
+        primaryHDpacket = core.setstr(primaryHDpacket, lenkey._hex_slice, ll)
         if primaryHDdict is not None:
             primaryHDdict[param_ccsds.DATALENGTH.name] += datalen
         return primaryHDpacket, primaryHDdict
 
-    def pack_secHeader(self, values, retvalues=False, retdbvalues=True):
+    def pack_secHeader(self, values, retvalues=False):
         """
         Encodes the values into a CCSDS secondary header, returns hex
         string and encoded values
@@ -300,8 +300,6 @@ class CCSDSPacker(object):
         Args:
           * values (dict): the values to pack
           * retvalues (bool): if ``True``, returns the encoded values
-          * retdbvalues (bool): if ``True``, returns the encoded values
-            in a format directly compatible with the database
         """
         if self.mode == 'telecommand':
             hdk = param_ccsds.HEADER_S_KEYS_TELECOMMAND
@@ -309,13 +307,13 @@ class CCSDSPacker(object):
             hdk = param_ccsds.HEADER_S_KEYS_TELEMETRY
             values[param_ccsds.DAYSINCEREF_TELEMETRY.name] = core.now2daystamp()
             values[param_ccsds.MSECSINCEREF_TELEMETRY.name] = core.now2msstamp()
-        data, retvals = hdk.pack(allvalues=values, retdbvalues=retdbvalues)
+        data, retvals = hdk.pack(allvalues=values)
         if retvalues:
             return data, retvals
         else:
             return data
 
-    def pack_auxHeader(self, values, pldFlag, pktCat, retvalues=False, retdbvalues=True):
+    def pack_auxHeader(self, values, pldFlag, pktCat, retvalues=False):
         """
         Encodes the values into a CCSDS auxiliary header, returns hex
         string and encoded values
@@ -325,8 +323,6 @@ class CCSDSPacker(object):
           * pldFlag (bool): the payload flag of the packet
           * pktCat (int): only for TM-mode, the packet category
           * retvalues (bool): if ``True``, returns the encoded values
-          * retdbvalues (bool): if ``True``, returns the encoded values
-            in a format directly compatible with the database
         """
         if self.mode != 'telemetry':
             return (Byt(), {}) if retvalues else Byt()
@@ -336,14 +332,13 @@ class CCSDSPacker(object):
         cat = param_category.CATEGORIES[int(pldFlag)][pktCat]
         if cat.aux_size == 0:
             return (Byt(), {}) if retvalues else Byt()
-        data, retvals = cat.aux_trousseau.pack(allvalues=values,
-                                               retdbvalues=retdbvalues)
+        data, retvals = cat.aux_trousseau.pack(allvalues=values)
         if retvalues:
             return data, retvals
         else:
             return data
 
-    def pack_data(self, values, header, retvalues=False, retdbvalues=True):
+    def pack_data(self, values, header, retvalues=False):
         """
         Encodes the values into a CCSDS auxiliary header, returns hex
         string and encoded values
@@ -352,8 +347,6 @@ class CCSDSPacker(object):
           * values (dict): the values to pack
           * header (dict): 
           * retvalues (bool): if ``True``, returns the encoded values
-          * retdbvalues (bool): if ``True``, returns the encoded values
-            in a format directly compatible with the database
         """
         if self.mode != 'telemetry':
             return (Byt(), {}) if retvalues else Byt()

@@ -29,6 +29,8 @@ from param import param_all
 from .ccsdstrousseau import CCSDSTrousseau
 from .ccsdskey import CCSDSKey
 from ..utils import bincore
+from ..utils import b
+from ..utils import O
 from ..utils.day import Day
 from ..utils.ms import Ms
 
@@ -46,86 +48,87 @@ LENGTHMODIFIER = 0
 # origin of start/end is start of packet
 # start/end units is bits
 
+TELEMETRYTYPEID = 0
+TELECOMMANDTYPEID = 1
+SEQSEGMENT = 0
+SEQSTART = 1
+SEQEND = 2
+SEQSTANDALONE = 3
+
 
 PACKETVERSION = CCSDSKey(       name='ccsds_version',
                                 dic={0: '000'},
-                                start=0,
-                                l=3,
+                                start=0*b,
+                                l=3*b,
                                 dic_force=0,
                                 verbose="The CCSDS format version. Shall be 0b000",
                                 disp="v")
 
 PACKETTYPE = CCSDSKey(          name='packet_type',
-                                dic={'telemetry': '0', 'telecommand': '1'},
-                                start=3,
-                                l=1,
-                                non_db_dic=True,
+                                dic={TELEMETRYTYPEID: '0', TELECOMMANDTYPEID: '1'},
+                                start=3*b,
+                                l=1*b,
                                 verbose="Whether telecommand packet or telemetry packet. Shall be 0b0 for telemetry or 0b1 for telecommand",
                                 disp="tc")
 
 SECONDARYHEADERFLAG = CCSDSKey( name='secondary_header_flag',
                                 dic={0: '0', 1: '1'},
-                                start=4,
-                                l=1,
+                                start=4*b,
+                                l=1*b,
                                 dic_force=1,
                                 verbose="Is there a secondary header? Always true, shall be 0b1",
                                 disp="shf")
 
 PID = CCSDSKey(                 name='pid',
-                                start=5,
-                                l=4,
-                                fctunpack=bincore.bin2int,
-                                fctpack=bincore.int2bin,
+                                start=5*b,
+                                l=4*b,
+                                typ='uint',
                                 verbose="The unique id of the sub-process or task that issued the packet. See external table 'apidDescription'",
                                 disp="pid")
 
 LEVELFLAG = CCSDSKey(           name='level_flag',
                                 dic={0: '0', 1: '1'},
-                                start=9,
-                                l=1,
+                                start=9*b,
+                                l=1*b,
                                 verbose="If the packet is not payload, what software is it? Shall be 0d0 if the payload flag is 0b1, else shall be 0b0 if the packet is L0-related or 0b1 for L1",
                                 disp="lvl")
 
 PAYLOADFLAG = CCSDSKey(         name='payload_flag',
                                 dic={0: '0', 1: '1'},
-                                start=10,
-                                l=1,
+                                start=10*b,
+                                l=1*b,
                                 verbose="Is that a packet routed from/to the payload? Shall be 0b1 if yes or 0b0 if no",
                                 disp="pld")
 
 PACKETCATEGORY = CCSDSKey(      name='packet_category',
-                                start=11,
-                                l=5,
-                                fctunpack=bincore.bin2int,
-                                fctpack=bincore.int2bin,
+                                start=11*b,
+                                l=5*b,
+                                typ='uint',
                                 verbose="Defines the auxiliary header structure for telemetry packets (see external table 'packetCategoryDescription'). For Telecommands, set at 0 or 1",
                                 disp="cat")
 
 SEQUENCEFLAG = CCSDSKey(        name='sequence_flag',
-                                dic={'segment': '00', 'start': '01',
-                                     'end': '10', 'standalone': '11'},
-                                start=16,
-                                l=2,
-                                dic_force='standalone',
-                                non_db_dic=True,
+                                dic={SEQSEGMENT: '00', SEQSTART: '01',
+                                     SEQEND: '10', SEQSTANDALONE: '11'},
+                                start=16*b,
+                                l=2*b,
+                                dic_force=SEQSTANDALONE,
                                 verbose="The stand-alone or continuation status of a packet. Always stand-alone, shall be 0b11",
                                 disp="seq")
 
 PACKETID = CCSDSKey(            name='packet_id',
-                                start=18,
-                                l=14,
-                                fctunpack=bincore.bin2int,
-                                fctpack=bincore.int2bin,
+                                start=18*b,
+                                l=14*b,
+                                typ='uint',
                                 verbose="The incremented id of the packet. Will be looped once the maximum encode-able value is reached",
                                 disp="#")
 
 # this CCSDSKey must not be relative, i.e. there must be a "start" defined
 # cf ccsdspacker.increment_data_length()
 DATALENGTH = CCSDSKey(          name='data_length',
-                                start=32,
-                                l=16,
-                                fctunpack=bincore.bin2int,
-                                fctpack=bincore.int2bin,
+                                start=32*b,
+                                l=16*b,
+                                typ='uint',
                                 verbose="The length, in octet, of the secondary header + auxiliary header + data field",
                                 disp="len")
 
@@ -133,7 +136,7 @@ DATALENGTH = CCSDSKey(          name='data_length',
 # all keys in the right order
 HEADER_P_KEYS = [PACKETVERSION, PACKETTYPE, SECONDARYHEADERFLAG, PAYLOADFLAG,
     LEVELFLAG, PID, PACKETCATEGORY, SEQUENCEFLAG, PACKETID, DATALENGTH]
-HEADER_P_KEYS = CCSDSTrousseau(HEADER_P_KEYS, octets=False)
+HEADER_P_KEYS = CCSDSTrousseau(HEADER_P_KEYS)
 
 
 # SECONDARY HEADER TELEMETRY
@@ -146,44 +149,27 @@ HEADER_P_KEYS = CCSDSTrousseau(HEADER_P_KEYS, octets=False)
 AUTHPACKETLENGTH = 11
 
 
-def days_unpack(v):
-    """
-    type = unsigned integer
-    verbose = binary -> unsigned integer
-    """
-    # apply a maximum to the rounded number of days from 1970 to the
-    # maximum of gmtime
-    return Day(min(24001, bincore.bin2int(v)))
-
-
-def msec_unpack(v):
-    """
-    type = unsigned integer
-    verbose = binary -> unsigned integer
-    """
-    # apply a maximum to the possible number of msec per day
-    return Ms(min(86399999, bincore.bin2int(v)))
-
-
 DAYSINCEREF_TELEMETRY = CCSDSKey(   name='days_since_ref',
-                                    start=0,
-                                    l=16,
-                                    fctunpack=days_unpack,
-                                    fctpack=bincore.int2bin,
+                                    start=0*O,
+                                    l=2*O,
+                                    typ='uint',
+                                    fctfix=Day,
                                     verbose="The integer number of fully elapsed days since the epoch reference",
                                     disp="days")
 
 MSECSINCEREF_TELEMETRY = CCSDSKey(  name='ms_since_today',
-                                    start=16,
-                                    l=32,
-                                    fctunpack=msec_unpack,
-                                    fctpack=bincore.int2bin,
+                                    start=2*O,
+                                    l=4*O,
+                                    typ='uint',
+                                    fctfix=Ms,
                                     verbose="The integer number of milli-seconds elapsed since previous midnight (UTC)",
                                     disp="ms")
 
 # all keys in the right order
 HEADER_S_KEYS_TELEMETRY = [DAYSINCEREF_TELEMETRY, MSECSINCEREF_TELEMETRY]
-HEADER_S_KEYS_TELEMETRY = CCSDSTrousseau(HEADER_S_KEYS_TELEMETRY, octets=False)
+HEADER_S_KEYS_TELEMETRY = CCSDSTrousseau(HEADER_S_KEYS_TELEMETRY)
+
+EXTRATS_TELECOMMAND = CCSDSTrousseau([DAYSINCEREF_TELEMETRY, MSECSINCEREF_TELEMETRY])
 
 
 # SECONDARY HEADER TELECOMMAND
@@ -192,52 +178,48 @@ HEADER_S_KEYS_TELEMETRY = CCSDSTrousseau(HEADER_S_KEYS_TELEMETRY, octets=False)
 
 
 REQACKRECEPTIONTELECOMMAND = CCSDSKey(  name='reqack_reception',
-                                        start=0,
-                                        l=1,
+                                        start=0*b,
+                                        l=1*b,
                                         dic={0: '0', 1: '1'},
                                         verbose="Should the satellite return an acknowledgement of receipt?",
                                         disp="rack")
 
 REQACKFORMATTELECOMMAND = CCSDSKey(     name='reqack_format',
-                                        start=1,
-                                        l=1,
+                                        start=1*b,
+                                        l=1*b,
                                         dic={0: '0', 1: '1'},
                                         verbose="Should the satellite return an acknowledgement of formatting?",
                                         disp="fack")
 
 REQACKEXECUTIONTELECOMMAND = CCSDSKey(  name='reqack_execution',
-                                        start=2,
-                                        l=1,
+                                        start=2*b,
+                                        l=1*b,
                                         dic={0: '0', 1: '1'},
                                         verbose="Should the satellite return an acknowledgement of execution?",
                                         disp="eack")
 
 TELECOMMANDID = CCSDSKey(               name='telecommand_id',
-                                        start=3,
-                                        l=10,
-                                        fctunpack=bincore.bin2int,
-                                        fctpack=bincore.int2bin,
+                                        start=3*b,
+                                        l=10*b,
+                                        typ='uint',
                                         verbose="The id of the telecommand sent",
                                         disp="tcid")
 
 EMITTERID = CCSDSKey(                   name='user_id',
-                                        start=13,
-                                        l=3,
-                                        fctunpack=bincore.bin2int,
-                                        fctpack=bincore.int2bin,
+                                        start=13*b,
+                                        l=3*b,
+                                        typ='uint',
                                         verbose="The id of the antena/program/script responsible for the telecommand",
                                         disp="user")
 
 SIGNATURE = CCSDSKey(                   name='signature',
-                                        start=16,
-                                        l=param_all.KEYLENGTHCCSDS*8,
-                                        fctunpack=bincore.bin2hex,
-                                        fctpack=bincore.hex2bin,
+                                        start=2*O,
+                                        l=param_all.KEYLENGTHCCSDS*O,
+                                        typ='byt',
                                         verbose="The cryptographic hash using the public/private key system",
                                         disp='sign')
 
 HEADER_S_KEYS_TELECOMMAND = [REQACKRECEPTIONTELECOMMAND,
     REQACKFORMATTELECOMMAND, REQACKEXECUTIONTELECOMMAND, TELECOMMANDID,
     EMITTERID, SIGNATURE]
-HEADER_S_KEYS_TELECOMMAND = CCSDSTrousseau(HEADER_S_KEYS_TELECOMMAND,
-                                            octets=False)
+HEADER_S_KEYS_TELECOMMAND = CCSDSTrousseau(HEADER_S_KEYS_TELECOMMAND)

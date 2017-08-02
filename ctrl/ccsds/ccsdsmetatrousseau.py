@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-from . import ccsdsexception
+from . import ccsdsexception as exc
 
 
 __all__ = ['CCSDSMetaTrousseau']
@@ -62,7 +62,7 @@ class CCSDSMetaTrousseau(object):
         if key in self.TROUSSEAUDIC:
             return self.TROUSSEAUDIC[key].unpack(data)
         else:
-            raise ccsdsexception.InvalidMetaTrousseauKey(key)
+            raise exc.InvalidMetaTrousseauKey(key)
 
     def disp(self, vals, hds, hdx):
         """
@@ -77,17 +77,15 @@ class CCSDSMetaTrousseau(object):
         if key in self.TROUSSEAUDIC:
             return self.TROUSSEAUDIC[key].disp(vals)
         else:
-            raise ccsdsexception.InvalidMetaTrousseauKey(key)
+            raise exc.InvalidMetaTrousseauKey(key)
 
-    def pack(self, allvalues, retdbvalues, hds, hdx, **kwargs):
+    def pack(self, allvalues, hds, hdx, **kwargs):
         """
         Does the packing loop for the list of CCSDS keys
         Returns the bytes chain and the values encoded
 
         Args:
           * allvalues (dict): the values to pack
-          * retdbvalues (bool): if ``True``, returns the encoded values
-            in a format directly compatible with the database
           * hds, hdx (dict): packet headers
 
         Kwargs:
@@ -95,7 +93,6 @@ class CCSDSMetaTrousseau(object):
         """
         key = hds.get(self.key, hdx.get(self.key))
         if key in self.TROUSSEAUDIC:
-            return self.TROUSSEAUDIC[key]\
-                            .pack(allvalues, retdbvalues, **kwargs)
+            return self.TROUSSEAUDIC[key].pack(allvalues, **kwargs)
         else:
-            raise ccsdsexception.InvalidMetaTrousseauKey(key)
+            raise exc.InvalidMetaTrousseauKey(key)

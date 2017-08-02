@@ -32,7 +32,48 @@ from ctrl.ccsds import CCSDSTrousseau
 from . import mgmtexception
 
 
-__all__ = ['CategoryRegistration', 'base_create_table']
+__all__ = ['CategoryRegistration']
+
+
+QUERY = """
+CREATE TABLE IF NOT EXISTS {table_name}
+(
+    id serial PRIMARY KEY,
+    telemetry_packet integer{unique}{fields}
+);
+ALTER TABLE {table_name} OWNER TO picsat_admin;
+GRANT ALL ON {table_name} TO picsat_admin;
+GRANT select ON {table_name} TO picsat_read;
+GRANT select, insert, update ON {table_name} TO picsat_edit;
+ALTER TABLE {table_name} ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
+GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
+"""
+
+QUERYCONV = """
+CREATE TABLE IF NOT EXISTS {table_name}
+(
+    id serial PRIMARY KEY,
+    rawdata_id integer{fields}
+);
+ALTER TABLE {table_name} OWNER TO picsat_admin;
+GRANT ALL ON {table_name} TO picsat_admin;
+GRANT select ON {table_name} TO picsat_read;
+GRANT select, insert, update ON {table_name} TO picsat_edit;
+ALTER TABLE {table_name} ADD FOREIGN KEY (rawdata_id) REFERENCES {table_daddy_name} (id);
+GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
+"""
+
+# syntax: 'type tag in function': 'sql type'
+# or 'type tag in function': [len limit (int),
+#                             'sql type if len <= than len limit',
+#                             'sql type if len > than len limit']
+TYPESCONV = { '2bool': 'boolean',
+              '2intSign': ['smallint', 16, 'integer', 32, 'bigint'],
+              '2int': ['smallint', 15, 'integer', 31, 'bigint'],
+              '2hex': 'bytea',
+              '2txt': ['varchar({len})', 125, 'text'],
+              '2float': 'real',
+              '2double': 'double precision'}
 
 
 class CategoryRegistration(object):
@@ -96,71 +137,89 @@ class CategoryRegistration(object):
         """
         Provides postgresql code to create the table
         """
-        return base_create_table(self.cat.aux_trousseau,\
-                                 self.cat.table_aux_name,\
-                                 self.cat.data_trousseau,\
-                                 self.cat.table_data_name)
+        return base_create_table(self.cat)
 
 
-def base_create_table(aux_trousseau, table_aux_name, data_trousseau,\
-                        table_data_name):
-    query = """
-CREATE TABLE IF NOT EXISTS {table_name}
-(
-    id serial PRIMARY KEY,
-    telemetry_packet integer{unique}{fields}
-);
-ALTER TABLE {table_name} OWNER TO picsat_admin;
-GRANT ALL ON {table_name} TO picsat_admin;
-GRANT select ON {table_name} TO picsat_read;
-GRANT select, insert, update ON {table_name} TO picsat_edit;
-ALTER TABLE {table_name} ADD FOREIGN KEY (telemetry_packet) REFERENCES telemetries (id);
-GRANT ALL ON SEQUENCE {table_name}_id_seq TO picsat_edit;
-    """
-    # syntax: 'type tag in function': 'sql type'
-    # or 'type tag in function': [len limit (int),
-    #                             'sql type if len <= than len limit',
-    #                             'sql type if len > than len limit']
-    types_conv = {'2bool': 'boolean',
-                  '2intSign': [16, 'smallint', 'integer'],
-                  '2int': [15, 'smallint', 'integer'],
-                  '2hex': 'bytea',
-                  '2txt': [125, 'varchar({len})', 'text'],
-                  '2float': [32, 'real', 'double precision']}
+def base_create_table(cat):
     ret = []
     # HEADER AUX
-    if aux_trousseau is not None:
+    if cat.aux_trousseau is not None:
         fields = ""
-        conv = 8 if aux_trousseau.octets else 1
-        for item in aux_trousseau.keys:
-            for k, v in types_conv.items():
-                if item._fctunpack.__name__.endswith(k):
-                    if isinstance(v, list):
-                        v = v[1] if item.len*conv <= v[0] else v[2]
-                    break
-            else:
-                v = '?TYPE?'
+        for item in cat.aux_trousseau.keys:
+            v = get_type_right(item)
             fields += ',\n    {} {}'.format(item.name,
                                             str(v).format(len=item.len))
-        ret.append(query.format(table_name=table_aux_name,
+        ret.append(QUERY.format(table_name=cat.table_aux_name,
                                 unique=" UNIQUE",
                                 fields=fields))
     # DATA FIELD
-    if data_trousseau is not None and\
-            isinstance(data_trousseau, CCSDSTrousseau):
+    if cat.data_trousseau is None:
+        return "\n\n".join(ret)
+    if not cat.is_data_metatr:
         fields = ""
-        conv = 8 if data_trousseau.octets else 1
-        for item in data_trousseau.keys:
-            for k, v in types_conv.items():
-                if item._fctunpack.__name__.endswith(k):
-                    if isinstance(v, list):
-                        v = v[1] if item.len*conv <= v[0] else v[2]
-                    break
-            else:
-                v = '?TYPE?'
+        for item in cat.data_trousseau.keys:
+            v = get_type_right(item)
             fields += ',\n    {} {}'.format(item.name,
                                             str(v).format(len=item.len))
-        ret.append(query.format(table_name=table_data_name,
+        ret.append(QUERY.format(table_name=cat.get_table_data_name({}),
                                 unique="",
                                 fields=fields))
+        # a conversion table
+        if cat.data_trousseau.unram_any:
+            fields = ""
+            for item in cat.data_trousseau.keys:
+                if item.unram is None:
+                    continue
+                fields += ',\n    {} real'.format(item.name)
+            ret.append(QUERYCONV.format(
+                        table_name=cat.get_table_data_conv_name({}),
+                        table_daddy_name=cat.get_table_data_name({}),
+                        fields=fields))
+    else:
+        metakey = cat.data_trousseau.key
+        for trkey, tr in cat.data_trousseau.TROUSSEAUDIC.items():
+            fields = ""
+            for item in tr.keys:
+                v = get_type_right(item)
+                fields += ',\n    {} {}'.format(item.name,
+                                                str(v).format(len=item.len))
+            ret.append(QUERY.format(
+                        table_name=cat.get_table_data_name({metakey: trkey}),
+                        unique="",
+                        fields=fields))
+            # a conversion table
+            if tr.unram_any:
+                fields = ""
+                for item in tr.keys:
+                    if item.unram is None:
+                        continue
+                    fields += ',\n    {} real'.format(item.name)
+                ret.append(QUERYCONV.format(
+                            table_name=cat.get_table_data_conv_name(\
+                                                            {metakey: trkey}),
+                            table_daddy_name=cat.get_table_data_name(\
+                                                            {metakey: trkey}),
+                            fields=fields))
     return "\n\n".join(ret)
+
+
+
+def get_type_right(item):
+    for k, v in TYPESCONV.items():
+        if item._fctunpack.__name__.endswith(k):
+            if isinstance(v, list):
+                if item.len <= v[1]:
+                    v = v[0]
+                else:
+                    if len(v) == 5:
+                        if item.len <= v[3]:
+                            v = v[2]
+                        else:
+                            v = v[4]
+                    else:
+                        v = v[2]
+            break
+    else:
+        raise Exception("unknown unpack function: {}"\
+                            .format(item._fctunpack.__name__))
+    return v

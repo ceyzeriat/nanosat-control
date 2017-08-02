@@ -1,7 +1,7 @@
 .. ctrl
 
 :Name: ctrl
-:Website: https://git.obspm.fr/git/projets/Picsat/segsol
+:Website: https://gitlab.obspm.fr/picsat/segsol
 :Author: Guillaume Schworer
 :Version: 0.1
 

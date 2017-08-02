@@ -114,23 +114,13 @@ class BadDefinition(CCSDSException):
         self.message = "Should assign either a dic or a fctpack/fctunpack, "\
                        "in '{}'".format(name)
 
-class NoPack(CCSDSException):
+class BadTypeDefinition(CCSDSException):
     """
-    If trying to render while fctpack was not provided
+    If the type given in unknown
     """
-    def __init__(self, name, *args, **kwargs):
-        self._init(name, *args, **kwargs)
-        self.message = "Cannot render the bits, fctpack was not "\
-                       "provided, in '{}'".format(name)
-
-class NoUnpack(CCSDSException):
-    """
-    If trying to unpack while fctrev was not provided
-    """
-    def __init__(self, name, *args, **kwargs):
-        self._init(name, *args, **kwargs)
-        self.message = "Cannot unpack the packet, fctunpack was not "\
-                       "provided, in '{}'".format(name)
+    def __init__(self, typ, name, *args, **kwargs):
+        self._init(typ, name, *args, **kwargs)
+        self.message = "Unknown type '{}' for '{}'".format(typ, name)
 
 class NoDic(CCSDSException):
     """

@@ -302,8 +302,7 @@ This document does not cover the content of headers for TC, and headers and data
         for cle in Tkeys:
             clesection = Subsubsection(cle.name)
             items = []
-            if not cle.relative_only:
-                start_bit = cle.start
+            start_bit = cle.start
             # if no padding, allows flexible len of the ccsdskey
             the_len = cle.len if cle.pad else "[0..{:d}]".format(cle.len)
             if cle.isdic:
@@ -335,6 +334,5 @@ This document does not cover the content of headers for TC, and headers and data
                 clesection.append(item)
                 clesection.append(NewLine())
             res.append(clesection)
-            start_bit += cle.len
         return res
 

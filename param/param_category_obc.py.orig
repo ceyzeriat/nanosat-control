@@ -104,7 +104,7 @@ FUNERRCODE = CCSDSKey(  name='fun_err_code',
                         disp="funErrCode")
 
 
-DATE = CCSDSKey( name='date',
+DATE = CCSDSKey(        name='date',
                         start=10*O,
                         l=2*O,
                         typ='uint',
@@ -112,8 +112,13 @@ DATE = CCSDSKey( name='date',
                         verbose='Time tag field 1: number of days since reference',
                         disp="date")
 
+<<<<<<< HEAD
 MSCOUNT = CCSDSKey( name='mscount',
                         start=12*O,
+=======
+MSCOUNT = CCSDSKey(     name='mscount',
+                        start=14*O,
+>>>>>>> 5df81a8bd039fa9856d58ed8db72847bcdf7eb06
                         l=4*O,
                         typ='uint',
                         fctfix=Ms,
@@ -191,15 +196,6 @@ CATEGORIESOBC = {
                                 aux_trousseau=HEADAUX_6,
                                 data_file='param_patch_list_segs'),
 
-               12: CCSDSCategory(name='list of files on sd card',
-                                number=12,
-                                aux_trousseau=HEADAUX_TELECOMMANDANSWERCAT,
-                                data_file='param_lsSdCard'),
-
-               13: CCSDSCategory(name='Data Counters of files in memory (SD card or Ram)',
-                                number=13,
-                                aux_trousseau=HEADAUX_TELECOMMANDANSWERCAT,
-                                data_file='param_dataCounters'),
 
                20: CCSDSCategory(name='list in scheduler',
                                 number=20,

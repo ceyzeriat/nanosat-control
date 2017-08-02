@@ -39,33 +39,57 @@ TWINKLETWINKLELITTLEINDIA = False
 def hex2str(v, **kwargs):
     """
     type = hexa string
-    verbose = "hexadecimal -> message"
+    verbose = hexadecimal -> hexa string
     """
     return v.hex()
 
 
-def str2hex(txt, **kwargs):
+def str2hex(txt, pad=0, **kwargs):
     """
+    A hexa-text '2F 3C A8' to bytes
+    pad in hex chars
     type = hexadecimal
-    verbose = "message -> hexadecimal"
+    verbose = hexa string -> hexadecimal
     """
-    return Byt.fromHex(txt)
+    return padit(txt=Byt.fromHex(txt), l=pad, ch=Byt(0))
+
+
+def bin2str(v, **kwargs):
+    """
+    type = hexa string
+    verbose = binary -> hexa string
+    """
+    return bin2hex(v).hex()
+
+
+def str2bin(txt, pad=True, **kwargs):
+    """
+    A hexa-text '2F 3C A8' to bytes
+    pad in bits
+    type = binary
+    verbose = hexa string -> binary
+    """
+    return hex2bin(Byt.fromHex(txt), pad=pad)
 
 
 def hex2txt(v, **kwargs):
     """
     type = hexa string
-    verbose = "hexadecimal -> message"
+    verbose = hexadecimal -> message
     """
     return ''.join([chr(i) for i in v.ints() if i >= 32 and i <= 126])
 
 
-def txt2hex(txt, **kwargs):
+def txt2hex(txt, pad=0, **kwargs):
     """
+    A display-text [32--126] to bytes
+    pad in hex chars
     type = hexadecimal
-    verbose = "message -> hexadecimal"
+    verbose = message -> hexadecimal
     """
-    return ''.join([Byt(i) for i in Byt(txt).ints() if i >= 32 and i <= 126])
+    txt = ''.join(Byt(i) for i in Byt(txt).ints()\
+                                if i >= 32 and i <= 126)
+    return padit(txt=txt, l=pad, ch=Byt(0))
 
 
 def bin2txt(v, **kwargs):
@@ -83,7 +107,7 @@ def txt2bin(txt, **kwargs):
     return hex2bin(txt2hex(txt), pad=True)
 
 
-def float2hex(v, bits=32, pad=0, **kwargs):
+def float2hex(v, pad=0, **kwargs):
     """
     Give a float32, returns chars
     pad in hex chars
@@ -91,21 +115,43 @@ def float2hex(v, bits=32, pad=0, **kwargs):
     verbose = float32 -> hexadecimal
     """
     litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
-    bits = 'd' if bits == 64 else 'f'
     end = '<' if litFucInd else '>'
-    v = Byt(struct.pack(end+bits, v))
+    v = Byt(struct.pack(end+'f', v))
     return padit(txt=v, l=pad, ch=Byt(0))
 
-def hex2float(h, bits=32, **kwargs):
+def hex2float(h, **kwargs):
     """
-    Give hex ``h`` as chars '\xf0', returns float32 or 64
+    Give hex ``h`` as chars '\xf0', returns float32
     type = float32
     verbose = hexadecimal -> float32
     """
     litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
-    bits = 'd' if bits == 64 else 'f'
     end = '<' if litFucInd else '>'
-    return struct.unpack(end+bits, h)
+    return struct.unpack(end+'f', h)
+
+
+def double2hex(v, pad=0, **kwargs):
+    """
+    Give a float64, returns chars
+    pad in hex chars
+    type = hexadecimal
+    verbose = float32 -> hexadecimal
+    """
+    litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
+    end = '<' if litFucInd else '>'
+    v = Byt(struct.pack(end+'d', v))
+    return padit(txt=v, l=pad, ch=Byt(0))
+
+def hex2double(h, **kwargs):
+    """
+    Give hex ``h`` as chars '\xf0', returns float64
+    type = float64
+    verbose = hexadecimal -> float64
+    """
+    litFucInd = kwargs.get('litFucInd', TWINKLETWINKLELITTLEINDIA)
+    end = '<' if litFucInd else '>'
+    return struct.unpack(end+'d', h)
+
 
 def hex2hex(v, pad=0, **kwargs):
     """
@@ -115,6 +161,7 @@ def hex2hex(v, pad=0, **kwargs):
     verbose = Kept as hexadecimal
     """
     return padit(txt=v, l=pad, ch=Byt(0))
+
 
 def bool2bin(i, **kwargs):
     """

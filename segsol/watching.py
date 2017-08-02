@@ -107,28 +107,28 @@ def process_report(inputs):
                     print('That was junk from RFCheckoutBox')
                     return
             if len(blobish) == 0:
-                print("Can't unpack emty packet")
+                print("Can't unpack empty packet")
                 return
-            hd, hdx, dd = TMUnPacker.unpack(blobish, retdbvalues=True)
+            hd, hdx, dd = TMUnPacker.unpack(blobish)
         except:
             print('Tried to unpack.. but an error occurred: {}'\
                     .format(sys.exc_info()[0]))
             return
         inpacket = dict(hd)
         inpacket.update(hdx)
-        inpacket.update(dd)
-        inpacket['sz'] = len(blobish)
+        inpacket['_all_data'] = dd['all']
+        inpacket['_sz_blobish'] = len(blobish)
         WATCH_TRANS.tell_key('tmf', **inpacket)
         pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
         catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
         # print Header Prim
-        print(param_ccsds.HEADER_P_KEYS.disp(hd))
+        print(param_ccsds.HEADER_P_KEYS.disp(dict(hd)))
         # print Header Sec TM
-        print(param_ccsds.HEADER_S_KEYS_TELEMETRY.disp(hd))
+        print(param_ccsds.HEADER_S_KEYS_TELEMETRY.disp(dict(hd)))
         # print Header Aux if any
         cat = param_category.CATEGORIES[pldflag][catnum]
         if cat.aux_size > 0:
-            print(cat.aux_trousseau.disp(hdx))
+            print(cat.aux_trousseau.disp(dict(hdx)))
         # print data if any
         if cat.data_trousseau is not None:
             print(cat.data_trousseau.disp(dd['unpacked'], hds=hd, hdx=hdx))

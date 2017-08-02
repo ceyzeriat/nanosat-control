@@ -63,6 +63,10 @@ class RFCheckoutbox(object):
         if data is not None:
             data = Byt(data)
             if len(data) > 0:
+                data = data.replace(param_all.TNCPATHOLOGICCMD,
+                                    param_all.TNCPATHOLOGICCMDREPLACE)
+                if len(data) > param_all.MAXTCLEN:
+                    raise ctrlexception.TCTooLong(len(data)-param_all.MAXTCLEN)
                 self.port.sendall(data)
 
     def close(self):

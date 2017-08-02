@@ -29,6 +29,9 @@ from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.ccsds.ccsdskey import CCSDSKey
 from ctrl.ccsds.ccsdscategory import CCSDSCategory
 from ctrl.utils import bincore
+from ctrl.utils import b
+from ctrl.utils import O
+
 
 from . import param_category_common as cmn
 
@@ -37,155 +40,136 @@ __all__ = []
 
 
 ACQMODESCIENCE = CCSDSKey(  name='acq_mode',
-                            start=0,
-                            l=8,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=0*O,
+                            l=1*O,
+                            typ='uint',
                             verbose="Activates science mode (0=Searching, 1=Tracking, 2=Test). Valid for the entire packet.",
                             disp="mode")
 
 INTEGRATIONTIME = CCSDSKey( name='integration_time',
-                            start=8,
-                            l=16,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=1*O,
+                            l=2*O,
+                            typ='uint',
                             verbose="Integration time (valid for the entire packet). In ms/10.",
                             disp="itime")
 
 DELAY = CCSDSKey(       name='delay',
-                        start=24,
-                        l=16,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
+                        start=3*O,
+                        l=2*O,
+                        typ='uint',
                         verbose="Delay between two integrations (in ms/10)",
                         disp="delay")
 
 MODULATION = CCSDSKey(  name='modulation',
-                        start=40,
-                        l=8,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
+                        start=5*O,
+                        l=1*O,
+                        typ='uint',
                         verbose="Modulation pattern (0=Point, 1=Circle, 2=Flower, 3=Calibration pattern). Valid for the entire packet.",
                         disp="mod")
 
 RADIUS = CCSDSKey(      name='radius',
-                        start=48,
-                        l=16,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
+                        start=6*O,
+                        l=2*O,
+                        typ='uint',
                         verbose="Radius of the modulation pattern. Valid for the entire packet.",
                         disp="rad")
 
 NPOINTS = CCSDSKey(     name='n_points',
-                        start=64,
-                        l=8,
-                        fctunpack=bincore.bin2int,
-                        fctpack=bincore.int2bin,
+                        start=8*O,
+                        l=1*O,
+                        typ='uint',
                         verbose="Number of points in the pattern",
                         disp="npts")
 
 
 HKTICK = CCSDSKey(          name='hk_tick',
-                            start=0,
-                            l=16,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=0*O,
+                            l=2*O,
+                            typ='uint',
                             verbose="Sampling time for hk data (in ms). Valid for the entire packet.",
                             disp="hk_tick")
 
 BINNING = CCSDSKey(         name='binning',
-                            start=16,
-                            l=8,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=2*O,
+                            l=1*O,
+                            typ='uint',
                             verbose="Binning of the hk data (real sampling is thus binning*hkTick). Valid for the entire packet.",
                             disp="binning")
 
 MAINMODE = CCSDSKey(        name='main_mode',
-                            start=24,
-                            l=8,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=3*O,
+                            l=1*O,
+                            typ='uint',
                             verbose="Main mode of the payload (SBY = 0, IDL = 1, SCI = 2, IMG = 3, TST = 4). Valid for the entire packet.",
                             disp="mode")
 
 ACQMODEHK = CCSDSKey(       name='acq_mode',
-                            start=32,
-                            l=8,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=4*O,
+                            l=1*O,
+                            typ='uint',
                             verbose="mode for the acquisition manager. Valid for the entire packet.",
                             disp="acq_mode")
 
 DIODEFLAG = CCSDSKey(       name='diode_flag',
-                            start=40,
-                            l=1,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=5*O,
+                            l=1*b,
+                            typ='uint',
                             verbose="Is diode active?. Valid for the entire packet.",
                             disp="diode_flag")
 
 INTERRUPTFLAG = CCSDSKey(   name='interrupt_flag',
-                            start=41,
-                            l=1,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=41*b,
+                            l=1*b,
+                            typ='uint',
                             verbose="Is interrupt active?. Valid for the entire packet.",
                             disp="interrupt_flag")
 
 PIEZOFLAG = CCSDSKey(       name='piezo_flag',
-                            start=42,
-                            l=1,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=42*b,
+                            l=1*b,
+                            typ='uint',
                             verbose="Is piezo active?. Valid for the entire packet.",
                             disp="piezo_flag")
 
 HVFLAG = CCSDSKey(          name='hv_flag',
-                            start=43,
-                            l=1,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=43*b,
+                            l=1*b,
+                            typ='uint',
                             verbose="Is high-voltage line active?. Valid for the entire packet.",
                             disp="hv_flag")
 
 SENSORSFLAG = CCSDSKey(     name='sensors_flag',
-                            start=44,
-                            l=1,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=44*b,
+                            l=1*b,
+                            typ='uint',
                             verbose="Are strain gauges active?. Valid for the entire packet.",
                             disp="sensors_flag")
 
 TECFLAG = CCSDSKey(         name='tec_flag',
-                            start=45,
-                            l=1,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=45*b,
+                            l=1*b,
+                            typ='uint',
                             verbose="Is tec active?. Valid for the entire packet.",
                             disp="hv_flag")
 
 BEACONFLAG = CCSDSKey(      name='beacon_flag',
-                            start=46,
-                            l=1,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=46*b,
+                            l=1*b,
+                            typ='uint',
                             verbose="Is beacon active?. Valid for the entire packet.",
                             disp="beacon_flag")
 
 PROCFREQ = CCSDSKey(        name='proc_freq',
-                            start=48,
-                            l=8,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=6*O,
+                            l=1*O,
+                            typ='uint',
                             verbose="SYSCLOCK frequency (in MHz). Valid for the entire packet.",
                             disp="proc_freq")
 
 TECSETPOINT = CCSDSKey(     name='tec_setpoint',
-                            start=56,
-                            l=16,
-                            fctunpack=bincore.bin2int,
-                            fctpack=bincore.int2bin,
+                            start=7*O,
+                            l=2*O,
+                            typ='uint',
                             verbose="Setpoint for the TEC controller (ADU). Valid for the entire packet.",
                             disp="tec_setpoint")
 
@@ -193,10 +177,10 @@ TECSETPOINT = CCSDSKey(     name='tec_setpoint',
 # HK payload
 HEADAUX_4 = CCSDSTrousseau([HKTICK, BINNING, MAINMODE, ACQMODEHK, DIODEFLAG,
                                 INTERRUPTFLAG, PIEZOFLAG, HVFLAG, SENSORSFLAG, TECFLAG,
-                                BEACONFLAG, PROCFREQ, TECSETPOINT], octets=False)
+                                BEACONFLAG, PROCFREQ, TECSETPOINT])
 # science HF
 HEADAUX_5 = CCSDSTrousseau([ACQMODESCIENCE, INTEGRATIONTIME, DELAY, MODULATION, RADIUS,
-                                NPOINTS], octets=False)
+                                NPOINTS])
 
 
 # (payloadd, category)

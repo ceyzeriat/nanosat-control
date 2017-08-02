@@ -28,7 +28,6 @@
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.ccsds.ccsdsmetatrousseau import CCSDSMetaTrousseau
 
-#from . import param_category_obc
 from .generated.l0hkstructpart1 import L0HKSTRUCTPART1_KEYS
 from .generated.l0hkstructpart2 import L0HKSTRUCTPART2_KEYS
 
@@ -36,8 +35,8 @@ from .generated.l0hkstructpart2 import L0HKSTRUCTPART2_KEYS
 __all__ = ['TROUSSEAU']
 
 
-TROUSSEAUDICT = {0: CCSDSTrousseau(L0HKSTRUCTPART1_KEYS, octets=False),
-                 1: CCSDSTrousseau(L0HKSTRUCTPART2_KEYS, octets=False)}
+TROUSSEAUDICT = {1: CCSDSTrousseau(L0HKSTRUCTPART1_KEYS),
+                 2: CCSDSTrousseau(L0HKSTRUCTPART2_KEYS)}
 
 
 TROUSSEAU = CCSDSMetaTrousseau(TROUSSEAUDICT, key='hk_part')

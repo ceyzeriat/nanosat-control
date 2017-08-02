@@ -126,7 +126,9 @@ class TNCRFBox(object):
                 self.set_TNCfrequency(config_swap=True)
                 # escaping of pathologic TNC phrase 'TC '
                 data = data.replace(param_all.TNCPATHOLOGICCMD,
-                                    param_all.TNCPATHOLOGICESC)
+                                    param_all.TNCPATHOLOGICCMDREPLACE)
+                if len(data) > param_all.MAXTCLEN:
+                    raise ctrlexception.TCTooLong(len(data)-param_all.MAXTCLEN)
                 self.writeport.write(data)
 
     def close(self):

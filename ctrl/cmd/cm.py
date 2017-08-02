@@ -213,18 +213,32 @@ class Cm(object):
     def ex(self):
         params = []
         for p in self._params:
-            v = p.rng[0]
-            if p.typ.typ == 'str':
-                # transform into char if string expected and quote it
-                v = "'{}'".format(chr(v)*p.size)
-            else:
-                v = str(v)
-            sz = p.size if p.size is not None else 5
-            if sz > 1 and p.typ.typ != 'str':
-                v = "[{}]".format(','.join([v for i in range(sz)]))
-            params.append("{}={}".format(p.name, v))
+            params.append("{}= ".format(p.name))
         print("c.{}({})".format(self.name, ', '.join(params)))
 
     @ex.setter
     def ex(self, value):
         raise cmdexception.ReadOnly('ex')
+    
+    @property
+    def exval(self):
+        params = []
+        for p in self._params:
+            if p.exval is not None:
+                v = p.exval
+            else:
+                v = p.rng[0]
+                if p.typ.typ == 'str':
+                    # transform into char if string
+                    v = chr(v) * p.size
+                else:
+                    sz = p.size if isinstance(p.size, int) else 5
+                    if sz > 1:
+                        v = [v] * sz
+                v = repr(v)
+            params.append("{}={}".format(p.name, v))
+        print("c.{}({})".format(self.name, ', '.join(params)))
+
+    @exval.setter
+    def exval(self, value):
+        raise cmdexception.ReadOnly('exval')

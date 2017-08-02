@@ -42,6 +42,7 @@ import json
 from dateutil import parser
 from multiprocessing import current_process
 from byt import Byt
+from sympy import solve, sympify
 from . import ctrlexception
 from .prepare_param import *
 from .posixutc import *
@@ -358,3 +359,14 @@ def payload_crc32(message):
         for byte in b:
             crc = ((crc << 8) & 0xffffffff) ^ payload_crc_table[(crc >> 24) ^ byte]
     return crc
+
+
+def inverse_eqn(eqn):
+    """
+    Inverse a symbolic expression with variable x
+    Keeps x as the variable in the inverted expression
+    > inverse('4*x/2')
+    'y = x/2'
+    """
+    e = sympify('-x + ' + eqn.replace('x', 'y'))
+    return str(solve(e, 'y')[0]).replace('x', 'float(x)')

@@ -34,13 +34,15 @@ __all__ = ['Day']
 
 
 class Day(int):
-    def __init__(self, v):
-        super(int, self).__init__()
-        d = time.gmtime((DATETIME_REF + self) * 86400)        
-        self._year = d.tm_year
-        self._month = d.tm_mon
-        self._day = d.tm_mday
-        self._date = datetime.date(self._year, self._month, self._day)
+    def __new__(cls, v):
+        v = int(min(24001, max(0, v)))
+        ans = super(Day, cls).__new__(cls, v) 
+        d = time.gmtime((DATETIME_REF + ans) * 86400)        
+        ans._year = d.tm_year
+        ans._month = d.tm_mon
+        ans._day = d.tm_mday
+        ans._date = datetime.date(ans._year, ans._month, ans._day)
+        return ans
 
     def strf(self, fmt='%Y/%m/%d'):
         """

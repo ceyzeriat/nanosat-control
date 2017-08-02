@@ -64,7 +64,7 @@ class CCSDSBlob(object):
             vals[param_ccsds.PID.name] = item
             possible_head = bincore.hex2bin(
                                 pk.pack_primHeader(values=vals, datalen=0,
-                                        retvalues=False, retdbvalues=False,
+                                        retvalues=False,
                                         withPacketID=False)[:self.octcut])[\
                                     :param_ccsds.AUTHPACKETLENGTH]
             self.auth_bits.append(possible_head)
@@ -80,17 +80,18 @@ class CCSDSBlob(object):
         if len(self.blob[start:start+self.octcut]) == 0:
             # empty blob
             return 0
-        for i in range(len(self.blob[start:])):
+        for i in range(len(self.blob[start:-self.octcut-1])):
             # read the ccsds head one octet more for further checks
-            head = bincore.hex2bin(self.blob[start+i:start+i+self.octcut+1])
+            headhex = self.blob[start+i:start+i+self.octcut+1]
+            head = bincore.hex2bin(headhex, pad=True)
             # check if first bits are in authorized header
             if head[:param_ccsds.AUTHPACKETLENGTH] in self.auth_bits:
                 # check sequence flag
-                seq = param_ccsds.SEQUENCEFLAG.unpack(head, raw=True)
-                if seq == param_ccsds.SEQUENCEFLAG.pack(''):
+                seq = param_ccsds.SEQUENCEFLAG.unpack(headhex)
+                if seq == param_ccsds.SEQUENCEFLAG.dic_force:
                     # check packet category
-                    pld = int(param_ccsds.PAYLOADFLAG.unpack(head))
-                    cat = int(param_ccsds.PACKETCATEGORY.unpack(head))
+                    pld = int(param_ccsds.PAYLOADFLAG.unpack(headhex))
+                    cat = int(param_ccsds.PACKETCATEGORY.unpack(headhex))
                     if cat in param_category.CATEGORIES[pld].keys():
                         return i
         else:

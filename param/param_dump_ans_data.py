@@ -28,6 +28,8 @@
 from byt import Byt
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.utils import bincore
+from ctrl.utils import b
+from ctrl.utils import O
 
 
 __all__ = ['TROUSSEAU']
@@ -36,13 +38,12 @@ __all__ = ['TROUSSEAU']
 MAXLENGTHDATA = 235  # octets
 
 KEYS = [dict(   name='data',
-                start=0,
-                l=MAXLENGTHDATA,
-                fctunpack=bincore.hex2hex,
-                fctpack=bincore.hex2hex,
+                start=0*O,
+                l=MAXLENGTHDATA*O,
+                typ='byt',
                 verbose="Buffer of bytes containing the dumped data",
                 disp='data',
-                pad=False)]
+                hard_l=False)]
 
 
 class DumpAnswerDataCCSDSTrousseau(CCSDSTrousseau):
@@ -67,8 +68,8 @@ class DumpAnswerDataCCSDSTrousseau(CCSDSTrousseau):
         copyvals[self.keys[0].name] = copyvals[self.keys[0].name].hex()
         return super(DumpAnswerDataCCSDSTrousseau, self).disp(copyvals, **kwargs)
 
-    def pack(self, allvalues, retdbvalues, **kwargs):
+    def pack(self, allvalues, **kwargs):
         pass
 
 
-TROUSSEAU = DumpAnswerDataCCSDSTrousseau(KEYS, octets=True)
+TROUSSEAU = DumpAnswerDataCCSDSTrousseau(KEYS)

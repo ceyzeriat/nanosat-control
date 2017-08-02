@@ -29,53 +29,45 @@ from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 from ctrl.utils import bincore
 from ctrl.utils import b
 from ctrl.utils import O
+from ctrl.utils.day import Day
+from ctrl.utils.ms import Ms
 
 
 __all__ = ['TROUSSEAU']
 
 
-KEYS = [dict(   name='step',
-                start=0*O,
-                l=1*O,
-                typ='uint',
-                verbose="step",
-                disp="step"),
+KEYS = [dict( name='telecommand_id_toexecute',
+                                start=0*O,
+                                l=2*O,
+                                typ='uint',
+                                verbose="telecommand id of the command to be executed",
+                                disp="tcid"),
 
-        dict(   name='counts',
-                start=1*O,
-                l=4*O,
-                typ='uint',
-                verbose="counts",
-                disp="cts"),
+        dict(  name='packet_id_toexecute',
+                            start=2*O,
+                            l=2*O,
+                            typ='uint',
+                            verbose="corresponding packet id count of the command to be executed",
+                            disp="pkid"),
 
-        dict(   name='x_com',
-                start=5*O,
-                l=2*O,
-                typ='uint',
-                verbose="x_com",
-                disp="xc"),
+        dict( name='date_ofexecution',
+                        start=4*O,
+                        l=2*O,
+                        typ='uint',
+#                        fctfix=Day,
+                        verbose='planned date of execution',
+                        disp="date"),
 
-        dict(   name='y_com',
-                start=7*O,
-                l=2*O,
-                typ='uint',
-                verbose="y_com",
-                disp="yc"),
+        dict( name='mscount_ofexecution',
+                        start=6*O,
+                        l=4*O,
+                        typ='uint',
+#                        fctfix=Ms,
+                        verbose='planned ms of execution',
+                        disp="ms")
 
-        dict(   name='x_pos',
-                start=9*O,
-                l=2*O,
-                typ='uint',
-                verbose="x_pos",
-                disp="xp"),
-
-        dict(   name='y_pos',
-                start=11*O,
-                l=2*O,
-                typ='uint',
-                verbose="y_pos",
-                disp="yp")
         ]
 
 
 TROUSSEAU = CCSDSTrousseau(KEYS, listof=True)
+#TROUSSEAU = CCSDSTrousseau(KEYS)
