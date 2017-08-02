@@ -72,10 +72,17 @@ KEYS = [    dict(   name='message',
                     fctunpack=bincore.bin2int, fctpack=bincore.int2bin),
 
             dict(   name='beacon_flag',
-                    start=LENGTHBEACONMESSAGE+33,
+                    start=LENGTHBEACONMESSAGE+32,
                     l=1,
                     disp="beacon_flag",
                     verbose="beacon flag",
+                    fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
+            
+            dict(   name='cheatmode_flag',
+                    start=LENGTHBEACONMESSAGE+33,
+                    l=1,
+                    disp="cheatmode_flag",
+                    verbose="cheatmode flag",
                     fctunpack=bincore.bin2bool, fctpack=bincore.bool2bin),
 
             dict(   name='tec_flag',

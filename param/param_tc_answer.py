@@ -62,7 +62,19 @@ TROUSSEAUDIC = {1: CCSDSTrousseau([CCSDSKey(name='message', start=0, l=10, fctun
                 200: CCSDSTrousseau([CCSDSKey(name='version', start=0, l=255, fctunpack=bincore.hex2txt, fctpack=bincore.txt2hex, verbose='none', disp='version', pad = False)], octets=True),
                 246: CCSDSTrousseau([CCSDSKey(name='values', start=0, l=255, fctunpack=bincore.hex2str, fctpack=bincore.str2hex, verbose='none', disp='values', pad = False)], octets=True),
                 248: CCSDSTrousseau([CCSDSKey(name='message', start=0, l=255, fctunpack=bincore.hex2str, fctpack=bincore.str2hex, verbose='none', disp='msg', pad = False)], octets=True),
-                250: CCSDSTrousseau([CCSDSKey(name='flashBytes', start=0, l=255, fctunpack=bincore.hex2str, fctpack=bincore.str2hex, verbose='none', disp='flashBytes', pad = False)], octets=True)
+                250: CCSDSTrousseau([CCSDSKey(name='flashBytes', start=0, l=255, fctunpack=bincore.hex2str, fctpack=bincore.str2hex, verbose='none', disp='flashBytes', pad = False)], octets=True),
+
+# PAYLOAD
+                101: CCSDSTrousseau([CCSDSKey(name='message', start=0, l=255, fctunpack=bincore.hex2str, fctpack=bincore.str2hex, verbose='none', disp='msg', pad = False)], octets=True),
+                100: CCSDSTrousseau([CCSDSKey(name='obcInterfaceError', start=0, l=1, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='obcIntErr'),
+                                     CCSDSKey(name='clockError', start=1, l=1, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='clockErr'),
+                                     CCSDSKey(name='rtcError', start=2, l=1, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='rtcErr'),
+                                     CCSDSKey(name='i2cError', start=3, l=1, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='i2cErr'),
+                                     CCSDSKey(name='spiError', start=4, l=1, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='spiErr'),
+                                     CCSDSKey(name='diodeError', start=5, l=1, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='diodeErr'),
+                                     CCSDSKey(name='piezoError', start=6, l=1, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='piezoErr'),
+                                     CCSDSKey(name='hkError', start=7, l=1, fctunpack=bincore.hex2int, fctpack=bincore.int2hex, verbose='none', disp='hkErr')], octets=True)
+
 }
 
 
