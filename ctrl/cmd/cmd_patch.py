@@ -91,10 +91,10 @@ class genericCrcPatch(CommandPatch):
         packet[-4:] = crc
         if signit is None:  # signit not given, follow default
             kwargs.pop('signit', None)
-            packet, sig = self._add_siggy(fullPacket, **kwargs)
+            packet, sig = self._add_siggy(packet, **kwargs)
         elif signit is True:  # signit was passed and True
             kwargs['signit'] = True
-            packet, sig = self._add_siggy(fullPacket, **kwargs)
+            packet, sig = self._add_siggy(packet, **kwargs)
         return packet, hd, hdx, inputs
 
 
