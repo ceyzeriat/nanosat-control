@@ -4,7 +4,7 @@
 ###############################################################################
 #  
 #  CTRL - Ground-Segment software for Cube-Sats
-#  Copyright (C) 202-2017  Guillaume Schworer
+#  Copyright (C) 2016-2017  Guillaume Schworer
 #  
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -36,44 +36,42 @@ from ctrl.utils.ms import Ms
 __all__ = ['TROUSSEAU']
 
 
-KEYS = [dict( name='file_name',
-                                start=0*O,
-                                l=8*O,
-                                typ='text',
-                                verbose="name of file on SD card (8 characters)",
-                                disp="filename"),
-		dict( name='file_ext',
-                                start=8*O,
-                                l=3*O,
-                                typ='text',
-                                verbose="extension of file on SD card (3 characters)",
-                                disp="ext"),
+KEYS = [dict(   name='file_name',
+                start=0*O,
+                l=8*O,
+                typ='text',
+                verbose="name of file on SD card (8 characters)",
+                disp="filename"),
+		dict(   name='file_ext',
+                start=8*O,
+                l=3*O,
+                typ='text',
+                verbose="extension of file on SD card (3 characters)",
+                disp="ext"),
 
-        dict(  name='attribute',
-                            start=11*O,
-                            l=1*O,
-                            typ='uint',
-                            verbose="type of file",
-                            disp="attr"),
+        dict(   name='attribute',
+                start=11*O,
+                l=1*O,
+                typ='uint',
+                verbose="type of file",
+                disp="attr"),
 
-        dict( name='timestamp',
-                        start=12*O,
-                        l=4*O,
-                        typ='uint',
-#                        fctfix=Day,
-                        verbose='time of of the oldest Tm in the file in second after 1970',
-                        disp="time"),
+        dict(   name='timestamp',
+                start=12*O,
+                l=4*O,
+                typ='uint',
+                fctfix=Day,
+                verbose='time of of the oldest Tm in the file in second after 1970',
+                disp="time"),
 
-        dict( name='file_size',
-                        start=16*O,
-                        l=4*O,
-                        typ='uint',
-#                        fctfix=Ms,
-                        verbose='size of the file',
-                        disp="size")
-
+        dict(   name='file_size',
+                start=16*O,
+                l=4*O,
+                typ='uint',
+               fctfix=Ms,
+                verbose='size of the file',
+                disp="size")
         ]
 
 
 TROUSSEAU = CCSDSTrousseau(KEYS, listof=True)
-#TROUSSEAU = CCSDSTrousseau(KEYS)
