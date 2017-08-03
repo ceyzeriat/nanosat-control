@@ -181,7 +181,7 @@ class WrongCategoryObjectName(CCSDSException):
                        "Capitalized-Camelcase-singular".format(name)
 
 
-class DuplicateKeyName(CTRLException):
+class DuplicateKeyName(CCSDSException):
     """
     Names in a trousseau must be unique
     """
@@ -190,7 +190,7 @@ class DuplicateKeyName(CTRLException):
         self.message = "Name '{}' is duplicated in the trousseau".format(name)
 
 
-class WrongNameFormat(CTRLException):
+class WrongNameFormat(CCSDSException):
     """
     Forbidden characters in the category name
     """
