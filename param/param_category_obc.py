@@ -252,46 +252,53 @@ CATEGORIESOBC = {
                                 aux_trousseau=HEADAUX_6,
                                 data_file='param_patch_list_segs'),
 
-               10: CCSDSCategory(name='flux mean (reduced data)',
+               10: CCSDSCategory(name='flux mean',
+                                verbose='flux mean (reduced data)',
                                 number=10,
                                 aux_trousseau=HEADAUX_SCIENCEOBC,
                                 data_file='param_l1dataprocessed'),
 
-               11: CCSDSCategory(name='flux variance (reduced data)',
+               11: CCSDSCategory(name='flux variance',
+                                verbose='flux variance (reduced data)',
                                 number=11,
                                 aux_trousseau=HEADAUX_SCIENCEOBC,
                                 data_file='param_l1datacovar'),
 
-               12: CCSDSCategory(name='sd Card files',
+               12: CCSDSCategory(name='sd card file',
                                 number=12,
                                 aux_trousseau=HEADAUX_TELECOMMANDANSWERCAT,
                                 data_file='param_lsSdCard'),
 
-               13: CCSDSCategory(name='data counters of files in memory (SD card or Ram)',
+               13: CCSDSCategory(name='data file',
+                                verbose='data counters of files in memory (SD card or Ram)',
                                 number=13,
                                 aux_trousseau=HEADAUX_TELECOMMANDANSWERCAT,
                                 data_file='param_dataCounters'),
 
 
-               15: CCSDSCategory(name='ADCS standard telemetry',
+               15: CCSDSCategory(name='ADCS standard',
+                                verbose='ADCS standard telemetry',
                                 number=15,
                                 aux_trousseau=None,
                                 data_file='param_l1adcsstandard'),
 
 
-               16: CCSDSCategory(name='ADCS actuator telemetry',
+               16: CCSDSCategory(name='ADCS actuator',
+                                verbose='ADCS actuator telemetry',
                                 number=16,
                                 aux_trousseau=None,
                                 data_file='param_l1adcsactuator'),
 
 
-               17: CCSDSCategory(name='ADCS sensor telemetry',
+               17: CCSDSCategory(name='ADCS sensor',
+                                verbose='ADCS sensor telemetry',
                                 number=17,
                                 aux_trousseau=None,
                                 data_file='param_l1adcssensor'),
 
 
                18: CCSDSCategory(name='ADCS attitude telemetry',
+                                verbose='ADCS attitude',
                                 number=18,
                                 aux_trousseau=None,
                                 data_file='param_l1adcsattitude'),
