@@ -275,24 +275,6 @@ class TCTooLong(CTRLException):
         self.message = "TC is too long of '{}' octets".format(l)
 
 
-class DuplicateKeyName(CTRLException):
-    """
-    Names in a trousseau must be unique
-    """
-    def __init__(self, name, *args, **kwargs):
-        self._init(name, *args, **kwargs)
-        self.message = "Name '{}' is duplicated in the trousseau".format(name)
-
-
-class WrongNameFormat(CTRLException):
-    """
-    Forbidden characters in the category name
-    """
-    def __init__(self, name, *args, **kwargs):
-        self._init(name, *args, **kwargs)
-        self.message = "Invalid name '{}'".format(name)
-
-
 # not used
 class NoSuchKey(CTRLException):
     """
