@@ -4,7 +4,7 @@
 ###############################################################################
 #  
 #  CTRL - Ground-Segment software for Cube-Sats
-#  Copyright (C) 202-2017  Guillaume Schworer
+#  Copyright (C) 2016-2017  Guillaume Schworer
 #  
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -36,29 +36,27 @@ from ctrl.utils.ms import Ms
 __all__ = ['TROUSSEAU']
 
 
-KEYS = [dict( name='counter',
-                                start=0*O,
-                                l=2*O,
-                                typ='uint',
-                                verbose="counter of a file in memory",
-                                disp="cnt"),
-        dict( name='date',
-                        start=2*O,
-                        l=2*O,
-                        typ='uint',
-#                        fctfix=Day,
-                        verbose='planned date of execution',
-                        disp="date"),
-
-        dict( name='mscount',
-                        start=4*O,
-                        l=4*O,
-                        typ='uint',
-#                        fctfix=Ms,
-                        verbose='planned ms of execution',
-                        disp="ms")
+KEYS = [dict(   name='counter',
+                start=0*O,
+                l=2*O,
+                typ='uint',
+                verbose="counter of a file in memory",
+                disp="cnt"),
+        dict(   name='date',
+                start=2*O,
+                l=2*O,
+                typ='uint',
+                fctfix=Day,
+                verbose='planned date of execution',
+                disp="date"),
+        dict(   name='mscount',
+                start=4*O,
+                l=4*O,
+                typ='uint',
+                fctfix=Ms,
+                verbose='planned ms of execution',
+                disp="ms")
         ]
 
 
 TROUSSEAU = CCSDSTrousseau(KEYS, listof=True)
-#TROUSSEAU = CCSDSTrousseau(KEYS)
