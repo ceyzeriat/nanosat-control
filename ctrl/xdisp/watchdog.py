@@ -53,7 +53,7 @@ MAXSTORERP = 100
 MAXDISPLAYRP = 10
 
 TIMEUPDFREQ = 3.
-PRINTFREQ = 5.
+PRINTFREQ = 10.
 TIMESTAMPFMT = '%Y-%m-%d %H:%M:%S'
 
 
@@ -61,6 +61,15 @@ TCFMT = '{timestamp} {pld} {lvl} {pid:<15.15} #{pkid:<5.5} {cmd_name:<27.27}'
 TMFMT = '{timestamp} {pld} {lvl} {pid:<15.15} #{pkid:<5.5} cat: {cat:>13.13} '\
         '({catnum:>2.2}) len: {sz:>3.3}'
 
+HELP =\
+"""
+Shortcuts:
+  * ESC: close pop-up
+  * h: help
+  * TAB: change panel TC>TM>Report>
+  * UP:
+  * DOWN: 
+"""
 
 # do we want to use unicode ?
 if param_all.SHOWUNICODE:
@@ -108,7 +117,7 @@ else:
 
 
 class PrintOut(object):
-    def __init__(self, text, loc, opts=None, newline=False):
+    def __init__(self, text, loc=(0,0), opts=None, newline=False):
         self.text = e(text)
         self.line = loc[0]
         self.col = loc[1]
@@ -122,6 +131,7 @@ class Xdisp(object):
         self.TClist = []
         self.TMlist = []
         self.printbuff = []
+        self.BOXSIZE = {0: MAXDISPLAYTC, 1: MAXDISPLAYTM, 2: MAXDISPLAYRP}
 
     def start(self):
         curses.wrapper(self.init)
@@ -141,10 +151,14 @@ class Xdisp(object):
         self.TC, self.TCpan, self._TC, self._TCpan =\
                             newlinebox(MAXDISPLAYTC, self.width,
                                        2, 0, "Telecommands")
+        self.TC.scrollok(True)
+        self.TC.idlok(True)
         self.TC.refresh()
         self.TM, self.TMpan, self._TM, self._TMpan =\
                             newlinebox(MAXDISPLAYTM, self.width,
                                        MAXDISPLAYTC+3, 0, "Telemetries")
+        self.TM.scrollok(True)
+        self.TM.idlok(True)
         self.TM.refresh()
         self.RP, self.RPpan, self._RP, self._RPpan =\
                             newlinebox(MAXDISPLAYRP, self.width,
@@ -152,9 +166,12 @@ class Xdisp(object):
         self.RP.refresh()
         self.updpan()
         time.sleep(0.2)  # give it a bit of air
+        self.pan_box = 0
+        self.PANBOX = {0: self.TC, 1: self.TM}
+        self.pan_loc = {0: 0, 1: 0, 2: 0}
         self.running = True
-        #self.bar.erase()
-        self._disp(self.bar, PrintOut(' '*(self.width-1), (0, 0)))
+        #self.bar.erase()refresh
+        self.disp(self.bar, PrintOut(' '*(self.width-1)))
         self.set_listenico(status=self.NOSTARTED)
         self.set_controlico(status=self.NOSTARTED)
         self.set_saveico(status=self.NOSTARTED)
@@ -171,7 +188,7 @@ class Xdisp(object):
         curses.panel.update_panels()
         self.stdscr.refresh()
 
-    def _disp(self, win, txt):
+    def disp(self, win, txt):
         self.printbuff.append((win, txt))
 
     def set_controlico(self, status):
@@ -180,8 +197,8 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        self._disp(self.bar,
-                   PrintOut(CONTROLICO[1], (0, CONTROLICO[0]), opts=status))
+        self.disp(self.bar,
+                   PrintOut(CONTROLICO[1], loc=(0, CONTROLICO[0]), opts=status))
 
     def set_saveico(self, status):
         """
@@ -189,8 +206,8 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        self._disp(self.bar,
-                   PrintOut(SAVEICO[1], (0, SAVEICO[0]), opts=status))
+        self.disp(self.bar,
+                   PrintOut(SAVEICO[1], loc=(0, SAVEICO[0]), opts=status))
 
     def set_listenico(self, status):
         """
@@ -198,8 +215,8 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        self._disp(self.bar,
-                   PrintOut(LISTENICO[1], (0, LISTENICO[0]), opts=status))
+        self.disp(self.bar,
+                   PrintOut(LISTENICO[1], loc=(0, LISTENICO[0]), opts=status))
 
     def set_time(self):
         """
@@ -207,8 +224,16 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        self._disp(self.bar,
-                   PrintOut(core.now().strftime('%T'), (0, 0), opts=self.CYAN))
+        self.disp(self.bar,
+                   PrintOut(core.now().strftime('%T'), opts=self.CYAN))
+        """ts = core.now().totimestamp()
+        if int(ts%3) == 0 and getattr(self, 'last_ts', 0) != ts//3:
+            self.last_ts = ts//3
+            DEL = PrintOut("{}: here is a new line mate".format(len(self.TClist)),
+                           opts=self.RED, newline=True)
+            self.TClist = [(DEL, {})] + self.TClist[:MAXSTORETC-1]
+            self.disp(0, DEL)
+        """
 
     def report(self, message):
         """
@@ -216,9 +241,9 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        self._disp(self.RP,
-                   PrintOut('{} {}'.format(core.now().strftime('%T'), message),
-                            (0, 0), opts=self.WHITE, newline=True))
+        self.disp(self.RP,
+                  PrintOut('{} {}'.format(core.now().strftime('%T'), message),
+                           opts=self.WHITE, newline=True))
 
     def set_TC_sent(self, packet_id, status):
         """
@@ -226,11 +251,10 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
+        for idx, (txt, item) in enumerate(self.TClist[:MAXDISPLAYTC]):
             if int(packet_id) == int(item[param_ccsds.PACKETID.name]):
-                self._disp(self.TC,
-                           PrintOut(SENTICO[1], (idx, SENTICO[0]),
-                                    opts=status))
+                self.disp(0, PrintOut(SENTICO[1], loc=(idx, SENTICO[0]),
+                                   opts=status))
                 break
 
     def set_TC_rack(self, packet_id, status):
@@ -242,16 +266,14 @@ class Xdisp(object):
         if str(packet_id).lower() == 'none':
             # if no packet_id given.. just assume it is the RACK of the
             # lastest TC, index 0
-            self._disp(self.TC,
-                       PrintOut(RACKICO[1], (0, RACKICO[0]),
-                                opts=status))
+            self.disp(0, PrintOut(RACKICO[1], loc=(0, RACKICO[0]),
+                                    opts=status))
             return
         packet_id = int(packet_id)
-        for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
+        for idx, (txt, item) in enumerate(self.TClist[:MAXDISPLAYTC]):
             if packet_id == int(item[param_ccsds.PACKETID.name]):
-                self._disp(self.TC,
-                           PrintOut(RACKICO[1], (idx, RACKICO[0]),
-                                    opts=status))
+                self.disp(0, PrintOut(RACKICO[1], loc=(idx, RACKICO[0]),
+                                        opts=status))
                 break
 
     def set_TC_fack(self, packet_id, status):
@@ -260,11 +282,10 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
+        for idx, (txt, item) in enumerate(self.TClist[:MAXDISPLAYTC]):
             if int(packet_id) == int(item[param_ccsds.PACKETID.name]):
-                self._disp(self.TC,
-                           PrintOut(FACKICO[1], (idx, FACKICO[0]),
-                                    opts=status))
+                self.disp(0, PrintOut(FACKICO[1], loc=(idx, FACKICO[0]),
+                                        opts=status))
                 break
 
     def set_TC_eack(self, packet_id, status):
@@ -273,35 +294,33 @@ class Xdisp(object):
         """
         if not self.running:
             return
-        for idx, item in enumerate(self.TClist[:MAXDISPLAYTC]):
+        for idx, (txt, item) in enumerate(self.TClist[:MAXDISPLAYTC]):
             if int(packet_id) == int(item[param_ccsds.PACKETID.name]):
-                self._disp(self.TC,
-                           PrintOut(EACKICO[1], (idx, EACKICO[0]),
-                                    opts=status))
+                self.disp(0, PrintOut(EACKICO[1], loc=(idx, EACKICO[0]),
+                                       opts=status))
                 break
 
     def add_TC(self, packet_id, infos):
         packet_id = int(packet_id)
         if packet_id in [item[param_ccsds.PACKETID.name]\
-                                    for item in self.TClist]:
+                                for (txt, item) in self.TClist]:
             return
         if not self.running:
             return
-        self.TClist = [infos] + self.TClist[:MAXSTORETC-1]
         pld = int(infos[param_ccsds.PAYLOADFLAG.name])
         lvl = int(infos[param_ccsds.LEVELFLAG.name])
         pid = int(infos[param_ccsds.PID.name])
         pidstr = str(PIDREGISTRATION_REV[pid][pld][lvl])\
                         if pid in PIDREGISTRATION_REV.keys() else "?????"
-        self._disp(self.TC,
-                   PrintOut(TCFMT.format(
-                                timestamp=core.now().strftime(TIMESTAMPFMT),
-                                pld=PAYLOADICO if pld == 1 else OBCICO,
-                                lvl=L1ICO if lvl == 1 else L0ICO,
-                                pid=pidstr,
-                                pkid=str(packet_id),
-                                cmd_name=str(infos.get('cmdname'))),
-                            (0, 0), opts=self.WHITE, newline=True))
+        TC = PrintOut(TCFMT.format(timestamp=core.now().strftime(TIMESTAMPFMT),
+                                   pld=PAYLOADICO if pld == 1 else OBCICO,
+                                   lvl=L1ICO if lvl == 1 else L0ICO,
+                                   pid=pidstr,
+                                   pkid=str(packet_id),
+                                   cmd_name=str(infos.get('cmdname'))),
+                      opts=self.WHITE, newline=True)
+        self.TClist = [(TC, infos)] + self.TClist[:MAXSTORETC-1]
+        self.disp(0, TC)
         self.set_TC_sent(packet_id, self.WAIT)
         self.set_TC_rack(packet_id,
                      self.WAIT if int(infos[\
@@ -319,27 +338,26 @@ class Xdisp(object):
     def add_TM(self, packet_id, infos):
         packet_id = int(packet_id)
         if packet_id in [item[param_ccsds.PACKETID.name]\
-                                    for item in self.TMlist]:
+                                    for (txt, item) in self.TMlist]:
             return
         if not self.running:
             return
-        self.TMlist = [infos] + self.TMlist[:MAXSTORETM-1]
         pld = int(infos[param_ccsds.PAYLOADFLAG.name])
         lvl = int(infos[param_ccsds.LEVELFLAG.name])
         pid = int(infos[param_ccsds.PID.name])
         catnum = int(infos[param_ccsds.PACKETCATEGORY.name])
         cat = param_category.CATEGORIES[pld][catnum]
-        self._disp(self.TM,
-                   PrintOut(TMFMT.format(
-                                timestamp=core.now().strftime(TIMESTAMPFMT),
-                                pld=PAYLOADICO if pld == 1 else OBCICO,
-                                lvl=L1ICO if lvl == 1 else L0ICO,
-                                pid=str(PIDREGISTRATION_REV[pid][pld][lvl]),
-                                pkid=str(packet_id),
-                                cat=str(cat.name),
-                                catnum=str(catnum),
-                                sz=str(infos['sz'])),
-                            (0, 0), opts=self.WHITE, newline=True))
+        TM = PrintOut(TMFMT.format(timestamp=core.now().strftime(TIMESTAMPFMT),
+                                   pld=PAYLOADICO if pld == 1 else OBCICO,
+                                   lvl=L1ICO if lvl == 1 else L0ICO,
+                                   pid=str(PIDREGISTRATION_REV[pid][pld][lvl]),
+                                   pkid=str(packet_id),
+                                   cat=str(cat.name),
+                                   catnum=str(catnum),
+                                   sz=str(infos['_sz_blobish'])),
+                      opts=self.WHITE, newline=True)
+        self.TMlist = [(TM, infos)] + self.TMlist[:MAXSTORETM-1]
+        self.disp(1, TM)
 
     def _init_colors(self):
         for i in range(curses.COLORS):
@@ -372,30 +390,74 @@ class Xdisp(object):
         
     def _key_catch(self):
         self.poped = False
+        self.PANBOX[self.pan_box].chgat(\
+                        0, 0, 1, curses.A_REVERSE)
         while self.running:
-            self.RP.move(0, 0)
-            #self.RP.addstr(0, 0, ">")
-            self.RP.clrtoeol()
             inp = self.RP.getch()
             #self.report('got: {}'.format(inp))
-            if inp == ord('q') and not self.poped:
+            if inp == 9 and not self.poped:  # tab
+                try:  # slid out of screen
+                    self.PANBOX[self.pan_box].chgat(self.pan_loc[self.pan_box],
+                                                0, 1, curses.A_NORMAL)
+                except:
+                    pass
+                self.pan_box = (self.pan_box + 1) % (len(self.PANBOX))
+                self.pan_loc[self.pan_box] = 0
+                self.PANBOX[self.pan_box].chgat(self.pan_loc[self.pan_box],
+                                                0, 1, curses.A_REVERSE)
+            elif inp == ord('h') and not self.poped:
                 self.poped = True
                 self.popup, self.popuppan, self._popup, self._popuppan =\
-                        newlinebox(5, 60, 10, 3, "Preview", opts=self.CYAN_BG)
-                self.popup.bkgd(" ", self.CYAN_BG)
-                #self.stdscr.wbkgd(self.popup, self.RED)
-                self.popuppan.top()
-                self._disp(self.popup, PrintOut('hahaha', (0,0), self.CYAN_BG))
+                        newpopup(25, 70, 3, 3, "Help", opts=self.CYAN_BG)
+                self.disp(self.popup, PrintOut(HELP, opts=self.CYAN_BG))
                 self.updpan()
-            if inp == 27 and self.poped:
+            elif inp == 27 and self.poped:  # esc
                 self.poped = False
-                #self.popuppan.bottom()
                 del self.popuppan
                 del self.popup
                 del self._popup
                 del self._popuppan
                 self.updpan()
-                #self.popup.bkgdset(' ', self.RED)
+            elif inp == curses.KEY_DOWN:
+                try:  # slid out of screen
+                    self.PANBOX[self.pan_box].chgat(self.pan_loc[self.pan_box],
+                                                0, 1, curses.A_NORMAL)
+                except:
+                    pass
+                self.pan_loc[self.pan_box] += 1
+                if not (0 <= self.pan_loc[self.pan_box]\
+                                        < self.BOXSIZE[self.pan_box]):
+                    self.pan_loc[self.pan_box] = self.BOXSIZE[self.pan_box]-1
+                self.PANBOX[self.pan_box].chgat(self.pan_loc[self.pan_box],
+                                                0, 1, curses.A_REVERSE)
+            elif inp == curses.KEY_UP:
+                try:  # slid out of screen
+                    self.PANBOX[self.pan_box].chgat(self.pan_loc[self.pan_box],
+                                                0, 1, curses.A_NORMAL)
+                except:
+                    pass
+                self.pan_loc[self.pan_box] -= 1
+                if not (0 <= self.pan_loc[self.pan_box]\
+                                        < self.BOXSIZE[self.pan_box]):
+                    self.pan_loc[self.pan_box] = 0
+                self.PANBOX[self.pan_box].chgat(self.pan_loc[self.pan_box],
+                                                0, 1, curses.A_REVERSE)
+            elif inp == 339:  # PAGE UP
+                self.PANBOX[self.pan_box].scroll(-1)
+                #self.updpan()
+            elif inp == 338:  # PAGE DOWN
+                self.PANBOX[self.pan_box].scroll(1)
+                #self.updpan()
+            elif inp == ord('q') and not self.poped:
+                self.poped = True
+                self.popup, self.popuppan, self._popup, self._popuppan =\
+                        newpopup(5, 60, 10, 3, "Preview", opts=self.CYAN_BG)
+                self.disp(self.popup, PrintOut('hahaha', opts=self.CYAN_BG))
+                self.updpan()
+            #elif inp == ord('v'):
+                #self.report(PrintOut(repr(self.pan_loc), newline=True))
+            
+            
 
                 #self.running = False
             #self.RP.insertln()
@@ -406,15 +468,26 @@ def update_it(self):
     while self.running:
         # make local copy of list
         for win, item in list(self.printbuff):
+            wd = self.PANBOX[win] if isinstance(win, int) else win
             if item.newline:
-                win.move(item.line, 0)
-                win.insertln()
-            win.addstr(item.line, item.col, item.text,
+                wd.move(item.line, 0)
+                wd.insertln()
+                if isinstance(win, int):
+                    self.pan_loc[win] += 1
+            wd.addstr(item.line, item.col, item.text,
                             0 if item.opts is None else item.opts)
-            win.refresh()
             self.printbuff.pop(0)
-        curses.panel.update_panels();
+        
+        self.updpan()
         time.sleep(1./PRINTFREQ)
+
+
+def newpopup(h, w, y, x, title=None, line=True, opts=None):
+    win, panel, wb, pn = newlinebox(h, w, y, x, title, line=line, opts=opts)
+    if opts is not None:
+        win.bkgd(" ", opts)
+    panel.top()
+    return win, panel, wb, pn
 
 
 def newlinebox(h, w, y, x, title=None, line=True, opts=None):

@@ -46,6 +46,7 @@ class TruncatedPrimaryHeader(CCSDSException):
         self._init(*args, **kwargs)
         self.message = "The packet has its primary header truncated"
 
+
 class TruncatedSecondaryHeader(CCSDSException):
     """
     The packet has its primary header truncated
@@ -55,6 +56,7 @@ class TruncatedSecondaryHeader(CCSDSException):
         self.message = "The packet '{}' has its"\
                        "secondary header truncated".format(name)
 
+
 class TruncatedData(CCSDSException):
     """
     The packet has its data truncated
@@ -62,6 +64,7 @@ class TruncatedData(CCSDSException):
     def __init__(self, name, *args, **kwargs):
         self._init(name, *args, **kwargs)
         self.message = "The packet '{}' has its data truncated".format(name)
+
 
 class NoSuchKey(CCSDSException):
     """
@@ -71,6 +74,7 @@ class NoSuchKey(CCSDSException):
         self._init(name, key, *args, **kwargs)
         self.message = "No key '{}' in dict '{}'".format(key, name)
 
+
 class NoSuchValue(CCSDSException):
     """
     Missing value in the dictionary
@@ -79,6 +83,7 @@ class NoSuchValue(CCSDSException):
         self._init(name, value, *args, **kwargs)
         self.message = "No value '{}' in dict '{}'".format(value, name)
 
+
 class NoAbsGrab(CCSDSException):
     """
     If relative grabing is not possible
@@ -86,6 +91,7 @@ class NoAbsGrab(CCSDSException):
     def __init__(self, name, *args, **kwargs):
         self._init(name, *args, **kwargs)
         self.message = "Can only parse bits in relatively in '{}'".format(name)
+
 
 class GrabFail(CCSDSException):
     """
@@ -96,6 +102,7 @@ class GrabFail(CCSDSException):
         self.message = "Blob too small, could not grab '{}', "\
                        "in '{}'".format(l, name)
 
+
 class CantApplyOffset(CCSDSException):
     """
     If relative grabing is not possible
@@ -104,6 +111,7 @@ class CantApplyOffset(CCSDSException):
         self._init(name, start, offset, *args, **kwargs)
         self.message = "Cannot apply offset '{}' with start index "\
                        "'{}' in '{}'".format(start, offset, name)
+
 
 class BadDefinition(CCSDSException):
     """
@@ -114,6 +122,7 @@ class BadDefinition(CCSDSException):
         self.message = "Should assign either a dic or a fctpack/fctunpack, "\
                        "in '{}'".format(name)
 
+
 class BadTypeDefinition(CCSDSException):
     """
     If the type given in unknown
@@ -121,6 +130,7 @@ class BadTypeDefinition(CCSDSException):
     def __init__(self, typ, name, *args, **kwargs):
         self._init(typ, name, *args, **kwargs)
         self.message = "Unknown type '{}' for '{}'".format(typ, name)
+
 
 class NoDic(CCSDSException):
     """
@@ -131,6 +141,7 @@ class NoDic(CCSDSException):
         self.message = "CCSDS key '{}' is defined through fctpack/unpack, "\
                        "not dic".format(name)
 
+
 class PacketValueMissing(CCSDSException):
     """
     If at packing, a value is missing
@@ -138,6 +149,7 @@ class PacketValueMissing(CCSDSException):
     def __init__(self, name, *args, **kwargs):
         self._init(name, *args, **kwargs)
         self.message = "CCSDS value for key '{}' is not optional".format(name)
+
 
 class CategoryMissing(CCSDSException):
     """
@@ -148,6 +160,7 @@ class CategoryMissing(CCSDSException):
         self.message = "Packet category '{}' with payload flag '{}' does "\
                        "not exist".format(cat, pld)
 
+
 class WrongCategoryTableName(CCSDSException):
     """
     Category has wrong name format
@@ -157,6 +170,7 @@ class WrongCategoryTableName(CCSDSException):
         self.message = "Category '{}' is not valid. Should be "\
                        "underscorded-lower-plural".format(name)
 
+
 class WrongCategoryObjectName(CCSDSException):
     """
     Category has wrong name format
@@ -165,6 +179,25 @@ class WrongCategoryObjectName(CCSDSException):
         self._init(name, *args, **kwargs)
         self.message = "Category '{}' is not valid. Should be "\
                        "Capitalized-Camelcase-singular".format(name)
+
+
+class DuplicateKeyName(CCSDSException):
+    """
+    Names in a trousseau must be unique
+    """
+    def __init__(self, name, *args, **kwargs):
+        self._init(name, *args, **kwargs)
+        self.message = "Name '{}' is duplicated in the trousseau".format(name)
+
+
+class WrongNameFormat(CCSDSException):
+    """
+    Forbidden characters in the category name
+    """
+    def __init__(self, name, *args, **kwargs):
+        self._init(name, *args, **kwargs)
+        self.message = "Invalid name '{}' for category".format(name)
+
 
 class PIDMissing(CCSDSException):
     """
@@ -192,6 +225,7 @@ class InvalidMetaTrousseauKey(CCSDSException):
         self._init(key, *args, **kwargs)
         self.message = "Meta-Trousseau Key '{}' does not exist".format(key)
 
+
 class NoMetaTrousseauAttribute(CCSDSException):
     """
     If one tries to access a trousseau attribute on a meta-trousseau
@@ -200,6 +234,7 @@ class NoMetaTrousseauAttribute(CCSDSException):
         self._init(key, *args, **kwargs)
         self.message = "Attribute '{}' does not exist for meta-trousseau"\
                         .format(key)
+
 
 class WrongAt(CCSDSException):
     """

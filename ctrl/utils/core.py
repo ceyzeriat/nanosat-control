@@ -299,7 +299,9 @@ def setstr(txt, slc, rep):
     """
     return txt[:slc.start] + rep[0:slc.stop-slc.start] + txt[slc.stop:]
 
-def clean_name(txt):
+authorized = list(range(65, 91)) + list(range(97, 123))\
+                    + list(range(48, 58)) + [95]
+def clean_name(txt, allow_front_digit=False, allow_space=False):
     """
     Cleans the ``txt`` from non-alphanum characters; replaces the first
     character by a word if it is a number
@@ -308,12 +310,16 @@ def clean_name(txt):
         raise TypeError("txt must be string or unicode")
     number = {"0": "zero", "1": "one", "2": "two", "3": "three", "4": "four",
               "5": "five", "6": "six", "7": "seven", "8": "eight", "9": "nine"}
-    authorized = list(range(65, 91)) + list(range(97, 123))\
-                    + list(range(48, 58)) + [95]
+    space = [ord(' ') if allow_space else '']
     txt = "".join([letter for letter in str(txt)
-                        if (ord(letter) in authorized)])
-    return number[txt[0]] + "_" if ord(txt[0]) in number.keys() else txt[0]\
-            + txt[1:]
+                        if (ord(letter) in (authorized + space))])
+    if allow_front_digit:
+        return txt
+    else:
+        if txt[0] in number.keys():
+            return number[txt[0]] + txt[1:]
+        else:
+            return txt
 
 def isStr(txt):
     """

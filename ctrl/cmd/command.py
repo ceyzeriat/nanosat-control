@@ -69,6 +69,12 @@ class Command(Cm):
                                              TCid=self.number, retvalues=True,
                                              **kwargs)
         return packet, hd, hdx, inputs
+    
+    def _add_siggy(self, fullPacket, **kwargs):
+        """
+        Just a shortcut for adding signature to a packet
+        """
+        return TCPacker.add_siggy(fullPacket, **kwargs)
 
     def __call__(self, *args, **kwargs):
         return self.send(**kwargs)

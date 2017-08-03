@@ -26,11 +26,46 @@
 
 
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
-
-from .generated.l0beaconstruct import L0BEACONSTRUCT_KEYS
+from ctrl.utils import bincore
+from ctrl.utils import b
+from ctrl.utils import O
+from ctrl.utils.day import Day
+from ctrl.utils.ms import Ms
 
 
 __all__ = ['TROUSSEAU']
 
 
-TROUSSEAU = CCSDSTrousseau(L0BEACONSTRUCT_KEYS)
+KEYS = [dict(   name='telecommand_id_toexecute',
+                start=0*O,
+                l=2*O,
+                typ='uint',
+                verbose="telecommand id of the command to be executed",
+                disp="tcid"),
+
+        dict(   name='packet_id_toexecute',
+                start=2*O,
+                l=2*O,
+                typ='uint',
+                verbose="corresponding packet id count of the command to be executed",
+                disp="pkid"),
+
+        dict(   name='date_ofexecution',
+                start=4*O,
+                l=2*O,
+                typ='uint',
+                fctfix=Day,
+                verbose='planned date of execution',
+                disp="date"),
+
+        dict(   name='mscount_ofexecution',
+                start=6*O,
+                l=4*O,
+                typ='uint',
+                fctfix=Ms,
+                verbose='planned ms of execution',
+                disp="ms")
+        ]
+
+
+TROUSSEAU = CCSDSTrousseau(KEYS, listof=True)

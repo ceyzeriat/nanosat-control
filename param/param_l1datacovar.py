@@ -27,10 +27,10 @@
 
 from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 
-from .generated.l0beaconstruct import L0BEACONSTRUCT_KEYS
+from .generated.l1datacovar import L1DATACOVAR_KEYS
 
 
 __all__ = ['TROUSSEAU']
 
 
-TROUSSEAU = CCSDSTrousseau(L0BEACONSTRUCT_KEYS)
+TROUSSEAU = CCSDSTrousseau(L1DATACOVAR_KEYS, listof=True)

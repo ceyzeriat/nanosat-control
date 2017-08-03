@@ -116,8 +116,8 @@ def process_report(inputs):
             return
         inpacket = dict(hd)
         inpacket.update(hdx)
-        inpacket.update(dd)
-        inpacket['sz'] = len(blobish)
+        inpacket['_all_data'] = dd['all']
+        inpacket['_sz_blobish'] = len(blobish)
         WATCH_TRANS.tell_key('tmf', **inpacket)
         pldflag = int(hd[param_ccsds.PAYLOADFLAG.name])
         catnum = int(hd[param_ccsds.PACKETCATEGORY.name])
@@ -131,7 +131,7 @@ def process_report(inputs):
             print(cat.aux_trousseau.disp(dict(hdx)))
         # print data if any
         if cat.data_trousseau is not None:
-            print(cat.data_trousseau.disp(dict(dd['unpacked']), hds=hd, hdx=hdx))
+            print(cat.data_trousseau.disp(dd['unpacked'], hds=hd, hdx=hdx))
     else:
         pass
 
