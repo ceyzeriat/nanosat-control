@@ -30,7 +30,7 @@ from byt import Byt
 
 from ..utils import core
 from ..utils import bincore
-from . import ccsdsexception
+from . import ccsdsexception as exc
 from .ccsdskey import CCSDSKey
 from param import param_all
 
@@ -54,12 +54,16 @@ class CCSDSTrousseau(object):
         self.listof = bool(listof)
         self.octets = True
         self.unram_any = False
+        allnames = []
         for item in keylist:
             if not isinstance(item, CCSDSKey):
                 item = CCSDSKey(**item)
             self.octets = (self.octets and item.octets)
             self.size = max(self.size, item.end)
             self.unram_any = (self.unram_any or (item.unram is not None))
+            if item.name in allnames:
+                raise exc.DuplicateKeyName(name=item.name)
+            allnames.append(item.name)
             self.keys.append(item)
         self.size = int(self.size/8)
         self._make_fmt()
@@ -103,7 +107,7 @@ class CCSDSTrousseau(object):
         for item in self.keys:
             if item.name not in values.keys() and item.dic_force is None:
                 # got no values for this key, wtf
-                raise ccsdsexception.PacketValueMissing(item.name)
+                raise exc.PacketValueMissing(item.name)
             retvals[item.name] = values[item.name] if item.dic_force is None\
                                                             else item.dic_force
             v = item.pack(retvals[item.name], octets=self.octets, **kwargs)
