@@ -40,7 +40,7 @@ __all__ = ['CCSDSCategory']
 
 
 class CCSDSCategory(object):
-    def __init__(self, name, number, aux_trousseau=None,
+    def __init__(self, name, number, aux_trousseau=None, verbose='',
                     data_file=None, thatsTCANS=False):
         """
         Defines a packet category
@@ -51,12 +51,16 @@ class CCSDSCategory(object):
           * number (int): the id number of the category
           * aux_trousseau (None or Trousseau): None if the category
             has no auxiliary header, otherwise the Trousseau to unpack it
+          * verbose (str): some more details
           * data_file (None or str): None if the category has no data
             field, or the name of the parameter file where its trousseau
             is defined
         """
         # deal with name checking
+        if txt != core.clean_name(txt, allow_space=True):
+            raise exc.WrongNameFormat(txt)
         self.name = str(name)
+        self.verbose = str(verbose)
         self._thatsTCANS = bool(thatsTCANS)
         self.table_name = core.clean_name(self.name.replace(' ', '_')).lower()
         inf = inflect.engine()
