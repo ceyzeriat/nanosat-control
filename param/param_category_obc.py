@@ -297,8 +297,8 @@ CATEGORIESOBC = {
                                 data_file='param_l1adcssensor'),
 
 
-               18: CCSDSCategory(name='ADCS attitude telemetry',
-                                verbose='ADCS attitude',
+               18: CCSDSCategory(name='ADCS attitude',
+                                verbose='ADCS attitude telemetry',
                                 number=18,
                                 aux_trousseau=None,
                                 data_file='param_l1adcsattitude'),
