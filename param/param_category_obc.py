@@ -137,6 +137,64 @@ PARTSELECT = CCSDSKey(  name='hk_part',
 
 
 
+L1AUXDATAPROCESSED_KEYS = [
+    dict(
+        name = 'mod_pattern',
+        start = 0*b,
+        l = 8*b,
+        typ = 'uint',
+        verbose = '[NO DOC STRING]',
+        disp = 'modPattern'),
+
+    dict(
+        name = 'number_of_points',
+        start = 8*b,
+        l = 8*b,
+        typ = 'uint',
+        verbose = '[NO DOC STRING]',
+        disp = 'numberOfPoints'),
+
+    dict(
+        name = 'date_start',
+        start = 16*b,
+        l = 16*b,
+        typ = 'uint',
+        verbose = 'Beginning of integration (days)',
+        unit = 'day',
+        disp = 'dateStart'),
+
+    dict(
+        name = 'ms_count_start',
+        start = 32*b,
+        l = 32*b,
+        typ = 'uint',
+        verbose = 'Beginning of integration (ms)',
+        unit = 'ms',
+        disp = 'msCountStart'),
+
+    dict(
+        name = 'date_end',
+        start = 64*b,
+        l = 16*b,
+        typ = 'uint',
+        verbose = 'End of integration (days)',
+        unit = 'day',
+        disp = 'dateEnd'),
+
+    dict(
+        name = 'ms_count_end',
+        start = 80*b,
+        l = 32*b,
+        typ = 'uint',
+        verbose = 'End of integration (ms)',
+        unit = 'ms',
+        disp = 'msCountEnd'),
+
+]
+
+
+
+
 HEADAUX_0 = CCSDSTrousseau([]) # recep ack
 HEADAUX_2 = CCSDSTrousseau(BOOTERRORSTRUCT_KEYS) # boot error report
 HEADAUX_3 = CCSDSTrousseau([LOGCOUNTER, FILECRCCODE, LINECODE,
@@ -146,6 +204,9 @@ HEADAUX_5 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, STARTADDRESS, B
 HEADAUX_6 = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR, NSEGS])  # patch list segments
 # tc answer
 HEADAUX_TELECOMMANDANSWERCAT = CCSDSTrousseau([TELECOMMANDIDMIRROR, PACKETIDMIRROR])
+
+# L1 Science Data : 
+HEADAUX_SCIENCEOBC= CCSDSTrousseau(L1AUXDATAPROCESSED_KEYS)
 
 # acknowledgement of reception
 RACKCAT = 0
@@ -191,17 +252,58 @@ CATEGORIESOBC = {
                                 aux_trousseau=HEADAUX_6,
                                 data_file='param_patch_list_segs'),
 
-               12: CCSDSCategory(name='list of files on sd card',
+               10: CCSDSCategory(name='flux mean (reduced data)',
+                                number=10,
+                                aux_trousseau=HEADAUX_SCIENCEOBC,
+                                data_file='param_l1dataprocessed'),
+
+               11: CCSDSCategory(name='flux variance (reduced data)',
+                                number=11,
+                                aux_trousseau=HEADAUX_SCIENCEOBC,
+                                data_file='param_l1datacovar'),
+
+               12: CCSDSCategory(name='sd Card files',
                                 number=12,
                                 aux_trousseau=HEADAUX_TELECOMMANDANSWERCAT,
                                 data_file='param_lsSdCard'),
 
-               13: CCSDSCategory(name='Data Counters of files in memory (SD card or Ram)',
+               13: CCSDSCategory(name='data counters of files in memory (SD card or Ram)',
                                 number=13,
                                 aux_trousseau=HEADAUX_TELECOMMANDANSWERCAT,
                                 data_file='param_dataCounters'),
 
-               20: CCSDSCategory(name='list in scheduler',
+
+               15: CCSDSCategory(name='ADCS standard telemetry',
+                                number=15,
+                                aux_trousseau=None,
+                                data_file='param_l1adcsstandard'),
+
+
+               16: CCSDSCategory(name='ADCS actuator telemetry',
+                                number=16,
+                                aux_trousseau=None,
+                                data_file='param_l1adcsactuator'),
+
+
+               17: CCSDSCategory(name='ADCS sensor telemetry',
+                                number=17,
+                                aux_trousseau=None,
+                                data_file='param_l1adcssensor'),
+
+
+               18: CCSDSCategory(name='ADCS attitude telemetry',
+                                number=18,
+                                aux_trousseau=None,
+                                data_file='param_l1adcsattitude'),
+
+
+               19: CCSDSCategory(name='L1 housekeeping',
+                                number=19,
+                                aux_trousseau=None,
+                                data_file='param_l1hk'),
+
+
+               20: CCSDSCategory(name='Scheduler Fifo',
                                 number=20,
                                 aux_trousseau=HEADAUX_TELECOMMANDANSWERCAT,
                                 data_file='param_l1Scheduler')
