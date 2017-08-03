@@ -4,7 +4,7 @@
 ###############################################################################
 #  
 #  CTRL - Ground-Segment software for Cube-Sats
-#  Copyright (C) 202-2017  Guillaume Schworer
+#  Copyright (C) 2016-2017  Guillaume Schworer
 #  
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -36,38 +36,36 @@ from ctrl.utils.ms import Ms
 __all__ = ['TROUSSEAU']
 
 
-KEYS = [dict( name='telecommand_id_toexecute',
-                                start=0*O,
-                                l=2*O,
-                                typ='uint',
-                                verbose="telecommand id of the command to be executed",
-                                disp="tcid"),
+KEYS = [dict(   name='telecommand_id_toexecute',
+                start=0*O,
+                l=2*O,
+                typ='uint',
+                verbose="telecommand id of the command to be executed",
+                disp="tcid"),
 
-        dict(  name='packet_id_toexecute',
-                            start=2*O,
-                            l=2*O,
-                            typ='uint',
-                            verbose="corresponding packet id count of the command to be executed",
-                            disp="pkid"),
+        dict(   name='packet_id_toexecute',
+                start=2*O,
+                l=2*O,
+                typ='uint',
+                verbose="corresponding packet id count of the command to be executed",
+                disp="pkid"),
 
-        dict( name='date_ofexecution',
-                        start=4*O,
-                        l=2*O,
-                        typ='uint',
-#                        fctfix=Day,
-                        verbose='planned date of execution',
-                        disp="date"),
+        dict(   name='date_ofexecution',
+                start=4*O,
+                l=2*O,
+                typ='uint',
+                fctfix=Day,
+                verbose='planned date of execution',
+                disp="date"),
 
-        dict( name='mscount_ofexecution',
-                        start=6*O,
-                        l=4*O,
-                        typ='uint',
-#                        fctfix=Ms,
-                        verbose='planned ms of execution',
-                        disp="ms")
-
+        dict(   name='mscount_ofexecution',
+                start=6*O,
+                l=4*O,
+                typ='uint',
+                fctfix=Ms,
+                verbose='planned ms of execution',
+                disp="ms")
         ]
 
 
 TROUSSEAU = CCSDSTrousseau(KEYS, listof=True)
-#TROUSSEAU = CCSDSTrousseau(KEYS)
