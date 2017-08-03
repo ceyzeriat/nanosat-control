@@ -57,8 +57,8 @@ class CCSDSCategory(object):
             is defined
         """
         # deal with name checking
-        if txt != core.clean_name(txt, allow_space=True):
-            raise exc.WrongNameFormat(txt)
+        if name != core.clean_name(name, allow_space=True):
+            raise exc.WrongNameFormat(name)
         self.name = str(name)
         self.verbose = str(verbose)
         self._thatsTCANS = bool(thatsTCANS)
