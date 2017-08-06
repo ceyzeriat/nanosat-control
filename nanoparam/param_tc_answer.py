@@ -61,17 +61,9 @@ TROUSSEAUDIC = {
                 81: CCSDSTrousseau([CCSDSKey(name='i2cReply', start=0*O, l=255*O, typ='byt', verbose='none', disp='i2cReply', hard_l=False)]),
                 82: CCSDSTrousseau([CCSDSKey(name='adcsMode', start=0*O, l=4*O, typ='uint', verbose='none', disp='adcsMode',)]),
 
-
-#PAYLOAD BOOTLOADER
-                200: CCSDSTrousseau([CCSDSKey(name='version', start=0*O, l=255*O, typ='text', verbose='none', disp='version', hard_l=False)]),
-                246: CCSDSTrousseau([CCSDSKey(name='values', start=0*O, l=255*O, typ='hexstr', verbose='none', disp='values', hard_l=False)]),
-                248: CCSDSTrousseau([CCSDSKey(name='message', start=0*O, l=255*O, typ='hexstr', verbose='none', disp='msg', hard_l=False)]),
-                250: CCSDSTrousseau([CCSDSKey(name='flashBytes', start=0*O, l=255*O, typ='hexstr', verbose='none', disp='flashBytes', hard_l=False)]),
-
-#L1 OBC
                 300: CCSDSTrousseau([CCSDSKey(name='messa', start=0*O, l=10*O, typ='byt', verbose='none', disp='message',)]),
                 305: CCSDSTrousseau([CCSDSKey(name='TimerProc', start=0*O, l=1*O,  typ='uint', verbose='Timer for data processing', disp='TimerProc',unit='s'),
-                                     CCSDSKey(name='TimerHk', start=1*O, l=1*O,  typ='uint', verbose='Timer for hkL1 retrieval', disp='TimerHk',unit='s'),
+                                     CCSDSKey(name='TimerL1Hk', start=1*O, l=1*O,  typ='uint', verbose='Timer for hkL1 retrieval', disp='TimerHk',unit='s'),
                                      CCSDSKey(name='hkStandardPeriod', start=2*O, l=1*O,  typ='uint', verbose='Period of ADCS fetch of standard Hk', disp='standard',unit='ticks'),
                                      CCSDSKey(name='hkActuatorPeriod', start=3*O, l=1*O,  typ='uint', verbose='Period of ADCS fetch of actuator Hk', disp='actuator',unit='ticks'),
                                      CCSDSKey(name='hkSensorPeriod', start=4*O, l=1*O,  typ='uint', verbose='Period of ADCS fetch of sensor Hk', disp='sensor',unit='ticks'),
@@ -80,7 +72,29 @@ TROUSSEAUDIC = {
                 307: CCSDSTrousseau([CCSDSKey(name='sstateProc', start=0*O, l=1*O,  typ='uint', verbose='SubState for Data Processing', disp='sstateProc',),
                                      CCSDSKey(name='sstatePldCom', start=1*O, l=1*O,  typ='uint', verbose='SubState for UART Payload Communication', disp='sstatePldCom',),
                                      CCSDSKey(name='sstateDataMgm', start=2*O, l=1*O,  typ='uint', verbose='SubState for Data Management', disp='sstateDataMgm',),
-                                     CCSDSKey(name='sstateSdCard', start=3*O, l=1*O,  typ='uint', verbose='SubState for SD Card use', disp='sstateSdCard',)])
+                                     CCSDSKey(name='sstateSdCard', start=3*O, l=1*O,  typ='uint', verbose='SubState for SD Card use', disp='sstateSdCard',)]),
+                319: CCSDSTrousseau([CCSDSKey(name='mfnHkPld', start=0*O, l=4*O,  typ='uint', verbose='Number of files that will be stored on SD card', disp='HkPld',),
+                                     CCSDSKey(name='mfnLowFreq', start=4*O, l=4*O,  typ='uint', verbose='Number of files that will be stored on SD card', disp='LowFreq',),
+                                     CCSDSKey(name='mfnHighFreq', start=8*O, l=4*O,  typ='uint', verbose='Number of files that will be stored on SD card', disp='HighFreq',),
+                                     CCSDSKey(name='mfnTechno', start=12*O, l=4*O,  typ='uint', verbose='Number of files that will be stored on SD card', disp='Techno',),
+                                     CCSDSKey(name='mfnHkL1', start=16*O, l=4*O,  typ='uint', verbose='Number of files that will be stored on SD card', disp='HkL1',)]),
+                
+#PAYLOAD BOOTLOADER
+                200: CCSDSTrousseau([CCSDSKey(name='version', start=0*O, l=255*O, typ='byt', verbose='none', disp='version')]),
+                246: CCSDSTrousseau([CCSDSKey(name='values', start=0*O, l=255*O, typ = 'byt', verbose='none', disp='version')]),
+                248: CCSDSTrousseau([CCSDSKey(name='message', start=0*O, l=255*O, typ = 'byt', verbose='none', disp='version')]),
+                250: CCSDSTrousseau([CCSDSKey(name='flashBytes', start=0*O, l=255*O, typ = 'byt', verbose='none', disp='version')]),
+
+# PAYLOAD
+                101: CCSDSTrousseau([CCSDSKey(name='message', start=0*O, l=255*O,  typ='byt', verbose='none', disp='version')]),
+                100: CCSDSTrousseau([CCSDSKey(name='obcInterfaceError', start=0*O, l=1*O, typ = 'uint', verbose='none', disp='obcIntErr'),
+                                     CCSDSKey(name='clockError', start=1*O, l=1*O, typ='uint', verbose='none', disp='clockErr'),
+                                     CCSDSKey(name='rtcError', start=2*O, l=1*O, typ='uint', verbose='none', disp='rtcErr'),
+                                     CCSDSKey(name='i2cError', start=3*O, l=1*O, typ='uint', verbose='none', disp='i2cErr'),
+                                     CCSDSKey(name='spiError', start=4*O, l=1*O, typ='uint', verbose='none', disp='spiErr'),
+                                     CCSDSKey(name='diodeError', start=5*O, l=1*O, typ='uint', verbose='none', disp='diodeErr'),
+                                     CCSDSKey(name='piezoError', start=6*O, l=1*O, typ='uint', verbose='none', disp='piezoErr'),
+                                     CCSDSKey(name='hkError', start=7*O, l=1*O, typ='uint', verbose='none', disp='hkErr')])
 }
 
 

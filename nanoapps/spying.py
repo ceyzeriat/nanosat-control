@@ -105,7 +105,7 @@ def init(dir_name):
         os.mkdir(sub_dir)
         os.mkdir(core.home_dir(ALL_TEL, DIRNAME, 'tm_data'))
         SPY_TRANS = SpyTrans(port=param_all.SPYINGPORT[0],
-                             nreceivermax=1,
+                             nreceivermax=5,
                              start=True,
                              portname=param_all.SPYINGPORT[1],
                              timeoutACK=3)        

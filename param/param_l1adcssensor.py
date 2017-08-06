@@ -25,12 +25,12 @@
 ###############################################################################
 
 
-from nanoctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
 
-from .generated.l0beaconstruct import L0BEACONSTRUCT_KEYS
+from .generated.l1adcssensor import L1ADCSSENSOR_KEYS
 
 
 __all__ = ['TROUSSEAU']
 
 
-TROUSSEAU = CCSDSTrousseau(L0BEACONSTRUCT_KEYS)
+TROUSSEAU = CCSDSTrousseau(L1ADCSSENSOR_KEYS)

@@ -25,12 +25,38 @@
 ###############################################################################
 
 
-from nanoctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
-
-from .generated.l0beaconstruct import L0BEACONSTRUCT_KEYS
+from ctrl.ccsds.ccsdstrousseau import CCSDSTrousseau
+from ctrl.utils import bincore
+from ctrl.utils import b
+from ctrl.utils import O
+from ctrl.utils.day import Day
+from ctrl.utils.ms import Ms
 
 
 __all__ = ['TROUSSEAU']
 
 
-TROUSSEAU = CCSDSTrousseau(L0BEACONSTRUCT_KEYS)
+KEYS = [dict(   name='counter',
+                start=0*O,
+                l=2*O,
+                typ='uint',
+                verbose="counter of a file in memory",
+                disp="cnt"),
+        dict(   name='date',
+                start=2*O,
+                l=2*O,
+                typ='uint',
+                fctfix=Day,
+                verbose='planned date of execution',
+                disp="date"),
+        dict(   name='mscount',
+                start=4*O,
+                l=4*O,
+                typ='uint',
+                fctfix=Ms,
+                verbose='planned ms of execution',
+                disp="ms")
+        ]
+
+
+TROUSSEAU = CCSDSTrousseau(KEYS, listof=True)

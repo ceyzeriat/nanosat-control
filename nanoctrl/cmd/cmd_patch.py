@@ -26,6 +26,8 @@
 
 
 from datetime import datetime
+
+
 from ..utils import bincore
 from ..utils import core
 from ..ccsds import param_ccsds
@@ -34,6 +36,8 @@ from .commandpatch import CommandPatch
 # function set_datetime of PLD, aim is to allow the input of a
 # datetime or date-tuple instead of a dirty integer timestamp
 class setDatetime(CommandPatch):
+    _datetimeName = "datetime"
+    
     def generate_data(self, *args, **kwargs):
         """
         This command has been patched.
@@ -42,21 +46,22 @@ class setDatetime(CommandPatch):
         Very useful in combination with datetime.datetime.utcnow().
         @param datetime datetime: the datetime or tuple object to convert. 
         """      
-        stamp = kwargs.get('datetime')
+        stamp = kwargs.pop(self._datetimeName, None)
         if stamp is None:
-            raise Exception("datetime is not an optional argument!")
+            raise Exception("'{}' is not an optional argument!"\
+                                                .format(self._datetimeName))
         if not isinstance(stamp, (datetime, list, tuple)):
-            raise TypeError
+            raise TypeError("'{}' should be datetime or date-tuple"\
+                                                .format(self._datetimeName))
         if isinstance(stamp, (list, tuple)):
             stamp = datetime(*stamp)
-        newkwargs = {}
-        newkwargs['years'] = stamp.year - 1970
-        newkwargs['months'] = stamp.month
-        newkwargs['days'] = stamp.day
-        newkwargs['hours'] = stamp.hour
-        newkwargs['minutes'] = stamp.minute                
-        newkwargs['seconds'] = stamp.second
-        return super(setDatetime, self).generate_data(*args, **newkwargs)
+        kwargs['years'] = stamp.year - 1970
+        kwargs['months'] = stamp.month
+        kwargs['days'] = stamp.day
+        kwargs['hours'] = stamp.hour
+        kwargs['minutes'] = stamp.minute                
+        kwargs['seconds'] = stamp.second
+        return super(setDatetime, self).generate_data(*args, **kwargs)
 
 
 # auto compute CRC
@@ -64,71 +69,35 @@ class genericCrcPatch(CommandPatch):
     _crcParamName = 'crc'
 
     def generate_data(self, *args, **kwargs):
-        # force 0 sur le crc
+        # force 0 on crc
         kwargs[self._crcParamName] = 0
         return super(genericCrcPatch, self).generate_data(*args, **kwargs)
 
     def _generate_packet(self, *args, **kwargs):
-        # appel méthode mère
+        # record  whether to sign or not if given as input
+        signit = kwargs.get('signit')
+        # force no signature as first step
+        kwargs['signit'] = False
+        # call mother's method
         packet, hd, hdx, inputs = super(genericCrcPatch, self)\
                                   ._generate_packet(*args, **kwargs)
-        # on calc le CRC sur le header sec et les data
+        # calculation of CRC on sec header and data
+        # 4 is the length of CRC
         bytesForCrc = packet[param_ccsds.HEADER_P_KEYS.size:-4]
         crc = core.payload_crc32(bytesForCrc)
-        # on remplace le crc dans les inputs, parce que voilà
+        # replacement of CRC in inputs
         inputs[self._crcParamName] = crc
-        # on ré-encode les param de la command avec la méthode mère
-        data, inputs = super(genericCrcPatch, self).generate_data(*args,
-                                                            **inputs)
-        # on remplace les data dans le packet encodé
-        packet = packet[:param_ccsds.HEADER_P_KEYS.size+\
-                        param_ccsds.HEADER_S_KEYS_TELECOMMAND.size] + data
+        # force CRC at the end of packet
+        packet[-4:] = crc
+        if signit is None:  # signit not given, follow default
+            kwargs.pop('signit', None)
+            packet, sig = self._add_siggy(packet, **kwargs)
+        elif signit is True:  # signit was passed and True
+            kwargs['signit'] = True
+            packet, sig = self._add_siggy(packet, **kwargs)
         return packet, hd, hdx, inputs
 
 
-# real time clock at bootloader level
-class configureRTC(CommandPatch):
-    _crcParamName = 'crc'
-
-    def generate_data(self, *args, **kwargs):
-        """
-        This command has been patched.
-        Convert a datetime object to an acceptable format, and sent it 
-        to the payload for updating the Real Time Clock. 
-        Very useful in combination with datetime.datetime.utcnow().
-        @param datetime datetime: the datetime or tuple object to convert. 
-        """
-        # force 0 sur le crc
-        stamp = kwargs.get('datetime')
-        if stamp is None:
-            raise Exception("datetime is not an optional argument!")
-        if not isinstance(stamp, (datetime, list, tuple)):
-            raise TypeError
-        if isinstance(stamp, (list, tuple)):
-            stamp = datetime(*stamp)
-        newkwargs = {}
-        newkwargs['years'] = stamp.year - 1970
-        newkwargs['months'] = stamp.month
-        newkwargs['days'] = stamp.day
-        newkwargs['hours'] = stamp.hour
-        newkwargs['minutes'] = stamp.minute                
-        newkwargs['seconds'] = stamp.second
-        newkwargs[self._crcParamName] = 0
-        return super(configureRTC, self).generate_data(*args, **newkwargs)
-    
-    def _generate_packet(self, *args, **kwargs):
-        # appel méthode mère
-        packet, hd, hdx, inputs = super(configureRTC, self)\
-                                  ._generate_packet(*args, **kwargs)
-        # on calc le CRC sur le header sec et les data
-        bytesForCrc = packet[param_ccsds.HEADER_P_KEYS.size:-4]
-        crc = core.payload_crc32(bytesForCrc)
-        # on remplace le crc dans les inputs, parce que voilà
-        inputs[self._crcParamName] = crc
-        # on ré-encode les param de la command avec la méthode mère
-        data, inputs = super(configureRTC, self).generate_data(*args,
-                                                            **inputs)
-        # on remplace les data dans le packet encodé
-        packet = packet[:param_ccsds.HEADER_P_KEYS.size+\
-                         param_ccsds.HEADER_S_KEYS_TELECOMMAND.size] + data
-        return packet, hd, hdx, inputs    
+# real time clock at bootloader level, just bind auto-CRC and simple-datetime
+class configureRTC(setDatetime, genericCrcPatch):
+    pass

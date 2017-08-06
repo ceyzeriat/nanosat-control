@@ -149,6 +149,8 @@ TNCPATHOLOGICCMDREPLACE = TNCPATHOLOGICCMD + TNCPATHOLOGICESC
 # Gpredict sniffing
 GPREDICTPORT = 4532
 
+# max TC len that can be sent over radio
+MAXTCLEN = 235
 
 
 # where the raw telemetry are dumped (locally), relative to HOME
@@ -157,8 +159,8 @@ TELEMETRYDUMPFOLDER = ['nanoctrl', 'tm_data']
 TELEMETRYNAMEFORMAT = 'TM_%Y%m%dT%H%M%S_%f.packet'
 
 
-REMOVERAWFILEAFTERSAVE = True
-SAVERAWFILE = True
+REMOVERAWFILEAFTERSAVE = False
+SAVERAWFILE = False
 TELEMETRYSAVESERVER = 'vmpicsat.obspm.fr'
 TELEMETRYSAVEUSER = 'picsatdata'
 TELEMETRYSAVEPASSFILE = ['.nanoctrl', 'godsavesthequeen']

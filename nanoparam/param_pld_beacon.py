@@ -74,10 +74,17 @@ KEYS = [    dict(   name='message',
                     typ='uint'),
 
             dict(   name='beacon_flag',
-                    start=LENGTHBEACONMESSAGE+4*O+1*b,
+                    start=LENGTHBEACONMESSAGE+4*O,
                     l=1*b,
                     disp="beacon_flag",
                     verbose="beacon flag",
+                    typ='bool'),
+            
+            dict(   name='cheatmode_flag',
+                    start=LENGTHBEACONMESSAGE+4*O+1*b,
+                    l=1*b,
+                    disp="cheatmode_flag",
+                    verbose="cheatmode flag",
                     typ='bool'),
 
             dict(   name='tec_flag',

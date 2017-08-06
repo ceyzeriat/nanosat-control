@@ -168,20 +168,28 @@ class CCSDSPacker(object):
                 hds.update(retprim[1])
             data = TCdata
         theFullPacket = retprim[0] + retsec[0] + maybeAux + data
-        if kwargs.pop('signit', param_all.USESIGGY)\
-                                and self.mode != 'telemetry':
-            theFullPacket = self.add_siggy(theFullPacket)
+        theFullPacket, sig = self.add_siggy(fullPacket=theFullPacket, **kwargs)
         if retvalues:
             return theFullPacket, hds, hdx, retd
         else:
             return theFullPacket
 
-    def add_siggy(self, fullPacket):
+    def add_siggy(self, fullPacket, **kwargs):
+        """
+        Does surgery of the input full packet with null signature (fullPacket)
+        and adds the signature into it
+        Returns the packet with included signature, and the signature
+        If the signature should not be used because of parametrization, the
+        signature is not added to the packet and a None signature is returned
+        """
+        if not kwargs.pop('signit', param_all.USESIGGY)\
+                                or self.mode == 'telemetry':
+            return fullPacket, None
         # calculates the signature from full packet
         siggy = hmac(fullPacket)
         # apply mask
-        siggy = Byt([s for idx, s in enumerate(siggy.ints())\
-                        if core.KEYMASK[idx] == '1'])
+        siggy = Byt(s for idx, s in enumerate(siggy.ints())\
+                        if core.KEYMASK[idx] == '1')
         # fuck endians
         if bincore.TWINKLETWINKLELITTLEINDIA:
             siggy = siggy[::-1]
@@ -192,7 +200,7 @@ class CCSDSPacker(object):
         return core.setstr(fullPacket,
                            slice(startSiggy,
                                  startSiggy + param_ccsds.SIGNATURE.len//8),
-                           siggy)
+                           siggy), siggy
 
     def pack_primHeader(self, values, datalen=0, retvalues=False,
                         withPacketID=True, at=None):
