@@ -27,8 +27,6 @@
 if __name__ == "__main__":
     import time
     from byt import Byt
-    import nanoutils
-    from nanoutils import bincore
     from nanoctrl import c
     from nanoctrl import c0
     from nanoctrl import c1
@@ -40,8 +38,10 @@ if __name__ == "__main__":
     from nanoctrl import Telecommand
     from nanoutils import core
     from nanoutils import PosixUTC
+    import nanoutils
+    from nanoutils import bincore
     from nanoapps import controlling
-    from param import param_all
+    from nanoparam import param_all
 
 
     core.prepare_terminal('Control')
