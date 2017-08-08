@@ -24,18 +24,15 @@
 #
 ###############################################################################
 
-if __name__ == "__main__":
-    import time
-    from nanoutils import core
-    from nanoctrl import db
-    from nanoapps import saving
+from nanoutils.ccsds import ccsdsexception
 
-    core.prepare_terminal('Save')
 
-    print("Initialization...")
-    db.init_DB()
+from .ccsdsblob import CCSDSBlob
+from .ccsdsunpacker import CCSDSUnPacker as _CCSDSUnPacker
+from .ccsdspacker import CCSDSPacker as _CCSDSPacker
 
-    time.sleep(0.5)
 
-    saving.init()
-    print("Saving...")
+TCUnPacker = _CCSDSUnPacker(mode='tc')
+TMUnPacker = _CCSDSUnPacker(mode='tm')
+TMPacker = _CCSDSPacker(mode='tm')
+TCPacker = _CCSDSPacker(mode='tc')

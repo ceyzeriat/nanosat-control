@@ -24,18 +24,5 @@
 #
 ###############################################################################
 
-if __name__ == "__main__":
-    import time
-    from nanoutils import core
-    from nanoctrl import db
-    from nanoapps import saving
-
-    core.prepare_terminal('Save')
-
-    print("Initialization...")
-    db.init_DB()
-
-    time.sleep(0.5)
-
-    saving.init()
-    print("Saving...")
+from .callsign import Callsign
+from .frame import Framer

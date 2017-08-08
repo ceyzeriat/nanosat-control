@@ -24,18 +24,21 @@
 #
 ###############################################################################
 
-if __name__ == "__main__":
-    import time
-    from nanoutils import core
-    from nanoctrl import db
-    from nanoapps import saving
 
-    core.prepare_terminal('Save')
+import os
 
-    print("Initialization...")
-    db.init_DB()
 
-    time.sleep(0.5)
+# the reserved input parameter key for declaring the report key
+REPORTKEY = '_report_key'
 
-    saving.init()
-    print("Saving...")
+
+# ending of dictionary keys for converted values
+SUFIXCONVERSION = '_cv'
+
+
+# hmac lib linux
+HMACLIBLINUX = 'hmaclib.so'
+
+
+# the root of the ctrl repo
+ROOTCTRL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

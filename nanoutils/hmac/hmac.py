@@ -24,18 +24,38 @@
 #
 ###############################################################################
 
-if __name__ == "__main__":
-    import time
-    from nanoutils import core
-    from nanoctrl import db
-    from nanoapps import saving
 
-    core.prepare_terminal('Save')
+from ctypes import cdll, c_char_p, c_uint, create_string_buffer
+from byt import Byt
+import os
+from nanoparam import param_all_processed as param_all
 
-    print("Initialization...")
-    db.init_DB()
 
-    time.sleep(0.5)
+from ..param_sys import HMACLIBLINUX
 
-    saving.init()
-    print("Saving...")
+
+__all__ = ['hmac']
+
+
+_hmacfct = cdll.LoadLibrary(os.path.join(os.path.dirname(__file__),
+                                         HMACLIBLINUX)).hmacSha256
+_hmacfct.argtypes = [c_char_p, c_char_p, c_uint, c_char_p]
+
+
+# on linux compile it with:
+# gcc -shared -o hmaclib.so -fPIC L0AppHmac.c L0AppSha256.c
+
+
+def hmac(txt):
+    """
+    Calculates the HMAC-SHA256 of the ``txt`` given as input
+    """
+    txt = Byt(txt)
+    digest = create_string_buffer(param_all.KEYLENGTH)
+    if param_all.VITELACLE is not None:
+        _hmacfct(param_all.VITELACLE, txt, len(txt), digest)
+    else:
+        print('No key found, using NULL')
+        _hmacfct(Byt("\x00"*param_all.KEYLENGTH), txt, len(txt), digest)
+    return Byt(digest.raw)
+

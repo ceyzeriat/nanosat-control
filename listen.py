@@ -24,13 +24,12 @@
 #
 ###############################################################################
 
-if __name__ == "__main__":
-    
-    from threading import Thread
-    from ctrl.utils import core
-    from segsol import listening
-    from param import param_all
 
+if __name__ == "__main__":
+    from threading import Thread
+    from nanoutils import core
+    from nanoapps import listening
+    from param import param_all
 
     core.prepare_terminal('Listen')
     print("Initialization...")

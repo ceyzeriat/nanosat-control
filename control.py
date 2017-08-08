@@ -25,22 +25,22 @@
 ###############################################################################
 
 if __name__ == "__main__":
-        
     import time
     from byt import Byt
-    from ctrl.utils import core
-    from ctrl.utils import bincore
-    from ctrl import c
-    from ctrl import c0
-    from ctrl import c1
-    from ctrl import co1
-    from ctrl import cp1
-    from ctrl import cadcs
-    from ctrl import db
-    from ctrl import Telemetry
-    from ctrl import Telecommand
-    from ctrl.utils.core import PosixUTC
-    from segsol import controlling
+    import nanoutils
+    from nanoutils import bincore
+    from nanoctrl import c
+    from nanoctrl import c0
+    from nanoctrl import c1
+    from nanoctrl import co1
+    from nanoctrl import cp1
+    from nanoctrl import cadcs
+    from nanoctrl import db
+    from nanoctrl import Telemetry
+    from nanoctrl import Telecommand
+    from nanoutils import core
+    from nanoutils import PosixUTC
+    from nanoapps import controlling
     from param import param_all
 
 
@@ -55,4 +55,4 @@ if __name__ == "__main__":
     time.sleep(0.5)
 
     core.prepare_terminal('Control')
-    print(core.ART)
+    print(param_all.ART)

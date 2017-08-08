@@ -24,18 +24,20 @@
 #
 ###############################################################################
 
-if __name__ == "__main__":
-    import time
-    from nanoutils import core
-    from nanoctrl import db
-    from nanoapps import saving
 
-    core.prepare_terminal('Save')
-
-    print("Initialization...")
-    db.init_DB()
-
-    time.sleep(0.5)
-
-    saving.init()
-    print("Saving...")
+import nanoparam
+from . import ccsds
+from . import cmd
+from . import db
+from . import c
+from . import c0
+from . import c1
+from . import co1
+from . import cp1
+from . import cadcs
+if nanoparam.param_all.ENABLESHOW:
+    from . import xdisp
+from . import kiss
+from ._version import __version__, __major__, __minor__, __micro__
+from .telecommand import *
+from .telemetry import *

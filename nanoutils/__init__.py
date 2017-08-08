@@ -24,18 +24,27 @@
 #
 ###############################################################################
 
-if __name__ == "__main__":
-    import time
-    from nanoutils import core
-    from nanoctrl import db
-    from nanoapps import saving
 
-    core.prepare_terminal('Save')
+import os
+import sys
+from sys import version_info
+PYTHON3 = version_info > (3,)
 
-    print("Initialization...")
-    db.init_DB()
 
-    time.sleep(0.5)
+from . import ctrlexception
+from . import bincore
+from .bindiff import Bindiff
+from .ms import Ms
+from . import param_sys
+from .pidwatchdog import PIDWatchDog
+from .posixutc import PosixUTC
+from .report import REPORTS, REPORTSDATA, EXTRADISPKEY
+from .unit import O, b
 
-    saving.init()
-    print("Saving...")
+if os.path.exists(os.path.join(__file__, 'hmac', param_sys.HMACLIBLINUX)):
+    from .hmac import hmac
+
+
+from .day import Day
+from . import core
+from . import ccsds

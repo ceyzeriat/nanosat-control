@@ -24,18 +24,17 @@
 #
 ###############################################################################
 
-if __name__ == "__main__":
-    import time
-    from nanoutils import core
-    from nanoctrl import db
-    from nanoapps import saving
+__all__ = ['listening', 'saving', 'watching', 'controlling', 'spying']
 
-    core.prepare_terminal('Save')
 
-    print("Initialization...")
-    db.init_DB()
+from nanoparam import param_all
 
-    time.sleep(0.5)
 
-    saving.init()
-    print("Saving...")
+from . import listening
+from . import saving
+from . import watching
+from . import controlling
+from . import spying
+if param_all.ENABLESHOW:
+    from . import showing
+    __all__ += ['showing']

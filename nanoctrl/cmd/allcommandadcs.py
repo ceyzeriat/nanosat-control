@@ -24,18 +24,27 @@
 #
 ###############################################################################
 
-if __name__ == "__main__":
-    import time
-    from nanoutils import core
-    from nanoctrl import db
-    from nanoapps import saving
 
-    core.prepare_terminal('Save')
+from nanoparam.commands import param_commands
+from nanoutils import core
 
-    print("Initialization...")
-    db.init_DB()
 
-    time.sleep(0.5)
+from .commandadcs import CommandADCS
 
-    saving.init()
-    print("Saving...")
+
+__all__ = ['ALLCMDS', 'ALLCMDSNAMES']
+
+
+allcmds = core.load_json_cmds(param_commands.COMMANDSFILE['adcs'])
+
+ALLCMDS = []
+ALLCMDSNAMES = []
+
+
+for item in allcmds:
+    # force command number and pid corresponding to the generic adcs function
+    item['number'] = param_commands.GENERICADCSCOMMANDNUMBER
+    item['pid'] = param_commands.GENERICADCSCOMMANDPID
+    c = CommandADCS(**item)
+    ALLCMDS.append(c)
+    ALLCMDSNAMES.append(c.name)
