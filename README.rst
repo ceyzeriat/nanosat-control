@@ -1,6 +1,6 @@
 .. NanoCTRL
 
-:Name: ctrl
+:Name: NanoCTRL
 :Website: `www.nanosat-control.com`_
 :Author: Guillaume Schworer
 :Version: 0.1beta
