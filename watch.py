@@ -25,11 +25,11 @@
 ###############################################################################
 
 if __name__ == "__main__":
-    
-    from nanoctrl.utils import core
+    from nanoutils import core
     from nanoapps import watching
 
     core.prepare_terminal('Watch')
+
     print("Initialization...")
     watching.init()
     print("Watching...")

@@ -26,16 +26,16 @@
 
 
 from datetime import datetime
+from nanoutils import bincore
+from nanoutils import fcts
+from nanoparam import param_ccsds
 
 
-from ..utils import bincore
-from ..utils import core
-from ..ccsds import param_ccsds
 from .commandpatch import CommandPatch
 
-# function set_datetime of PLD, aim is to allow the input of a
-# datetime or date-tuple instead of a dirty integer timestamp
-class setDatetime(CommandPatch):
+
+# allow input of datetime or date-tuple instead of a dirty integer timestamp
+class GenericDatetime(CommandPatch):
     _datetimeName = "datetime"
     
     def generate_data(self, *args, **kwargs):
@@ -61,7 +61,7 @@ class setDatetime(CommandPatch):
         kwargs['hours'] = stamp.hour
         kwargs['minutes'] = stamp.minute                
         kwargs['seconds'] = stamp.second
-        return super(setDatetime, self).generate_data(*args, **kwargs)
+        return super(GenericDatetime, self).generate_data(*args, **kwargs)
 
 
 # auto compute CRC
@@ -84,7 +84,7 @@ class genericCrcPatch(CommandPatch):
         # calculation of CRC on sec header and data
         # 4 is the length of CRC
         bytesForCrc = packet[param_ccsds.HEADER_P_KEYS.size:-4]
-        crc = core.payload_crc32(bytesForCrc)
+        crc = fcts.payload_crc32(bytesForCrc)
         # replacement of CRC in inputs
         inputs[self._crcParamName] = crc
         # force CRC at the end of packet
@@ -99,5 +99,9 @@ class genericCrcPatch(CommandPatch):
 
 
 # real time clock at bootloader level, just bind auto-CRC and simple-datetime
-class configureRTC(setDatetime, genericCrcPatch):
+class configureRTC(GenericDatetime, genericCrcPatch):
+    pass
+
+# function set_datetime of PLD
+class setDatetime(GenericDatetime):
     pass

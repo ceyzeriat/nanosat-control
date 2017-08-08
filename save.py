@@ -25,14 +25,13 @@
 ###############################################################################
 
 if __name__ == "__main__":
-    
     import time
-    from nanoctrl.utils import core
+    from nanoutils import core
     from nanoctrl import db
     from nanoapps import saving
 
-
     core.prepare_terminal('Save')
+
     print("Initialization...")
     db.init_DB()
 

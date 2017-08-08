@@ -25,10 +25,11 @@
 ###############################################################################
 
 
-from param import param_commands
+from nanoparam.commands import param_commands
+from nanoutils import core
+
 
 from .command import Command
-from ..utils import core
 
 
 # import all patches from patch-file

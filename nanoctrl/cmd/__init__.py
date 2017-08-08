@@ -25,5 +25,4 @@
 ###############################################################################
 
 
-#from .allcommand import *
-#from .allcommandadcs import *
+# empty

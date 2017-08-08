@@ -25,11 +25,10 @@
 ###############################################################################
 
 if __name__ == "__main__":
-        
     import time
     from byt import Byt
-    from nanoctrl.utils import core
-    from nanoctrl.utils import bincore
+    import nanoutils
+    from nanoutils import bincore
     from nanoctrl import c
     from nanoctrl import c0
     from nanoctrl import c1
@@ -39,7 +38,8 @@ if __name__ == "__main__":
     from nanoctrl import db
     from nanoctrl import Telemetry
     from nanoctrl import Telecommand
-    from nanoctrl.utils.core import PosixUTC
+    from nanoutils import core
+    from nanoutils import PosixUTC
     from nanoapps import controlling
     from param import param_all
 
@@ -55,4 +55,4 @@ if __name__ == "__main__":
     time.sleep(0.5)
 
     core.prepare_terminal('Control')
-    print(core.ART)
+    print(param_all.ART)

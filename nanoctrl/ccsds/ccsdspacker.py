@@ -27,15 +27,17 @@
 
 import datetime
 from byt import Byt
-from param import param_category
-from param import param_apid
-from param import param_all
-from ..utils import core
+from nanoparam.categories import param_category
+from nanoparam import param_apid
+from nanoparam import param_all
+from nanoparam import param_ccsds
+from nanoutils import bincore
+from nanoutils import fcts
+from nanoutils import core
+from nanoutils.ccsds import ccsdsexception as exc
+
 if param_all.USESIGGY:
-    from ..utils import hmac
-from ..utils import bincore
-from . import ccsdsexception
-from . import param_ccsds
+    from nanoutils.hmac import hmac
 
 
 __all__ = ['CCSDSPacker']
@@ -107,15 +109,15 @@ class CCSDSPacker(object):
             at = kwargs.pop('at', None)
             if at is not None:
                 if isinstance(at, (tuple, list)):
-                    at = core.PosixUTC(*at[:6])
+                    at = fcts.PosixUTC(*at[:6])
                 elif isinstance(at, datetime.datetime):
-                    at = core.PosixUTC.fromdatetime(at)
+                    at = fcts.PosixUTC.fromdatetime(at)
                 elif isinstance(at, PosixUTC):
                     pass
                 else:
-                    raise ccsdsexception.WrongAt(at)
+                    raise exc.WrongAt(at)
                 # time in past: remove
-                if core.PosixUTC.now().totimestamp() > at.totimestamp():
+                if fcts.PosixUTC.now().totimestamp() > at.totimestamp():
                     at = None
         else:
             hd[param_ccsds.PACKETCATEGORY.name] = int(pktCat)
@@ -197,7 +199,7 @@ class CCSDSPacker(object):
         startSiggy = param_ccsds.HEADER_P_KEYS.size +\
                                 param_ccsds.SIGNATURE.start//8
         # return concatenated turd
-        return core.setstr(fullPacket,
+        return fcts.setstr(fullPacket,
                            slice(startSiggy,
                                  startSiggy + param_ccsds.SIGNATURE.len//8),
                            siggy), siggy
@@ -245,10 +247,10 @@ class CCSDSPacker(object):
             values[param_ccsds.PACKETID.name] = '0'
         # check pid string
         if param_ccsds.PID.name not in values.keys():
-            raise ccsdsexception.PacketValueMissing(param_ccsds.PID.name)
+            raise exc.PacketValueMissing(param_ccsds.PID.name)
         pidstr = values[param_ccsds.PID.name]
         if pidstr not in param_apid.PIDREGISTRATION.keys():
-            raise ccsdsexception.PIDMissing(pidstr)
+            raise exc.PIDMissing(pidstr)
         values[param_ccsds.PID.name] =\
             param_apid.PIDREGISTRATION[pidstr]
         # fill in payload and level flags from pid string
@@ -292,10 +294,10 @@ class CCSDSPacker(object):
             # grab a hex chunck to edit for length update
             bits = bincore.hex2bin(primaryHDpacket[lenkey._hex_slice], pad=True)
             # replace the corresponding bits
-            bits = core.setstr(bits, lenkey._bin_sub_slice, ll)
+            bits = fcts.setstr(bits, lenkey._bin_sub_slice, ll)
             # get the hex chunk back to hex
             ll = bincore.bin2hex(bits, pad=len(bits)//8)
-        primaryHDpacket = core.setstr(primaryHDpacket, lenkey._hex_slice, ll)
+        primaryHDpacket = fcts.setstr(primaryHDpacket, lenkey._hex_slice, ll)
         if primaryHDdict is not None:
             primaryHDdict[param_ccsds.DATALENGTH.name] += datalen
         return primaryHDpacket, primaryHDdict
@@ -336,7 +338,7 @@ class CCSDSPacker(object):
             return (Byt(), {}) if retvalues else Byt()
         pktCat = int(pktCat)
         if pktCat not in param_category.CATEGORIES[int(pldFlag)].keys():
-            raise ccsdsexception.CategoryMissing(pktCat, pldFlag)
+            raise exc.CategoryMissing(pktCat, pldFlag)
         cat = param_category.CATEGORIES[int(pldFlag)][pktCat]
         if cat.aux_size == 0:
             return (Byt(), {}) if retvalues else Byt()

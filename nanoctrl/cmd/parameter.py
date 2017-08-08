@@ -26,9 +26,11 @@
 
 
 from byt import Byt
-from param import param_commands
+from nanoparam.commands import param_commands
+from nanoutils import fcts
+
+
 from . import cmdexception
-from ..utils import core
 from .pformat import PFormat
 
 
@@ -55,7 +57,7 @@ class Parameter(object):
         * unit (str or None): the unit of the parameter
         * exval (srt): an example value for the parameter
         """
-        self._name = core.clean_name(name)[:param_commands.LENPARAMNAME]
+        self._name = fcts.clean_name(name)[:param_commands.LENPARAMNAME]
         self._desc = str(desc)
         self._unit = str(unit) if unit is not None else ""
         self._isdict = isinstance(rng, dict)
@@ -77,9 +79,9 @@ class Parameter(object):
                 rng = [item.strip()
                         for item in rng.split(param_commands.LISTSEPARATOR)]
             # if we have a min-max range
-            if core.isStr(rng):
+            if fcts.isStr(rng):
                 self._rng = rng.split(param_commands.RANGESEPARATOR)[:2]
-                self._rng = tuple([core.to_num(item) for item in self._rng])
+                self._rng = tuple([fcts.to_num(item) for item in self._rng])
                 if self.typ.typ != 'str':
                     if not (self.typ.is_valid(self.rng[0])
                             and self.typ.is_valid(self.rng[1])):
@@ -92,7 +94,7 @@ class Parameter(object):
                                                                     'rng')
                 self._rngdisp = "[{}--{}]".format(*self.rng)
             elif hasattr(rng, "__iter__"):
-                self._rng = list(map(core.to_num, rng))
+                self._rng = list(map(fcts.to_num, rng))
                 for item in self.rng:
                     if self.typ.typ != 'str':
                         if not self.typ.is_valid(item):
@@ -107,12 +109,12 @@ class Parameter(object):
                 self._rngdisp = repr(self.rng)
             else:
                 raise cmdexception.WrongParameterDefinition(self.name, 'rng')
-        if core.isStr(size) and str(size) == '*':
+        if fcts.isStr(size) and str(size) == '*':
             self._sizedisp = '[*]'
             self._size = None
-        elif core.isStr(size) and not str(size).isdigit():
+        elif fcts.isStr(size) and not str(size).isdigit():
             self._size = size.split(param_commands.RANGESEPARATOR)[:2]
-            self._size = tuple([core.to_num(item) for item in self._size])
+            self._size = tuple([fcts.to_num(item) for item in self._size])
             self._sizedisp = "[{}--{}]".format(*self.size)
             if not isinstance(self.size[0], int) \
                     or not isinstance(self.size[1], int):
@@ -166,10 +168,10 @@ class Parameter(object):
                 if not item in self.rng.keys():
                     return (False, value) if withvalue else False
             return (True, value) if withvalue else True
-        if not hasattr(value, "__iter__") or core.isStr(value):
+        if not hasattr(value, "__iter__") or fcts.isStr(value):
             # split input string into ['a', 'b', ...]
             if self.typ.typ == 'str':
-                if not core.isStr(value):
+                if not fcts.isStr(value):
                     return (False, value) if withvalue else False
                 value = [item for item in value]
             else:

@@ -25,8 +25,7 @@
 ###############################################################################
 
 
-from param import param_category
-from nanoctrl.utils import core
+from nanoparam.categories import param_category
 from nanoctrl.ccsds import CCSDSTrousseau
 
 from . import mgmtexception

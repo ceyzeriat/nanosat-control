@@ -31,13 +31,12 @@ import glob
 import hein
 from byt import Byt
 from threading import Thread
-from nanoctrl.utils.report import REPORTS
-from nanoctrl.utils import core
-from param import param_all
-from nanoctrl.utils import ctrlexception
-from nanoctrl.rfcheckoutbox import RFCheckoutbox
-from nanoctrl.serialusb import SerialUSB
-from nanoctrl.tncrfbox import TNCRFBox
+
+from nanoutils.report import REPORTS
+from nanoutils import core
+from nanoparam import param_all_processed as param_all
+import nanoantennae
+from nanoutils import ctrlexception
 
 
 __all__ = ['process_data', 'init', 'close', 'report', 'theloop']
@@ -94,16 +93,15 @@ def process_data(data):
         return
     now = core.now()
     name = now.strftime(param_all.TELEMETRYNAMEFORMAT)
-    name = param_all.TELEMETRYDUMPFOLDER + [name]
-    name = core.home_dir(*name)
-    if os.path.isfile(name):  # already exists
-        name += ".{}".format(len(glob.glob(name))+1)
+    name = param_all.Pathing('~', param_all.TELEMETRYDUMPFOLDER, name)
+    if name.isfile:  # already exists
+        name.path += ".{}".format(len(glob.glob(name.path))+1)
     # locally saved
-    f = open(name, mode='wb')
+    f = open(name.path, mode='wb')
     f.write(data)
     f.close()
     # sends packets on the socket
-    LISTEN_TRANS.tell_dict(t=now, path=name, data=data)
+    LISTEN_TRANS.tell_dict(t=now, path=name.path, data=data)
 
 
 def report(*args, **kwargs):
@@ -185,15 +183,7 @@ def init(antenna):
                                 portname=param_all.CONTROLLINGPORT[1],
                                 hostname = 'localhost')
     report('SettingUpAntenna', antenna=antenna)
-    if antenna == 'checkoutbox':
-        ANTENNA = RFCheckoutbox()
-    elif antenna == 'serial':
-        ANTENNA = SerialUSB()
-    elif antenna == 'tncrfbox':
-        ANTENNA = TNCRFBox()
-    else:
-        close()
-        raise ctrlexception.UnknownAntenna(antenna)
+    ANTENNA = getattr(nanoantennae, antenna).ANT()
     running = True
 
 

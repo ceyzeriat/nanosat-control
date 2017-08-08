@@ -25,12 +25,16 @@
 ###############################################################################
 
 
-from param import param_category
-from param import param_category_common as pcc
-from .utils import core
-from .utils import ctrlexception as exc
+
+from datetime import datetime
+from nanoparam.categories import param_category
+from nanoparam.categories import param_category_common as pcc
+from nanoutils import fcts
+from nanoutils import ctrlexception as exc
+from nanoparam import param_ccsds
+
+
 from .ccsds import TMUnPacker
-from .ccsds import param_ccsds
 from .kiss.frame import Framer
 from . import db
 
@@ -75,12 +79,12 @@ class Telemetry(object):
         if isKiss:
             s1, s2, packet = Framer.decode_radio(packet) # unpack kiss
         cls.hd, cls.hdx, cls.data = TMUnPacker.unpack(packet)
-        cls.hd['raw_file'] = core.RAWPACKETFOLDER
-        cls.hd['user_id'] = core.RECEIVERID if user_id is None\
+        cls.hd['raw_file'] = param_all.RAWPACKETFOLDER
+        cls.hd['user_id'] = param_all.RECEIVERID if user_id is None\
                                     else int(user_id)
         cls.hd['time_received'] = time_received\
-                if isinstance(time_received, core.datetime.datetime)\
-                else core.now()
+                if isinstance(time_received, datetime)\
+                else fcts.now()
         catnum = int(cls.hd[param_ccsds.PACKETCATEGORY.name])
         # if it is a RACK, update the TM after checking the TC
         if catnum == int(param_category.RACKCAT):

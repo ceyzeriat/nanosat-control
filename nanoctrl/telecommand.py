@@ -30,15 +30,14 @@ try:
     import Queue as queue
 except:
     import queue
-from param import param_all
-if not param_all.JUSTALIB:
-    from segsol import controlling
-from .ccsds import param_ccsds
-from .utils import core
-from .utils import ctrlexception as exc
-if not param_all.JUSTALIB:
-    from . import db
-    from .telemetry import Telemetry
+from nanoparam import param_ccsds
+from nanoparam import param_all
+from nanoutils import ctrlexception as exc
+from nanoapps import controlling
+
+
+from . import db
+from .telemetry import Telemetry
 
 
 __all__ = ['Telecommand']
@@ -175,7 +174,7 @@ class Telecommand(object):
         hd = hd
         hd.update(hdx)
         # no wait
-        if not kwargs.pop('wait', core.DEFAULTWAITCMD):
+        if not kwargs.pop('wait', param_all.DEFAULTWAITCMD):
             time.sleep(0.1)
             return cls(dbid=dbid)
         # False if waiting for ACK, else None
@@ -193,7 +192,7 @@ class Telecommand(object):
         if not (rack or fack or eack):
             return cls(dbid=dbid)
         pkid = int(hd[param_ccsds.PACKETID.name])
-        doneat = time.time() + kwargs.pop('timeout', core.DEFAULTTIMEOUTCMD)
+        doneat = time.time() + kwargs.pop('timeout', param_all.DEFAULTTIMEOUTCMD)
         # check format first since it may prevent eack from being sent
         while time.time() < doneat:
             # if no ACK is False (waiting for ACK), then break

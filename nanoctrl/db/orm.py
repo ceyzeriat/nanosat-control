@@ -25,6 +25,7 @@
 ###############################################################################
 
 
+from byt import Byt
 import time
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
@@ -32,16 +33,16 @@ from sqlalchemy import create_engine
 from sqlalchemy import update
 from sqlalchemy import and_
 #from sqlalchemy import or_
-from param import param_all
-from param import param_category
-from param import param_category_common as pcc
-from param import param_apid
-from byt import Byt
+from nanoparam.categories import param_category
+from nanoparam.categories import param_category_common as pcc
+from nanoparam import param_apid
 
 
-from ..utils import core
-from ..utils import ctrlexception
-from ..ccsds import param_ccsds
+from nanoutils import param_sys
+from nanoutils import core
+from nanoutils import fcts
+from nanoutils import ctrlexception
+from nanoparam import param_ccsds
 
 
 __all__ = ['init_DB', 'get_column_keys', 'save_TC_to_DB', 'close_DB',
@@ -66,11 +67,11 @@ def init_DB():
     if running:
         return
     Base = automap_base()
-    engine = create_engine(core.DBENGINE)
+    engine = create_engine(param_all.DBENGINE)
     Base.prepare(engine, reflect=True)
     TABLES = {}
     for k in Base.classes.keys():
-        #nk = core.camelize_singular(k)
+        #nk = fcts.camelize_singular(k)
         #if nk is False:
         #    print("The table '{}' was given a name without plurals. "\
         #          "This is wrong and it will probably crash".format(k))
@@ -343,7 +344,7 @@ def save_TM_to_DB(hd, hdx, data):
     hd['time_sent'] = core.stamps2time(hd['days_since_ref'],
                                         hd['ms_since_today'])
     # force default to now
-    hd['time_saved'] = core.now()
+    hd['time_saved'] = fcts.now()
     TM = TABLES['telemetries'](**hd)
     DB.add(TM)
     DB.commit()

@@ -29,10 +29,11 @@ from byt import Byt
 from sys import version_info
 if version_info > (3,):
     long = int
+from nanoutils import bincore
+from nanoutils import fcts
+
 
 from . import cmdexception
-from ..utils import bincore
-from ..utils import core
 
 
 __all__ = ['PFormat']
@@ -106,7 +107,7 @@ class PFormat(object):
             if len(value) > 1:
                 return False
         if self.typ == 'str':
-            if not core.isStr(value):
+            if not fcts.isStr(value):
                 return False
             if len(value) > 1:
                 return False

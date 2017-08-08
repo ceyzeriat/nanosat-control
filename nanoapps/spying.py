@@ -27,11 +27,11 @@
 
 import os
 import hein
-from nanoctrl.utils import core
-from param import param_all
-from nanoctrl.utils import ctrlexception
+from nanoparam import param_all_processed as param_all
+
 
 __all__ = ['process_data', 'init', 'close']
+
 
 # the path where to create the directories in which packets data will be stored
 ALL_TEL = 'all_telemetries'
@@ -63,8 +63,7 @@ class SpyRec(hein.SocReceiver):
         """
         # ignores the reporting
         if key == 'rpt':
-            return        
-        blobish = data['data']
+            return
         process_data(data)
         return
 
@@ -80,7 +79,7 @@ def process_data(data):
     local_path = os.path.join(DIRNAME, 'tm_data', filename)
     print("Spying: '{}' >> {}".format(data['data'].hex(), local_path))
     # locally saved
-    f = open(core.home_dir(ALL_TEL, local_path), mode='wb')
+    f = open(param_all.Pathing('~', ALL_TEL, local_path).path, mode='wb')
     f.write(data['data'])
     f.close()
     SPY_TRANS.tell_dict(**data)
@@ -96,14 +95,14 @@ def init(dir_name):
     global DIRNAME
     if running:
         return
-    DIRNAME = str(dir_name).lstrip('/')
-    sub_dir = core.home_dir(ALL_TEL, DIRNAME)
-    if os.path.isdir(sub_dir):
+    DIRNAME = str(dir_name).lstrip(os.sep)
+    sub_dir = param_all.Pathing('~', ALL_TEL, DIRNAME)
+    if sub_dir.exists:
         print("Directory '{}' already exists. Please change the name!"\
-                                                        .format(sub_dir))
+                                                        .format(sub_dir.path))
     else:
-        os.mkdir(sub_dir)
-        os.mkdir(core.home_dir(ALL_TEL, DIRNAME, 'tm_data'))
+        os.mkdir(sub_dir.path)
+        os.mkdir(param_all.Pathing(sub_dir, 'tm_data').path)
         SPY_TRANS = SpyTrans(port=param_all.SPYINGPORT[0],
                              nreceivermax=5,
                              start=True,

@@ -24,15 +24,16 @@
 #
 ###############################################################################
 
+
 if __name__ == "__main__":
-    
     import locale
     locale.setlocale(locale.LC_ALL, '')
-    from nanoctrl.utils import core
+    from nanoutils import core
     from nanoapps import showing
 
 
     core.prepare_terminal('Show')
+
     print("Initialization...")
     showing.init()  # blocking
     print("Done")

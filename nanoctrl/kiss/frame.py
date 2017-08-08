@@ -26,16 +26,14 @@
 
 
 from byt import Byt
-from param import param_all
-from . import utils
-from ..utils import core
+from nanoparam import param_all_processed as param_all
+
+
+from . import kissutils
 from .callsign import Callsign
 
 
-if param_all.JUSTALIB:
-    __all__ = ['Frame']
-else:
-    __all__ = ['Framer']
+__all__ = ['Framer']
 
 
 class Frame(object):
@@ -45,9 +43,9 @@ class Frame(object):
         Codes/decodes an AX25+KISS frame
 
         Args:
-        * source, destination (str): the callsigns
-        * path: unused
-        * kiss (bool): whether the frames are AX25, or KISS+AX25
+          * source, destination (str): the callsigns
+          * path: unused
+          * kiss (bool): whether the frames are AX25, or KISS+AX25
         """
         self.ISKISS = bool(kiss) if kiss is not None else param_all.KISSENCAPS
         self.reinit(source=source, destination=destination, path=path)
@@ -70,14 +68,15 @@ class Frame(object):
                                     for path_call in self.path])
         frame = enc_frame[:-1] +\
                     Byt(ord(enc_frame[-1]) | 0x01) +\
-                    utils.SLOT_TIME +\
+                    kissutils.SLOT_TIME +\
                     Byt('\xf0') +\
                     self.text
         if not self.ISKISS:
             return frame
         else:
-            frame = utils.escape_special_codes(frame)
-            return utils.FEND + utils.DATA_FRAME + frame + utils.FEND
+            frame = kissutils.escape_special_codes(frame)
+            return kissutils.FEND + kissutils.DATA_FRAME + frame\
+                      + kissutils.FEND
 
     def decode_radio(self, frame):
         """
@@ -87,9 +86,9 @@ class Frame(object):
         source, destination, text = Byt(), Byt(), Byt()
         if self.ISKISS:
             # parse KISS away
-            frame = utils.strip_df_start(frame)
+            frame = kissutils.strip_df_start(frame)
             # recover special codes
-            frame = utils.recover_special_codes(frame)
+            frame = kissutils.recover_special_codes(frame)
         frameints = frame.ints()
         frame_len = len(frameints)
         if frame_len > 16:
@@ -109,5 +108,5 @@ class Frame(object):
                     return source, destination, text
         return source, destination, text
 
-if not param_all.JUSTALIB:
-    Framer = Frame(source=core.CSSOURCE, destination=core.CSDESTINATION)
+
+Framer = Frame(source=param_all.CSSOURCE, destination=param_all.CSDESTINATION)

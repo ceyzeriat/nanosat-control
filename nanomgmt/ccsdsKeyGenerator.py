@@ -97,7 +97,7 @@ for cFileName in cFileNames:
         pyFileFormulae = ''
         
         pyFile.write("#!/usr/bin/env python\n# -*- coding: utf-8 -*-\n\n\n")
-        pyFile.write("from nanoctrl.utils import bincore\nfrom nanoctrl.utils import b\nfrom nanoctrl.utils import O\n\n\n")
+        pyFile.write("from nanoutils import b\nfrom nanoutils import O\n\n\n")
         addit("{}_KEYS = [\n".format(structureName.upper()))
 
         # scan and parse each line

@@ -25,10 +25,12 @@
 ###############################################################################
 
 
-from param import param_all
+from nanoparam import param_all
+from nanoutils import fcts
+
+
 from .cm import Cm
 from ..ccsds import TCPacker
-from ..utils import core
 from ..telecommand import Telecommand
 from .. import db
 
@@ -100,7 +102,7 @@ class Command(Cm):
         # generates the packet
         packet, hd, hdx, inputs = self._generate_packet(**kwargs)
         hd['raw_file'] = param_all.RAWPACKETFOLDER
-        hd['time_given'] = core.now()
+        hd['time_given'] = fcts.now()
         # left None until confirmation sent by antenna
         hd['time_sent'] = None
         # save in database

@@ -26,8 +26,10 @@
 
 
 from byt import Byt
-from ..utils import core
-from . import utils
+from nanoutils import fcts
+
+
+from . import kissutils
 from . import kissexception
 
 
@@ -66,10 +68,10 @@ class Callsign(object):
             except IndexError:
                 pass
             # if not happy with existing callsign, try parsing it as callsign
-            if not utils.valid_callsign(self.callsign):
+            if not kissutils.valid_callsign(self.callsign):
                 self.parse_callsign(callsign)
         # if still no valid callsign at this point
-        if not utils.valid_callsign(self.callsign):
+        if not kissutils.valid_callsign(self.callsign):
             raise kissexception.BadCallsignError(self.callsign)
 
     def encode_callsign(self):
@@ -82,7 +84,7 @@ class Callsign(object):
         if self.digi:
             encoded_ssid |= 0x80
         # Pad the callsign to 6 characters
-        callsign = core.fillit(callsign, l=6, ch=Byt(' ')).ints()
+        callsign = fcts.fillit(callsign, l=6, ch=Byt(' ')).ints()
 
         encoded_callsign = Byt(p << 1 for p in callsign)
 

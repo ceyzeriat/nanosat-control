@@ -27,6 +27,7 @@
 
 from byt import Byt
 
+
 from . import cmdexception
 from .cm import Cm
 

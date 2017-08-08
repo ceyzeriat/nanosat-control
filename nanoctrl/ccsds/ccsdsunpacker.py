@@ -25,12 +25,13 @@
 ###############################################################################
 
 
-import param
 from byt import Byt
-from param import param_category
-from ..utils import bincore
-from . import ccsdsexception
-from . import param_ccsds
+from nanoutils import bincore
+from nanoparam.categories import param_category
+from nanoparam import param_ccsds
+
+
+from nanoutils.ccsds import ccsdsexception as exc
 
 
 __all__ = ['CCSDSUnPacker']
@@ -110,7 +111,7 @@ class CCSDSUnPacker(object):
         pldFlag = int(pldFlag)
         pktCat = int(pktCat)
         if pktCat not in param_category.CATEGORIES[pldFlag].keys():
-            raise ccsdsexception.CategoryMissing(pktCat, pldFlag)
+            raise exc.CategoryMissing(pktCat, pldFlag)
         cat = param_category.CATEGORIES[pldFlag][pktCat]
         if cat.aux_size == 0:
             return {}

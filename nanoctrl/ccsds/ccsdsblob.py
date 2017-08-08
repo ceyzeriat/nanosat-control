@@ -27,12 +27,14 @@
 
 from byt import Byt
 import math
-from param import param_apid
-from param import param_category_common as pcc
-from param import param_category
-from . import param_ccsds
-from ..utils import bincore
-from . import ccsdsexception as exc
+from nanoparam import param_apid
+from nanoparam.categories import param_category_common as pcc
+from nanoparam.categories import param_category
+from nanoparam import param_ccsds
+from nanoutils import bincore
+from nanoutils.ccsds import ccsdsexception as exc
+
+
 from .ccsdspacker import CCSDSPacker
 
 

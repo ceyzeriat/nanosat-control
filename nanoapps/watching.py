@@ -28,15 +28,14 @@
 import hein
 import sys
 from byt import Byt
-from nanoctrl.utils import core
-from nanoctrl.utils.report import REPORTS, EXTRADISPKEY
-from nanoctrl.utils import PIDWatchDog
+from nanoutils import core
+from nanoutils.report import REPORTS, EXTRADISPKEY
+from nanoutils import PIDWatchDog
 from nanoctrl.ccsds import TMUnPacker
-from nanoctrl.ccsds import param_ccsds
 from nanoctrl.kiss import Framer
-import param
-from param import param_category
-from param import param_all
+from nanoparam import param_ccsds
+from nanoparam.categories import param_category
+from nanoparam import param_all_processed as param_all
 
 
 __all__ = ['init', 'close']
@@ -153,8 +152,8 @@ def broadcast(*args, **kwargs):
     WATCH_TRANS.tell_report(**kwargs)
     key = kwargs.pop(param_all.REPORTKEY)
     rpt_verb = REPORTS[key].disp(**kwargs)
-    core.append_logfile(rpt_verb)
     if kwargs.get(EXTRADISPKEY, REPORTS[key].prt):
+        core.append_logfile(rpt_verb)
         print(rpt_verb)
 
 

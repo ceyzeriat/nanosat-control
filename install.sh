@@ -196,9 +196,9 @@ if [ "$doserver" ==  1  ];then
     cp ./param/param_all_example.py ./param/param_all.py
 
 
-    echo "Move logging binaries"
-    chmod a+x bins/log*
-    cp bins/log* $WHEREBINS/
+    #echo "Move logging binaries"
+    #chmod a+x bins/log*
+    #cp bins/log* $WHEREBINS/
 
 
     echo "Compiling hmac library"

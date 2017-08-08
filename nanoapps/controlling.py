@@ -29,18 +29,18 @@ import time
 import hein
 from byt import Byt
 from multiprocessing import Manager
-from nanoctrl.utils import core
-from nanoctrl.utils import ctrlexception
-from nanoctrl.utils.report import REPORTS, EXTRADISPKEY
+from nanoparam import param_ccsds
+from nanoparam import param_all_processed as param_all
+from nanoparam.categories import param_category
+from nanoparam.categories import param_category_common
+from nanoutils import core
+from nanoutils import ctrlexception
+from nanoutils.report import REPORTS, EXTRADISPKEY
 from nanoctrl.ccsds import CCSDSBlob
 from nanoctrl.kiss import Framer
 from nanoctrl.ccsds import TMUnPacker
 from nanoctrl.ccsds import TCUnPacker
-from nanoctrl.ccsds import param_ccsds
 from nanoctrl import db
-from param import param_all
-from param import param_category
-from param import param_category_common
 
 
 __all__ = ['init', 'close', 'broadcast_TC', 'report']

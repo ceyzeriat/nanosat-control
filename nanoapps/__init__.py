@@ -24,20 +24,17 @@
 #
 ###############################################################################
 
-
-__all__ = []
-
-
-from param import param_all
+__all__ = ['listening', 'saving', 'watching', 'controlling', 'spying']
 
 
-if not param_all.JUSTALIB:
-    __all__ = ['listening', 'saving', 'watching', 'controlling', 'spying']
+from nanoparam import param_all
 
-    from . import listening
-    from . import saving
-    from . import watching
-    from . import controlling
-    from . import spying
-    if param_all.ENABLESHOW:
-        from . import showing
+
+from . import listening
+from . import saving
+from . import watching
+from . import controlling
+from . import spying
+if param_all.ENABLESHOW:
+    from . import showing
+    __all__ += ['showing']

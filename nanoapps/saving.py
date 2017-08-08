@@ -30,14 +30,13 @@ import os
 import hein
 import paramiko
 from byt import Byt
-from nanoctrl.utils import core
-from param import param_all
-from nanoctrl.utils import ctrlexception
-from nanoctrl.utils.report import REPORTS
+from nanoutils import core
+from nanoutils import ctrlexception
+from nanoparam import param_all_processed as param_all
+from nanoutils.report import REPORTS
 from nanoctrl.telemetry import Telemetry
 from nanoctrl.ccsds import CCSDSBlob
 from nanoctrl.kiss import Framer
-from param import param_all
 
 
 __all__ = ['init', 'close', 'report']
@@ -77,7 +76,7 @@ class SaveRec(hein.SocReceiver):
         report('receivedTM')
         if param_all.AX25ENCAPS:
             source, destination, blobish = Framer.decode_radio(data['data'])
-            if source != Byt():
+            if len(source) > 0:
                 report('receivedCallsignTM', source=source, ll=len(blobish),
                             destination=destination)
             else:
@@ -184,8 +183,8 @@ def init():
         ssh.load_host_keys(os.path.expanduser( os.path.join("~", ".ssh",
                                                             "known_hosts")))
         ssh.connect(param_all.TELEMETRYSAVESERVER,
-                    username=core.TELEMETRYSAVEUSER,
-                    password=core.TELEMETRYSAVEPASS)
+                    username=param_all.TELEMETRYSAVEUSER,
+                    password=param_all.TELEMETRYSAVEPASS)
         sftp = ssh.open_sftp()
         # creates the root user-folder if missing and moves into it
         sftp = moveto_save_folder(sftp=sftp)

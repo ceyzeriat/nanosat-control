@@ -26,11 +26,12 @@
 
 
 from byt import Byt
-from param import param_apid
-from param import param_commands
+from nanoparam import param_apid
+from nanoparam.commands import param_commands
+from nanoutils import fcts
+
 
 from . import cmdexception
-from ..utils import core
 from .parameter import Parameter
 
 
@@ -53,7 +54,7 @@ class Cm(object):
           * param (iterable of list): an iterable of parameter lists of
             form and order: (name, desc, rng, typ, size, unit)
         """
-        self._name = core.clean_name(name)
+        self._name = fcts.clean_name(name)
         self._number = int(number)
         pid = str(pid).lower()
         if pid not in param_apid.PIDREGISTRATION.keys():

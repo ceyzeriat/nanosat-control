@@ -24,6 +24,5 @@
 #
 ###############################################################################
 
-
-from .callsign import *
-from .frame import *
+from .callsign import Callsign
+from .frame import Framer

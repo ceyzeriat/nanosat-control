@@ -26,13 +26,13 @@
 
 
 import hein
-import param
-from param import param_all
+from nanoparam import param_all_processed as param_all
+from nanoutils import param_sys
 from nanoctrl.kiss import Framer
 from nanoctrl.ccsds import TCUnPacker
-from nanoctrl.ccsds import param_ccsds
-from nanoctrl.xdisp import watchdog as wt
-from nanoctrl.utils.report import REPORTS
+from nanoparam import param_ccsds
+from nanoctrl.xdisp import watcher
+from nanoutils.report import REPORTS
 
 
 __all__ = ['init', 'close']
@@ -41,7 +41,7 @@ __all__ = ['init', 'close']
 SHOW_REC_WATCH = None
 running = False
 PIDS = {}
-XDISP = wt.XDISP
+XDISP = watcher.XDISP
 
 
 class ShowRec(hein.SocReceiver):
@@ -56,7 +56,7 @@ class ShowRec(hein.SocReceiver):
         Updates the XDISP window
         """
         if key == 'rpt':
-            rpt_key = str(data.pop(param_all.REPORTKEY, ''))
+            rpt_key = str(data.pop(param_sys.REPORTKEY, ''))
             if rpt_key == '':
                 return
             who = str(data['who'])
