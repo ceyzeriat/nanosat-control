@@ -29,7 +29,7 @@ if __name__ == "__main__":
     from threading import Thread
     from nanoutils import core
     from nanoapps import listening
-    from param import param_all
+    from nanoparam import param_all
 
     core.prepare_terminal('Listen')
     print("Initialization...")

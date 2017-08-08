@@ -191,7 +191,7 @@ class CCSDSPacker(object):
         siggy = hmac(fullPacket)
         # apply mask
         siggy = Byt(s for idx, s in enumerate(siggy.ints())\
-                        if core.KEYMASK[idx] == '1')
+                        if param_all.KEYMASK[idx] == '1')
         # fuck endians
         if bincore.TWINKLETWINKLELITTLEINDIA:
             siggy = siggy[::-1]

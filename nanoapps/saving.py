@@ -76,7 +76,7 @@ class SaveRec(hein.SocReceiver):
         report('receivedTM')
         if param_all.AX25ENCAPS:
             source, destination, blobish = Framer.decode_radio(data['data'])
-            if len(source) > 0:
+            if source == Byt():
                 report('receivedCallsignTM', source=source, ll=len(blobish),
                             destination=destination)
             else:

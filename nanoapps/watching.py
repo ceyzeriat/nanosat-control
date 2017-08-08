@@ -28,6 +28,7 @@
 import hein
 import sys
 from byt import Byt
+from nanoutils import param_sys
 from nanoutils import core
 from nanoutils.report import REPORTS, EXTRADISPKEY
 from nanoutils import PIDWatchDog
@@ -81,7 +82,7 @@ class WatchRec(hein.SocReceiver):
 
 def process_report(inputs):
     global PIDS
-    key = str(inputs.get(param_all.REPORTKEY))
+    key = str(inputs.get(param_sys.REPORTKEY))
     broadcast(key, **inputs)
     if key == 'myPID':
         who = inputs['who']
@@ -148,9 +149,9 @@ def broadcast(*args, **kwargs):
     """
     Broacasts info
     """
-    kwargs[param_all.REPORTKEY] = str(args[0])
+    kwargs[param_sys.REPORTKEY] = str(args[0])
     WATCH_TRANS.tell_report(**kwargs)
-    key = kwargs.pop(param_all.REPORTKEY)
+    key = kwargs.pop(param_sys.REPORTKEY)
     rpt_verb = REPORTS[key].disp(**kwargs)
     if kwargs.get(EXTRADISPKEY, REPORTS[key].prt):
         core.append_logfile(rpt_verb)
