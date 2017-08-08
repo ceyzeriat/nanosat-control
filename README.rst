@@ -30,5 +30,7 @@ This software is no hardware: it reads and writes bytes from/to a port (serial, 
 
 It does not control the antenna nor predicts the next transit, which is `Gpredict`_‘s task.
 
+Don't forget to check out the website: `www.nanosat-control.com`_.
+
 .. _`www.nanosat-control.com`: http://www.nanosat-control.com/
 .. _`Gpredict`: http://gpredict.oz9aec.net/
