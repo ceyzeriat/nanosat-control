@@ -36,6 +36,8 @@ from sqlalchemy import and_
 from nanoparam.categories import param_category
 from nanoparam.categories import param_category_common as pcc
 from nanoparam import param_apid
+from nanoparam import param_all_processed as param_all
+from nanoutils import param_sys
 
 
 from nanoutils import param_sys
@@ -407,7 +409,7 @@ def split_data_by_keys_conv(data, trkeys):
     for item in trkeys:
         rawdata[item.name] = data[item.name]
         if item.unram is not None:
-            convdata[item.name] = data[item.name+param_all.SUFIXCONVERSION]
+            convdata[item.name] = data[item.name+param_sys.SUFIXCONVERSION]
     return rawdata, convdata
 
 

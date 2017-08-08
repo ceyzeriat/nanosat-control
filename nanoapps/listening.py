@@ -93,7 +93,7 @@ def process_data(data):
         return
     now = core.now()
     name = now.strftime(param_all.TELEMETRYNAMEFORMAT)
-    name = param_all.Pathing('~', param_all.TELEMETRYDUMPFOLDER, name)
+    name = param_all.Pathing(param_all.TELEMETRYDUMPFOLDER, name)
     if name.isfile:  # already exists
         name.path += ".{}".format(len(glob.glob(name.path))+1)
     # locally saved

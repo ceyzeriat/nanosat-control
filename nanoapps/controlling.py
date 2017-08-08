@@ -36,6 +36,7 @@ from nanoparam.categories import param_category_common
 from nanoutils import core
 from nanoutils import ctrlexception
 from nanoutils.report import REPORTS, EXTRADISPKEY
+from nanoutils import param_sys
 from nanoctrl.ccsds import CCSDSBlob
 from nanoctrl.kiss import Framer
 from nanoctrl.ccsds import TMUnPacker
@@ -89,7 +90,7 @@ class ControlRec(hein.SocReceiver):
         # if report type message, gotta check if report_key is sentTC
         if key == 'rpt':
             # case of getting the TC back, update time_sent in DB
-            if str(data[param_all.REPORTKEY]) == 'sentTC'\
+            if str(data[param_sys.REPORTKEY]) == 'sentTC'\
                                         and param_all.SAVETC:
                 res = TCUnPacker.unpack_primHeader(blobish)
                 pkid = res[param_ccsds.PACKETID.name]
