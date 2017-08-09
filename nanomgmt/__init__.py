@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-#from . import mgmtexception
+from . import mgmtexception
 from .categoryregistration import *
 from .commandlist import *
 from .doccomm import *

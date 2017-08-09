@@ -21,7 +21,7 @@
 #  
 #  For any information, bug report, idea, donation, hug, beer, please contact
 #    guillaume.schworer@gmail.com
-#
+#.path
 ###############################################################################
 
 
@@ -30,9 +30,8 @@ from pylatex import Document, Section, Subsection, Tabular, NoEscape,\
 from pylatex.basic import NewLine
 from pylatex.utils import italic
 from nanoctrl.cmd import allcommand
-from nanoctrl.utils import core
-from nanoctrl.ccsds import param_ccsds
-from nanoctrl.ccsds import CCSDSMetaTrousseau
+from nanoparam.categories import param_tc_answer
+from nanoparam import param_all_processed as param_all
 import param
 import os
 import re
@@ -45,7 +44,7 @@ DOCNAME = "PICSAT-TCTM-SPEC-01"
 REPL = {"<!SHORTTITLE!>": 'PicSat Comm. Spec.',
         "<!VERSION!>": '1.0',
         "<!STITLE!>": 'PicSat TC-TM Specifications',
-        "<!PATH!>": core.rel_dir('mgmt'),
+        "<!PATH!>": param_all.Pathing('ctrl', 'mgmt').path,
         "<!REF!>": DOCNAME}
 
 
@@ -71,8 +70,8 @@ class DocTCTM(object):
           * clean_tex (bool): whether to delete the .tex file after
             compiling
         """
-        HEADER = open(core.rel_dir('mgmt', 'header.tex'), mode='r').read()
-        HEADER2 = open(core.rel_dir('mgmt', 'header-2.tex'), mode='r').read()
+        HEADER = open(param_all.Pathing('ctrl', 'mgmt', 'header.tex').path, mode='r').read()
+        HEADER2 = open(param_all.Pathing('ctrl', 'mgmt', 'header-2.tex').path, mode='r').read()
         doc = Document(self.docname)
         for k, v in REPL.items():
             HEADER = HEADER.replace(k, v)
@@ -98,9 +97,9 @@ This document does not cover the content of headers for TC, and headers and data
             subsection.append(self._print_TC(item))
             section.append(subsection)
             # add TM if need be
-            if item.number in param.param_tc_answer.TROUSSEAUDIC.keys():
+            if item.number in param_tc_answer.TROUSSEAUDIC.keys():
                 subsection = self._trousseau2subsection("Answer TM to {}".format(item.name),
-                                        param.param_tc_answer.TROUSSEAUDIC[item.number])
+                                        param_tc_answer.TROUSSEAUDIC[item.number])
                 section.append(subsection)
         doc.append(section)
 
@@ -110,9 +109,9 @@ This document does not cover the content of headers for TC, and headers and data
             subsection.append(self._print_TC(item))
             section.append(subsection)
             # add TM if need be
-            if item.number in param.param_tc_answer.TROUSSEAUDIC.keys():
+            if item.number in param_tc_answer.TROUSSEAUDIC.keys():
                 subsection = self._trousseau2subsection("Answer TM to {}".format(item.name),
-                                        param.param_tc_answer.TROUSSEAUDIC[item.number])
+                                        param_tc_answer.TROUSSEAUDIC[item.number])
                 section.append(subsection)
         doc.append(section)
 
@@ -122,9 +121,9 @@ This document does not cover the content of headers for TC, and headers and data
             subsection.append(self._print_TC(item))
             section.append(subsection)
             # add TM if need be
-            if item.number in param.param_tc_answer.TROUSSEAUDIC.keys():
+            if item.number in param_tc_answer.TROUSSEAUDIC.keys():
                 subsection = self._trousseau2subsection("Answer TM to {}".format(item.name),
-                                        param.param_tc_answer.TROUSSEAUDIC[item.number])
+                                        param_tc_answer.TROUSSEAUDIC[item.number])
                 section.append(subsection)
         doc.append(section)
         self._compile(doc, clean_tex=clean_tex)

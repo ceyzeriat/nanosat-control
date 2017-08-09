@@ -27,8 +27,7 @@
 
 import os
 import sys
-from sys import version_info
-PYTHON3 = version_info > (3,)
+PYTHON3 = sys.version_info > (3,)
 
 
 from . import ctrlexception

@@ -93,7 +93,7 @@ class CCSDSKey(object):
 
         Kwargs are unused
         """
-        self.name = str(name)
+        self.name = str(name).lower()
         self.unit = str(unit)
         self.verbose = str(verbose)
         self.disp = self.name[:3] if disp is None else str(disp)

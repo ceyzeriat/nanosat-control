@@ -25,27 +25,26 @@
 ###############################################################################
 
 
-from sys import version_info
-PYTHON3 = version_info > (3,)
-
 import os
 import json
-from param import params
+from nanoparam import param_all_auto as param_all
 from byt import Byt
 
 
 # make sure that python 3 understands unicode native python 2 function
-if PYTHON3:
+if param_all.PYTHON3:
     unicode = str
+
 
 def load_json_cmds(path):
     """
     Loads all the commands from the json file, given the path list
     """
-    f = open(params.rel_dir(*path), mode='r')
+    f = open(param_all.Pathing('param', *path).path, mode='r')
     allcmds = json.load(f)
     f.close()
     return allcmds
+
 
 def rchop(txt, ending):
     """
@@ -55,6 +54,7 @@ def rchop(txt, ending):
         return txt[:-len(ending)]
     else:
         return txt
+
 
 def clean_name(txt):
     """
@@ -72,14 +72,16 @@ def clean_name(txt):
     return number[txt[0]] + "_" if ord(txt[0]) in number.keys() else txt[0]\
             + txt[1:]
 
+
 def save_json_cmds(path, cmds):
     """
     Saves all the commands from the json file, given the path and
     the commands list
     """
-    f = open(params.rel_dir(*path), mode='w')
+    f = open(param_all.Pathing('param', *path).path, mode='w')
     json.dump(cmds, f)
     f.close()
+
 
 def ustr(txt):
     """

@@ -29,9 +29,10 @@ from pylatex import Document, Section, Subsection, Tabular, NoEscape,\
                         Command, Itemize, MultiColumn, Subsubsection
 from pylatex.basic import NewLine
 from pylatex.utils import italic
-from nanoctrl.utils import core
-from nanoctrl.ccsds import param_ccsds
-from nanoctrl.ccsds import CCSDSMetaTrousseau
+from nanoparam import param_all_auto as param_all
+from nanoparam import param_ccsds
+from nanoparam.categories import param_category
+from nanoutils.ccsds import CCSDSMetaTrousseau
 import param
 import os
 import re
@@ -44,7 +45,7 @@ DOCNAME = "PICSAT-COMM-SPEC-01"
 REPL = {"<!SHORTTITLE!>": 'PicSat Comm. Spec.',
         "<!VERSION!>": '1.0',
         "<!STITLE!>": 'PicSat Communication Specifications',
-        "<!PATH!>": core.rel_dir('mgmt'),
+        "<!PATH!>": param_all.Pathing('ctrl', 'mgmt').path,
         "<!REF!>": DOCNAME}
 
 
@@ -66,12 +67,12 @@ class DocComm(object):
         """
         Generates the document and saves it to disk
 
-        Args:
+        Args:.path
           * clean_tex (bool): whether to delete the .tex file after
             compiling
         """
-        HEADER = open(core.rel_dir('mgmt', 'header.tex'), mode='r').read()
-        HEADER2 = open(core.rel_dir('mgmt', 'header-2.tex'), mode='r').read()
+        HEADER = open(param_all.Pathing('ctrl', 'mgmt', 'header.tex').path, mode='r').read()
+        HEADER2 = open(param_all.Pathing('ctrl', 'mgmt', 'header-2.tex').path, mode='r').read()
         doc = Document(self.docname)
         for k, v in REPL.items():
             HEADER = HEADER.replace(k, v)
@@ -117,14 +118,14 @@ This documents does not cover the content of data field for TC, and the content 
                        1: 'Packet Categories for Payload'}
         for idx, pldflag in ([0, False], [1, True]):
             section = Section(sectionname[idx])
-            for catnum, cat in param.param_category.\
+            for catnum, cat in param_category.\
                                     CATEGORIES[idx].items():
                 subsection = self._trousseau2subsection(
                     '{} ({:d}) - Auxiliary Header'.format(cat.name, catnum),
                     cat.aux_trousseau, catnum=catnum, pldflag=pldflag)
                 section.append(subsection)
                 # case of TC answer, dedicated doc
-                if catnum == param.param_category.TELECOMMANDANSWERCAT:
+                if catnum == param_category.TELECOMMANDANSWERCAT:
                     subsection = Subsection('{} ({:d}) - Data'\
                                                 .format(cat.name, catnum))
                     subsection.append("Refer to the dedicated TC-TM "\
