@@ -26,9 +26,9 @@
 
 
 import csv
-from param import param_all
-from param import param_apid
-from param import param_commands
+from nanoparam import param_all
+from nanoparam import param_apid
+from nanoparam import param_commands
 from byt import Byt
 
 from . import core

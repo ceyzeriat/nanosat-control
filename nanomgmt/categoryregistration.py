@@ -26,7 +26,7 @@
 
 
 from nanoparam.categories import param_category
-from nanoctrl.ccsds import CCSDSTrousseau
+from nanoutils.ccsds.ccsdstrousseau import CCSDSTrousseau
 
 from . import mgmtexception
 
