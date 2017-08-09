@@ -32,7 +32,6 @@ from pylatex.utils import italic
 from nanoctrl.cmd import allcommand
 from nanoparam.categories import param_tc_answer
 from nanoparam import param_all_processed as param_all
-import param
 import os
 import re
 

@@ -26,7 +26,6 @@
 
 
 import csv
-from nanoparam import param_all_processed as param_all
 from nanoparam import param_apid
 from nanoparam.commands import param_commands
 from byt import Byt

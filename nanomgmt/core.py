@@ -27,8 +27,8 @@
 
 import os
 import json
-from nanoparam import param_all_auto as param_all
 from byt import Byt
+from nanoparam import param_all_processed as param_all
 
 
 # make sure that python 3 understands unicode native python 2 function

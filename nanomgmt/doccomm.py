@@ -29,11 +29,10 @@ from pylatex import Document, Section, Subsection, Tabular, NoEscape,\
                         Command, Itemize, MultiColumn, Subsubsection
 from pylatex.basic import NewLine
 from pylatex.utils import italic
-from nanoparam import param_all_auto as param_all
+from nanoparam import param_all_processed as param_all
 from nanoparam import param_ccsds
 from nanoparam.categories import param_category
 from nanoutils.ccsds import CCSDSMetaTrousseau
-import param
 import os
 import re
 
