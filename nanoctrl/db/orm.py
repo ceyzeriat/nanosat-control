@@ -73,12 +73,7 @@ def init_DB():
     Base.prepare(engine, reflect=True)
     TABLES = {}
     for k in Base.classes.keys():
-        #nk = fcts.camelize_singular(k)
-        #if nk is False:
-        #    print("The table '{}' was given a name without plurals. "\
-        #          "This is wrong and it will probably crash".format(k))
         TABLES[k] = Base.classes[k]
-        #globals()[nk] = Base.classes[k]
     DB = Session(engine)
     running = True
 
@@ -364,11 +359,23 @@ def save_TM_to_DB(hd, hdx, data):
     if tblnm is not None:
         # if saving the data from TC answer
         if catnum == param_category.TELECOMMANDANSWERCAT:
+            # if dealing with listof type of trousseau, list of dict-res
+            if isinstance(data['unpacked'], (list, tuple)):
+                dictdata = {}
+                if len(data['unpacked']) > 0:
+                    for key in data['unpacked'][0].keys():
+                        dictdata[key] = []
+                for item in data['unpacked']:
+                    for k, v in item.items():
+                        dictdata[k].append(v)
+            else:
+                # usual case, just copy the dict-res
+                dictdata = data['unpacked']
             for k, v in data['unpacked'].items():
                 DB.add(TABLES[tblnm](telemetry_packet=TM.id,
                                      param_key=k,
                                      value=repr(v)))
-        # if dealing with list of dict, e.g. science or payload hk
+        # if dealing with listof type of trousseau, list of res
         elif isinstance(data['unpacked'], (list, tuple)):
             trkeys = cat.get_trousseau_keys(hdx=hdx)
             for item in data['unpacked']:
