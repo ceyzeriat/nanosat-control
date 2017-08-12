@@ -26,7 +26,7 @@
 
 
 import binascii
-from byt import Byt
+from byt import Byt, DByt
 import math
 import struct
 
@@ -43,7 +43,7 @@ def hex2str(v, **kwargs):
     type = hexa string
     verbose = hexadecimal -> hexa string
     """
-    return v.hex()
+    return DByt(v)
 
 
 def str2hex(txt, pad=0, **kwargs):

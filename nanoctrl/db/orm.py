@@ -25,7 +25,7 @@
 ###############################################################################
 
 
-from byt import Byt
+from byt import Byt, DByt
 import time
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session

@@ -41,16 +41,17 @@ from . import ccsdsexception as exc
 __all__ = ['CCSDSKey']
 
 
-TYP = { 'sint': 'intSign',
-        'uint': 'int',
-        'byt': 'hex',
-        'hex': 'hex',
-        'hexstr': 'str',
-        'text': 'txt',
-        'real': 'float',
-        'float': 'float',
-        'double': 'double',
-        'bool': 'bool'
+TYP = { 'sint': 'intSign',  # signed integer
+        'uint': 'int',  # unsigned integer
+        'byt': 'hex',  # chain of bytes that displays as ascii
+        'hex': 'hex',  # same as above
+        'dbyt': 'str',  # chain of bytes that displays as hexadecimal
+        'hexstr': 'str',  # same as above
+        'text': 'txt',  # readable text, ascii chars between 32 and 126
+        'real': 'float',  # 32 bits float
+        'float': 'float',  # same as above
+        'double': 'double',  # 64 bits float
+        'bool': 'bool'  # boolean
       }
 
 
