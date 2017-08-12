@@ -371,7 +371,7 @@ def save_TM_to_DB(hd, hdx, data):
             else:
                 # usual case, just copy the dict-res
                 dictdata = data['unpacked']
-            for k, v in data['unpacked'].items():
+            for k, v in dictdata.items():
                 DB.add(TABLES[tblnm](telemetry_packet=TM.id,
                                      param_key=k,
                                      value=repr(v)))
