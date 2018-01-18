@@ -1,6 +1,6 @@
 .. NanoCTRL
 
-Dear radio-amateur, if you are interested in unpacking the raw-frames of the PICSAT mission, you are (almost) at the right place. Please have a read here: https://github.com/ceyzeriat/nanosat-control/issues
+Dear radio-amateur, if you are interested in unpacking the raw-frames of the PICSAT mission, you are (almost) at the right place. Please have a read here: https://github.com/ceyzeriat/nanosat-control/issues/1
 
 :Name: NanoCTRL
 :Website: `www.nanosat-control.com`_
